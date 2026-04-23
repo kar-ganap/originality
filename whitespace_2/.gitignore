@@ -1,0 +1,54 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+
+# OS
+.DS_Store
+
+# Environment
+.env
+.env.*
+
+# Coverage
+htmlcov/
+.coverage
+.coverage.*
+
+# mypy / ruff / pytest caches
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+
+# uv
+uv.lock
+
+# Experiment outputs
+experiments/results/
+experiments/logs/
+
+# Tasks (internal project management — per sibling house style)
+tasks/
+
+# Literature review PDFs (copyrighted)
+literature-review/*.pdf
+
+# Run logs
+*.log
+
+# Experiment checkpoints
+*_ckpt/
+
+# Raw data (large; fetched from OpenAlex / S2AG; regenerable from pinned snapshot date)
+data/*
+!data/.gitignore
+!data/README.md
+!data/metadata/

@@ -1,0 +1,6 @@
+# Ignore all data by default; whitelist metadata + this directory's README.
+*
+!.gitignore
+!README.md
+!metadata/
+!metadata/**

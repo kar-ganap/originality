@@ -1,0 +1,56 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.*
+
+# Coverage
+htmlcov/
+.coverage
+.coverage.*
+
+# mypy
+.mypy_cache/
+
+# ruff
+.ruff_cache/
+
+# uv
+uv.lock
+
+# Pytest
+.pytest_cache/
+
+# Run logs at root
+*.log
+
+# Tasks (internal project management — per sibling house style)
+tasks/
+
+# Literature review PDFs (copyrighted)
+literature-review/*.pdf
+
+# Per-whitespace experiment outputs (also handled at ws level)
+*/experiments/results/
+*/experiments/logs/
