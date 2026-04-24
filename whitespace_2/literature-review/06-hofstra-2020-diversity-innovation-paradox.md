@@ -1295,9 +1295,115 @@ novelty counting, and TF-IDF can't provide that."
 *(Pending — covered in topic-modeling primer §3; summary note could be
 added here if the user wants the compressed version.)*
 
-### SQ6 — Why negative binomial? What does the log offset accomplish?
+### SQ6 — Why negative binomial rather than OLS? What does the log offset accomplish?
 
-*(Pending.)*
+Working session with user, 2026-04-24.
+
+**User's first pass.** The offset is used to block/control on
+# new links. Negative binomial (not OLS) because the graph obeys
+power law.
+
+Two sharpenings, each replacing a close-but-imprecise framing with
+the actual technical mechanism.
+
+**(1) The offset is normalization, not control.** A control variable
+enters the regression equation on the right-hand side with an
+*estimated* coefficient — the model learns how much to weight it. An
+offset enters with a *fixed* coefficient of 1 (log-linked). For a
+negative binomial model of count Y:
+
+> log(E[Y]) = β₀ + β₁X₁ + ... + βₖXₖ + log(t)
+
+This is algebraically equivalent to:
+
+> log(E[Y]/t) = β₀ + β₁X₁ + ... + βₖXₖ
+
+So the offset converts the model from predicting **expected count**
+to predicting **expected rate** (count per unit of exposure).
+
+Hofstra uses this to model `uptake per new link` (a rate,
+non-integer) as a count model with normalization: total `uptake` is
+the dependent count; `log(# new links)` is the offset. Coefficients
+on other predictors become interpretable as rate changes. SI p. 18:
+
+> "Uptake per new link (impactful novelty) is a non-integer rate
+> instead of an integer event count. An occasional method of
+> modelling non-integers is to offset the negative binomial
+> regression with logged independent variables."
+
+**Why the distinction matters.** The offset imposes an assumption —
+fixed coefficient of 1 means uptake is assumed to scale exactly
+linearly with # new links (in log-units). If uptake actually scales
+sublinearly or superlinearly, the offset mis-specifies the
+relationship. A freely-estimated coefficient would relax the
+assumption but lose the clean rate interpretation. The control vs.
+offset choice is a methodological commitment, not just a presentation
+choice.
+
+Your "control on # new links" framing captures the *effect* (the
+result reads as uptake-per-link) but misses the *mechanism*
+(normalization via fixed-coefficient rescaling). Informally these
+look similar; technically they're distinct commitments.
+
+**(2) Negative binomial is motivated by overdispersion, not
+specifically power law.** OLS fails on count data for three distinct
+reasons:
+
+1. **Non-negative integer constraint.** OLS predicts real-valued
+   outcomes; counts are non-negative integers.
+2. **Skewed distributions with non-normal residuals.** Counts with
+   many zeros and a long right tail break OLS's normality assumption.
+   (20.9% of Hofstra's theses introduce 0 new links; `# new links`
+   has mean=9, SD=14, max in hundreds.)
+3. **Variance-mean relationship.** Count variance grows with mean;
+   OLS's homoscedasticity assumption is violated.
+
+**Why negative binomial specifically, not Poisson.** Poisson is the
+simpler count model but assumes variance = mean. Real count data
+typically has variance > mean (overdispersion). Negative binomial
+generalizes Poisson with a dispersion parameter α, letting
+variance = mean × (1 + α × mean). This accommodates the "counts
+with variance much greater than mean" pattern typical of scientific
+productivity, citation counts, and conceptual recombinations.
+
+Hofstra's data: `# new links` variance ~189 (mean 9, SD 14) —
+variance is ~20× the mean. Heavily overdispersed. `uptake per new
+link` variance ~9.5 (mean 0.79, SD 3.08) — also overdispersed.
+
+**The power-law angle — intuition captures something real.** Power-law
+distributions are a specific kind of heavy-tailed distribution.
+They're scale-free and exhibit overdispersion because the tail
+carries so much mass. Power-law-distributed data are automatically
+overdispersed, and Hofstra's right-skewed `# new links` distribution
+is consistent with power-law-like tail behavior. But negative
+binomial's motivation is **overdispersion generally**, not power-law
+specifically. Many overdispersed distributions (clustered events,
+zero-inflated processes, negative binomial itself) aren't power-law.
+NB accommodates the variance-mean mismatch without committing to a
+specific tail shape.
+
+SI p. 17:
+
+> "Scientific novelty (# new links) and impactful novelty (uptake per
+> link), are right-skewed counts of events or rates. For these
+> outcomes, we employ negative binomial regression analyses, where
+> the overdispersion in the outcomes is modeled as a linear
+> combination of the covariates."
+
+Hofstra cites **right-skewness** and **overdispersion** as the
+motivation — not power law specifically. The user's intuition picked
+up the heavy-tailed shape correctly; the sharpening identifies
+overdispersion as the technical condition that requires NB.
+
+**Sharpened one-sentence version.** "Negative binomial handles
+overdispersed count data (non-negative integers with right-skewed
+distributions and variance growing with mean), which OLS can't fit.
+The `log(# new links)` offset is a fixed-coefficient rescaling
+device — it converts the count model into a rate model by imposing
+a linear relationship between uptake and # new links rather than
+estimating that relationship. The power-law framing captures the
+heavy-tailed shape but isn't the technical condition that forces NB;
+overdispersion is."
 
 ### SQ7 — What fraction of students produce any novelty that gets adopted?
 
