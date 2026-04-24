@@ -68,40 +68,98 @@ This phase is NOT:
 
 ### 1. Embeddings
 
-- **Primary:** SPECTER2 (pinned version to be recorded in `tasks/spend.md` and
-  `data/metadata/` when the pipeline runs; check latest version at that time).
-- **Robustness partner 1 (commercial, required):** `text-embedding-3-large`
-  via OpenAI API. Different architecture, different training data, different
-  scale — genuine cross-family replication.
-- **Robustness partner 2 (open-source, optional):** BGE-M3 or SciNCL. Free,
-  local; included if Stage 2 has capacity.
-- **For cross-field expansion (if pursued):** for philosophy or economics,
-  `text-embedding-3-large` or BGE-M3 becomes co-primary alongside SPECTER2
-  (not a robustness partner). See compass on field-specific embedding strength.
+Three-model stack, with deliberate within-family and cross-family
+robustness partners (per Phase 0 embedding-landscape research;
+SPECTER3 does not exist, SciRepEval leaderboard is essentially static,
+and the scientific-domain embedding space has stalled — so "robustness"
+is load-bearing here).
+
+- **Primary:** SPECTER2 (`allenai/specter2_base` + proximity adapter
+  `allenai/specter2`). Pin to the Dec 4 2024 commit for reproducibility
+  (avoid `aug2023refresh` — AI2 says use non-refresh for benchmarking).
+- **Within-family robustness partner:** SciNCL (`malteos/scincl`).
+  Same SciBERT backbone, different training objective (neighborhood
+  contrastive on citation graph vs. triplet loss). Tests whether the
+  result is driven by SPECTER2's specific training objective.
+- **Cross-family robustness partner:** Qwen3-Embedding-0.6B at 768-dim
+  via Matryoshka representation learning. Frontier-family model
+  (decoder-LM, SentencePiece tokenizer, 32K context — no abstract
+  truncation), Apache 2.0. Tests whether the SciBERT-era tokenization
+  is driving the result. Critically important for diachronic robustness
+  since SPECTER2 and SciNCL share the same 2019-era tokenizer.
+- **Explicitly skipped:** NV-Embed-v2 (CC-BY-NC license), Qwen3-8B
+  (10× compute, not worth it unless 0.6B proves limiting), `text-
+  embedding-3-large` (API-only, no transparent training data, no
+  obvious advantage over Qwen3-0.6B for this task).
+- **Compute budget (500K abstracts, Apple M-series with MPS, fp16):**
+  SPECTER2 ~30–90 min; SciNCL ~30–90 min; Qwen3-0.6B ~3.5–9 hrs.
+  Total ~half a day for a full triple-pass. Storage ~5 GB for arrays.
+- **For cross-field expansion (if philosophy or economics is pursued):**
+  Qwen3-0.6B graduates from robustness partner to co-primary alongside
+  SPECTER2. SciNCL remains a within-family check on SPECTER2 but would
+  need an analogous within-family partner for Qwen3, deferred to that
+  phase plan.
 
 ### 2. Embedding drift mitigation ladder
 
-Per ws2 desiderata §2, §3.
+Per ws2 desiderata §2, §3. Restructured from a linear ladder to a
+two-axis framework: **method-sophistication axis** (default → Flavor B)
+and **cross-architecture axis** (transformer-only → includes non-
+transformer). Flavor A (if adopted) lives on the cross-architecture
+axis; Flavor B lives on the sophistication axis. They are complementary,
+not sequential.
 
 **Stage 2 default (always run):**
-- Mitigation 2 — cross-model replication using the robustness partner(s) above.
-- Mitigation 4 — anchor-dimension projection. ~100 curated field-specific
-  anchor concepts (stable across eras: "Fourier analysis," "Turing machines,"
-  "graph theory," etc., for CS). Report anchor-space diversity alongside raw-
-  space diversity as a column in every robustness table.
+- Mitigation 2 — cross-model replication using the three-model stack
+  above (SPECTER2 + SciNCL + Qwen3-0.6B). Qwen3-0.6B's different
+  tokenizer is the most load-bearing diachronic check we run cheaply.
+- Mitigation 4 — anchor-dimension projection. ~100 curated field-
+  specific anchor concepts (stable across eras: "Fourier analysis,"
+  "Turing machines," "graph theory," etc., for CS). Report anchor-
+  space diversity alongside raw-space diversity as a column in every
+  robustness table.
 
-**Stage 3 progressive escalation (invoke if triggered):**
-- Flavor A — diachronic Word2Vec + orthogonal Procrustes alignment
-  (Hamilton-Leskovec-Jurafsky 2016 template).
-- Flavor B — fine-tune SPECTER2 per era, align via anchor-paper Procrustes.
-- Flavor C (dynamic embedding models) — **reserve only**; do not invoke unless
-  (B) produces results contradicting domain intuition AND reviewers are still
-  pushing.
+**Phase 0.1 drift-pilot (Check 5c) decides whether Flavor A is
+added to Stage 3.** A 100-abstract nearest-neighbor spot-check on
+1970–1980 CS under each of the three default-stack models. Quantitative
+era-match rate (fraction of top-10 nearest neighbors that are era-
+appropriate rather than modern-vocabulary-coincidence). Decision rule:
+SPECTER2 era-match >70% → drift manageable, skip Flavor A; <50% →
+drift severe, commit to Flavor A; between → commit to Flavor A as
+cheap insurance.
+
+**Stage 3 Flavor A (conditional, cross-architecture axis):** Word2Vec
+per decade + orthogonal Procrustes alignment on stable anchor words
++ TF-IDF-weighted document aggregation. Hamilton-Leskovec-Jurafsky
+2016 template, adapted to document-level via aggregation. Value-add:
+genuinely non-transformer embedding family (distributional, non-
+contextual) → if Word2Vec-diachronic converges with
+SPECTER2+SciNCL+Qwen3 on the divergence trend, cross-architecture
+robustness is established.
+
+**Stage 3 Flavor B (conditional, method-sophistication axis):** Fine-
+tune SPECTER2 per era on that era's abstracts, align via anchor-paper
+Procrustes, compute diversity in aligned space. Invoked if Stage 2
+or Flavor A results suggest measurement-level drift remains material,
+or if reviewers push on pre-1990 data specifically.
+
+**Stage 3 Flavor C (reserve only):** Dynamic embedding models
+(Bamler-Mandt 2017, Rudolph-Blei 2018). Do not invoke unless Flavor B
+produces results contradicting domain intuition AND reviewers are
+still pushing.
+
+**Document-level diachronic is an underdeveloped literature.** Post-
+2018 contextual-embedding diachronic methods (Giulianelli et al. 2020,
+Tahmasebi et al. 2021 textbook) operate at word-level; they don't
+directly translate to document embeddings. The plan acknowledges
+this in Limitations: Flavor B is reasonable engineering, not a
+validated template.
 
 **Escalation triggers:**
-- Mitigation 4 shows direction-changing divergence from raw-space results → Flavor A.
-- Flavor A is ambiguous or shows era-dependent inconsistencies → Flavor B.
-- Any pre-1990-data-dependent headline claim requires at least Flavor A regardless.
+- Check 5c drift-pilot era-match rate <70% → add Flavor A.
+- Stage 2 results differ substantively between raw-space and anchor-
+  space (Mitigation 4) → add Flavor B.
+- Any pre-1990-data-dependent headline claim requires at least Flavor A.
 
 ### 3. Subfield classifier drift mitigation ladder
 
@@ -233,9 +291,23 @@ Per ws2 desiderata §10 (new in this phase).
   Arabic-speaking, Slavic, Latin, other/unknown.
 - **ORCID ground-truth validation:** 5–10K-author subsample where ORCID
   gender is self-reported; compute per-region gender-inference accuracy.
-- **Stratified sensitivity analyses:** all demographic diversity time series
-  reported both (a) on full population and (b) on Anglo-name subset. If
-  headline trend holds on (b), finding is robust to inference bias.
+- **Primary analytic strategy: weight-by-confidence, not exclusion.** All
+  authors retained; each demographic attribute's contribution to diversity
+  metrics is weighted by its inference confidence (per-variable, per-author).
+  Bootstrap CIs are computed over plausible alternative assignments on the
+  low-confidence subset, propagating inference uncertainty into reported
+  trends. This is the approach Lockhart, King & Munsch 2023 (*Nature Human
+  Behaviour*) make the case for — their finding that name-based inference
+  error concentrates in marginalized communities means exclusion-by-
+  confidence would itself bias the sample; weighting by confidence keeps
+  the population intact while making the uncertainty visible.
+- **Secondary (ablation):** re-run headline metrics on the Anglo-first-author
+  subset only. If the trend direction holds on the ablation, the finding
+  is robust to inference-bias concerns. Smaller sample, cleaner inference,
+  reduced external validity — report as a robustness check, not a headline.
+- **Per-region accuracy reporting in Methods:** document the per-region
+  gender-inference accuracy from the ORCID validation subsample. No
+  results reported without this accuracy table.
 
 ### 10. Disambiguation error floor
 
@@ -292,6 +364,123 @@ pre-registration footnote.
 
 **If this is violated, the finding is invalid.** Acknowledged in Methods
 explicitly; verified in any independent reproduction.
+
+### 12. Text representation and full-text policy
+
+**Primary representation: title + abstract.** All embedding-based
+analyses (semantic diversity, Test IV novelty metrics, anchor-dimension
+projection) use title + abstract only. Matches SPECTER2's training
+distribution, matches convention in scientometric embedding work
+(Chu-Evans 2021, Hofstra et al. 2020, etc.), and provides high coverage
+across the 1970–2024 window.
+
+**Full-text is not required** for any primary analysis. Pre-1990
+full-text coverage is prohibitively uneven; requiring full-text would
+collapse the pre-1990 sample and defeat the paper's 50-year arc.
+
+**Reference-list metadata for novelty computation.** Test IV primary
+novelty (N_p = cosine distance from paper to cited-papers centroid)
+uses OpenAlex's structured reference metadata, not full-text. Test IV
+tertiary (Uzzi-Mukherjee-Stringer recombinant novelty, Stage 3) also
+uses references. So reference-based analyses are cleanly doable
+without full-text.
+
+**Stage 3 arXiv full-text robustness (optional).** For the subset of
+papers with arXiv full-text (CS post-1993ish, Physics post-1991ish),
+re-run primary semantic-diversity metrics using long-context Qwen3
+embeddings of the full text. Compare trend direction to the abstract-
+based result. Purpose: test whether abstract summaries miss
+substantive content that would change the divergence finding. Cost:
+2–3 extra days of compute on the arXiv subset; arXiv is free and
+legal. Limitation: covers only post-1991/93 window, so doesn't help
+with 1970s drift concern — complements rather than replaces the
+drift-mitigation ladder.
+
+**Limitations acknowledgment (pre-baked for Methods section):**
+abstracts are high-level summaries; they can mask methodological
+similarity between papers with different approaches. Abstract-only
+representation may over-state semantic similarity for methodologically-
+distinct-but-topically-similar papers.
+
+### 13. Pathway coverage and pre-1990 data retention
+
+**Pathway coverage — what ws2 commits to saying about each of
+Claim #13's 8 pathways.** Prevents over-claiming in the paper and
+clarifies positioning vs. whitespace 1 (agent-based simulation).
+
+| Pathway | ws2 engagement | Mechanism |
+|---|---|---|
+| 13-A Channel/recommender convergence | Circumstantial | Break-point timing near platform-era transitions (arXiv '91–93, web '93, foundation models '18–'20) is suggestive but not dispositive. Cannot separate from other mechanisms firing in same era. |
+| 13-B Demographic-diversification-as-cosmetic | **Direct test** | Tests I–III operationalize this. Divergence confirms, tracking disconfirms, delayed tracking qualifies. Paper's central claim maps 1:1 onto 13-B. |
+| 13-C Institutional selection pressure | Indirect | Prestige and career-stage shifts captured in demographic decomposition; Test II controls for these. Doesn't affirmatively identify 13-C as mechanism. |
+| 13-D Network-topology canonical convergence | **Direct test** | Chu-Evans Spearman operationalizes 13-D. Subfield mechanism test (canon-concentration → divergence) provides direct mechanism evidence if γ₁ > 0. |
+| 13-E Translation/linguistic asymmetry | Silent | English-language corpus; translation dynamics out of scope. |
+| 13-F Measurement artifact (null) | **Directly constrained** | Drift-mitigation ladder + metric plurality + cross-model replication + field-level replication together constrain 13-F. Not a positive test; a rigorous rebuttal. |
+| 13-G Individual-level conformity psychology | Silent | No individual-level conformity measures in observational-aggregate design. |
+| 13-H Endogenous actuator emergence | Weakly suggestive | Break-point analysis can reveal non-linear dynamics consistent with tipping-point emergence. Emergence mechanisms (causal dynamics) are out of scope. |
+
+**Influence-structure characterization (load-bearing in Discussion):**
+ws2 does not observe individual author-to-author influence edges. It
+provides aggregate correlates only — canonical concentration, training-
+institution concentration (Proxy A), subfield mechanism test, Stage 3
+advisor Proxy B. Which *specific* influence channels drive any
+observed homogenization (shared textbooks vs. shared advisors vs.
+shared platforms vs. shared training institutions) is not identifiable
+from our data. That is the domain of interventional/simulation work —
+explicitly whitespace 1.
+
+**Pre-1990 data retention policy (non-negotiable).** Pre-1990 data is
+retained in all primary analyses despite known measurement weaknesses
+(classifier drift §10, embedding drift §3, sparser abstracts, weaker
+demographic inference). Rationale:
+
+1. **13-B requires a pre-diversification baseline.** The substantive
+   claim ("demographic diversity rose while intellectual diversity
+   didn't") needs the pre-acceleration era to be measured, not just
+   assumed. Demographic diversification in CS and Physics accelerated
+   substantially post-1990; clipping to post-1990 would start *at the
+   inflection* rather than before it, losing the statistical leverage
+   to identify the baseline-to-acceleration transition.
+2. **13-D requires cross-subfield variation in canon-concentration.**
+   Pre-1990 subfields had less-established canons (young CS fields
+   pre-Knuth-textbooks, emerging physics subfields pre-high-Tc). This
+   is exactly the variation the within-field subfield mechanism test
+   needs on the right-hand side. Clipping compresses the variation.
+3. **Ruling out 13-F (null) requires surviving worse measurement.**
+   A trend that appears only post-1990 is consistent with "measurement
+   became clean, not that anything actually changed." A trend that
+   persists in the noisier pre-1990 data (after drift mitigation) is
+   substantively harder to explain as a pure measurement artifact.
+   Paradoxically, keeping the noisy era *strengthens* the rebuttal to
+   the null.
+
+**Asymmetric measurement-reliability handling.** Rather than clipping,
+the plan applies different restrictions to different analyses:
+
+- **Primary divergence tests (I–III):** span 1970–2024. Drift mitigation
+  handles measurement concerns.
+- **Subfield mechanism test:** restricted to post-1990 (desiderata §10 —
+  classifier drift on pre-1990 subfield tags is untenable). This is a
+  measurement-reliability restriction on *one* analysis, not a project-
+  wide clip.
+- **Full-text robustness:** post-1991/93 subset (arXiv coverage).
+- **Demographic inference:** weight-by-confidence with per-era accuracy
+  reporting; no clipping.
+
+**Concrete pre-1990 break-point candidates** (added to the break-point
+analysis pre-registration):
+
+- **CS 1986:** first neural-network revival (Rumelhart-Hinton-Williams
+  PDP volumes). Subfield rebirth event visible in aggregate citation
+  and embedding structure.
+- **Physics 1986:** high-Tc superconductivity discovery (Bednorz-Müller).
+  Field-transforming event; new cohort of researchers, global interest.
+- **Physics 1991:** Soviet Union dissolution → mass outflow of Soviet-
+  trained physicists and mathematicians to the West. Demographic shock.
+
+These join the existing candidate set (CS: 1991–93, 1998–2000, 2008–09,
+2012, 2018–20; Physics: 1991, 1995–2000, 2012) with Bonferroni
+correction within each field's expanded candidate list.
 
 ## Sanity checks (this phase's empirical work)
 
@@ -412,6 +601,75 @@ Two coupled goals, run together on the pilot data:
 - Per-year bootstrap n = min(Nᵧ, N_target) committed as a pre-registered
   constant per metric.
 
+**5c — Drift pilot (nearest-neighbor era-match rate):**
+- **What:** sample 100 abstracts from 1970–1980 CS. For each, compute
+  top-10 nearest neighbors in each of the three default-stack models
+  (SPECTER2, SciNCL, Qwen3-0.6B). Classify each neighbor as era-
+  appropriate (other 1970–1990 paper on related topic by domain-read
+  inspection) vs. era-mismatched (post-2000 paper sharing a surface
+  word but not the topic). Compute per-model era-match rate.
+- **Why:** decides whether the Stage 3 conditional Flavor A (Word2Vec
+  diachronic) is added to the drift-mitigation ladder (subsection 2).
+  Cheaper than committing to Flavor A a priori; empirically grounded.
+- **Output:** `experiments/phase-0.1/drift-pilot-results.md` —
+  per-model era-match rates, inspected-neighbor examples,
+  qualitative commentary on where each model's failures concentrate.
+- **Decision rule:** SPECTER2 era-match rate >70% → drift manageable,
+  skip Flavor A; <50% → drift severe, commit to Flavor A; 50–70% →
+  commit to Flavor A as cheap insurance. Applied at Phase 0.1 closure.
+
+### Check 6 — Methodological literature deep dive (parallel track)
+
+Parallel to sanity checks 1–5; runs concurrently with the empirical
+data work. Deliverable gates Phase 0.2 (pre-registration).
+
+- **What:** close methodological read of the ~10 Tier-1 and Tier-2
+  papers confirmed in `literature-review/README.md`. Per paper:
+  structured review document with three-level discourse (smart
+  high-schooler / junior-senior undergrad / early grad), study questions
+  (basic / intermediate / advanced), challenge questions (to be
+  answered in discussion), plus convention sections (background, key
+  ideas, connection to ws2, key quotes, synthesis pointers,
+  discussion notes filled during review sessions). Template matches
+  sibling house style (`inverse-device-design/literature-review/`
+  format) with the three MUST-have elements (discourse levels, study
+  questions, challenge questions) pinned as non-negotiable.
+- **Why:** every ws2 methodology choice inherits from or diverges from
+  specific prior work. Close reading (a) validates our Phase 0.2
+  pre-registration commitments against current methodology, (b)
+  prevents re-litigation of choices in later phases, (c) produces
+  the structured notes that get harvested into ws2's Methods and
+  Related Work sections.
+- **Scope:** Tier 1 papers (read closely, deep review): Chu-Evans 2021,
+  Park-Leahey-Funk 2023, Petersen 2024 QSS (positioning read),
+  Petersen 2025 JOI (close methodological read — directly relevant to
+  Test IV), Holst et al. 2024, Hofstra et al. 2020, Lockhart et al.
+  2023. Tier 2 (read for methodology, not every claim):
+  Wu-Wang-Evans 2019, Singh et al. 2023 SciRepEval, Cohan et al.
+  2020 SPECTER, Ostendorff et al. 2022 SciNCL, Hamilton-Leskovec-
+  Jurafsky 2016, Uzzi-Mukherjee-Stringer 2013 (correction: fourth
+  author is Stringer not Stone), Kozlowski et al. 2022, Funk et al.
+  2026 (disruption-decline inventory), Culbert et al. 2024/2025
+  (OpenAlex coverage).
+- **Output:** `literature-review/README.md` (master reading list,
+  tiers, per-paper status tracking, template). `literature-review/XX-
+  <slug>.md` per Tier 1 and Tier 2 paper. `literature-review/
+  synthesis.md` (cross-paper synthesis harvested into ws2's Related
+  Work / Methods sections).
+- **Petersen distinction:** 2024 QSS is the broader citation-inflation
+  critique — positioning read (~2 hrs) justifying our CD-index
+  exclusion. 2025 JOI is the team-size / CD re-analysis — close read
+  (~4 hrs) because it directly challenges the Wu-Wang-Evans team-size
+  interpretation that underpins our Test II team-size control and
+  Test IV's team-diversity × novelty setup. Read both; close-read 2025
+  JOI, positioning-read 2024 QSS.
+- **Effort estimate:** ~30 hours total (Tier 1: ~15 hrs deep reads;
+  Tier 2: ~15 hrs methodological reads). Parallelizable with
+  empirical Check 1–5 work.
+- **Decision rule:** if a close read surfaces a methodology choice that
+  contradicts Phase 0.1 commitments, Phase 0.1 re-opens. Better to
+  re-plan once than ship the wrong Phase 0.2 pre-registration.
+
 ## Deliverables (committed at end of phase)
 
 1. **`data/metadata/field_definitions.csv`** — concept IDs (CS, Physics) with
@@ -429,7 +687,14 @@ Two coupled goals, run together on the pilot data:
    - `pilot-summary.md`
    - `metric-convergence.{png,md}`
    - `cluster-stratification-check.{png,md}`
+   - `drift-pilot-results.md`
 5. **`data/metadata/pilot-query-results.parquet`** — 1000-paper pilot pull.
+6. **Literature review artifacts** under `literature-review/`:
+   - `README.md` — master reading list, tiers, status tracking, template
+   - `XX-<slug>.md` per Tier 1 and Tier 2 paper (~16 files)
+   - `synthesis.md` — cross-paper synthesis
+7. **Statistics primer** at `docs/primers/stats.{tex,pdf}` (already
+   committed earlier this phase; compiled 20-page PDF).
 6. **Updated `docs/desiderata.md`** — §10 amendment committed (already done
    in this phase, 2026-04-23).
 7. **Revised cost estimate in `tasks/spend.md`** with pre-commit entries for
@@ -456,6 +721,13 @@ Each gate must be met before advancing to Phase 1.1 (full data pull):
    documented.
 6. **`field_definitions.csv` is committed.** Review-worthy and pinned.
 7. **Retro written** — what surprised us, what to adjust before Phase 0.2.
+8. **Literature review closed.** Tier 1 + Tier 2 papers each have a
+   committed review file following the template; `synthesis.md`
+   harvested; no surfaced contradictions with Phase 0.1 methodology
+   commitments remain unaddressed.
+9. **Drift-pilot decision committed.** Check 5c era-match rate
+   reported; Flavor A either committed (with rationale) or deferred
+   (with rationale); decision logged in the retro.
 
 Gate failures are not blockers in themselves — they are triggers for phase
 re-planning. "Abstract coverage pre-1985 is 40%" ≠ "stop the project"; it =
@@ -761,23 +1033,35 @@ desiderata §9, but same principle).
 
 ## Timeline
 
-Phase 0.1 target: **2 weeks, ~30 hours of effort.**
+Phase 0.1 target: **3 weeks, ~55–60 hours of effort** (bumped from the
+original 2-week estimate to reflect the parallel lit-review track and
+drift-pilot addition).
 
-- **Week 1:** methodology commitment (this document — in progress);
-  OpenAlex API setup + pilot query; field_definitions.csv draft.
-- **Week 2:** sanity checks (abstract coverage, classifier drift audit,
-  demographic coverage, disambiguation spot-check); pilot-query review;
-  budget revision; retro.
+- **Week 1:** methodology commitment (this document); OpenAlex API
+  setup + pilot query; `field_definitions.csv` draft. Literature
+  review Tier 1 begins in parallel (~5 hrs).
+- **Week 2:** sanity checks 1–5 (abstract coverage, classifier drift
+  audit, demographic coverage, disambiguation spot-check, metric
+  convergence, cluster-stratification A/B, drift-pilot);
+  pilot-query review; cost budget revision. Literature review Tier 1
+  continues (~10 hrs).
+- **Week 3:** literature review Tier 2 (~15 hrs); `synthesis.md`
+  harvest; drift-pilot decision locked; retro. If lit review
+  surfaces methodology conflicts, Phase 0.1 re-opens before Phase 0.2.
 
-Advancement to Phase 0.2 (pre-registration) assumes Phase 0.1 closes cleanly.
-Advancement to Phase 1.1 (full data pull) assumes Phase 0.2 and Phase 0.1
-both close.
+Advancement to Phase 0.2 (pre-registration) assumes Phase 0.1 closes
+cleanly and all validation gates pass, including lit-review closure
+and drift-pilot decision. Advancement to Phase 1.1 (full data pull)
+assumes Phase 0.2 and Phase 0.1 both close.
 
 ## References
 
 - North star: `../conceptual.md`
 - Principles: `../desiderata.md` (amended §10 and §11 in this phase)
+- Statistics primer: `../primers/stats.{tex,pdf}` (covers all methods
+  committed in this plan)
 - Program context: `../../../docs/program/`
+- Literature review: `../../literature-review/README.md`
 - Todo: `../../tasks/todo.md`
 - Spend: `../../tasks/spend.md`
 - Lessons: `../../tasks/lessons.md`

@@ -1,0 +1,974 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{graphicx, hyperref}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{parskip}
+\hypersetup{colorlinks=true, linkcolor=blue, urlcolor=blue, citecolor=blue}
+
+\newtheorem{definition}{Definition}
+\newtheorem{remark}{Remark}
+
+\title{Statistics Primer for Whitespace 2}
+\author{Originality Program --- Whitespace 2 Empirical Decomposition}
+\date{April 2026}
+
+\begin{document}
+\maketitle
+\tableofcontents
+\clearpage
+
+\section{Introduction}
+
+This primer accompanies the Phase 0.1 scoping plan for Whitespace 2, an
+empirical time-series study testing whether demographic plurality and
+semantic plurality of scientific output have diverged over 1970--2024.
+The plan commits to specific statistical methods, some of which are
+standard in scientometrics but may be unfamiliar outside that literature.
+This document explains each committed method from first principles:
+what question it answers, its formal definition, the intuition behind
+it, when it works and when it fails, and how Whitespace 2 uses it.
+
+The organization follows the structure of the analysis pipeline:
+
+\begin{itemize}[nosep]
+  \item \textbf{Part I} --- diversity metrics used for the demographic,
+    semantic, and canonical-concentration time series (Sections 2--6).
+  \item \textbf{Part II} --- the four co-primary divergence tests
+    committed in Phase 0.2 pre-registration (Sections 7--10).
+  \item \textbf{Part III} --- break-point analysis for locating when any
+    divergence begins (Sections 11--12).
+  \item \textbf{Part IV} --- auxiliary methods used across multiple tests:
+    bootstrap confidence intervals, multiple-comparisons correction,
+    diachronic embedding alignment, and multicollinearity diagnostics
+    (Sections 13--16).
+\end{itemize}
+
+Each section is self-contained. Read linearly for a full build-up, or
+jump to specific methods as needed. A glossary of symbols is in the
+appendix.
+
+\clearpage
+\part{Diversity Metrics}
+
+\section{Shannon Entropy}
+\label{sec:shannon}
+
+\textbf{Question answered.} Given a categorical distribution (e.g.,
+authors' countries, paper cluster assignments), how ``spread out''
+is the mass across categories?
+
+\textbf{Formal definition.} For a distribution with probabilities
+$p_1, \ldots, p_K$ over $K$ categories:
+\[
+  H(p) = -\sum_{i=1}^{K} p_i \log p_i
+\]
+By convention $0 \log 0 = 0$. The base of the log determines the units:
+base-2 yields bits, base-$e$ yields nats, base-10 yields hartleys.
+Whitespace 2 uses natural log (nats); the choice affects units but not
+conclusions.
+
+\textbf{Intuition.} Shannon entropy is the expected ``surprise'' of a
+random draw. If one category dominates ($p_1 \to 1$), drawing that
+category is unsurprising and $H \to 0$. If all categories are equally
+likely ($p_i = 1/K$), each draw is maximally surprising and
+$H = \log K$.
+
+The quantity $\exp(H)$ is the \textit{effective number of categories}
+--- the number of equally-common categories that would produce the
+same entropy. If papers are distributed over 50 cluster IDs but half
+the mass is in 3 clusters, $\exp(H)$ might be around 8: roughly
+equivalent to being spread over 8 equally-common clusters.
+
+\textbf{Finite-sample bias.} The naïve ``plug-in'' estimator
+$\hat H = -\sum \hat p_i \log \hat p_i$ systematically underestimates
+the true entropy. The leading-order bias is
+\[
+  \mathbb{E}[\hat H] - H(p) \approx -\frac{K-1}{2N}
+\]
+where $N$ is the sample size. For $K = 100$ and $N = 1000$,
+the bias is about $0.05$ nats---non-negligible. The \textit{Miller-Madow
+bias correction} adds $(K-1)/(2N)$ to the plug-in estimate:
+\[
+  \hat H_{\text{MM}} = \hat H + \frac{K-1}{2N}
+\]
+Whitespace 2 uses this correction on all Shannon entropy estimates.
+
+\textbf{When it fails.}
+\begin{itemize}[nosep]
+  \item With many rare categories ($K \sim N$), even Miller-Madow
+    underestimates. Consider Chao-Shen or NSB estimators in that regime
+    (not used in ws2 primary analyses).
+  \item Requires a discrete distribution. For continuous features
+    (career stage in years), discretize into bins first; bin choice
+    affects the estimate.
+\end{itemize}
+
+\textbf{Use in ws2.} Per-dimension demographic diversity (gender,
+country, institution type, prestige tier, career stage bin, training
+institution) uses Shannon entropy as the primary metric. Cluster
+entropy (Section~\ref{sec:cluster-entropy}) is Shannon entropy applied
+to paper-embedding cluster assignments.
+
+\section{Gini-Simpson Index}
+\label{sec:gini-simpson}
+
+\textbf{Question answered.} Given a categorical distribution, what is
+the probability that two independently drawn samples fall into different
+categories?
+
+\textbf{Formal definition.} For probabilities $p_1, \ldots, p_K$:
+\[
+  \text{GS}(p) = 1 - \sum_{i=1}^{K} p_i^2
+\]
+The Simpson index $D = \sum p_i^2$ is the probability that two draws
+match; Gini-Simpson is its complement.
+
+\textbf{Intuition.} If a single category dominates, two random draws
+likely match, $D \to 1$, and $\text{GS} \to 0$. If categories are
+equal, the match probability is $1/K$ and $\text{GS} = 1 - 1/K \to 1$
+as $K \to \infty$.
+
+The quantity $1/D = 1/\sum p_i^2$ is also an \textit{effective number
+of categories} (under a different weighting than Shannon's).
+Sometimes called the ``Hill number of order 2.''
+
+\textbf{How it differs from Shannon.} Both measure spread over
+categories, but they weight rare vs. common categories differently:
+
+\begin{itemize}[nosep]
+  \item \textbf{Shannon} weights rare categories heavily (the
+    $\log p_i$ term diverges as $p_i \to 0$). A rise in a few new rare
+    categories moves Shannon entropy more.
+  \item \textbf{Gini-Simpson} weights common categories heavily (the
+    $p_i^2$ term). A rebalancing of existing dominant categories moves
+    Gini-Simpson more.
+\end{itemize}
+
+A trend that is picked up by both suggests broad-based diversification.
+A trend that moves only one suggests something more specific about the
+shape of the change.
+
+\textbf{Finite-sample bias.} Gini-Simpson's plug-in bias is smaller
+than Shannon's:
+\[
+  \mathbb{E}[\widehat{\text{GS}}] - \text{GS}(p) \approx
+  -\frac{1 - \text{GS}(p)}{N}
+\]
+Often acceptable without correction for $N \gtrsim 1000$.
+
+\textbf{Use in ws2.} Secondary per-dimension demographic metric, paired
+with Shannon entropy. Co-movement of both under trend testing is part
+of the metric-plurality robustness commitment (desiderata §8).
+
+\section{Rao's Quadratic Entropy}
+\label{sec:rao-q}
+
+\textbf{Question answered.} Given a categorical distribution
+\emph{plus} a distance between categories, what is the expected pairwise
+distance between two random samples from the distribution?
+
+\textbf{Formal definition.} For probabilities $p_1, \ldots, p_K$ and a
+symmetric distance function $d_{ij} \ge 0$ (with $d_{ii} = 0$):
+\[
+  Q(p, d) = \sum_{i=1}^{K} \sum_{j=1}^{K} p_i p_j d_{ij}
+\]
+
+\textbf{Intuition.} Rao's $Q$ generalizes Gini-Simpson. If $d_{ij} = 1$
+for all $i \ne j$ (everything is equally distant), $Q = 1 - \sum p_i^2$
+= Gini-Simpson. By specifying non-trivial distances between categories,
+$Q$ captures the geometric sense in which the distribution is
+``spread out'' in feature space.
+
+\textbf{Distance choice is load-bearing.} The distance metric $d_{ij}$
+is a modeling decision. For joint demographic states (e.g., female +
+Chinese-affiliation + senior + non-top-50-institution), Whitespace 2
+uses \textit{weighted Hamming distance}:
+\[
+  d_{ij} = \sum_{d=1}^{D} w_d \cdot \mathbf{1}(\text{state } i
+  \text{ and } j \text{ differ on dimension } d)
+\]
+with uniform weights $w_d = 1/D$ in the primary analysis. Sensitivity
+analysis doubles one weight at a time.
+
+\textbf{Why not simpler composites?} Plain joint Shannon entropy over
+joint states treats all category pairs as equally different. For ws2,
+(female, American, senior) and (male, American, senior) should not be
+\textit{as} far apart as (female, American, senior) and (male, Chinese,
+early-career). Rao's $Q$ captures this; joint Shannon entropy does not.
+
+\textbf{When it fails.}
+\begin{itemize}[nosep]
+  \item Requires a principled distance metric. If the metric is
+    arbitrary, so is the conclusion.
+  \item High-dimensional joint states may have sparse marginals,
+    making $\hat p_i$ noisy. Bootstrap CIs are essential.
+\end{itemize}
+
+\textbf{Use in ws2.} Primary composite demographic-diversity metric.
+Also used for paper-level \textit{team} demographic diversity in Test IV
+(Section~\ref{sec:test-iv}).
+
+\section{Effective Dimensionality (Participation Ratio)}
+\label{sec:participation-ratio}
+
+\textbf{Question answered.} Given a set of $N$ vectors in
+$\mathbb{R}^d$ (e.g., paper embeddings), how many ``independent
+directions'' does the cloud effectively span?
+
+\textbf{Formal definition.} Let the empirical covariance matrix
+of the $N$ vectors be $\Sigma = (1/N) \sum_{n=1}^N (x_n - \bar x)
+(x_n - \bar x)^\top$, with eigenvalues $\lambda_1 \ge \lambda_2
+\ge \cdots \ge \lambda_d \ge 0$. The \textit{participation ratio}
+(also called effective rank or effective dimensionality) is:
+\[
+  d_{\text{eff}} = \frac{(\sum_i \lambda_i)^2}{\sum_i \lambda_i^2}
+  = \frac{(\text{tr } \Sigma)^2}{\text{tr}(\Sigma^2)}
+\]
+
+\textbf{Intuition.} If all variance is in one direction
+($\lambda_1 > 0$, rest zero), then $d_{\text{eff}} = 1$. If variance is
+spread uniformly across $k$ directions
+($\lambda_1 = \cdots = \lambda_k = \sigma^2$, rest zero), then
+$d_{\text{eff}} = (k \sigma^2)^2 / (k \sigma^4) = k$. So
+$d_{\text{eff}}$ counts ``how many roughly-equal eigenvalues there are,''
+which corresponds to how many independent conceptual directions the
+cloud inhabits.
+
+\textbf{Why not just count eigenvalues above a threshold?} Hard cutoffs
+are arbitrary and discontinuous. Participation ratio is smooth, scale-
+invariant (multiplying all eigenvalues by a constant doesn't change it),
+and has a clean probabilistic interpretation: it is the exponential of
+the Rényi-2 entropy of the normalized eigenvalue distribution.
+
+\textbf{Sample-size dependence.} For SPECTER2 embeddings
+($d = 768$), estimating $d_{\text{eff}}$ requires $N \gtrsim d$ for a
+stable estimate. The ratio itself converges faster than individual
+eigenvalues, but small samples bias $d_{\text{eff}}$ downward.
+Whitespace 2 calibrates the minimum sample size empirically in Phase 0.1
+sanity Check 5b.
+
+\textbf{Year-centering.} Embedding distributions often have a drifting
+\textit{mean} (the centroid of CS 1975 sits in a different region than
+CS 2024), which is a measurement artifact rather than a diversity signal.
+Whitespace 2 subtracts the year-specific mean before computing
+$d_{\text{eff}}$, so we measure \textit{spread around center}, not
+absolute position.
+
+\textbf{Use in ws2.} Primary semantic-diversity metric B (alongside
+cluster entropy as primary A, mean pairwise cosine distance as
+secondary).
+
+\textbf{References.} Gao et al.~2017 (neuroscience); Recanatesi et
+al.~2022 (scale-dependent dimensionality).
+
+\section{Cluster Entropy}
+\label{sec:cluster-entropy}
+
+\textbf{Question answered.} Given embeddings clustered into $K$
+groups, what is the Shannon entropy of each year's distribution over
+clusters?
+
+\textbf{Formal definition.} Let $c_n \in \{1, \ldots, K\}$ be the
+cluster assignment of paper $n$. For year $Y$ with papers
+$\mathcal{P}_Y$:
+\[
+  p_k^{(Y)} = \frac{|\{n \in \mathcal{P}_Y : c_n = k\}|}{|\mathcal{P}_Y|},
+  \qquad
+  H_Y = -\sum_{k=1}^{K} p_k^{(Y)} \log p_k^{(Y)}
+\]
+Apply Miller-Madow bias correction for finite $N$.
+
+\textbf{Why cluster over the embedding space.} Embedding space is
+continuous and high-dimensional; a direct Shannon entropy over the
+continuous distribution requires density estimation, which is
+expensive and sample-hungry. Clustering discretizes the space into
+interpretable regions, after which Shannon entropy is straightforward.
+
+\textbf{The critical methodological commitment: temporal stratification
+of the cluster fit.} The clusters must be fit on a
+\textit{temporally-stratified} subsample with equal papers per decade,
+\textit{not} on the full pooled corpus.
+
+If clusters are fit on the unstratified pool, modern papers (which
+outnumber early-decade papers by 10--50$\times$) dominate the cluster
+definitions. The clusters then reflect modern semantic structure; old
+papers map poorly to those modern definitions and concentrate
+artificially in a few least-wrong clusters, producing spurious
+low-diversity in early years and a spurious divergence trend. This
+would silently manufacture the paper's headline finding as a
+corpus-composition artifact.
+
+This is desiderata §11 and is load-bearing; it is stress-tested in
+sanity Check 5b (Phase 0.1) with an A/B comparison quantifying the
+artifact size on pilot data.
+
+\textbf{Procedural separation.}
+\begin{itemize}[nosep]
+  \item \textbf{Fit:} on a temporally-stratified subsample (equal
+    papers per decade).
+  \item \textbf{Assign:} every paper in the full corpus (all years) to
+    its nearest cluster centroid from the stratified fit.
+\end{itemize}
+
+\textbf{Robustness.} Report results for $K \in \{30, 50, 100\}$. If
+the headline trend direction is consistent across $K$, the finding is
+robust to cluster-count choice.
+
+\textbf{Use in ws2.} Primary semantic-diversity metric A. Pairs
+naturally with per-dimension demographic Shannon entropy, enabling
+direct comparison on the same mathematical quantity
+(effective-number-of-bins interpretation) in the main 3-panel figure.
+
+\section{Citation Gini and Chu-Evans Spearman Top-N}
+\label{sec:canonical}
+
+Canonical concentration has two distinct senses:
+\begin{enumerate}[nosep,label=(\arabic*)]
+  \item \textbf{Distributional concentration}: are citations concentrated
+    on a few papers?
+  \item \textbf{Temporal persistence}: are the \textit{same} papers at
+    the top year after year?
+\end{enumerate}
+The actuator-homogenization hypothesis is primarily about (2). Both
+are captured by Whitespace 2's primary and secondary metrics.
+
+\subsection{Citation Gini (secondary)}
+
+The Gini coefficient on citations received in year $Y$:
+\[
+  G_Y = \frac{\sum_{i,j} |c_i - c_j|}{2 N^2 \bar c}
+\]
+where $c_i$ is the number of citations received by paper $i$ in year $Y$
+and $\bar c$ is the mean. $G = 0$: perfect equality; $G = 1$: one paper
+gets all citations.
+
+\textbf{Why ``citations received in year $Y$'' (framing A):} this
+captures the \textit{flow of attention} in year $Y$, i.e., what the
+field is drawing on now. The alternative (``citations ever received by
+papers published in year $Y$'') confounds paper age with canonicity.
+Framing A is a pre-registered commitment and aligns with the
+Chu-Evans methodology.
+
+\subsection{Chu-Evans Spearman top-$N$ correlation (primary)}
+
+For each year $Y$, rank papers by citations received in $Y$ (framing A
+above). Define the top-$N$ list $T_Y$. Compute the Spearman rank
+correlation between $T_Y$ and $T_{Y-\Delta}$:
+\[
+  \rho_Y = \text{spearman}(T_Y, T_{Y-\Delta})
+\]
+High $\rho_Y$ $\Rightarrow$ the same papers are at the top year over
+year $\Rightarrow$ stable canon. Low $\rho_Y$ $\Rightarrow$ canon
+turns over.
+
+\textbf{Pre-registered parameters:} $N = 50$, $\Delta = 5$. Robustness
+at $N \in \{100, 500\}$, $\Delta \in \{3, 10\}$.
+
+\textbf{Why this metric is load-bearing.} The subfield mechanism test
+--- ``canonical-concentrated subfields show more demographic-semantic
+divergence'' --- uses the Chu-Evans Spearman as the canonical-
+concentration score. This is the paper's single most important mechanism
+analysis.
+
+\subsection{Why CD-index is deliberately excluded}
+
+Park, Leahey \& Funk's CD-index is contested (Petersen-Holst-Macher
+critiques demonstrated citation-inflation artifacts and dataset
+extraction bugs). Including CD-index as a primary metric would put
+ws2 on the wrong side of an active methodological war. Used only for
+Discussion-section engagement, not measurement.
+
+\clearpage
+\part{Divergence Tests}
+
+Whitespace 2 commits to four co-primary divergence tests, each asking
+a distinct substantive question. They are not redundant; they are
+complementary.
+
+\section{Test I: Standardized-Gap Trend}
+\label{sec:test-i}
+
+\textbf{Question answered.} Is the contemporaneous gap between
+demographic and semantic diversity growing over time?
+
+\textbf{Construction.} Standardize both time series over the analysis
+window:
+\[
+  z^{\text{Dem}}_Y = \frac{\text{DemDiv}_Y - \bar{\text{DemDiv}}}
+  {\sigma_{\text{DemDiv}}},
+  \qquad
+  z^{\text{Sem}}_Y = \frac{\text{SemDiv}_Y - \bar{\text{SemDiv}}}
+  {\sigma_{\text{SemDiv}}}
+\]
+Define
+\[
+  \text{Gap}_Y = z^{\text{Dem}}_Y - z^{\text{Sem}}_Y
+\]
+Test:
+\[
+  \text{Gap}_Y = \alpha + \beta \cdot Y + \epsilon_Y,
+  \quad H_0: \beta = 0,
+  \quad H_1: \beta > 0 \text{ (one-sided)}
+\]
+
+\textbf{The autocorrelation problem.} Time series have serial
+correlation: $\epsilon_Y$ and $\epsilon_{Y-1}$ are not independent.
+Ordinary least squares (OLS) treats them as independent and
+\textit{underestimates} standard errors, producing false positives.
+
+\textbf{Newey-West HAC standard errors.} The
+heteroscedasticity-and-autocorrelation-consistent (HAC) variance
+estimator corrects for this:
+\[
+  \widehat{\text{Var}}_{\text{HAC}}(\hat \beta) =
+  (X^\top X)^{-1} \hat{\Omega} (X^\top X)^{-1}
+\]
+where
+\[
+  \hat{\Omega} = \sum_{t=1}^T \hat \epsilon_t^2 x_t x_t^\top
+  + \sum_{l=1}^{L} w_l \sum_{t=l+1}^{T} \hat \epsilon_t \hat \epsilon_{t-l}
+  (x_t x_{t-l}^\top + x_{t-l} x_t^\top)
+\]
+The weights $w_l = 1 - l/(L+1)$ (Bartlett kernel) down-weight far
+lags. The bandwidth $L$ is typically chosen as $L = \lfloor
+4(T/100)^{2/9} \rfloor$ (Newey-West rule) or by bandwidth-selection
+procedures.
+
+\textbf{Intuition.} Newey-West is OLS with inflated standard errors
+to account for the fact that correlated residuals give less
+independent information than a count of data points suggests.
+
+\textbf{Mann-Kendall as robustness.} A nonparametric alternative.
+Compute the sign statistic:
+\[
+  S = \sum_{i < j} \text{sign}(\text{Gap}_{Y_j} - \text{Gap}_{Y_i})
+\]
+Under the null of no trend, $S$ is approximately normal with known
+variance. No distributional assumption on residuals; robust to
+outliers. Pre-whitening handles autocorrelation (Hamed \& Rao 1998).
+
+\textbf{Use in ws2.} Test I primary on 6 metric pairings per field.
+Bonferroni-corrected across the 6 pairings within each field.
+
+\section{Test II: Confound-Controlled Gap Regression}
+\label{sec:test-ii}
+
+\textbf{Question answered.} Does the gap between demographic and
+semantic diversity grow over time \textit{after controlling for known
+confounds} (field growth, team-size evolution, publishing-norm shifts)?
+
+\textbf{Construction.} Regress Gap on time and controls:
+\[
+  \text{Gap}_Y = \beta_0 + \sum_{k=1}^{K} \beta_k C_{k,Y} + \beta_t Y
+  + \epsilon_Y
+\]
+where $C_k$ are the seven pre-registered controls: $\log N_{\text{papers}}$,
+trimmed mean team size, median references per paper, arXiv fraction,
+$\log$ distinct active authors, field-entry rate, and subfield
+composition (vector). Newey-West HAC standard errors.
+
+\[
+  H_0: \beta_t = 0, \qquad H_1: \beta_t > 0 \text{ (one-sided)}
+\]
+
+\textbf{Why not regress SemDiv on DemDiv + time?} A prior draft of
+Test II regressed $\text{SemDiv}_Y = \beta_0 + \beta_1 \text{DemDiv}_Y
++ \sum \beta_k C_k + \beta_t Y + \epsilon$. That specification has an
+interpretability problem: if DemDiv itself trends strongly, including
+$Y$ partials time out of DemDiv's effect, and $\beta_t$ can absorb the
+divergence we want to detect. The Gap-reformulation avoids this by
+treating divergence as a single quantity and asking whether it trends.
+
+\textbf{Multicollinearity.} The seven controls are all upward-trending
+over 50 years and are correlated. Variance Inflation Factor (VIF) is
+reported per variable:
+\[
+  \text{VIF}_k = \frac{1}{1 - R_k^2}
+\]
+where $R_k^2$ is the $R^2$ from regressing $C_k$ on the other controls.
+$\text{VIF} > 10$ is a standard flag. Whitespace 2 reports VIF
+alongside coefficients. Mandatory sensitivity analysis: re-fit Test II
+(i) with all controls, (ii) with each control dropped in turn, (iii)
+with subfield composition toggled. $\beta_t$ stability across these
+specifications is the robustness claim.
+
+\textbf{Use in ws2.} Test II primary alongside Tests I, III, IV.
+Directly addresses the ``does divergence survive controls?''
+reviewer question.
+
+\section{Test III: De-trended Cross-Correlation and Granger Causality}
+\label{sec:test-iii}
+
+\textbf{Question answered.} Does demographic diversity predict semantic
+diversity at some lag $k$? If yes, the ``divergence'' may be
+\textit{delayed tracking} rather than pure decoupling.
+
+\subsection{Cross-correlation at lags}
+
+The cross-correlation at lag $k$ between two series $X_t, Y_t$:
+\[
+  \rho_k = \frac{\text{Cov}(X_{t-k}, Y_t)}{\sqrt{\text{Var}(X_t) \cdot
+  \text{Var}(Y_t)}}
+\]
+
+\textbf{The spurious-correlation trap.} If both $X_t$ and $Y_t$ have
+strong trends (both rising over time), their raw cross-correlation
+will be spuriously high --- not because they co-vary meaningfully, but
+because both are going up. A textbook pitfall.
+
+\textbf{Solution: de-trend first.} Two common approaches:
+\begin{itemize}[nosep]
+  \item \textbf{First differences:} $\Delta X_t = X_t - X_{t-1}$.
+    Tests whether \textit{changes} in $X$ correlate with \textit{changes}
+    in $Y$. Simple, aggressive de-trending.
+  \item \textbf{Hodrick-Prescott (HP) filter:} extracts a smooth trend
+    component and leaves cyclical residuals. Gentler; less aggressive.
+\end{itemize}
+Whitespace 2 uses first differences as primary de-trending and HP-filter
+residuals as robustness.
+
+\textbf{Pre-registered lag set.} $k \in \{0, 3, 5, 10, 15\}$. Fixed in
+advance to limit multiple testing. Scanning all lags post-hoc and
+reporting the largest inflates false-positive rate.
+
+\textbf{Confidence bands.} Under the null hypothesis of independence,
+$\rho_k$ is approximately normal with variance $1/T$ (Bartlett's
+formula for sample sizes $T$). Confidence bands at $\pm 1.96/\sqrt{T}$.
+Bootstrap CIs are a robustness option.
+
+\subsection{Granger causality}
+
+Formalizes ``does $X$ predict $Y$ beyond $Y$'s own history?''
+Fit two models:
+\begin{align*}
+  \text{Restricted:}\quad Y_t &= \alpha + \sum_{l=1}^{L} \phi_l Y_{t-l}
+  + u_t \\
+  \text{Unrestricted:}\quad Y_t &= \alpha + \sum_{l=1}^{L} \phi_l Y_{t-l}
+  + \sum_{l=1}^{L} \psi_l X_{t-l} + v_t
+\end{align*}
+F-test: is the improvement from adding $X$-lags significant?
+\[
+  F = \frac{(SSR_R - SSR_U)/L}{SSR_U/(T - 2L - 1)}
+\]
+
+\textbf{Caveats.}
+\begin{itemize}[nosep]
+  \item Granger causality is \textit{not} causality in the structural
+    sense. It means $X$ has predictive information for $Y$ beyond $Y$'s
+    own past. Confounders can manufacture or destroy Granger-causal
+    relationships.
+  \item Lag order $L$ matters. Chosen by AIC (Akaike information
+    criterion) or BIC on pre-pilot data, capped at $L = 5$ in ws2.
+  \item Requires stationarity of both series (after de-trending).
+\end{itemize}
+
+\textbf{Use in ws2.} Test III primary. Four-quadrant interpretation
+combines Tests I and III:
+
+\begin{center}
+\begin{tabular}{lll}
+  \toprule
+  & \textbf{Test III: no lagged correlation} & \textbf{Test III: peak at $k > 0$} \\
+  \midrule
+  \textbf{Test I: significant} & true divergence & delayed tracking \\
+  \textbf{Test I: not significant} & contemporaneous tracking & lagged tracking \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+Each quadrant is publishable and tells a different mechanism story.
+
+\section{Test IV: Paper-Level Team-Diversity vs.\ Novelty}
+\label{sec:test-iv}
+
+\textbf{Question answered.} Do demographically diverse teams produce
+semantically novel papers?
+
+This is the within-paper companion to the aggregate Tests I--III.
+It operates at a different level of aggregation (paper cross-section)
+and addresses the intra-paper version of the claim: \textit{if} diverse
+inputs get averaged toward canonical outputs by shared actuators, we
+should see a within-team signature of it.
+
+\subsection{Variables}
+
+For each paper $p$:
+\begin{itemize}[nosep]
+  \item \textbf{Team diversity $T_p$}: Rao's $Q$ over the author team's
+    joint demographic distribution, with uniform Hamming distance
+    (same metric as the aggregate composite). $T_p = 0$ for single-author
+    papers.
+  \item \textbf{Novelty $N_p$ (primary)}: cosine distance from paper
+    $p$'s embedding to the centroid of embeddings of papers $p$ cites:
+    \[
+      N_p = 1 - \frac{e_p \cdot \bar e_{\text{ref}(p)}}
+      {\|e_p\| \cdot \|\bar e_{\text{ref}(p)}\|}
+    \]
+    High $N_p$ $\Rightarrow$ $p$ synthesizes distant concepts; low
+    $N_p$ $\Rightarrow$ $p$ is close to its cited context.
+  \item \textbf{Novelty $N_p$ (secondary)}: cosine distance from $p$
+    to the year-$Y$ canonical centroid (top-100 most-cited papers in
+    year $Y$). Tests ``distance from canon'' as alternative framing.
+\end{itemize}
+
+\subsection{Regression}
+
+\[
+  N_p = \gamma_0 + \gamma_1 T_p + \sum_k \gamma_k X_{k,p}
+  + \mu_{\text{year}(p)} + \eta_{\text{subfield}(p)} + \epsilon_p
+\]
+
+where $X_{k,p}$ are paper-level controls (team size, reference count,
+mean career stage, mean institutional prestige, log paper age, field
+dummy) and $\mu, \eta$ are year and subfield fixed effects.
+
+\textbf{Fixed effects, intuitively.} A fixed effect absorbs all
+variation due to year or subfield, leaving only variation
+\textit{within} year-subfield cells. This answers ``within a given year
+and subfield, do diverse teams produce more or less novel papers?''
+Year-trends and subfield-differences don't confound the estimate.
+
+\subsection{Standard errors: double-clustered}
+
+Papers by the same lead author or in the same subfield are not
+independent. Double-clustering the standard errors accounts for this:
+\[
+  \widehat{\text{Var}}_{\text{DC}}(\hat \gamma_1) =
+  V_{\text{author}} + V_{\text{subfield}} - V_{\text{author} \cap
+  \text{subfield}}
+\]
+(Cameron, Gelbach \& Miller 2011 estimator). Naïve OLS standard errors
+that ignore clustering underestimate variance and produce false
+positives.
+
+\subsection{Hypotheses and effect size}
+
+\begin{itemize}[nosep]
+  \item $H_0$: $\gamma_1 = 0$ (team diversity uncorrelated with novelty)
+  \item $H_1$ (actuator-dominant): $\gamma_1 < 0$ --- diverse teams
+    produce \textit{less} novel work; shared actuators average diverse
+    inputs toward canonical outputs.
+  \item $H_1'$ (diversity-productive): $\gamma_1 > 0$ --- diverse teams
+    produce more novel work. Consistent with Hofstra et al.~2020
+    framing.
+\end{itemize}
+
+Two-sided test; the \textit{sign} of $\gamma_1$ is the substantive
+answer. With hundreds of thousands of papers, statistical significance
+is almost automatic, so substantive-significance threshold
+$|\gamma_1| \ge 0.05$ (after standardization of $T_p$ and $N_p$) is
+pre-registered.
+
+\textbf{Time interaction (secondary).}
+$\gamma_1(Y) = \gamma_{10} + \gamma_{11} Y$: does the relationship
+evolve? A strengthening negative $\gamma_1$ over time would be
+consistent with growing actuator dominance.
+
+\textbf{Causal caveat.} Cross-sectional correlations $\ne$ causal
+effects. $\gamma_1$ is reported as descriptive association. Reverse
+causation (novel work attracts diverse teams), selection (risk-prefering
+researchers form diverse teams), and omitted variables all threaten
+causal interpretation. No instrumental variable strategy is attempted
+in Whitespace 2.
+
+\clearpage
+\part{Break-Point Analysis}
+
+If Tests I or II detect significant divergence, a natural follow-up is:
+when does it start? A continuous slow divergence from 1970 tells a
+different mechanism story than a sharp break around, say, 2000.
+
+\section{Chow Test at Pre-specified Candidates}
+\label{sec:chow}
+
+\textbf{Setup.} Suppose a candidate break year $\tau$ is specified in
+advance (e.g., 2000, corresponding to the dot-com peak). Fit two
+regressions of Gap on year:
+\begin{align*}
+  \text{Pre:}& \quad \text{Gap}_Y = \alpha_1 + \beta_1 Y + u_Y,
+  \quad Y \le \tau \\
+  \text{Post:}& \quad \text{Gap}_Y = \alpha_2 + \beta_2 Y + v_Y,
+  \quad Y > \tau \\
+  \text{Pooled:}& \quad \text{Gap}_Y = \alpha + \beta Y + w_Y,
+  \quad \text{all } Y
+\end{align*}
+Let $SSR_P, SSR_1, SSR_2$ be the residual sums of squares. The Chow
+F-statistic:
+\[
+  F = \frac{(SSR_P - SSR_1 - SSR_2)/2}{(SSR_1 + SSR_2)/(T-4)}
+\]
+tests the null that coefficients are equal on both sides of $\tau$.
+
+\textbf{Pre-specification is the key.} Post-hoc search for break
+points inflates false positives enormously --- with 50 years of data,
+\textit{some} year will look like a break by chance. Chow requires
+the candidate to be committed in advance. Whitespace 2 pre-registers
+specific candidates per field, tied to substantive events.
+
+\textbf{Pre-registered candidates (CS):}
+\begin{itemize}[nosep]
+  \item 1991--93: arXiv launch + public web
+  \item 1998--2000: dot-com peak (demographic broadening from industry
+    demand)
+  \item 2008--09: financial crisis, academic-market consolidation
+  \item 2012: AlexNet, deep-learning takeoff
+  \item 2018--20: foundation models (likely too recent for smoothed
+    series)
+\end{itemize}
+
+\textbf{Pre-registered candidates (Physics):}
+\begin{itemize}[nosep]
+  \item 1991: arXiv launched in hep-th
+  \item 1995--2000: post-SSC cancellation; string theory dominance
+  \item 2012: Higgs boson discovery
+\end{itemize}
+
+Bonferroni correction across the candidate set within each field.
+
+\section{Bai-Perron Multi-Break Detection}
+\label{sec:bai-perron}
+
+\textbf{Setup.} Rather than pre-specifying candidates, the Bai-Perron
+procedure algorithmically searches for $m$ breakpoints
+$\tau_1 < \tau_2 < \cdots < \tau_m$ partitioning the time series into
+$m+1$ regimes, each with its own slope and intercept. The number of
+breaks $m$ is selected by BIC or sequential F-tests.
+
+\textbf{Trimming.} Breaks cannot be detected near series boundaries
+(too few points on one side for stable estimates). Standard trimming
+removes the first and last 15\% of the series. For 1970--2024, this
+excludes break detection before $\sim$1978 or after $\sim$2017.
+
+\textbf{Confidence intervals on break locations.} Bai-Perron provides
+asymptotic CIs on each $\tau_i$. Bootstrap CIs are a robustness option.
+
+\textbf{Power.} With annual data over 55 years, the Bai-Perron
+procedure can reliably detect 0 or 1 breaks; 2 breaks is borderline;
+3+ is generally not defensible at this series length. Whitespace 2
+reports what BIC selects plus sensitivity at $\pm 1$ break.
+
+\textbf{Concordance requirement.} A break is ``significant'' only if
+\textit{both} Bai-Perron detects it \textit{and} Chow at a nearby
+pre-specified candidate (within $\pm 2$ years) rejects no-break.
+Prevents one-method-only artifacts from being reported as substantive.
+
+\clearpage
+\part{Auxiliary Methods}
+
+\section{Bootstrap Confidence Intervals}
+\label{sec:bootstrap}
+
+\textbf{What and why.} Classical confidence intervals rely on
+distributional assumptions (usually normality) about the sampling
+distribution of the statistic. For complex statistics like Rao's $Q$
+or participation-ratio effective dimensionality, these assumptions
+may not hold. The bootstrap sidesteps the issue.
+
+\textbf{Algorithm.} Given data $\mathcal{D} = \{x_1, \ldots, x_N\}$ and
+statistic $\hat\theta(\mathcal{D})$:
+\begin{enumerate}[nosep]
+  \item For $b = 1, \ldots, B$: draw a sample $\mathcal{D}^{*(b)}$ of
+    size $N$ with replacement from $\mathcal{D}$; compute
+    $\hat\theta^{*(b)} = \hat\theta(\mathcal{D}^{*(b)})$.
+  \item Form the empirical distribution of
+    $\{\hat\theta^{*(1)}, \ldots, \hat\theta^{*(B)}\}$.
+  \item For 95\% CI: take the 2.5th and 97.5th percentiles (percentile
+    method) or the bias-corrected equivalent (BCa method).
+\end{enumerate}
+
+\textbf{Commitment.} Whitespace 2 uses $B = 200$ replicates for every
+metric on every figure. 95\% percentile CIs unless otherwise noted.
+
+\textbf{When it fails.}
+\begin{itemize}[nosep]
+  \item Small sample sizes ($N < 30$) give noisy bootstrap estimates.
+  \item Statistics at distributional extremes (maxima, minima) are
+    poorly bootstrapped. Not an issue for our metrics.
+  \item Time-series bootstrap requires block bootstrapping
+    (Politis-Romano) to preserve autocorrelation structure. For our
+    annual series in the divergence tests, we use moving-block
+    bootstrap when computing CIs on trend estimates.
+\end{itemize}
+
+\section{Multiple-Comparisons Correction}
+\label{sec:multiple-comparisons}
+
+\textbf{The problem.} Running many statistical tests inflates the
+probability of at least one false positive. With 100 tests at
+$\alpha = 0.05$ under the global null, we expect 5 false positives
+just by chance.
+
+\subsection{Bonferroni correction}
+
+Divide $\alpha$ by the number of tests:
+\[
+  \alpha_{\text{Bonf}} = \frac{\alpha}{m}
+\]
+Controls the \textit{family-wise error rate} (FWER): probability of
+\textit{any} false positive among the $m$ tests. Conservative; loses
+power when tests are correlated (since true effective $m$ is smaller).
+
+\subsection{False discovery rate (FDR)}
+
+Benjamini-Hochberg procedure. Sort p-values
+$p_{(1)} \le \cdots \le p_{(m)}$. Reject tests $p_{(i)}$ where
+$p_{(i)} \le (i/m) \cdot q$ for target FDR level $q$ (often 0.05 or 0.10).
+
+Controls the \textit{expected proportion} of false discoveries among
+rejections. Less conservative than Bonferroni; more powerful when
+many true effects exist.
+
+\subsection{Whitespace 2's hierarchical scheme}
+
+\begin{itemize}[nosep]
+  \item Primary tests (Tests I--IV, 6 metric pairings each, 2 fields):
+    Bonferroni within each test-type across 6 pairings;
+    \textit{no correction across test-types} since they ask distinct
+    questions. Replicated divergence requires all 3 test types to agree
+    on direction in $\ge$4/6 pairings per field.
+  \item Secondary tests (per-dimension demographic decomposition:
+    7 dims $\times$ 3 semantic $\times$ 2 fields = 42 tests): FDR at
+    $q = 0.10$, labeled exploratory.
+  \item Break-point analysis: Bonferroni within candidate set per field.
+\end{itemize}
+
+\section{Procrustes Alignment}
+\label{sec:procrustes}
+
+\textbf{Problem setup.} In the Flavor A drift mitigation, we train
+separate embedding spaces per era and then need to \textit{align} them
+so embeddings from different eras can be compared. Each space is defined
+up to an arbitrary rotation/reflection.
+
+\textbf{Orthogonal Procrustes problem.} Given two matrices
+$W_1, W_2 \in \mathbb{R}^{k \times d}$ (each row a vector), find the
+orthogonal matrix $R$ minimizing:
+\[
+  R^* = \arg\min_{R : R^\top R = I} \| W_1 R - W_2 \|_F
+\]
+
+\textbf{Closed-form solution via SVD.} Compute
+$W_2^\top W_1 = U \Sigma V^\top$. Then $R^* = V U^\top$.
+
+\textbf{The anchor-paper idea.} To align era 1 (say, 1980s embeddings)
+with era 2 (2010s embeddings), we need vectors that mean the ``same
+thing'' in both eras. These are anchor papers or anchor concepts
+appearing in both eras. Their embeddings in era 1 form $W_1$; their
+embeddings in era 2 form $W_2$. Procrustes finds the rotation aligning
+these anchors. Then apply the same rotation to all era-1 embeddings to
+bring them into era-2's coordinate system.
+
+\textbf{Anchor-choice caveat.} Whatever makes it into the anchor set
+defines the ``fixed frame.'' Anchors should be semantically stable
+across eras (named methods, classical theorems, widely-agreed terms).
+This is itself a modeling commitment; Whitespace 2 treats anchor
+selection as a Phase 0.2 deliverable.
+
+\section{Variance Inflation Factor (VIF)}
+\label{sec:vif}
+
+\textbf{Problem.} In regression with multiple controls, if controls
+are highly correlated, coefficient estimates become unstable and their
+standard errors explode. This is multicollinearity.
+
+\textbf{Diagnostic.} For control $k$, regress it on the other controls
+and record $R_k^2$. Define:
+\[
+  \text{VIF}_k = \frac{1}{1 - R_k^2}
+\]
+$\text{VIF}_k = 1$: control $k$ is uncorrelated with others.
+$\text{VIF}_k = 10$: $R_k^2 = 0.9$; 90\% of $k$'s variance is
+explained by other controls. Standard error of $\hat\beta_k$ is
+inflated by a factor $\sqrt{\text{VIF}_k}$.
+
+\textbf{Rules of thumb.}
+\begin{itemize}[nosep]
+  \item VIF $< 5$: unproblematic.
+  \item VIF 5--10: concerning; re-examine.
+  \item VIF $> 10$: drop, combine, or report stability under omission.
+\end{itemize}
+
+\textbf{Whitespace 2 treatment.} The seven Test II controls are all
+upward-trending over 50 years; high VIFs are \textit{expected}. Rather
+than dropping variables mechanically, ws2 commits to a
+\textit{sensitivity analysis}: re-fit with each control dropped in turn,
+report $\beta_t$ across specifications. Qualitative stability of
+$\beta_t$ is the robustness claim.
+
+\clearpage
+\part*{Appendix}
+
+\section*{Glossary of Symbols}
+
+\begin{tabular}{ll}
+  \toprule
+  Symbol & Meaning \\
+  \midrule
+  $H(p)$ & Shannon entropy of distribution $p$ \\
+  $\text{GS}(p)$ & Gini-Simpson index \\
+  $Q(p, d)$ & Rao's quadratic entropy with distance $d$ \\
+  $d_{\text{eff}}$ & Effective dimensionality (participation ratio) \\
+  $\lambda_i$ & $i$-th eigenvalue of covariance matrix \\
+  $p_k^{(Y)}$ & Cluster-$k$ probability in year $Y$ \\
+  $G_Y$ & Citation Gini in year $Y$ \\
+  $\rho_Y$ & Chu-Evans Spearman top-$N$ at year $Y$, lag $\Delta$ \\
+  $z^{\text{Dem}}_Y, z^{\text{Sem}}_Y$ & Standardized demographic, semantic diversity \\
+  $\text{Gap}_Y$ & $z^{\text{Dem}}_Y - z^{\text{Sem}}_Y$ \\
+  $\beta_t$ & Slope on year in Test II \\
+  $T_p$ & Team demographic diversity of paper $p$ \\
+  $N_p$ & Novelty of paper $p$ \\
+  $\gamma_1$ & Coefficient of $T_p$ in Test IV regression \\
+  $\mu, \eta$ & Year and subfield fixed effects \\
+  $\tau$ & Break-point year \\
+  $\text{VIF}_k$ & Variance inflation factor for control $k$ \\
+  $B$ & Bootstrap replicates \\
+  \bottomrule
+\end{tabular}
+
+\section*{Key References by Method}
+
+\begin{itemize}[nosep]
+  \item \textbf{Shannon entropy, Miller-Madow correction:} Miller 1955
+    ``Note on the bias of information estimates.''
+  \item \textbf{Rao's Q:} Rao 1982, ``Diversity and dissimilarity
+    coefficients: a unified approach,'' \textit{Theor.\ Popul.\ Biol.}
+  \item \textbf{Participation ratio:} Gao et al.\ 2017 (neural
+    dimensionality); Recanatesi et al.\ 2022.
+  \item \textbf{Chu-Evans Spearman:} Chu \& Evans 2021,
+    \textit{PNAS}~118(41).
+  \item \textbf{Newey-West HAC:} Newey \& West 1987,
+    \textit{Econometrica}.
+  \item \textbf{Mann-Kendall with pre-whitening:} Hamed \& Rao 1998,
+    \textit{J.~Hydrology}.
+  \item \textbf{Granger causality:} Granger 1969,
+    \textit{Econometrica}.
+  \item \textbf{Bai-Perron:} Bai \& Perron 1998, \textit{Econometrica}
+    66(1); 2003, \textit{J.~Appl.\ Econ.}
+  \item \textbf{Cameron-Gelbach-Miller double-clustering:}
+    Cameron, Gelbach \& Miller 2011, \textit{J.~Bus.\ Econ.\ Stat.}
+  \item \textbf{Bootstrap:} Efron \& Tibshirani 1993,
+    \textit{An Introduction to the Bootstrap}.
+  \item \textbf{Block bootstrap for time series:} Politis \& Romano 1994,
+    \textit{JASA}.
+  \item \textbf{FDR:} Benjamini \& Hochberg 1995, \textit{J.\ R.~Stat.\
+    Soc.\ B}.
+  \item \textbf{Orthogonal Procrustes:} Schönemann 1966,
+    \textit{Psychometrika}.
+  \item \textbf{Diachronic word embeddings:} Hamilton, Leskovec \&
+    Jurafsky 2016, \textit{ACL}.
+\end{itemize}
+
+\section*{Building This Document}
+
+From the primer directory:
+\begin{verbatim}
+pdflatex stats.tex
+pdflatex stats.tex    # second pass for TOC
+\end{verbatim}
+
+No bibliography manager is used; references are in-text. If the
+references grow, migrate to \texttt{bibtex} or \texttt{biblatex}.
+
+\end{document}
