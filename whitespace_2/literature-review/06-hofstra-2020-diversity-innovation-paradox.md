@@ -1035,3 +1035,306 @@ pre-registration):**
   leave as two-sided exploratory. User prior is left-leaning (top-left
   quadrant) but explicitly acknowledged as too-early to anchor
   pre-registration on.
+
+---
+
+## Study Question Walkthroughs
+
+Answers to the Study Questions worked through collaboratively in review
+sessions. Each entry preserves the arc of initial intuition → sharpening
+→ final version, because the sharpening is often as instructive as the
+answer. Questions not yet worked through are marked `(Pending)`.
+
+### SQ1 — What does "novelty" mean operationally in this paper? Give an example from Figure 1
+
+Working session with user, 2026-04-23.
+
+**User's first pass.** Novelty = creation of a new edge (as determined
+by STM/FREX) between already-existing concept nodes, introduced through
+the thesis work.
+
+**Sharpened version.** Three precisions to the initial framing:
+
+1. The operation is **first-time pairwise co-occurrence**, not
+   "edge creation" in a graph-building sense. For each thesis, count
+   pairs of FREX-valid concepts that co-appear in the abstract for the
+   first time in the 1977–2015 corpus. The graph metaphor is useful
+   intuitively but the operation is a set-of-pairs comparison, not a
+   graph-construction procedure.
+2. **PMI filter.** Not every pairwise co-occurrence counts. They apply
+   a pointwise-mutual-information significance filter (PMI = log[Pr(a,b)
+   / (Pr(a) × Pr(b))]) to drop co-occurrences that happen by chance
+   given base rates. Also require each term to appear in ≥10 theses
+   corpus-wide.
+3. **Abstract-level, not full-text.** The measurement is on dissertation
+   abstracts only (~10 sentences). Co-occurrences in the body that
+   don't appear in the abstract don't count.
+
+**One subtlety about "already-existing."** The FREX vocabulary is
+defined once over the entire 1977–2015 corpus, not accumulated over
+time. So a 1985 thesis that uses a vocabulary-valid term T for the
+first time in any thesis gets credit for every pair (T, existing_concept)
+simultaneously. This hidden combinatorial asymmetry (caught in C6 of
+the Challenge Corner) inflates credit for papers introducing a
+vocabulary-first term. The initial "already existing nodes" framing is
+technically correct given how the vocabulary is defined, but worth
+remembering that "existing in the vocabulary" ≠ "previously seen in
+any thesis."
+
+**Figure 1 example — Donna Strickland (Panel E).**
+
+- **Thesis:** "Development of an Ultrabright Laser and an Application
+  to Multiphoton Ionization" (1989).
+- **New link introduced:** `grate` ↔ `stretch` (grating and stretching,
+  in the specific physical-optics sense).
+- **Why it's novel under the measure:** both concepts were FREX-valid
+  (they appear across the corpus), but no prior thesis from 1977–1988
+  had both appearing together. Strickland's thesis is the first
+  pairwise co-occurrence.
+- **The substantive content:** this link corresponds to chirped pulse
+  amplification — stretching a laser pulse via a diffraction grating
+  before amplifying, then recompressing. The technique won Strickland
+  and Mourou the 2018 Nobel Prize in Physics.
+- **Uptake:** 22 subsequent theses used the link.
+
+**What the example illustrates well.** A single new link can be
+vastly more consequential than the count (1) suggests — because the
+count collapses the *meaning* of what was linked. Hofstra's measure
+doesn't privilege "important" links at the metric level; weight comes
+from the uptake layer (22 uses vs. median 0.333 for new links).
+
+**What the example doesn't illustrate.** The combinatorial asymmetry
+issue (Strickland linked two concepts both already in circulation);
+cases where PMI filtering is load-bearing (this link is technical
+and semantically coherent, passing the filter easily).
+
+---
+
+### SQ2 — What's the "paradox" in the title? State it in your own words
+
+Working session with user, 2026-04-24.
+
+**User's first pass.** The paradox is the fact that the diversity-
+enhancing minority itself doesn't reap the (supposed) benefits of
+overall greater diversity, thereby serving as a positive externality
+to the until-then-less-diverse group (likely the majority in many
+cases).
+
+**Sharpened version — Hofstra's premise-conflict structure.** The
+paradox is best understood as a conflict between three statements
+that can't simultaneously hold:
+
+1. **Diversity breeds innovation.** Demographically underrepresented
+   groups produce more novel scientific work (demonstrated in the paper).
+2. **Innovation predicts career success.** Novelty and impactful
+   novelty are what gets you a faculty job (demonstrated in the paper
+   at aggregate level).
+3. **Minorities have worse careers.** Underrepresented groups face
+   persistent career disadvantage (prior literature + confirmed here).
+
+These three can't all hold *if we assume innovation→career is the
+same mechanism for everyone.* (1) + (2) together imply minorities
+should have *better* careers — they produce more of what predicts
+success. (3) says they don't.
+
+Something has to give. Hofstra's resolution: **(2) is not universal.**
+The innovation→success conversion rate differs by demographic group:
+
+- Minorities' novelty is adopted by others at lower rates (the
+  "impactful novelty" discount).
+- Even holding novelty AND uptake constant, their career returns are
+  lower (the pure career discount — Figure 4).
+
+**What the user's externality framing adds.** Directionally right and
+substantively interesting. It reframes the question from "why don't
+minorities succeed?" to "who IS capturing the value minorities
+generate?" Possible answers:
+
+- **The collective scientific enterprise** — the field as a whole
+  advances faster when demographic inputs diversify; benefit is
+  public/diffuse.
+- **Majority individuals** — who work in the same institutions,
+  benefit from the broader talent pool, get more research
+  opportunities from having diverse colleagues.
+- **Institutional actors** — universities, funders, awards-committees
+  capture reputational gains from diversity-associated innovation
+  without distributing the rewards back to producers.
+
+The externality framing isn't quite what Hofstra argues explicitly, but
+it's a natural extension and arguably a deeper reading of the
+mechanism. They document the discount; the externality reading asks
+where the value goes when it's not captured by the producers.
+
+**Note on externality-framing limits (surfaced later in the session).**
+The externality framing requires being able to separate "value
+produced" from "value captured" — which Hofstra's per-paper design
+does (novelty count vs. uptake vs. career outcome). Ws2's Tests I–III
+*aggregate* design cannot do this cleanly, because aggregate semantic
+diversity doesn't decompose into per-paper production-and-capture
+stories. The externality framing applies at Test IV (per-paper) scale
+and at item 11's production-capture aggregate decomposition, but not
+at Tests I–III as originally specified. See Synthesis Pointer 11 for
+the scale-difference framing.
+
+**Tight one-sentence versions.**
+
+- Hofstra's structural reading: *"Diversity produces the innovation
+  that supposedly fuels career success, but those who provide the
+  diversity systematically don't capture the career returns — implying
+  that the innovation→success conversion is not neutral across
+  demographic groups."*
+- User's distributional extension: *"Diverse individuals produce a
+  collective good whose benefits are not distributed back to them in
+  proportion to what they produce."*
+
+Both are right. The first emphasizes premise-logical structure; the
+second emphasizes distributional consequence. A good Discussion section
+might use both.
+
+---
+
+### SQ3 — Novelty vs. impactful novelty: which matters more for explaining the career gap?
+
+*(Pending — not yet worked through.)*
+
+### SQ4 — Why STM rather than simpler approaches like TF-IDF? What advantage for their task?
+
+Working session with user, 2026-04-24.
+
+**User's first pass.** STM will "understand" topic in a deeper
+semantic sense than TF-IDF, which is purely linguistic.
+
+**Sharpened version.** The intuition is in the right direction but the
+"semantic vs. linguistic" framing slightly overstates what's
+happening. Neither method "understands" semantics in a meaningful
+sense — both are statistical. The real distinction is about *what kind
+of statistical structure* each captures.
+
+**TF-IDF is a per-document weighting scheme.** For a word w in document d:
+
+> TF-IDF(w, d) = (frequency of w in d) × log(|D| / |{d' : w ∈ d'}|)
+
+It scores each word per document saying "how distinctive is this word
+*to this document* versus the rest of the corpus?" High score = common
+here, rare elsewhere. That's it. It operates on one document at a time
+against corpus-wide word frequencies.
+
+**STM is a corpus-level generative model.** It assumes the entire
+corpus was produced by a mixture-model process and fits latent topics
+by modeling the joint co-occurrence structure across *all* documents
+simultaneously. Each topic β_k is a probability distribution over the
+vocabulary; inference finds topics whose distributions best explain
+observed word-document patterns.
+
+**The real distinction.** Not "semantic vs. linguistic" — both are
+purely statistical — but **per-document scoring vs. corpus-wide joint
+structure**. STM discovers distributional regularity across the corpus
+that happens to correspond to human-interpretable topics, because
+human scientific writing *is* structured by underlying topics and
+that structure propagates into co-occurrence patterns. The
+correspondence between statistical structure and semantic topic is
+real; the mechanism is distributional.
+
+**What Hofstra specifically gets from STM over TF-IDF.**
+
+1. **A topic-structured vocabulary.** ~500 topics, each with its
+   characteristic terms. With TF-IDF, you'd get per-document term
+   lists with no cross-paper thematic structure. STM's structure is
+   what makes the vocabulary usable for novelty counting — concepts
+   need to be grouped and comparable across papers, not just
+   distinctive within one.
+2. **FREX weighting over topic-word distributions.** FREX combines
+   frequency and exclusivity *within a topic* (common in this topic,
+   concentrated in this topic relative to others). TF-IDF's analogous
+   selection (common in doc, rare elsewhere) doesn't give you
+   thematic grouping — its "exclusivity" is against the corpus, not
+   against other topics.
+3. **Covariate awareness.** STM with year-as-prevalence-covariate
+   lets topic prevalence evolve over time. "Deep learning" can grow
+   as a topic from near-zero in 1980 to substantial in 2020. TF-IDF
+   has no mechanism for temporal structure.
+4. **Internal coherence validation.** STM's coherence metric (Mimno)
+   plus exclusivity plus external validation (MCC against keyword
+   partitions) lets Hofstra empirically justify K=500. TF-IDF
+   produces no latent structure to validate.
+5. **Scalable concept selection.** Top-500 FREX terms per topic × 500
+   topics gives a principled way to pick a large, structured
+   vocabulary. With TF-IDF you'd get top-N across the corpus, mixing
+   function words, idiosyncratic terms, and topical terms without
+   quality control.
+
+**Hofstra's own framing (SI p. 5):**
+
+> "The affordance of STMs in comparison to simpler concept extraction
+> strategies — i.e., choose the top n TF-IDF weighted terms — is that
+> it allows us to extract terms that play a significant role in an
+> underlying thematic structure."
+
+Their language echoes the sharpened distinction. STM gives thematic
+structure; TF-IDF doesn't.
+
+**Why the user's initial framing captured something real.** STM groups
+words by how they co-occur in documents, which *feels* semantic
+because the groups often correspond to topics humans would recognize.
+The flavor is semantic even though the mechanism is distributional.
+The user's "STM will understand topic in a deeper semantic sense"
+intuition picks up on this flavor correctly; the sharpening just
+clarifies the mechanism underneath.
+
+**Takeaway for the sharpened version.** "STM discovers corpus-wide
+latent topics by modeling joint co-occurrence structure across all
+documents; TF-IDF only scores individual words' distinctiveness per
+document. For Hofstra's task, STM's topic structure is what tilts the
+balance — the vocabulary needs thematic grouping to be usable for
+novelty counting, and TF-IDF can't provide that."
+
+---
+
+### SQ5 — What is FREX scoring? Why isn't frequency alone enough?
+
+*(Pending — covered in topic-modeling primer §3; summary note could be
+added here if the user wants the compressed version.)*
+
+### SQ6 — Why negative binomial? What does the log offset accomplish?
+
+*(Pending.)*
+
+### SQ7 — What fraction of students produce any novelty that gets adopted?
+
+*(Pending.)*
+
+### SQ8 — How is distal vs. proximal novelty measured? Validation?
+
+*(Pending.)*
+
+### SQ9 — PMI filter threshold sensitivity
+
+*(Pending — surfaced in the "≥10 theses" discussion but not formally walked through as SQ9.)*
+
+### SQ10 — Global embeddings justification (r=0.931 at year 2000)
+
+*(Pending.)*
+
+### SQ11 — Innovation-discount null hypothesis
+
+*(Pending.)*
+
+### SQ12 — "Research faculty" definition and selection
+
+*(Pending.)*
+
+### SQ13 — URM per-group inference accuracy heterogeneity
+
+*(Pending.)*
+
+### SQ14 — Career discount after controlling for distal novelty
+
+*(Pending.)*
+
+---
+
+**When to fill in the pending entries.** These are extra-credit relative
+to the Challenge Corner (C1–C11); the Challenge Corner is load-bearing
+for ws2's methodology decisions, the Study Questions are primarily
+educational. Fill in incrementally when the user wants to work through
+a specific one, or leave as-is.
