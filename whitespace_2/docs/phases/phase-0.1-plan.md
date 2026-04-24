@@ -1054,12 +1054,68 @@ cleanly and all validation gates pass, including lit-review closure
 and drift-pilot decision. Advancement to Phase 1.1 (full data pull)
 assumes Phase 0.2 and Phase 0.1 both close.
 
+## Companion documents and maintenance
+
+Derivative documents that depend on this plan and must be kept in sync
+when the plan materially changes. If you edit this plan in a way that
+alters scope, methodology, or decision logic, check the corresponding
+companion(s) in the same session.
+
+- **`../plan-at-a-glance.md`** — visual summary via Mermaid diagrams.
+  Covers three-whitespace epistemic layering (diagram 1); phase/stage
+  backbone with gates (diagram 2); drift-mitigation branching
+  (diagram 3); test structure including aggregate, per-paper, and
+  scale-bridging tests (diagram 4); semantic-diversity metric stack
+  (diagram 5); novelty metric stack (diagram 6); pathway coverage
+  table (section 7); Phase 0.1 sanity-check structure (diagram 8).
+  **Update triggers:**
+  - Phase/stage structure change → diagram 2
+  - Drift-mitigation conditions or thresholds change → diagram 3
+  - New tests or extensions added → diagram 4
+  - Metric stack changes → diagrams 5 and 6
+  - Pathway coverage changes → section 7 table
+  - New sanity checks or Phase 0.1 deliverables → diagram 8
+  - Three-whitespace program structure changes → diagram 1
+
+- **`../primers/stats.tex`** — statistical methods primer. Update when
+  new statistical methods are committed (new regression types, new
+  correction schemes, new bootstrap protocols, etc.).
+
+- **`../primers/topic-modeling.md`** — topic-modeling and
+  cluster-quality diagnostics primer. Update when STM/FREX/clustering
+  methodology changes in the plan (e.g., if Hofstra-style concept-
+  linkage secondary novelty is pursued and introduces new pipeline
+  commitments).
+
+- **`../../literature-review/`** — per-paper review files.
+  Synthesis Pointers that live in review files (currently 12 in
+  `06-hofstra-2020-...md`) should be harvested into
+  `literature-review/synthesis.md` as they accumulate across papers.
+  Cross-paper methodological tensions surfaced in review sessions
+  may imply plan updates — check when a review session closes.
+
+**Cross-reference discipline (recommended workflow):**
+
+1. Edit the plan file.
+2. Before committing, check the companion-doc update-trigger list
+   above; if a trigger is hit, edit the relevant companion in the
+   same commit or the immediately-following one.
+3. If a companion edit is deferred (e.g., "plan changed but diagram
+   sync is tomorrow's task"), add a TODO entry to
+   `../../tasks/todo.md` or a note to `docs/phases/phase-0.1-retro.md`.
+4. Phase 0.1 closure gate: all companion docs synced before
+   advancing to Phase 0.2. Include a companion-doc-freshness check
+   in the retro.
+
 ## References
 
 - North star: `../conceptual.md`
 - Principles: `../desiderata.md` (amended §10 and §11 in this phase)
+- Visual summary: `../plan-at-a-glance.md` (Mermaid diagrams;
+  maintenance triggers listed above)
 - Statistics primer: `../primers/stats.{tex,pdf}` (covers all methods
   committed in this plan)
+- Topic-modeling primer: `../primers/topic-modeling.md`
 - Program context: `../../../docs/program/`
 - Literature review: `../../literature-review/README.md`
 - Todo: `../../tasks/todo.md`
