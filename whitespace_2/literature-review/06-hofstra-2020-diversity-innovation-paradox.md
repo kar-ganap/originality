@@ -747,6 +747,39 @@ papers)?
     credit but not k× the credit of relinking-two-established-terms.
     Pre-register in Phase 0.2.
 
+11. **Scale-difference framing: aggregate vs. per-paper novelty.**
+    Hofstra's novelty is a per-paper, combinatorial, composable quantity
+    (each paper counts new concept-pairs; totals aggregate). Ws2's
+    semantic diversity is aggregate, distributional, non-composable
+    (each year has a spread-of-output number that isn't a sum over
+    papers). These dissociate in at least four cases: (high per-paper
+    novelty concentrated in one region of embedding space) vs. (normal
+    science across diverse topics). Ws2's Methods and Discussion should
+    engage this distinction explicitly: Tests I–III measure distributional
+    spread at the population level; Test IV measures per-paper novelty
+    (parallel to Hofstra's scale); together they triangulate, but they
+    are not the same measurement at different units. Different
+    combinations of results across scales tell different mechanism stories.
+
+12. **Citation-as-behavioral-trace framing.** Citations are load-bearing
+    in ws2 in four places (canonical concentration in Tests I–III;
+    intellectual-context definition for Test IV primary N_p; long-term
+    citation accumulation for Test IV persistence extension; reference-
+    pair recombination for Test IV tertiary if pursued). Hofstra's
+    "plethora of reasons to cite" argument motivates reducing citation
+    load where possible. Concept-linkage novelty (Hofstra's methodology,
+    adopted as Test IV secondary alongside embedding-distance primary)
+    provides a citation-independent parallel novelty measure for Test IV,
+    partially alleviating citation load on the novelty side. Canonical
+    concentration and persistence remain citation-based — no substitute
+    cleanly dodges the analogous "plethora of reasons to reuse a
+    concept-linkage" problem. Methods section acknowledges that
+    citations are behavioral traces, not direct influence measures, and
+    that the measurement-to-influence chain (citation → attention →
+    reception → influence) requires interpretive leaps reserved for
+    ws1's interventional simulation rather than claimed from ws2's
+    observational data.
+
 ---
 
 ## Discussion Notes

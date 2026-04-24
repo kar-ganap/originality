@@ -305,6 +305,76 @@ oriented reviewers understand why observational constraints motivate the
 program's simulation arm. Hiding the limit would invite critique;
 stating it pre-empts it.
 
+### Citation measures as behavioral traces, not influence
+
+A related measurement-construct gap applies to the adoption side of
+the design. Citations are load-bearing in four places in ws2:
+
+1. **Canonical concentration** (Tests I–III, third panel) — Chu-Evans
+   Spearman top-N rank correlation + citation Gini.
+2. **Test IV primary novelty (N_p)** — cosine distance from paper to
+   centroid of cited-references' embeddings; citations define the
+   intellectual context.
+3. **Test IV persistence extension (Stage 3)** — C_k(p) = incoming
+   citations received in year t+k; measures long-term attention.
+4. **Test IV tertiary novelty (optional, Stage 3)** — reference-pair
+   recombination if Uzzi-style is pursued; uses the reference list.
+
+Hofstra et al. 2020's "plethora of reasons to cite" argument motivates
+reducing citation load where possible. Citation behavior is
+heterogeneous: ritual citations, self-citations, politeness citations,
+citations-to-rebut, field-specific citation norms, citation inflation
+over time (Petersen-Arroyave-Pammolli 2024). The measurement chain from
+citation to substantive influence is long:
+
+> **citation** → **attention** → **reception** → **influence**
+
+Each arrow is a non-trivial interpretive step. Observational scientometric
+data gives us the first (citation behavior). Inferring influence requires
+either (a) causal-identification strategies we don't deploy, or (b)
+interventional simulation of explicit influence channels — which is
+whitespace 1's domain, not ws2's.
+
+**Ws2's explicit move.** Where feasible, we reduce citation load by
+running citation-independent parallel measures:
+
+- Test IV secondary novelty: Hofstra-style concept-linkage (first
+  pairwise co-occurrence of FREX concepts with PMI filter in paper's
+  abstract). Runs alongside embedding-distance primary as a citation-
+  free second novelty measure. Co-movement across the two is real
+  cross-methodology robustness.
+- If Test IV tertiary is pursued: Hofstra-style concept-pair
+  recombination preferred over Uzzi-style reference-pair recombination,
+  for the same reason — further reduces citation dependency.
+
+**Where citations remain load-bearing (no substitute).** Canonical
+concentration and persistence are fundamentally adoption measures;
+concept-linkage reuse has its own analog "plethora of reasons" problem
+(ritual reuse, peripheral mention) and doesn't cleanly dodge the
+underlying confound. Here the honest move is acknowledgment in Methods
+rather than methodological escape.
+
+**Methods section commitment.** A short paragraph near the opening of
+Methods should state explicitly:
+
+> "Our reception and adoption measures are citation-based. We use
+> 'citation' rather than 'influence' throughout. Citations are
+> behavioral traces, shaped by citation norms, field conventions, and
+> structural processes. Inferring influence — a causal relationship —
+> from citation patterns requires interpretive steps we do not take
+> in this paper. Canonical-concentration metrics (Chu-Evans Spearman)
+> should be read as measuring the concentration of year-over-year
+> citation attention on a top-N cohort, not the concentration of
+> intellectual influence. Where citation independence is feasible
+> (novelty measures), we run citation-independent parallel metrics as
+> robustness; where it isn't (adoption measures), we acknowledge the
+> limit rather than engineer around it."
+
+This mirrors the novelty-vs-innovation distinction (above) in
+structural form: surface marker, intermediate construct, substantive
+target, with honest framing about which gap our measurements do and
+don't close.
+
 ### When to revisit this section
 
 This section is a framing commitment. Revisit if:
@@ -318,6 +388,8 @@ This section is a framing commitment. Revisit if:
   ws1's own paper).
 - A referee pushes on the counterfactual claim in a specific way that
   requires sharper language than this section provides.
+- A referee pushes on the citation-as-influence concern in a way that
+  requires more specific disclaimers than the Methods paragraph above.
 
 ## What "done" looks like
 
