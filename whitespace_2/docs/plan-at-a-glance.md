@@ -88,33 +88,32 @@ Flavor A is conditional on the Phase 0.1 drift-pilot result.
 
 ```mermaid
 flowchart TB
-    Default["<b>Stage 2 DEFAULT (always run)</b><br/>• Mitigation 2: SPECTER2 + SciNCL + Qwen3-0.6B<br/>• Mitigation 4: Anchor-dim projection"]
-
-    Pilot{"<b>Phase 0.1 drift-pilot</b><br/>Check 5c: 1970s era-match rate<br/>(100-abstract nearest-neighbor)"}
-
-    FA["<b>Flavor A (Stage 3)</b><br/>Word2Vec per decade<br/>+ Procrustes alignment<br/>+ document aggregation"]
-    Skip["Skip Flavor A"]
-
-    Stage2["Stage 2 main run<br/>Tests I-IV on default stack"]
-
-    CheckS2{"Stage 2 results:<br/>does drift remain<br/>material?"}
-
-    FB["<b>Flavor B (Stage 3)</b><br/>Per-era fine-tuned SPECTER2<br/>+ anchor-paper Procrustes"]
-
-    FC["<b>Flavor C (reserve)</b><br/>Dynamic embedding models<br/>(Bamler-Mandt, Rudolph-Blei)"]
+    Default["Stage 2 default — always runs<br/>Mitigation 2: SPECTER2 + SciNCL + Qwen3-0.6B<br/>Mitigation 4: anchor-dim projection"]
+    Pilot{"Phase 0.1 Check 5c<br/>drift-pilot era-match rate<br/>on 1970s abstracts"}
+    FA["Flavor A — conditional<br/>Word2Vec per decade<br/>+ Procrustes + doc aggregation"]
+    Stage2["Stage 2 main run<br/>Tests I-IV on the stack"]
+    Check2{"Stage 2 results:<br/>drift material OR<br/>pre-1990 claims hinge?"}
+    FB["Flavor B — conditional<br/>Per-era SPECTER2 fine-tune<br/>+ anchor-paper Procrustes"]
+    FC["Flavor C — reserve only<br/>Dynamic embedding models<br/>Bamler-Mandt, Rudolph-Blei"]
+    Done["Stage 3 robustness complete"]
 
     Default --> Pilot
-    Pilot -->|rate < 70%| FA
-    Pilot -->|rate ≥ 70%| Skip
+    Pilot -->|below threshold| FA
+    Pilot -->|at or above threshold| Stage2
     FA --> Stage2
-    Skip --> Stage2
-    Stage2 --> CheckS2
-    CheckS2 -->|yes or<br/>pre-1990 load-bearing| FB
-    CheckS2 -->|no| Done[Stage 3 without B]
+    Stage2 --> Check2
+    Check2 -->|yes| FB
+    Check2 -->|no| Done
     FB --> Done
-
-    FC -.->|only if reviewer push<br/>+ B unresolved| Done
+    FB -.->|if B still unresolved| FC
+    FC -.-> Done
 ```
+
+**Threshold interpretation:** era-match rate below 70% (Phase 0.1 drift-pilot
+result) → commit to Flavor A at Stage 3. At or above 70% → skip Flavor A and
+proceed to Stage 2 with default stack only. Rates between 50–70% fall in the
+"insurance" zone: commit to Flavor A as cheap insurance since drift is
+plausibly material. Below 50% → Flavor A is strongly indicated.
 
 **Rationale for two axes** (full explanation in plan subsection 2):
 Flavor A adds *cross-architecture* robustness (Word2Vec is non-
