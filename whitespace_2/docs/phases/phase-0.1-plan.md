@@ -728,6 +728,20 @@ Each gate must be met before advancing to Phase 1.1 (full data pull):
 9. **Drift-pilot decision committed.** Check 5c era-match rate
    reported; Flavor A either committed (with rationale) or deferred
    (with rationale); decision logged in the retro.
+10. **Consolidation pass.** Once literature review (Check 6) closes,
+    perform a holistic review of accumulated framing artifacts,
+    Synthesis Pointers across review files, Epistemic Scope
+    subsections in `conceptual.md`, and pending Phase 0.2
+    pre-registration batch items. Compress or prune where the
+    accumulated material is overlapping, noise, or doing less work
+    than its maintenance cost implies. Deliberate deferral to end of
+    lit review (rather than pruning continuously): pruning decisions
+    are higher-quality once the full cross-paper landscape is visible,
+    at the cost of temporarily carrying some redundancy. The
+    consolidation itself produces a short `experiments/phase-0.1/
+    consolidation-notes.md` documenting what was pruned, what was
+    kept, and why — useful for the retro and for future phases
+    considering similar accumulation patterns.
 
 Gate failures are not blockers in themselves — they are triggers for phase
 re-planning. "Abstract coverage pre-1985 is 40%" ≠ "stop the project"; it =
