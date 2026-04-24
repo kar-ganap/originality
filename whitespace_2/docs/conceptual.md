@@ -190,6 +190,135 @@ Write for them. Engage their critiques pre-emptively.
 | Time at 15 hrs/week | 10 weeks | 14 weeks |
 | Elapsed (realistic, with life events) | 3 months | 5 months |
 
+## Epistemic scope and limits
+
+Added 2026-04-24 during Phase 0.1 scoping conversations. Makes explicit
+what ws2 can and cannot establish as a piece of observational
+scientometric work.
+
+### The measurement-construct gap
+
+Ws2 measures surface markers — novelty (by embedding distance), adoption
+(by citation patterns), team composition (by inferred demographics),
+canonical concentration (by Spearman rank persistence). None of these
+directly measures *innovation* in the substantive sense ("genuine
+advancement of knowledge"). Following Hofstra et al. 2020's explicit
+move, we hold that novelty and adoption are proxies for innovation, not
+substitutes for it:
+
+- Novelty ≠ innovation (new is necessary but not sufficient for
+  substantively new knowledge).
+- Adoption ≠ innovation (adoption patterns are contaminated by structural
+  processes independent of substantive merit).
+
+Any claim ws2 makes about "innovation" is inferential — a structural
+argument about patterns across multiple surface markers — rather than a
+direct measurement.
+
+### The counterfactual-requires-simulation limit
+
+The diversity-innovation literature implicitly invokes a counterfactual:
+what would adoption, novelty, and career outcomes look like if
+structural biases were absent? The difference between observed reality
+and that counterfactual is the "bias" that observational studies
+attempt to infer.
+
+This counterfactual is **not producible from observational data alone**.
+Producing it requires two moves that observational scientometrics cannot
+make:
+
+1. Making implicit structural assumptions explicit — specifying which
+   channels operate (shared canon, shared training, shared platforms,
+   shared advisors), with what strength, on what subpopulations.
+2. Varying those assumptions — asking what changes when channel X is
+   removed or modified. This is an interventional operation, not a
+   measurement.
+
+Both moves live in simulation, not in data analysis. Ws2 can characterize
+the phenomenon with rigor. It cannot identify the structural
+counterfactual that would let us adjudicate (e.g.) the "discrimination"
+versus "quality-difference" readings of demographic adoption gaps.
+
+### The three-whitespace epistemic layering
+
+The originality program's three whitespaces are not redundant; they
+operate on complementary epistemic layers. Each layer's weakness is
+another's strength.
+
+| Whitespace | Method | What it establishes | What it cannot |
+|---|---|---|---|
+| **ws2** (empirical) | Observational scientometrics | The phenomenon; quantitative constraints any structural model must reproduce; mechanism-space narrowing via the subfield test | Counterfactuals; causal identification; true adjudication of discrimination vs. quality |
+| **ws3** (theoretical) | Formal model decomposing cumulative preservation (C) and per-capita variance generation (V) | Plausible structural stories; identifiable parameters; qualitative regimes separating mechanism classes | Whether any particular story actually operates; which parameter values real science supports |
+| **ws1** (simulation) | Agent-based simulation of actuator-homogenization dynamics | Counterfactual trajectories under explicit structural assumptions; intervention effects on outputs; structural sensitivity analysis | External validity of simulation structure to real-world science |
+
+Triangulating across layers is what makes the full research program
+stronger than any single study. The layering is not a narrative
+retrofit — it is the natural consequence of what each method can and
+cannot establish.
+
+### What ws2 specifically contributes under this limit
+
+Given ws2 cannot produce the counterfactual, its contributions are:
+
+1. **Phenomenon-level falsification.** If Tests I–III show no divergence,
+   or if the subfield mechanism test produces γ₁ ≈ 0, the actuator-
+   homogenization structural claim is directly challenged. This matters
+   without requiring causal identification — the data refutes structural
+   claims even if it doesn't identify the true alternative.
+2. **Quantitative anchoring for ws1.** Any structural simulation in
+   whitespace 1 must reproduce ws2's time-series patterns, subfield-
+   mechanism results, and Test IV cross-sectional regression. Ws2's
+   findings become empirical targets that simulations must match, not
+   just hypotheses they might test.
+3. **Mechanism-space narrowing.** The subfield mechanism test localizes
+   where structural processes plausibly concentrate — evidence that
+   narrows the class of plausible simulation architectures ws1 needs to
+   build.
+4. **Explicit identification of what simulation would adjudicate.** Ws2's
+   Discussion names the specific unresolved counterfactuals that
+   simulation work could answer (e.g., "what adoption pattern would obtain
+   if canonical concentration were held flat across subfields?"). This
+   gives ws1 a sharp research agenda rather than a vague charge.
+
+### Implications for the ws2 paper's framing
+
+Methods and Discussion should include (paraphrased):
+
+> "Our analysis is observational. We document patterns in surface
+> markers — novelty, team diversity, adoption, canonical concentration —
+> but cannot directly estimate what these patterns would look like
+> absent the structural processes we hypothesize produce them. That
+> estimation requires interventional evidence, whether from large-scale
+> field experiments on scientific evaluation (impractical) or from
+> simulation of explicit structural models (our program's whitespace 1).
+> Ws2 contributes quantitative characterization of the phenomenon that
+> any structural model must reproduce, plus evidence about where
+> structural mechanisms likely concentrate (subfield test), while
+> leaving the counterfactual adjudication to simulation-based follow-up
+> work."
+
+This is the canonical honest framing for observational scientometric
+work on bias-vs-quality. Readers of Hofstra, the Evans lab, and Azoulay
+recognize the move; reviewers from the methodological-critique cluster
+(Petersen-Holst) find it defensible even if not decisive; simulation-
+oriented reviewers understand why observational constraints motivate the
+program's simulation arm. Hiding the limit would invite critique;
+stating it pre-empts it.
+
+### When to revisit this section
+
+This section is a framing commitment. Revisit if:
+
+- Phase 0.1 sanity checks reveal that the phenomenon level is itself
+  contested (e.g., Test I produces no divergence under any specification),
+  at which point the scope discussion shifts from "what does the
+  divergence mean" to "is there a divergence to interpret."
+- Ws1 starts producing simulation results whose counterfactual answers
+  are reported in ws2 (they shouldn't be — simulation findings belong in
+  ws1's own paper).
+- A referee pushes on the counterfactual claim in a specific way that
+  requires sharper language than this section provides.
+
 ## What "done" looks like
 
 You have a paper draft with:

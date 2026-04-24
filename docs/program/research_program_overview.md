@@ -191,6 +191,26 @@ Because the actuators that homogenize in #13 are what small protected groups in 
 
 Simulation alone risks being a model in search of a phenomenon. Empirics alone risks describing a pattern without explaining it. Theory alone risks reconciling two literatures without showing the reconciliation matters in observable data or in generative dynamics. The three together are mutually reinforcing: empirical phenomenon + theoretical framework + mechanistic demonstration.
 
+**The deeper, epistemic argument (added 2026-04-24):** the three methods are not interchangeable because they operate on different epistemic layers, each with bounds that only the others can relax.
+
+- **Observational scientometrics (Whitespace 2) can characterize patterns in surface markers and constrain what any explanatory story must reproduce — but it cannot produce counterfactuals.** The diversity-innovation question (and Claim #13 more generally) implicitly invokes a counterfactual: what would adoption and production look like if the hypothesized structural processes were absent? Observational data cannot answer this, because producing the counterfactual requires (a) making implicit structural assumptions explicit and (b) varying them. Both moves are interventional, not measurable. Residualization-based inferences ("demographic gaps after controlling for measured quality equal bias") are circular in principle: they presuppose that demographic residuals *are* bias, which is exactly what observational methods cannot establish directly.
+
+- **Formal theory (Whitespace 3) can specify the structural objects and their qualitative dynamics — but it cannot establish which structural assumptions match observed reality.** A formal decomposition of cumulative preservation (C) and per-capita variance generation (V) produces phase diagrams and parameter-regime analyses. It tells you *what could be true* given different structural assumptions, but not *which assumptions are operating* in real-world science.
+
+- **Interventional simulation (Whitespace 1) can produce counterfactuals under explicitly-specified structure — but it cannot by itself validate that the specified structure corresponds to reality.** You can turn off shared canon, vary actuator density, remove reception bias, and observe what happens to outputs. But whether the simulation's structural assumptions are the right ones is not answerable from within the simulation; it requires external validation against observed patterns.
+
+Each layer's weakness is another's strength:
+
+| Layer | Establishes | Cannot establish | Needs from others |
+|---|---|---|---|
+| **Ws2** (empirical) | The phenomenon; quantitative constraints any model must reproduce; mechanism-space narrowing | Counterfactuals; causal identification | Structural models to anchor against; simulation-based adjudication |
+| **Ws3** (theoretical) | Plausible structural stories; identifiable parameters; qualitative regimes | Which story is operating; empirical parameter values | Empirical targets to match; simulated implementations |
+| **Ws1** (simulation) | Counterfactual trajectories; intervention effects; structural sensitivity | External validity of the simulated structure | Phenomenological targets to reproduce; theoretical framework to specify what to simulate |
+
+Triangulating across these layers is the program's claim to scientific rigor. Observational work that claims counterfactual identification overclaims; simulation work without empirical anchoring is ungrounded; theoretical work without empirical and simulated companions is incomplete. The three-whitespace structure is the natural consequence of what each method can and cannot do — not a narrative retrofit imposed for aesthetic reasons.
+
+This also justifies the specific framing each whitespace should adopt in its own paper. Whitespace 2 should explicitly position itself as documenting the phenomenon and narrowing the space of plausible structural stories, with the counterfactual adjudication deferred to Whitespace 1. Whitespace 3 should position itself as specifying the formal objects over which interventional variation can later be performed. Whitespace 1 should position itself as answering the counterfactual question Whitespaces 2 and 3 pose but cannot resolve. Reviewers of any of the three should find the cross-references to the others principled rather than opportunistic.
+
 ### Why LLM-based agents for Whitespace 1 rather than abstract-state agents
 
 Because the actuator-sharing knob — "fraction of agents sharing a foundation model" — has a clean operational meaning in LLM-based agents that has no equivalent in abstract-state models. The specific mechanism being tested (shared formative substrate as a homogenization force) is best implemented in systems where substrate-sharing is literally a parameter. LLM-based multi-agent frameworks have matured to the point where this is now tractable.
