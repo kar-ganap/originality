@@ -1405,9 +1405,120 @@ estimating that relationship. The power-law framing captures the
 heavy-tailed shape but isn't the technical condition that forces NB;
 overdispersion is."
 
-### SQ7 — What fraction of students produce any novelty that gets adopted?
+### SQ7 — What fraction of students produce any novelty that gets adopted? What does this imply about the shape of the innovation distribution?
 
-*(Pending.)*
+Working session with user, 2026-04-24.
+
+**Setup.** The question combines two figures from the paper: 20.9% of
+students introduce zero new links (so 79.1% produce ≥1), and ~50% of
+new links never receive any uptake. It asks what fraction of students
+have at least one *adopted* new link, and what the answer implies about
+the shape of the innovation distribution.
+
+**User's decomposition.** Reduces to: for a student with k new links,
+are k/2 typically adopted (independence-style, uptake spread across
+the student's links), or is uptake correlated within-student (some
+students have most links adopted, others have none)? The
+50%-non-uptake aggregate doesn't reveal which.
+
+**Two critiques user surfaced — both substantive.**
+
+**(1) Within-student correlation isn't answerable from cumulative
+statistics.** The paper reports per-link uptake distribution (mean=0.79,
+median=0.33, SD=3.08) and per-student new-link distribution (mean=9,
+median=4, SD=14), but not the joint distribution within students. We
+don't know whether a student with high novelty also has high uptake-
+per-link or whether the two are uncorrelated within-student. SD/mean
+of uptake-per-link is ~4× — substantial heterogeneity that's more
+consistent with within-student correlation than independence, but
+this is suggestive rather than dispositive.
+
+**(2) The 50% non-uptake figure is a cumulative aggregate that hides
+temporal asymmetry.** A 1985-introduced link has ~30 years of
+subsequent corpus to be adopted in; a 2010-introduced link has only 5
+years. The "50% never adopted" aggregate includes substantial
+right-censoring on recent-vintage links. The marginal probability
+"this link would ever be adopted given infinite time" is higher than
+50%; the empirical fraction "was this link adopted by 2015" is the
+actual 50% figure. Hofstra's year fixed effects in inferential
+analyses partially absorb this, but they don't fix the marginal
+aggregate that the question is built on.
+
+**Bounding analysis (given the data underdetermines the exact answer).**
+Two extreme scenarios:
+
+- **Independence scenario:** each of a student's new links has
+  independent 50% probability of adoption. P(any adopted | k links) =
+  1 − 0.5^k.
+  - k=1: 50%
+  - k=4 (median): 93.75%
+  - k=9 (mean): 99.8%
+  Under independence, almost every link-producing student has at least
+  one adopted link, and the fraction "any adopted" approaches 79.1%.
+- **Perfect correlation scenario:** each student is either "all
+  adopted" or "all not." Half of link-producers fall in each. Fraction
+  with any adopted = 0.5 × 79.1% = **39.6%**.
+
+Realistic answer falls in 50–70%, with the uptake-per-link
+heterogeneity suggesting the truth is closer to the lower end (more
+correlation, not less). The literal number isn't sharp; the data
+underdetermines it.
+
+**Reframing — what the question actually probes.** Given the bounds
+are wide and the literal number isn't derivable, the substantive
+answer is about distributional *shape*, not a number. Three pieces of
+evidence about innovation concentration:
+
+1. Per-student new-link distribution is right-skewed (mean=9, median=4,
+   SD=14, 20.9% at zero). The minority who produce more than the
+   median produce most of the new links.
+2. Per-link uptake distribution is also right-skewed (mean=0.79,
+   median=0.33, SD=3.08).
+3. The two heavy tails likely co-occur within students (large SD/mean
+   of uptake-per-link argues for within-student correlation rather
+   than independence).
+
+When two right-skewed distributions are positively correlated within
+unit, the compound distribution (per-student total adopted innovation)
+is **extremely heavy-tailed**. A small minority of students likely
+accounts for most of the adopted innovation. The fraction with *any*
+adopted innovation is moderate (50–70% bound), but the fraction with
+*substantial* adopted innovation is much smaller. **Innovation isn't
+democratic, even within the link-producing subpopulation.**
+
+**Connection to ws2's Test IV persistence extension.** This heavy-tail
+concentration in citation distributions is well-documented (power-
+law-like behavior in scientific impact). For our Test IV persistence
+regressions on C_15 (10-year citation accumulation), a small fraction
+of extremely-cited papers can dominate regression leverage —
+particularly for the interaction term β_3 in the direct-interaction
+regression and the persistence ratio in the C_10/C_3 regression.
+
+**Pre-registration commitment added to pending Phase 0.2 batch
+(item 7 sub-item):** report Test IV persistence regression
+coefficients in three versions:
+
+1. Full sample (1975–2014 papers)
+2. Top 1% of C_15 trimmed
+3. Top 5% of C_15 trimmed
+
+Coefficient stability across all three = robustness claim. Coefficient
+flip or substantial magnitude shift between full and trimmed = report
+as evidence that a small set of extreme papers drives the result;
+either outcome is publishable, framing differs.
+
+**Net answer to SQ7.** Honest: the literal number isn't computable
+from the given data because (a) within-student uptake correlation
+isn't reported by the paper, and (b) the 50% non-uptake figure is a
+cumulative aggregate that mixes uptake horizons across vintages. The
+substantive answer is the shape claim — innovation is heavily
+concentrated in a productive minority, with a heavy-tailed compound
+distribution combining heavy-tailed novelty production and heavy-
+tailed uptake. The fraction "with any adopted" is somewhere in
+50–70%; the fraction "with substantial adopted innovation" is
+considerably smaller; the very-top-cited papers exert disproportionate
+influence on aggregate findings (motivating the pre-registered
+trimming robustness for Test IV).
 
 ### SQ8 — How is distal vs. proximal novelty measured? Validation?
 
