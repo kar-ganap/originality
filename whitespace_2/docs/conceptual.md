@@ -354,6 +354,54 @@ concept-linkage reuse has its own analog "plethora of reasons" problem
 underlying confound. Here the honest move is acknowledgment in Methods
 rather than methodological escape.
 
+**Why the citation-influence conflation is worse than the
+novelty-as-citation-residual operationalization.** A tempting
+simplification treats citations as direct measurements of influence
+(call this assumption A) and novelty as the residual content not
+traceable through citations (assumption B). Both appear to streamline
+the measurement-construct chain, but they do so at very different
+costs because they make structurally different kinds of claim.
+
+Assumption A is an **interpretation claim**: it asserts a positive
+identity between a measurement and a construct. Such identities
+propagate globally — every downstream inference about influence
+inherits every source of citation-behavior heterogeneity (ritual
+citations, field norms, citation inflation over time, unacknowledged
+non-citation influence channels) as a contaminant of the construct
+itself. The error compounds: citation inflation becomes influence
+inflation, ritual citations become influence relationships, field-norm
+variation becomes influence variation. Hofstra's "plethora of reasons
+to cite" concern becomes invisible rather than manageable.
+
+Assumption B is a **construction claim**: it specifies how a construct
+is operationalized. A construction choice is locally scoped — it can
+be evaluated against alternative operationalizations (concept-linkage
+novelty à la Hofstra; reference-pair recombinant novelty à la Uzzi;
+embedding distance as we propose); it can be supplemented by running
+multiple operationalizations in parallel; and it limits contamination
+to the specific construct's measurement, not to every downstream
+inference.
+
+The asymmetry matters because it justifies a graded response. Ws2
+resists assumption A firmly (citations are not influence; we maintain
+the distinction throughout Methods and Discussion) while tolerating a
+bounded version of assumption B (Test IV primary novelty operates on
+embedding distance from cited-reference centroid, which is a
+citation-residual operationalization). The response to A is definitional;
+the response to B is measurement-mix. This asymmetry also suggests a
+useful rhetorical move for the paper: a Discussion paragraph briefly
+sketching the (A)+(B) simplification and showing where it fails
+(citation inflation becomes fake influence growth; Hofstra's argument
+flips; sparse-citation papers score as maximally novel absent peer-
+review filtering) makes the case for our position concrete rather than
+abstract.
+
+Generalizable methodological principle: **interpretation-level
+conflations are typically more damaging than construction-level
+operationalization choices.** The former infects inference globally;
+the latter is contained. This applies beyond ws2 — it's a lens worth
+carrying into every methodological review we do.
+
 **Methods section commitment.** A short paragraph near the opening of
 Methods should state explicitly:
 
