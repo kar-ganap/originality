@@ -1520,9 +1520,186 @@ considerably smaller; the very-top-cited papers exert disproportionate
 influence on aggregate findings (motivating the pre-registered
 trimming robustness for Test IV).
 
-### SQ8 — How is distal vs. proximal novelty measured? Validation?
+### SQ8 — How are distal vs. proximal novelty measured? What Word2Vec hyperparameters and validation?
 
-*(Pending.)*
+Working session with user, 2026-04-24.
+
+User noted they hadn't paid much attention to this on first reading and
+asked for a full walkthrough. No first-pass answer to sharpen — this is
+a reference walkthrough.
+
+**What the metric measures.** Distal novelty asks: for a pair of
+concepts that this thesis newly co-occurs, are those concepts
+semantically close to each other or far apart in vector space? A new
+link between concepts already in the same intellectual neighborhood
+(e.g., `ceramic_composition` and `fracture_behavior`, both materials
+science) is *proximal*; a new link between concepts in distinct
+neighborhoods (e.g., `genetic_algorithm` and `hiv-1`) is *distal*.
+Distal links are creative juxtapositions, cross-field bridges, or
+metaphorical leaps; proximal links are within-field refinements.
+
+The metric is computed per-pair, then averaged over a thesis's new
+links to get a thesis-level distal-novelty score. So distal novelty
+is a property of *pairs*, summarized as an *average over thesis*.
+
+**Word2Vec hyperparameters (SI p. 12):**
+
+- **Architecture:** skip-gram model (Mikolov et al. 2013, *Efficient
+  Estimation of Word Representations in Vector Space*, arXiv:1301.3782).
+- **Training data:** dissertation abstracts only (1977–2015). Not pre-
+  trained on a larger corpus.
+- **Vocabulary:** FREX concepts only (the ~250K-token concept
+  vocabulary derived from STM topic-FREX terms). Not the full word
+  vocabulary.
+- **Window size:** 5 — captures co-occurrences within roughly two
+  sentences.
+- **Dimensions:** 100 main; robustness checked at 200 and 300.
+- **Time scope:** **Globally trained on the entire 1977–2015 corpus.**
+  Single embedding space, not per-year or per-decade. This is a
+  load-bearing methodological choice with consequences for ws2.
+
+**Distance metric.** For two FREX concepts a and b with learned
+embeddings v(a) and v(b):
+
+> distance(a, b) = 1 − cos(v(a), v(b)) = 1 − v(a)·v(b) / (||v(a)|| ||v(b)||)
+
+Cosine distance, not Euclidean. Range 0 (identical direction) to 2
+(opposite direction). For a thesis with multiple new links,
+distal-novelty(thesis) = average cosine distance over all newly-linked
+pairs in that thesis.
+
+**Distribution in their data:**
+
+- Mean = 0.426
+- Median = 0.419
+- SD = 0.118
+
+Roughly normally distributed (hence linear regression to model it,
+unlike novelty and impactful novelty which are right-skewed counts
+requiring negative binomial).
+
+**Validation — internal robustness:**
+
+- **Robust to dimensionality:** results similar at 100, 200, 300 dims.
+- **Robust to stochasticity:** Word2Vec has random initialization;
+  multiple runs give similar scores.
+- **Sensitivity check on time-independence:** trained alternative
+  time-dependent embeddings on year-2000 data alone, computed distal-
+  novelty scores, correlated with global-embedding scores.
+  **Correlation r = 0.931** (very high).
+
+**Validation — external against human coders:**
+
+- Random sample of 100 newly-linked concept pairs.
+- 3 expert human coders independently labeled each pair as "distal"
+  or "proximal."
+- Inter-coder agreement: **Cohen's κ = 0.46** (moderate; not high).
+  Convention: 0.21–0.40 fair, 0.41–0.60 moderate, 0.61–0.80
+  substantial, 0.81+ near-perfect.
+- Coder consensus predicts ~95% of "true distal" links (defined as
+  those with distance score > 0.8).
+- **15–20% of high-distance links are "hard to interpret
+  substantively"** — embedding flagged them as distal but humans
+  couldn't articulate why.
+
+**Substantive findings using this metric (Figure 3, p. 9287):**
+
+1. **Underrepresented genders introduce more distal novelty** (Panel
+   C; P<0.001). Women's new concept-pairs have higher cosine distance
+   on average than men's. Same effect for nonwhite vs. white but
+   smaller. Hofstra's interpretation: the "outsider vantage" of
+   underrepresented groups produces less-conventional combinations —
+   they bridge across fields more often.
+2. **Distal novelty negatively predicts uptake** (Panel D; P<0.001).
+   The further apart linked concepts are, the less likely the link
+   is to be reused in subsequent theses. Distal links are creative
+   but get less adopted.
+
+Hofstra uses these together as a **partial mediation argument:** women
+→ more distal novelty → less uptake. Some of the gender gap in uptake
+is explained by distal novelty as a mediator. This doesn't fully
+explain the gap (the discount holds even controlling for distal
+novelty in Figure 4), but it's part of the mechanism.
+
+**Methodological strengths.**
+
+- **Concept-level, not document-level.** Word2Vec on FREX terms gives
+  type-level vectors; distance is between concept types, not between
+  specific contextual usages. Reproducible across runs, interpretable.
+- **Independent of citation behavior.** Like the novelty count itself,
+  distal novelty is text-only — doesn't depend on citation patterns.
+- **Validated with human coders.** Most scientometric measures don't
+  get external validation against domain experts. κ=0.46 is moderate
+  but real; more than most papers do.
+- **Robustness across dimensionality and seeds is checked.** Bare
+  minimum, but explicit.
+
+**Methodological weaknesses (relevant to ws2's drift discussion).**
+
+**(1) Globally-trained, not diachronic.** The most consequential
+choice. Hofstra trains one embedding on the whole 1977–2015 corpus,
+then uses it to score links from any year. Modern semantic structure
+is therefore baked in; 1985 links are scored against a 2015-
+influenced embedding space. Their justification is the year-2000
+robustness check (r=0.931 with time-dependent embeddings). But this
+is a single-year sensitivity at a year close to the corpus center,
+where global and time-dependent should look most similar. They don't
+validate at 1985 or 2010 where drift would be larger. This is exactly
+the methodological gap our drift-mitigation ladder addresses (see
+`phase-0.1-plan.md` subsection 2 and `desiderata.md` §3).
+
+**(2) Cohen's κ = 0.46 is moderate, not high.** Their human coders
+agree with each other at moderate level, not strong consensus. The
+distal-vs-proximal distinction is somewhat subjective even for
+domain experts.
+
+**(3) 15–20% of high-distance links are hard to interpret.** A
+substantive error rate is baked in — not all high-distance pairs
+are genuinely distal in a meaningful intellectual sense; some are
+just tokens that happen not to co-occur in the corpus.
+
+**Connection to ws2.**
+
+**(a) Hofstra's distal-novelty pipeline IS our Flavor A pipeline
+(Stage 3 conditional).** Word2Vec on FREX-style concept vocabulary,
+trained globally on the corpus. This is what we'd run if our Phase
+0.1 drift-pilot indicates Flavor A is needed. We'd implement
+essentially Hofstra's methodology with the addition of explicit
+Procrustes alignment across eras (which they don't do because their
+global embeddings are nominally aligned by construction — at the
+cost of suppressing diachronic signal).
+
+**(b) Their `distal novelty` is conceptually parallel to our anchor-
+dimension projection (Mitigation 4).** Both use a curated subset of
+vocabulary as the basis for distance measurement, rather than
+computing in raw transformer-embedding space. Hofstra's vocabulary
+is automatic (FREX from STM); our anchor concepts are curated (~100
+stable scientific terms). Different procedure, similar spirit.
+
+**(c) The diachronic concern they elide is what our drift-mitigation
+ladder addresses.** If we run Flavor A, we explicitly do not assume
+year-2000 robustness extrapolates; we Procrustes-align across decades
+using anchor papers. This is one of the few places where ws2's
+methodology is genuinely better-rigored than Hofstra's.
+
+**Distinction worth noting.** For Test IV's primary novelty (N_p =
+embedding distance to citation-context centroid), we use SPECTER2
+contextual document embeddings, not Word2Vec type-level concept
+embeddings. Different embedding family, different unit (document vs.
+concept), different operation (distance to centroid vs. distance to
+single concept). So Hofstra's distal-novelty and our N_p aren't the
+same metric — they're parallel constructions for different units. If
+we add Hofstra-style concept-linkage as Test IV secondary, *that*
+metric would adopt their distal-novelty methodology more directly.
+
+**One-sentence summary.** Distal novelty = average cosine distance
+(in a 100-dim Word2Vec space trained on dissertation abstracts, FREX
+concepts only) between concept pairs newly-linked by a thesis;
+validated with moderate human-coder agreement (κ=0.46), robust to
+dim choice and stochasticity, with a single-year time-dependence
+robustness check (r=0.931 at year 2000) that doesn't probe boundary
+years; used by Hofstra to argue that women's higher distal-novelty
+production partially mediates their lower uptake.
 
 ### SQ9 — PMI filter threshold sensitivity
 
