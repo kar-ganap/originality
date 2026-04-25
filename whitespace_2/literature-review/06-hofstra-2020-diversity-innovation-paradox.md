@@ -1837,9 +1837,133 @@ methodological lesson — filter choices have demographic-by-method
 interactions — directly motivates ws2's deliberate no-filter primary
 + Hofstra-style ≥K filter on secondary policy.
 
-### SQ10 — Global embeddings justification (r=0.931 at year 2000)
+### SQ10 — Global-embedding justification (r=0.931 at year 2000) — under what conditions does it fail?
 
-*(Pending.)*
+Working session with user, 2026-04-24.
+
+User engaged with the walkthrough but had no first-pass answer to
+sharpen. Reference walkthrough.
+
+**Setup.** Hofstra trains one global Word2Vec embedding on the full
+1977–2015 corpus and uses it to compute distal novelty for theses
+from any year. Validation: at year 2000 only, they trained an
+alternative time-specific embedding and correlated distal-novelty
+scores from global vs. time-specific. Correlation r = 0.931. They
+take this as evidence that the metric is robust to time-dependence,
+extrapolating to all years in the corpus.
+
+**Why year 2000 is best-case by construction.** Year 2000 sits near
+the temporal centroid of the 1977–2015 corpus. A global embedding's
+representations are an average over all years' co-occurrence
+patterns, weighted by data volume — so the global embedding is
+**closest by construction** to a time-specific embedding from a
+year near the data-weighted center. Validating at the center year
+means choosing the year where global and time-specific should agree
+the most. r = 0.931 there is essentially "in the year these two
+methods should agree most by design, they do." Weak claim.
+
+**Four reasons boundary years (1982, 2010) would diverge more:**
+
+**(1) Vocabulary evolution.** Concepts emerge, fade, and shift
+meaning. `neural_network` meant different things in 1982
+(physiological/early-connectionist) and 2010 (post-PDP/post-LeNet
+computational). Global embedding learns a weighted average between
+the senses; doesn't represent either accurately.
+
+**(2) Co-occurrence pattern shift.** Even for stable-meaning
+concepts, what they co-occur with changes. `genomics` co-occurred
+with `restriction_enzyme` in 1982 and `single_nucleotide_polymorphism`
+in 2010. Distance calculations between concept pairs differ
+substantially across eras.
+
+**(3) Asymmetric data volume.** 1977–1985 has many fewer
+dissertations than later decades (CS as a field was small;
+indexing was incomplete). A hypothetical 1982-only embedding would
+have noisier estimates from limited data; the global embedding has
+post-2000 data dominating its representation. The boundary-year
+sample-size effect compounds the temporal-distance effect.
+
+**(4) Rapidly evolving fields hit hardest.** CS, which is heavily
+represented in Hofstra's corpus and in our own focus, exhibits
+substantial vocabulary turnover between 1982 and 2010. Stable fields
+(classical mechanics) show little drift; fast-changing fields
+(CS, genomics, ML) show a lot. Hofstra's distal-novelty findings
+inherit the most error in exactly the fields whose vocabulary
+shifts most.
+
+**The structural critique of the validation logic.** From a single-
+year, single-correlation result Hofstra extrapolates "the metric is
+robust to time-dependence everywhere." Three reasons this
+extrapolation is invalid:
+
+1. **It's a best-case measurement.** Year 2000 is where the two
+   methods should agree most by construction. Center-year agreement
+   tells you nothing about boundary-year agreement.
+2. **No bound on far-year disagreement.** A correlation of 0.931 at
+   one year provides no theoretical basis for predicting the
+   correlation at a different year. Could be 0.95 at 1995, 0.65 at
+   1982, 0.75 at 2010 — we don't know.
+3. **Aggregate scores can hide concept-level disagreement.** Even if
+   distal-novelty *averages* correlate, individual concept-pair
+   distances might differ wildly. Hofstra's substantive findings
+   (women → more distal novelty; distal → less uptake) depend on
+   per-pair distance estimates, not aggregate scores.
+
+**What a proper validation would look like.** Train time-specific
+embeddings at multiple years (1985, 1995, 2005, 2015), report the
+full correlation curve. If the curve is uniformly high, the global-
+embedding choice is justified. If it drops at boundary years, the
+choice systematically distorts boundary-year measurements and the
+pre-1990 / post-2010 distal-novelty claims are unreliable. Hofstra
+didn't do this — they did the cheapest possible validation and
+accepted the center-year result as license for the full corpus.
+
+**Implication for the substantive claims.** The boundary-year
+distortion isn't uniform; it concentrates in:
+
+- Fields with rapid vocabulary change (CS specifically — Hofstra's
+  primary corpus and our primary field)
+- Eras with sparser data (pre-1990)
+- The distal-novelty mediator specifically (which depends on
+  per-pair concept distances, not aggregate scores)
+
+So the partial-mediation argument (women → more distal → less uptake)
+that Hofstra builds is on shakier ground than the validation
+acknowledges, *especially* for the boundary-year portion of their
+analysis window.
+
+**Connection to ws2 — this is exactly what our drift-mitigation
+ladder addresses.**
+
+- **Mitigation 4 (anchor-dimension projection)** — runs in default
+  Stage 2. Doesn't rely on the embedding model itself being time-
+  invariant; projects onto stable-concept anchors that are
+  drift-robust by construction.
+- **Phase 0.1 Check 5c (drift-pilot)** — empirically tests era-match
+  rates on 1970s abstracts specifically. Probes the boundary-year
+  question Hofstra didn't probe.
+- **Stage 3 Flavor A (conditional)** — explicitly trains per-era
+  Word2Vec + Procrustes-aligns. This IS the multi-year validation
+  curve Hofstra didn't do.
+- **Stage 3 Flavor B (conditional)** — fine-tunes SPECTER2 per era.
+  Document-embedding-level escalation if Flavor A surfaces drift.
+
+This is one of the few places where ws2's methodology is genuinely
+better-rigored than Hofstra's, not just different. The default
+methodology assumes boundary-year drift is a real concern and
+provides explicit escalation paths to test for it; Hofstra's
+methodology assumes drift is not a concern, validated by a single
+best-case correlation that doesn't actually probe the failure mode.
+
+**One-sentence summary.** Hofstra's r=0.931 validation is a center-
+year correlation that's best-case by construction; vocabulary
+evolution, co-occurrence pattern shift, asymmetric data volume, and
+field-specific rapid change all push global vs. time-specific
+embeddings further apart at boundary years (1982, 2010); their
+extrapolation from one center-year correlation to corpus-wide
+robustness is structurally invalid, and ws2's drift-mitigation
+ladder (Mitigation 4 default + drift-pilot + conditional Flavor
+A/B) is built precisely to test the failure mode they didn't probe.
 
 ### SQ11 — Innovation-discount null hypothesis
 
