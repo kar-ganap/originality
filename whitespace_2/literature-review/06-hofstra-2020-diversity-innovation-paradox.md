@@ -2402,7 +2402,29 @@ choice explicit in pre-registration.
 
 ### SQ14 — Career discount after controlling for distal novelty
 
-*(Pending.)*
+Covered implicitly via SQ8 (distal-novelty methodology) and SQ11
+(multi-arrow causal-identification limits). Factual answer: Hofstra
+reports *partial mediation* — the career discount persists when
+controlling for distal novelty (the reported 3.5% → 9.5% / 4.3% →
+15% numbers include distal as a control), but shrinks relative to
+the no-control version. The paper states explicitly (p. 9287):
+*"These results hold over and above of the distance between newly
+linked concepts."* Residual discount beyond distal suggests other
+mechanisms (direct discrimination, network access, pipeline
+constraints) contribute. Consistent with the multi-arrow causal
+structure in SQ11 — distal novelty is one mediator among several
+unidentified pathways.
+
+**Small modification to Test IV persistence extension (pending batch
+item 7):** report β_3 (the T_p × N_p interaction coefficient) under
+multiple control specifications — without novelty-structure controls,
+controlling for distance-from-canonical-centroid (our secondary
+novelty metric), controlling for subfield fixed effects, full control
+set. Coefficient stability across specs is robustness; substantial
+shrinkage under specific controls suggests those controls mediate
+part of the relationship. Nice-to-have sensitivity reporting, not a
+new pre-registration item; aligns with the partial-mediation framing
+SQ14 introduces.
 
 ---
 
