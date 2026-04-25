@@ -1965,9 +1965,132 @@ robustness is structurally invalid, and ws2's drift-mitigation
 ladder (Mitigation 4 default + drift-pilot + conditional Flavor
 A/B) is built precisely to test the failure mode they didn't probe.
 
-### SQ11 — Innovation-discount null hypothesis
+### SQ11 — Innovation-discount null hypothesis + causal identification
 
-*(Pending.)*
+Working session with user, 2026-04-24.
+
+User caught an imprecision in my original question wording — I had
+conflated "minorities" (general) with the specific 3.5% → 9.5%
+number (gender-specific). Cleaned-up version: "the 2SD-above-median
+novelty increases the gender-minority-vs-majority faculty-
+probability gap from 3.5% to 9.5%; what's the null and what would
+make this causal?"
+
+**Gender vs. race clarification.** Hofstra reports findings on both
+demographic axes. The 3.5% → 9.5% (and 4.3% → 15% for impactful
+novelty) numbers are gender-specific. The racial-discount finding
+exists (25%-lower-baseline-odds for racial minorities; paper claims
+the discount also extends to slope-with-novelty for racial axis) but
+isn't put in the same headline-numerical form in the main text.
+
+**Null hypothesis tested.** The relationship between novelty and
+faculty-becoming-probability has the *same slope* across gender
+groups (parallel-slopes / constant-gap null). Under this null, the
+gap at low novelty equals the gap at high novelty.
+
+**Alternative tested (and supported).** Slope differs — minorities
+have shallower novelty-on-faculty slope. The 3.5% → 9.5% widening is
+the operational signature. Formal test: (novelty × gender)
+interaction term in logistic regression of faculty status. Hofstra
+cites P<0.01 for this interaction.
+
+**User's observation on causal identification.** "Their underlying
+causal pathway is innovation → career outcomes AND gender → career
+outcomes (among others), so all the issues with causal inference
+will haunt them."
+
+This captures the multi-arrow problem precisely: there are multiple
+potentially-causal pathways, none individually identified from
+observational data, and the slope-difference finding combines them.
+The causal pathways at play:
+
+1. **Demographic → innovation.** Minorities produce more novelty
+   (Figure 2 main effect).
+2. **Innovation → career.** Novelty predicts faculty outcome
+   (Figure 4 main effect).
+3. **Demographic → career, independent of innovation.** Baseline
+   demographic gap at low novelty levels.
+4. **Demographic × innovation → career.** The slope-difference /
+   interaction term — the headline discount finding.
+
+Pathway 3 alone (demographic → career through non-innovation
+channels: hiring biases, dual-career constraints, network-access
+asymmetries, advisor-support differentials) could partially produce
+the observed pattern. Unmeasured confounders correlated with both
+demographics and innovation quality could also produce it. The
+conditional association is well-identified; the causal interpretation
+requires assumptions Hofstra's design can't sustain.
+
+**Identifying strategies that would establish causality, none
+available to Hofstra:**
+
+1. **Randomization.** Random demographic-identity assignment is
+   impossible. Audit-study designs (same paper labeled with
+   different inferred-gender names) exist at small scale but not
+   population-level scientometric.
+2. **Natural experiments.** Exogenous shock that changes novelty for
+   one group but not the other. Hard to find at scientometric scale.
+3. **Instrumental variables.** Instrument affecting novelty but not
+   faculty-outcome through any non-novelty channel. Very hard for
+   innovation in science.
+4. **Panel data with individual fixed effects.** Repeated within-
+   individual observations to absorb individual-level fixed effects.
+   Hofstra has only first-thesis-per-individual, not panel data.
+
+None of these strategies is operationally available given their
+design. The result remains a **conditional association**, not a
+causal discount. The paper's careful language (talking about
+"discounting" patterns rather than "discrimination causing")
+implicitly acknowledges this; a sympathetic reader infers
+causality, a hostile reader argues the unmeasured-variable concern
+is decisive.
+
+**Connection to ws2.**
+
+For our **Test IV** (within-paper team-diversity × novelty
+regression), we face the same multi-arrow structure:
+
+- Team diversity → novelty (the immediate question)
+- Team diversity → citations / career outcomes (separate)
+- Novelty → citations / career outcomes (separate)
+- Team diversity × novelty → outcomes (interaction in persistence
+  extension)
+
+Same confounding structure, same identification limits. Our Methods
+section already commits to reporting this as descriptive association,
+not causal effect (the framing-commitment paragraphs in pending
+Phase 0.2 batch). The user's observation reinforces a structural
+point: the multi-arrow causal-inference problem isn't unique to
+Hofstra; it's structural to *all* observational scientometrics.
+
+For **aggregate Tests I–III**, the situation is even more
+aggregated — within-paper causal arrows aren't identifiable from
+aggregate data at all. The population-level pattern (divergence
+between aggregate dimensions) can be documented without claiming
+causal arrows. The Epistemic Scope section in `conceptual.md`
+addresses this explicitly.
+
+This is also why the three-whitespace program structure exists:
+ws2 documents observable patterns; ws3 specifies plausible
+structural stories formally; ws1 attempts counterfactual
+identification through interventional simulation. The multi-arrow
+causal-inference problem can't be resolved by ws2 alone, and
+acknowledging that is a methodological commitment, not a
+weakness.
+
+**One-sentence summary.** Null = parallel-slope; alternative tested
+= shallower-slope-for-minorities (slope-difference test, P<0.01 for
+the interaction). For the discount to be *causal* rather than
+*conditional*, Hofstra would need randomization, natural
+experiments, instrumental variables, or panel data — none
+available. With multiple causal pathways simultaneously in play
+(demographic → innovation, innovation → career, demographic →
+career, demographic × innovation → career), observational data can
+document the conditional pattern but cannot isolate which arrows
+produce it. Same identification limits apply to ws2's Test IV and
+to all observational scientometric work; this is precisely what
+motivates the three-whitespace program structure where ws1
+simulation does the counterfactual that ws2 cannot.
 
 ### SQ12 — "Research faculty" definition and selection
 
