@@ -114,6 +114,13 @@ For plotting: `uv sync --extra dev --extra plot`.
 - **Immutable principles (ws2): `docs/desiderata.md`**
 - Program-level desiderata: `../docs/program/desiderata.md`
 - Phase plans/retros: `docs/phases/`
+- **Visual plan summary: `docs/plan-at-a-glance.md`** (Mermaid
+  diagrams; keep in sync when phase plans change — see the
+  "Companion documents and maintenance" section of each phase plan
+  for specific update triggers)
+- Statistics primer: `docs/primers/stats.{tex,pdf}`
+- Topic-modeling primer: `docs/primers/topic-modeling.md`
+- Literature review: `literature-review/README.md`
 - Task tracking: `tasks/todo.md`
 - Lessons: `tasks/lessons.md`
 - Spend tracking: `tasks/spend.md`

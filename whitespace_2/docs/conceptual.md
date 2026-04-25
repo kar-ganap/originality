@@ -190,6 +190,255 @@ Write for them. Engage their critiques pre-emptively.
 | Time at 15 hrs/week | 10 weeks | 14 weeks |
 | Elapsed (realistic, with life events) | 3 months | 5 months |
 
+## Epistemic scope and limits
+
+Added 2026-04-24 during Phase 0.1 scoping conversations. Makes explicit
+what ws2 can and cannot establish as a piece of observational
+scientometric work.
+
+### The measurement-construct gap
+
+Ws2 measures surface markers — novelty (by embedding distance), adoption
+(by citation patterns), team composition (by inferred demographics),
+canonical concentration (by Spearman rank persistence). None of these
+directly measures *innovation* in the substantive sense ("genuine
+advancement of knowledge"). Following Hofstra et al. 2020's explicit
+move, we hold that novelty and adoption are proxies for innovation, not
+substitutes for it:
+
+- Novelty ≠ innovation (new is necessary but not sufficient for
+  substantively new knowledge).
+- Adoption ≠ innovation (adoption patterns are contaminated by structural
+  processes independent of substantive merit).
+
+Any claim ws2 makes about "innovation" is inferential — a structural
+argument about patterns across multiple surface markers — rather than a
+direct measurement.
+
+### The counterfactual-requires-simulation limit
+
+The diversity-innovation literature implicitly invokes a counterfactual:
+what would adoption, novelty, and career outcomes look like if
+structural biases were absent? The difference between observed reality
+and that counterfactual is the "bias" that observational studies
+attempt to infer.
+
+This counterfactual is **not producible from observational data alone**.
+Producing it requires two moves that observational scientometrics cannot
+make:
+
+1. Making implicit structural assumptions explicit — specifying which
+   channels operate (shared canon, shared training, shared platforms,
+   shared advisors), with what strength, on what subpopulations.
+2. Varying those assumptions — asking what changes when channel X is
+   removed or modified. This is an interventional operation, not a
+   measurement.
+
+Both moves live in simulation, not in data analysis. Ws2 can characterize
+the phenomenon with rigor. It cannot identify the structural
+counterfactual that would let us adjudicate (e.g.) the "discrimination"
+versus "quality-difference" readings of demographic adoption gaps.
+
+### The three-whitespace epistemic layering
+
+The originality program's three whitespaces are not redundant; they
+operate on complementary epistemic layers. Each layer's weakness is
+another's strength.
+
+| Whitespace | Method | What it establishes | What it cannot |
+|---|---|---|---|
+| **ws2** (empirical) | Observational scientometrics | The phenomenon; quantitative constraints any structural model must reproduce; mechanism-space narrowing via the subfield test | Counterfactuals; causal identification; true adjudication of discrimination vs. quality |
+| **ws3** (theoretical) | Formal model decomposing cumulative preservation (C) and per-capita variance generation (V) | Plausible structural stories; identifiable parameters; qualitative regimes separating mechanism classes | Whether any particular story actually operates; which parameter values real science supports |
+| **ws1** (simulation) | Agent-based simulation of actuator-homogenization dynamics | Counterfactual trajectories under explicit structural assumptions; intervention effects on outputs; structural sensitivity analysis | External validity of simulation structure to real-world science |
+
+Triangulating across layers is what makes the full research program
+stronger than any single study. The layering is not a narrative
+retrofit — it is the natural consequence of what each method can and
+cannot establish.
+
+### What ws2 specifically contributes under this limit
+
+Given ws2 cannot produce the counterfactual, its contributions are:
+
+1. **Phenomenon-level falsification.** If Tests I–III show no divergence,
+   or if the subfield mechanism test produces γ₁ ≈ 0, the actuator-
+   homogenization structural claim is directly challenged. This matters
+   without requiring causal identification — the data refutes structural
+   claims even if it doesn't identify the true alternative.
+2. **Quantitative anchoring for ws1.** Any structural simulation in
+   whitespace 1 must reproduce ws2's time-series patterns, subfield-
+   mechanism results, and Test IV cross-sectional regression. Ws2's
+   findings become empirical targets that simulations must match, not
+   just hypotheses they might test.
+3. **Mechanism-space narrowing.** The subfield mechanism test localizes
+   where structural processes plausibly concentrate — evidence that
+   narrows the class of plausible simulation architectures ws1 needs to
+   build.
+4. **Explicit identification of what simulation would adjudicate.** Ws2's
+   Discussion names the specific unresolved counterfactuals that
+   simulation work could answer (e.g., "what adoption pattern would obtain
+   if canonical concentration were held flat across subfields?"). This
+   gives ws1 a sharp research agenda rather than a vague charge.
+
+### Implications for the ws2 paper's framing
+
+Methods and Discussion should include (paraphrased):
+
+> "Our analysis is observational. We document patterns in surface
+> markers — novelty, team diversity, adoption, canonical concentration —
+> but cannot directly estimate what these patterns would look like
+> absent the structural processes we hypothesize produce them. That
+> estimation requires interventional evidence, whether from large-scale
+> field experiments on scientific evaluation (impractical) or from
+> simulation of explicit structural models (our program's whitespace 1).
+> Ws2 contributes quantitative characterization of the phenomenon that
+> any structural model must reproduce, plus evidence about where
+> structural mechanisms likely concentrate (subfield test), while
+> leaving the counterfactual adjudication to simulation-based follow-up
+> work."
+
+This is the canonical honest framing for observational scientometric
+work on bias-vs-quality. Readers of Hofstra, the Evans lab, and Azoulay
+recognize the move; reviewers from the methodological-critique cluster
+(Petersen-Holst) find it defensible even if not decisive; simulation-
+oriented reviewers understand why observational constraints motivate the
+program's simulation arm. Hiding the limit would invite critique;
+stating it pre-empts it.
+
+### Citation measures as behavioral traces, not influence
+
+A related measurement-construct gap applies to the adoption side of
+the design. Citations are load-bearing in four places in ws2:
+
+1. **Canonical concentration** (Tests I–III, third panel) — Chu-Evans
+   Spearman top-N rank correlation + citation Gini.
+2. **Test IV primary novelty (N_p)** — cosine distance from paper to
+   centroid of cited-references' embeddings; citations define the
+   intellectual context.
+3. **Test IV persistence extension (Stage 3)** — C_k(p) = incoming
+   citations received in year t+k; measures long-term attention.
+4. **Test IV tertiary novelty (optional, Stage 3)** — reference-pair
+   recombination if Uzzi-style is pursued; uses the reference list.
+
+Hofstra et al. 2020's "plethora of reasons to cite" argument motivates
+reducing citation load where possible. Citation behavior is
+heterogeneous: ritual citations, self-citations, politeness citations,
+citations-to-rebut, field-specific citation norms, citation inflation
+over time (Petersen-Arroyave-Pammolli 2024). The measurement chain from
+citation to substantive influence is long:
+
+> **citation** → **attention** → **reception** → **influence**
+
+Each arrow is a non-trivial interpretive step. Observational scientometric
+data gives us the first (citation behavior). Inferring influence requires
+either (a) causal-identification strategies we don't deploy, or (b)
+interventional simulation of explicit influence channels — which is
+whitespace 1's domain, not ws2's.
+
+**Ws2's explicit move.** Where feasible, we reduce citation load by
+running citation-independent parallel measures:
+
+- Test IV secondary novelty: Hofstra-style concept-linkage (first
+  pairwise co-occurrence of FREX concepts with PMI filter in paper's
+  abstract). Runs alongside embedding-distance primary as a citation-
+  free second novelty measure. Co-movement across the two is real
+  cross-methodology robustness.
+- If Test IV tertiary is pursued: Hofstra-style concept-pair
+  recombination preferred over Uzzi-style reference-pair recombination,
+  for the same reason — further reduces citation dependency.
+
+**Where citations remain load-bearing (no substitute).** Canonical
+concentration and persistence are fundamentally adoption measures;
+concept-linkage reuse has its own analog "plethora of reasons" problem
+(ritual reuse, peripheral mention) and doesn't cleanly dodge the
+underlying confound. Here the honest move is acknowledgment in Methods
+rather than methodological escape.
+
+**Why the citation-influence conflation is worse than the
+novelty-as-citation-residual operationalization.** A tempting
+simplification treats citations as direct measurements of influence
+(call this assumption A) and novelty as the residual content not
+traceable through citations (assumption B). Both appear to streamline
+the measurement-construct chain, but they do so at very different
+costs because they make structurally different kinds of claim.
+
+Assumption A is an **interpretation claim**: it asserts a positive
+identity between a measurement and a construct. Such identities
+propagate globally — every downstream inference about influence
+inherits every source of citation-behavior heterogeneity (ritual
+citations, field norms, citation inflation over time, unacknowledged
+non-citation influence channels) as a contaminant of the construct
+itself. The error compounds: citation inflation becomes influence
+inflation, ritual citations become influence relationships, field-norm
+variation becomes influence variation. Hofstra's "plethora of reasons
+to cite" concern becomes invisible rather than manageable.
+
+Assumption B is a **construction claim**: it specifies how a construct
+is operationalized. A construction choice is locally scoped — it can
+be evaluated against alternative operationalizations (concept-linkage
+novelty à la Hofstra; reference-pair recombinant novelty à la Uzzi;
+embedding distance as we propose); it can be supplemented by running
+multiple operationalizations in parallel; and it limits contamination
+to the specific construct's measurement, not to every downstream
+inference.
+
+The asymmetry matters because it justifies a graded response. Ws2
+resists assumption A firmly (citations are not influence; we maintain
+the distinction throughout Methods and Discussion) while tolerating a
+bounded version of assumption B (Test IV primary novelty operates on
+embedding distance from cited-reference centroid, which is a
+citation-residual operationalization). The response to A is definitional;
+the response to B is measurement-mix. This asymmetry also suggests a
+useful rhetorical move for the paper: a Discussion paragraph briefly
+sketching the (A)+(B) simplification and showing where it fails
+(citation inflation becomes fake influence growth; Hofstra's argument
+flips; sparse-citation papers score as maximally novel absent peer-
+review filtering) makes the case for our position concrete rather than
+abstract.
+
+Generalizable methodological principle: **interpretation-level
+conflations are typically more damaging than construction-level
+operationalization choices.** The former infects inference globally;
+the latter is contained. This applies beyond ws2 — it's a lens worth
+carrying into every methodological review we do.
+
+**Methods section commitment.** A short paragraph near the opening of
+Methods should state explicitly:
+
+> "Our reception and adoption measures are citation-based. We use
+> 'citation' rather than 'influence' throughout. Citations are
+> behavioral traces, shaped by citation norms, field conventions, and
+> structural processes. Inferring influence — a causal relationship —
+> from citation patterns requires interpretive steps we do not take
+> in this paper. Canonical-concentration metrics (Chu-Evans Spearman)
+> should be read as measuring the concentration of year-over-year
+> citation attention on a top-N cohort, not the concentration of
+> intellectual influence. Where citation independence is feasible
+> (novelty measures), we run citation-independent parallel metrics as
+> robustness; where it isn't (adoption measures), we acknowledge the
+> limit rather than engineer around it."
+
+This mirrors the novelty-vs-innovation distinction (above) in
+structural form: surface marker, intermediate construct, substantive
+target, with honest framing about which gap our measurements do and
+don't close.
+
+### When to revisit this section
+
+This section is a framing commitment. Revisit if:
+
+- Phase 0.1 sanity checks reveal that the phenomenon level is itself
+  contested (e.g., Test I produces no divergence under any specification),
+  at which point the scope discussion shifts from "what does the
+  divergence mean" to "is there a divergence to interpret."
+- Ws1 starts producing simulation results whose counterfactual answers
+  are reported in ws2 (they shouldn't be — simulation findings belong in
+  ws1's own paper).
+- A referee pushes on the counterfactual claim in a specific way that
+  requires sharper language than this section provides.
+- A referee pushes on the citation-as-influence concern in a way that
+  requires more specific disclaimers than the Methods paragraph above.
+
 ## What "done" looks like
 
 You have a paper draft with:

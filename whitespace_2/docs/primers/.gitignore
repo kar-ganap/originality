@@ -1,0 +1,15 @@
+# LaTeX auxiliary files — don't track
+*.aux
+*.log
+*.toc
+*.out
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.bbl
+*.blg
+*.nav
+*.snm
+*.vrb
+
+# Keep .tex sources and compiled .pdf
