@@ -942,9 +942,136 @@ ws2: multi-operationalization of demographic diversity (item 11
 sub-item / new item), explicit Methods-section acknowledgment (item 9
 extension), and subfield-concentration framing in Discussion.
 
-### On C2 — distal novelty mediator: real or information-theoretic?
+### On C2 — distal-novelty mediator: discrimination or information-theoretic?
 
-(Pending.)
+Working session with user, 2026-04-24.
+
+**User's first-pass observation.** *"I don't have anything to add
+beyond our SQ14 discussion. Can you think of anything else?"* The
+intuition that C2 largely overlaps SQ14 is correct, but a useful
+sharpening surfaced through the back-and-forth that's worth capturing
+because it directly clarifies what Test IV's β_3 measures.
+
+**The discrimination/information-theoretic distinction sharpened.**
+
+C2's framing presents a binary: is the distal-novelty mediator
+"discrimination" or "information-theoretic"? Hofstra's analysis
+structure resolves this in a specific way that requires precision —
+and an initial overstatement on my part required correction by the
+user.
+
+**What Hofstra actually does.** Controls for distal novelty as a
+**main-effect covariate** in regressions of career outcomes on
+demographic status. The 3.5% → 9.5% gender discount (and 4.3% → 15%
+impactful-novelty version) include distal novelty as a control. Main
+text claims: *"These results hold over and above of the distance
+between newly linked concepts"* (p. 9287).
+
+**What Hofstra does NOT do (or at least doesn't headline).** Test
+the **(demographic × distal-novelty) interaction** at the link
+level. They don't formally verify that the distal-novelty → uptake
+relationship has the same slope for majority-introduced and
+minority-introduced links.
+
+**Why this distinction matters.** A main-effect control adjusts for
+the *average* distal-novelty effect on outcomes. It treats distal
+novelty as if its effect were uniform across creators. After
+main-effect adjustment, the residual demographic effect could be:
+
+- **Pure "around-distal" residual** if interaction = 0: distal
+  novelty operates equally for everyone, demographic discrimination
+  works through OTHER channels.
+- **Underestimated "through-distal" effect plus around-distal
+  residual** if interaction < 0: demographic discrimination operates
+  PARTLY through differential treatment of distal contributions,
+  which the main-effect control absorbs imperfectly.
+
+These two readings are observationally indistinguishable from
+Hofstra's main-text analysis. The main-effect control is a partial
+information-theoretic correction; the differential-discrimination
+question requires the interaction test, which isn't formally
+reported.
+
+**The earlier overstatement and its correction.**
+
+I initially said: *"The mediator is information-theoretic, NOT a
+discrimination claim... it operates the same for majority-introduced
+and minority-introduced links."* User pushed back: *"so are you
+saying that Hofstra had already controlled for the information-
+theoretic confound?"*
+
+The corrected framing: Hofstra controls for the distal-novelty *main
+effect* (partial information-theoretic control); they don't formally
+verify uniformity-of-effect-across-groups (the interaction). My
+earlier framing collapsed this distinction. The correction matters
+because it directly determines what Test IV's β_3 measures
+methodologically.
+
+**ws2 lesson — Test IV's β_3 IS the missing interaction test.**
+
+Test IV's persistence regression specification:
+
+> log(1 + C_15) = α + β_1·N_p + β_2·T_p + β_3·(N_p × T_p) + controls + ε
+
+- **β_1 (N_p main effect)** corresponds to Hofstra's information-
+  theoretic mediator — the average effect of paper-level novelty on
+  long-term-citation accumulation, regardless of team composition.
+- **β_2 (T_p main effect)** corresponds to Hofstra's residual
+  demographic effect after main-effect distal control — the
+  "around-novelty-channel" team-diversity effect.
+- **β_3 (T_p × N_p interaction)** is the test Hofstra doesn't run —
+  whether team-diversity differentially modulates the novelty →
+  long-term-citation relationship.
+
+Substantive readings of β_3:
+
+- **β_3 = 0**: novelty's long-term-uptake effect is uniform across
+  team-diversity levels. Information-theoretic mediation operates the
+  same for everyone; team-diversity effects (if any) operate through
+  other channels. Hofstra's "main-effect control" assumption holds.
+- **β_3 < 0**: diverse teams' novel papers get less long-term uptake
+  than non-diverse teams' equally-novel papers. Differential
+  discrimination operates *through* the novelty channel. The
+  main-effect-control approach (Hofstra's) would underestimate the
+  full demographic effect.
+- **β_3 > 0**: diverse teams' novel papers get more long-term uptake
+  than non-diverse teams'. Inverse-discrimination through the novelty
+  channel; less commonly hypothesized.
+
+**Test IV's design directly addresses C2's discrimination-vs-
+information-theoretic question** — not because we anticipated C2
+specifically, but because the interaction-term specification is
+methodologically more rigorous than main-effect-only adjustment for
+mediator effects. We're built to distinguish what Hofstra leaves
+implicit.
+
+**Pending batch addition (item 9 extension — Methods framing
+paragraph):**
+
+> *"Hofstra et al. 2020 control for distal novelty as a main-effect
+> covariate when estimating demographic discounts in career outcomes;
+> their main-text analysis treats the distal-novelty → uptake
+> relationship as uniform across demographic groups (without
+> explicitly verifying the assumption). Our Test IV persistence
+> regression includes the (T_p × N_p) interaction term β_3
+> explicitly, which directly tests the uniformity assumption
+> Hofstra leaves implicit. β_3 ≠ 0 indicates that the novelty →
+> long-term-citation relationship varies by team diversity — the
+> discrimination-through-novelty-channel hypothesis the main-effect
+> specification cannot distinguish from pure information-theoretic
+> mediation."*
+
+Three-sentence framing addition. No new analysis (the regression
+specification is already committed). Sharpens what β_3 measures
+substantively and ties it to the broader literature.
+
+**One-sentence summary.** Hofstra's "control for distal novelty" is a
+main-effect adjustment that doesn't test the (demographic × distal-
+novelty) interaction; the discrimination-through-distal-channel
+question is observationally indistinguishable from pure information-
+theoretic mediation in their main analysis. Test IV's β_3 is the
+interaction Hofstra doesn't run — methodologically more rigorous on
+this dimension. Methods framing should make this explicit.
 
 ### On C3 — individual findings aggregated to team level
 
