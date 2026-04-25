@@ -1701,9 +1701,141 @@ robustness check (r=0.931 at year 2000) that doesn't probe boundary
 years; used by Hofstra to argue that women's higher distal-novelty
 production partially mediates their lower uptake.
 
-### SQ9 — PMI filter threshold sensitivity
+### SQ9 — PMI filter threshold sensitivity (≥10 vs. ≥1 vs. ≥100; PMI vs. raw frequency)
 
-*(Pending — surfaced in the "≥10 theses" discussion but not formally walked through as SQ9.)*
+Working session with user, 2026-04-24.
+
+User asked first for the PMI computation mechanics (corpus-wide
+empirical probabilities, log-ratio of joint to product-of-marginals,
+specific examples) before answering. Once mechanics were clear, user
+gave a tight three-part answer that turned out to surface a deeper
+methodological observation about demographic-by-filter interaction.
+
+**User's first pass.**
+
+- ≥10 → ≥1: many noise high-PMI pairs (false positives to what we
+  truly want)
+- ≥10 → ≥100: false negatives — some useful pairs get screened out;
+  what remains is "not too distinguishable wrt median"
+- Raw frequency filter: penalizes concepts with low baseline
+  occurrence rates → many false negatives
+
+**Sharpening (1) — ≥10 → ≥1.** The false positives concentrate in
+*one-shot or two-shot terms*. Their PMI estimates are pathologically
+unstable: the denominator $\Pr(a)\Pr(b)$ becomes vanishingly small,
+and a single co-occurrence of two one-shot terms produces extreme
+PMI by accident.
+
+Substantive consequence: novelty count would *inflate massively*
+because the candidate vocabulary explodes, but the new "links" would
+be measuring vocabulary peculiarities of obscure terms rather than
+substantive concept-bridging. Hofstra's headline finding might still
+hold but would be measuring something different — statistical noise
+over rare vocabulary rather than meaningful recombination.
+
+The ≥10 threshold is essentially: "PMI on rare terms is noise;
+require enough observations for the ratio to mean something."
+
+**Sharpening (2) — ≥10 → ≥100.** User's "not too distinguishable wrt
+median" intuition is sharp. The mechanism: PMI is most discriminating
+when the candidate vocabulary spans a wide range of base rates —
+common terms get penalized for high $\Pr(a)\Pr(b)$ products, rare-
+but-associated terms get rewarded. When all surviving terms have
+similar (relatively high) base rates, the products sit in a similar
+range, and PMI's discriminative power across the surviving pool
+narrows.
+
+Specific consequence for Hofstra's findings: distal novelty depends
+on cross-field bridges, which typically involve at least one
+specialized term that wouldn't survive ≥100. So:
+
+- Distal novelty signal weakens or disappears.
+- The partial-mediation argument (women → more distal novelty → less
+  uptake) loses its data foundation.
+- Hofstra's mechanistic chain in Figure 3 would be broken.
+- The novelty signal that survives is entirely "within-field common-
+  concept recombinations," not the cross-field-bridges-by-outsiders
+  narrative the paper builds.
+
+**Sharpening (3) — Raw frequency vs. PMI.** This is the most
+interesting result. User's framing (penalty for low-baseline concepts
+→ false negatives) is correct but doesn't surface the deeper finding:
+**the demographic-by-filter interaction.**
+
+Hofstra's argument depends on a chain:
+
+1. Women introduce more distal novelty (Figure 3C, P<0.001)
+2. Distal novelty has lower uptake (Figure 3D, P<0.001)
+3. Therefore part of the gender uptake gap is mediated by distal-
+   novelty differential
+
+Distal novelty = cross-field bridges = concept pairs from semantically
+distant regions, typically involving at least one specialty/less-
+common term. Under raw-frequency filtering:
+
+- Cross-field-bridge pairs get excluded (low absolute joint count)
+- Women's novelty contribution gets *disproportionately* filtered out
+  (because their novelty is more distal-loaded)
+- Surviving novelty pool skews toward within-field common-concept
+  pairs (more conventional, less distal)
+
+**The raw-frequency filter doesn't just produce false negatives
+uniformly — it produces false negatives disproportionately for one
+demographic group.** The filter choice isn't demographically neutral.
+
+If Hofstra had used raw frequency instead of PMI:
+
+- The headline "underrepresented groups introduce more novelty"
+  might *weaken substantially*
+- Distal novelty wouldn't exist as a measurable mediator
+- The cross-field-outsider-vantage mechanism story wouldn't have
+  data behind it
+- Findings might *flip* — minorities could appear less novel under
+  raw-frequency filtering
+
+**The methodological lesson generalizes.** Filter choice in
+scientometric measurement often has demographic-by-method
+interactions. A filter that disproportionately excludes one kind of
+content (here: rare-term-involving cross-field bridges) will
+disproportionately exclude the demographic groups whose work is
+characterized by that kind of content. This is not unique to PMI vs.
+raw frequency; it applies to many filtering choices (citation-count
+thresholds, author-disambiguation cutoffs, abstract-length
+restrictions, etc.).
+
+**Connection to ws2's filter policy.** This SQ directly motivated our
+filter-policy commitments in pending Phase 0.2 batch item 5:
+
+- Test IV primary N_p (embedding distance): no filter on cited
+  references. Filtering would shift the metric toward "distance from
+  mainstream references," biasing against distal-novelty detection
+  — exactly the failure mode this SQ surfaces in Hofstra's context
+  if they'd used raw frequency.
+- Test IV secondary N_p (Hofstra-style concept-linkage): adopts
+  Hofstra's ≥K filter on FREX concepts (K=20 default). Inherits
+  PMI-style stability without distorting toward common-only.
+- Citation-list richness sensitivity (sub-item): explicitly tests
+  whether Test IV's findings differ when we restrict to citation-rich
+  papers vs. include sparse-citation papers. Probes the demographic-
+  by-filter interaction at our scale.
+
+The demographic-by-filter interaction is a real methodological hazard
+ws2 has to handle deliberately; this SQ exercise is exactly why our
+filter policy is constructed the way it is.
+
+**One-sentence summary.** Lowering the threshold to ≥1 floods the
+candidate pool with one-shot-vocabulary noise (PMI estimates
+unstable for rare terms); raising to ≥100 narrows the surviving
+vocabulary to a common-base-rate range where PMI's discriminative
+power flattens (and crucially, distal-novelty signal vanishes
+because cross-field bridges depend on specialty terms); replacing
+PMI with raw frequency systematically excludes cross-field bridges
+and creates a demographic-by-filter interaction (women's distal-
+loaded novelty is disproportionately filtered out, potentially
+flipping or substantially weakening the headline finding). The
+methodological lesson — filter choices have demographic-by-method
+interactions — directly motivates ws2's deliberate no-filter primary
++ Hofstra-style ≥K filter on secondary policy.
 
 ### SQ10 — Global embeddings justification (r=0.931 at year 2000)
 
