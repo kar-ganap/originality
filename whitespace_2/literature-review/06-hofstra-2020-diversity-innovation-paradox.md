@@ -2092,9 +2092,183 @@ to all observational scientometric work; this is precisely what
 motivates the three-whitespace program structure where ws1
 simulation does the counterfactual that ws2 cannot.
 
-### SQ12 — "Research faculty" definition and selection
+### SQ12 — "Research faculty" definition and selection mechanisms
 
-*(Pending.)*
+Working session with user, 2026-04-24.
+
+**User's first pass.** The narrow "research faculty" definition
+depends on "what career trajectory looks like in each field," citing
+three filtered paths: (1) research lab after PhD, (2) non-research
+position after PhD, (3) non-tenure research-track position in
+academia. Plus a temporal skew observation: "some others like worked
+for some time in 1)-3) above before obtaining tenure track will also
+add some temporal skew." Plus the sharp framing: *"It's like saying
+I will care for certain edges only if the creator of the edge
+remains in the pool. This might only have like career progression as
+the primary outcome of interest at the study design time."*
+
+**Sharpening (1) — person-level vs edge-level filter.** The user's
+"edges only if the creator remains in the pool" intuition captures
+a specific methodological commitment: the "research faculty" outcome
+operates on a survivors sub-sample of edge-creators, not on the full
+population of edge-creators. Two-step filter:
+
+- **Edge-creation (novelty) is measured at thesis stage, population-
+  wide.** Every 1982–2010 PhD thesis in ProQuest contributes edges
+  regardless of author's subsequent career.
+- **Career outcome is measured years later, on a filtered sub-sample.**
+  Whether the edge-creator becomes "research faculty" depends on US
+  PhD-granting-institution employment + taking on a PhD student +
+  that student appearing in the corpus.
+
+So the discount comparison is technically: *"Among edge-creators who
+ended up in PhD-granting-institution advisor roles, minorities need
+higher novelty than majorities for similar advisor-pool membership."*
+This is narrower than "minorities need higher novelty for similar
+career outcomes." The narrowness matters for interpretation.
+
+**Sharpening (2) — what Hofstra is actually studying.** The user's
+intent-inference observation is correct. By using "research faculty"
+as the narrow outcome, Hofstra is effectively asking a specific
+question about the **reproduction of the academic class**: "do you
+become someone who trains the next generation of PhDs?" This is
+pipeline-continuity, not career-success-in-general.
+
+A minority researcher who becomes a highly-cited industry researcher,
+or a teaching-focused professor at a liberal arts college, or a
+research scientist at a national lab — none count as "research
+faculty." These are substantial career successes; they're just not
+*academic-reproduction* successes.
+
+The broader "does innovation pay off for minorities?" question
+requires the broader "continued researcher" definition (Hofstra's
+secondary outcome). That the discount holds on both is Hofstra's
+evidence that the result isn't an artifact of the narrow definition —
+but the magnitudes differ, and the broader-definition numbers aren't
+in the same headline form in the main text.
+
+**Selection mechanisms, demographically non-neutral.** Each of the
+three filtered career paths the user identified has demographic
+correlations:
+
+- **Industry research.** Asian researchers (especially in CS/ML) may
+  be over-represented at Google Research, Microsoft Research, Meta AI,
+  etc. Excluding industry systematically excludes this subpopulation
+  from the "research faculty" measurement even if they're doing
+  high-impact research.
+- **Non-research positions & teaching-focused academia.** Women are
+  historically over-represented at teaching-focused and non-research-
+  primary positions. The institution-type filter is thus not gender-
+  neutral.
+- **Non-tenure research-track.** Research scientists, staff
+  scientists, soft-money researchers. Filtered out despite doing
+  research. Demographic patterns here depend on field.
+- **Temporal skew from non-linear careers** (user's observation). A
+  person who goes industry → academia → eventually TT advisor is
+  systematically later than linear-path peers. Women often have
+  non-linear paths due to caregiving; some groups for economic or
+  visa/geographic reasons.
+
+**Alternative definitions and gap-change implications:**
+
+| Definition | Expected gap change | Why |
+|---|---|---|
+| TT position at any institution (incl. liberal arts, foreign) | Smaller gap | Broader denominator; includes teaching-focused positions |
+| h-index ≥ 10 by year 10 post-PhD | Smallest of common alternatives | Institution-neutral; productivity-based |
+| Industry R&D employment | Possible inversion for some groups | Different selection dynamics by industry sector |
+| Total 10-year citation count | Gap present but smaller | Impact-based, excludes no publishers |
+| "Continued researcher" (Hofstra's broad) | Gap present, smaller than research-faculty | Includes WoS publishing; captures non-academic trajectories |
+
+General principle: narrower definitions (higher institutional filter,
+stricter career-path linearity) show larger gaps; broader definitions
+show smaller gaps. Discount has both an *institutional-exclusion
+component* and a *residual among-survivors component*.
+
+**The edge–edge vs creator–creator asymmetry.** Hofstra's data
+structure allows measuring every new edge regardless of the creator's
+later career. But the discount finding conditions on the creator
+surviving in the academic-reproduction pool. Hidden imbalance:
+
+- Novelty time series: complete measurement (all edges).
+- Career-discount time series: survivor-biased measurement (only
+  academic-reproduction survivors).
+
+If demographic groups have different academic-pipeline survival
+rates *independent of novelty*, the career-discount gap is
+contaminated by differential pipeline survival. Some of the
+"discount" could be "some demographic groups leave academia for
+non-academic-but-successful careers at higher rates, so we don't see
+their late-career outcomes." This is not the same as Hofstra's
+interpretation ("minorities get less credit for their novelty") but
+it's consistent with the observed data.
+
+**Connection to ws2 — three structural commitments derived from this
+SQ.**
+
+User asked: "anything we could do differently beyond explicit ack
+given our core hypothesis?" The SQ surfaces three design
+commitments that address survivor-bias structurally, not just via
+acknowledgment.
+
+**(a) Multi-window lookahead reporting** for Test IV persistence
+extension (modifies pending batch item 7). Instead of anchoring on
+C_15 alone, report regression at C_5, C_10, C_15 in a single table.
+Stability across windows = robustness claim; divergence = substantive
+finding about observation-window dependence. Each paper enters each
+measurement at the appropriate post-publication stage. Cost: 2×
+additional regression runs (trivial), 3 columns in main table.
+Benefit: sharpens interpretability; aligns with metric-plurality
+desideratum §8.
+
+**(b) Per-active-year normalization** for item 11 production-capture
+aggregate decomposition (modifies pending batch item 11). Instead of
+$N(G, Y)$ = total new links by group G in year Y, use $N(G, Y)$ =
+*mean new links per active group-G author in year Y* (active =
+published ≥1 paper in Y). This isolates per-capita production from
+pipeline-survival effects. A minority author who leaves the corpus
+in 1995 contributes to the mean through 1994, then drops from the
+denominator — they don't count as "zero production" in later years;
+they just aren't counted. Cost: moderate; requires author-level
+active-years tracking (low incremental given we're already doing
+author-level demographic attribution). Benefit: substantially cleaner
+substantive interpretation of item 11 results.
+
+**(c) Explicit pipeline-survival sub-analysis** (new sub-item under
+item 11). Define "pipeline survival" = publishing ≥1 paper in any
+5-year window spanning ≥10 years post-first-publication. Report
+pipeline-survival rates per demographic group. If minorities show
+lower pipeline-survival independent of novelty, item 11's analysis
+is contaminated by pipeline attrition. Worth documenting separately
+so readers can see whether it drives the main result.
+
+All three commitments documented in SQ12 → pending Phase 0.2 batch
+updates (see running batch summary).
+
+**What ws2 doesn't adopt from this SQ.** Two things considered and
+rejected:
+
+- **IPCW / survival-aware estimators.** Methodologically rigorous
+  but substantially more complex. Cost-benefit doesn't favor for
+  ws2's scope. Available if reviewers push on censoring bias.
+- **Multiple imputation for missing post-corpus data.** Requires an
+  imputation model (what would a minority author who left in 1995
+  have produced in 2005?). The imputation model is itself a
+  substantive commitment that could shift results. Without strong
+  theoretical grounding, adds complexity without interpretive gain.
+
+**One-sentence summary.** "Research faculty" is a narrow academic-
+reproduction outcome that filters out industry research, teaching-
+focused academia, non-tenure research-track, and non-linear career
+paths — each demographically non-neutral. The discount holds on both
+narrow and broad definitions (Hofstra reports both), but the
+survivor-bias concern is real and structurally matches the kind of
+concern that applies to ws2's Test IV persistence and item 11
+production-capture decomposition. Three structural commitments
+derived from this SQ: (a) multi-window lookahead reporting for
+persistence; (b) per-active-year normalization for item 11; (c)
+explicit pipeline-survival sub-analysis for item 11. These move
+beyond explicit acknowledgment to design-level survivor-bias
+handling.
 
 ### SQ13 — URM per-group inference accuracy heterogeneity
 
