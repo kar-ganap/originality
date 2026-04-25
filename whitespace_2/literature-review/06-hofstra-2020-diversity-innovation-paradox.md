@@ -2272,7 +2272,133 @@ handling.
 
 ### SQ13 — URM per-group inference accuracy heterogeneity
 
-*(Pending.)*
+Working session with user, 2026-04-24.
+
+**User's first-pass intuition.** *"Other than team-level tests I don't
+see this question helping us much."* The intuition is largely correct
+— we've already absorbed most of the methodological lesson into ws2's
+commitments (Lockhart-2023-grounded weight-by-confidence policy,
+region-of-origin stratification in plan subsection 9). Walkthrough
+confirms this intuition and surfaces three marginal extras.
+
+**Per-group accuracy heterogeneity (SI p. 14).** After all methods
+including auxiliary:
+
+- White: 97.2%
+- Asian: 93.4%
+- Hispanic: 70.4% raw → ~83% after Sood-Laohaprapanon auxiliary
+- AA: 9.9% raw → ~74% after auxiliary
+- NA: worst of all; auxiliary doesn't fully fix
+
+**Three specific consequences of URM pooling.**
+
+**(1) URM is a compositional average over subpopulations with
+heterogeneous inference accuracy.** URM classifications have roughly
+20–25 percentage points more misclassification than white
+classifications. The URM-vs-white contrast is structurally
+"(83%-accurate Hispanic + 74%-accurate AA + small NA) vs. 97%-
+accurate white."
+
+**(2) Subgroup-specific dynamics are invisible.** "URM introduces
+more novelty" could be driven primarily by Hispanic, primarily by
+AA, equally by both, or by opposite effects that partially cancel.
+Hofstra's pooled analysis can't tell us which. The same ambiguity
+propagates to the distal-novelty mediator.
+
+**(3) Intersectional analyses limited to 2×2 cells.** Gender × race
+in Hofstra is 2 × 2 (white women, white men, nonwhite women, nonwhite
+men). With better inference, intersectional analysis at 2 × 3 level
+(separate Hispanic, AA cells) becomes possible — revealing whether
+gender gaps operate uniformly across racial subgroups or differently.
+
+**How you'd decompose with better inference.** Given perfect
+demographic inference:
+
+- **Separate per-subgroup regressions:** Hispanic-vs-white, AA-vs-
+  white, NA-vs-white analyses in parallel. Compare effect sizes. If
+  URM aggregate finding holds for each subgroup, aggregate is
+  meaningful. If subgroups differ substantially, URM is a statistical
+  artifact hiding real heterogeneity.
+- **Formal test of aggregation validity:** test whether per-subgroup
+  coefficients are statistically indistinguishable. If yes, URM
+  makes sense; if no, URM aggregates distinct populations.
+- **Finer intersectional analyses:** 2 × 3 or finer cells with
+  meaningful sample sizes.
+- **Pipeline decomposition by subgroup:** differential career
+  outcomes within URM.
+
+Hofstra is explicit in SI that the URM pooling is *forced* by
+inference accuracy, not preferred. With their 10% AA accuracy (pre-
+auxiliary) and 74% (post-auxiliary), per-subgroup analysis would have
+too much misclassification noise to be reliable. The aggregate is
+defensive, not substantive.
+
+**ws2 relevance — user's intuition validated with three marginal
+extras.**
+
+The main lesson is already absorbed into ws2 via the Lockhart-
+grounded weight-by-confidence policy and the region-of-origin
+stratification commitment (plan subsection 9). Our stratification is
+finer (Anglo / East Asian / South Asian / Arabic-speaking / Slavic /
+Latin / other) than Hofstra's white / Asian / URM, and our NamSor +
+Genderize approach provides better per-region accuracy than
+Hofstra's Census-and-Sood approach.
+
+**SQ13 validates these existing commitments rather than motivating
+new ones.** Three marginal extras surface from the SQ but are
+low-priority:
+
+**(a) Rao's Q distance-metric granularity.** Our Rao's Q uses uniform
+Hamming distance between demographic states. SQ13's logic suggests
+non-uniform weights (e.g., some demographic boundaries are more
+culturally meaningful than others). For ws2 primary analysis, uniform
+Hamming is defensible (transparent, convention-matching). Non-uniform
+could be a Stage 3 robustness check — low priority.
+
+**(b) Item 11 stratification level — worth noting in pre-
+registration.** We're committed to per-demographic-group decomposition.
+Question of granularity: at 7-region level (finer) vs. pooled bins
+(coarser). Trade-off: finer = cleaner interpretation, smaller per-
+group samples; coarser = bigger samples, URM-style pooling concern.
+**Small modification to item 11 pre-registration**: report primary at
+finer granularity (7+ regions), collapse to coarser groups only for
+robustness or secondary analysis.
+
+**(c) Intersectional analyses in Stage 3.** Gender × region-of-origin
+× career-stage is a 2 × 7 × 3 = 42-cell structure. Most cells will
+have thin samples. Document as a structural possibility we explored;
+report selectively where cell sizes permit. Stage 3 secondary, not
+primary.
+
+None of (a)–(c) are load-bearing commitments. The main "what we can
+do differently" answer is that we've already done it: finer-granularity
+demographic stratification is built into ws2 by design from the start.
+
+**Net framing.** Hofstra's URM pooling is a forced choice from
+inference limits, not a methodological preference. It creates real
+measurement and interpretability costs (subgroup heterogeneity
+invisible; compositional-average findings; intersectional analyses
+limited). Ws2's region-of-origin stratification and weight-by-
+confidence policy are already better-rigored than Hofstra's approach
+on this dimension. SQ13 validates these choices rather than motivating
+new ones; the three marginal extras are nice-to-haves for Stage 3
+robustness rather than load-bearing commitments.
+
+**One-sentence summary.** URM = Hispanic + AA + NA pooled with
+heterogeneous per-subgroup inference accuracy (83% / 74% / worse);
+aggregate findings are compositional averages that mask subgroup
+differences, forced by inference limits not preferred methodology.
+With better inference, per-subgroup decomposition + finer
+intersectional analyses become possible. Ws2's region-of-origin
+stratification + weight-by-confidence policy are already better-
+rigored than Hofstra's on this dimension; SQ13 validates existing
+commitments rather than motivating new ones.
+
+**Small modification to pending batch.** Item 11 primary
+operationalization: report demographic decomposition at region-of-
+origin granularity (≥7 groups) rather than pooled coarser bins. This
+is consistent with our existing commitments but makes the granularity
+choice explicit in pre-registration.
 
 ### SQ14 — Career discount after controlling for distal novelty
 
