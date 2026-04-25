@@ -1075,7 +1075,115 @@ this dimension. Methods framing should make this explicit.
 
 ### On C3 — individual findings aggregated to team level
 
-(Pending.)
+Working session with user, 2026-04-24.
+
+**User's first-pass.** *"Not sure how to answer."* The three
+aggregation patterns make different predictions and the data hasn't
+spoken yet. Walkthrough lays out predictions, evidence, honest
+expectation, and what each observed outcome would update us on.
+
+**Three aggregation patterns, three predictions for Test IV's γ_1:**
+
+| Pattern | Mechanism | Test IV γ_1 prediction |
+|---|---|---|
+| Pure additive | Individual contributions sum mechanically | γ_1 > 0, scaling with minority fraction in team |
+| Actuator-override | Shared inputs (advisor, canon, training) average individuals to consensus | γ_1 ≈ 0 even though Hofstra's individual effect is real |
+| Selection | Team formation correlates with topic, advisor, institution | γ_1 attenuates substantially under FE |
+
+**Evidence for each:**
+
+- **Pure additive**: Hofstra's individual finding survives multiple
+  robustness checks; Page-Hong literature predicts compositional
+  effects at team level; some scientometric work finds positive
+  team-composition effects.
+- **Actuator-override**: ws2's whole thesis is built around shared
+  actuators producing homogenization; CS especially has dense
+  actuators (deep learning canon, GitHub, conferences, advisor
+  lineage chains); field-level homogenization is observable, teams
+  are smaller-scale instances of same dynamic.
+- **Selection**: team formation in academic science is highly non-
+  random; demographic patterns correlate with subfield, advisor,
+  institution; Hofstra's individual-level analysis controls for
+  these but team-level analysis exposes within-team selection
+  patterns.
+
+**Honest answer: probably some mixture, with field-specific
+variation.**
+
+For CS specifically, actuator-override is plausible at moderate-to-
+strong magnitude. The actuators are dense (transformer-architecture
+canon post-2017, conference monoculture, lineage chains). γ_1 could
+be substantially attenuated relative to Hofstra's individual
+coefficient, possibly approaching zero in some specifications.
+
+For Physics, actuators are weaker on average (more diverse subfields,
+less hot-trend dominance). γ_1 could be larger than in CS, closer
+to pure additive.
+
+For both, selection effects will absorb some signal under FE — both
+fields have non-random team formation correlated with subfield,
+advisor, institution.
+
+Most likely empirical outcome: **γ_1 ≠ 0 but substantially smaller
+than pure-additive aggregation of Hofstra's individual coefficient
+would predict, with magnitude varying by field (CS smaller than
+Physics) and by control specification (smaller with FE than
+without).**
+
+**What each observed outcome would update us on:**
+
+| Observation | Update |
+|---|---|
+| γ_1 > 0, stable across specifications, both fields | Pure additive holds; outsider vantage extends from individual to team level; ws2's actuator-override hypothesis weakened |
+| γ_1 ≈ 0, both fields, all specifications | Actuator-override dominant; team dynamics flatten individual vantage; strongest support for ws2's central claim |
+| γ_1 > 0 in Physics, ≈ 0 in CS | Field-specific actuator-override; CS's tight actuator network suppresses team-level signal; Physics's looser structure preserves it. Most informative for ws1 — actuator density is parametrically variable |
+| γ_1 substantially attenuated by FE | Selection-driven; individual-level effect was confounded with team-formation patterns; outsider-vantage requires nuancing |
+| γ_1 < 0 (diverse teams less novel) | Surprising, doesn't fit any pattern cleanly; suggests differential editorial filtering or systematic publishing disadvantage; would prompt re-examination of measurement chain |
+
+**Connection to ws2 commitments.**
+
+We're already set up to test all three patterns through Test IV's
+regression structure. What would help discriminate:
+
+**(1) Report γ_1 across multiple control specifications.** Same
+sensitivity-analysis pattern as the SQ14-derived mediation-control
+sensitivity (β_3 across specs). For γ_1:
+
+- No controls (pure correlation)
+- Year FE only
+- Year + subfield FE
+- Full control set (year + subfield + team size + reference count + team-level covariates)
+
+**Diagnostic readings:**
+- Stable γ_1 across specs → not selection-driven
+- Collapsing γ_1 with FE → selection effects matter
+- Persistent γ_1 ≈ 0 across all specs → actuator-override regardless of selection
+
+**(2) Field-stratified reporting.** Already committed via cross-
+field replication (CS + Physics). γ_1 difference between fields is
+the actuator-density-comparison test. Already in plan.
+
+**(3) Pre-registered interpretive readings.** Phase 0.2 pre-
+registration should explicitly state what each γ_1 pattern is
+interpreted as. Prevents post-hoc framing of unexpected results.
+
+**Pending batch addition (item 7 / Test IV extension):** report γ_1
+across the four control specifications listed above, alongside the
+existing β_3 mediation-sensitivity reporting. Sensitivity-analysis
+table column, not new analysis. Discriminates the three aggregation
+patterns empirically.
+
+**One-sentence summary.** Three aggregation patterns make different
+predictions for Test IV's γ_1: pure additive (γ_1 > 0 scaling with
+minority fraction), actuator-override (γ_1 ≈ 0 despite real
+individual effect), selection (γ_1 attenuates under FE). Most likely
+outcome is a mixture with field-specific variation (CS smaller γ_1
+than Physics, attenuation under controls). Already-committed cross-
+field replication tests actuator-density variation; new pending-
+batch addition reports γ_1 across multiple control specifications
+to discriminate the patterns. The four-quadrant interpretive grid
+(γ_1 sign × persistence pattern from SQ7) extends naturally to
+this discrimination.
 
 ### On C4 — demographic inference accuracy and URM validity
 
