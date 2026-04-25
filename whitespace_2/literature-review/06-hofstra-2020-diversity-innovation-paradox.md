@@ -1187,11 +1187,162 @@ this discrimination.
 
 ### On C4 — demographic inference accuracy and URM validity
 
-(Pending.)
+Working session with user, 2026-04-23.
+
+**Distinctive from SQ13.** SQ13 was about the structural problem of URM
+as a compositional aggregate. C4 is more pointedly methodological: does
+the URM-vs-white discount finding actually survive given the
+catastrophic AA/NA accuracy, and (importantly for ws2) does our
+weight-by-confidence approach solve the problem or just make uncertainty
+visible?
+
+**Sensitivity analyses that would clear Hofstra's URM-vs-white contrast.**
+
+Hofstra mentions one of these in passing (SI p. 14–15): "our main
+substantive conclusions and inferences are robust if we only consider
+those students whose names overwhelmingly occur within one rather than
+multiple races." This is a high-confidence-cases-only restriction. The
+fact that they report it as a footnote rather than headlining suggests
+the substantive conclusions hold, but the analysis isn't given the same
+prominence as the main findings.
+
+Three sensitivity analyses that would clear the contrast more
+rigorously:
+
+1. **Stratified by per-group accuracy.** Run the URM-vs-white discount
+   separately for high-confidence URM cases (probability > 0.9) vs. low-
+   confidence URM cases. If the discount holds in both, robust. If it
+   holds only in low-confidence, measurement error is plausibly driving
+   the result.
+2. **Bounded under assumed misclassification patterns.** Compute the
+   discount under different assumed misclassification rates for each
+   subgroup. If the discount remains for all reasonable misclassification
+   scenarios, it's robust.
+3. **Decompose URM into Hispanic-only and AA-only contrasts where
+   inference allows.** With ~83% Hispanic accuracy, a Hispanic-only-vs-
+   white contrast is more defensible than the pooled URM contrast.
+
+Hofstra's "overwhelmingly one race" restriction is approximately #1 in
+compressed form. They claim the substantive conclusion is robust to
+this restriction. Without seeing the actual numbers, this is a vague
+reassurance.
+
+**Does ws2's weight-by-confidence solve the problem, or just make
+uncertainty visible?**
+
+Honest answer: mostly the latter. Weight-by-confidence is a structural
+improvement over Hofstra's "treat all classifications as equally
+certain" approach because it propagates inference uncertainty into our
+downstream estimates (wider CIs for low-confidence inferences). But it
+doesn't fix the underlying problem in two specific ways:
+
+- A 74% AA inference is still 74% accurate, regardless of how we weight
+  it. Weight-by-confidence makes the lower confidence visible but
+  doesn't generate a more accurate inference.
+- Aggregate findings still mix high- and low-confidence cases under our
+  reporting. Even with weighted CIs, the aggregate point estimate is
+  contaminated by misclassification at rates we can't fully bound.
+
+**What would actually solve the problem:**
+
+1. **Better inference at the source.** NamSor's per-region accuracy is
+   mostly higher than Census-based methods, but still imperfect. ORCID
+   self-reported demographic data has higher accuracy but limited
+   adoption (~30–40% of recent researchers). We're committed to NamSor
+   + Genderize, which is better than Hofstra's stack but not a complete
+   solution.
+2. **Restrict analyses to high-confidence cases only** (lose statistical
+   power; introduce sample selection if confidence varies by
+   demographic).
+3. **Bayesian models propagating inference uncertainty into all
+   downstream estimates** — methodologically elegant but computationally
+   heavy at our scale.
+
+**Sharpening for the C4 walkthrough:** weight-by-confidence is better
+than treating inferences as certain (Hofstra's approach), but it's not
+a solution. It's an honest accounting of uncertainty that doesn't
+pretend to fix the underlying inference quality. The Methods section
+should acknowledge this distinction — we're not claiming our
+demographic inference is reliable; we're claiming we report uncertainty
+more transparently than Hofstra does.
+
+**Pending batch addition:** small Methods-paragraph extension —
+explicitly state that weight-by-confidence is an uncertainty-
+propagation policy, not an inference-quality fix. Three sentences. Low-
+cost.
 
 ### On C5 — diachronic embedding robustness
 
-(Pending.)
+Working session with user, 2026-04-23.
+
+**Distinctive from SQ10.** SQ10 unpacked Hofstra's r=0.931 single-year
+validation as best-case-by-construction. C5 is the hypothetical: which
+of Hofstra's specific findings would change under proper diachronic
+embeddings, and which would be stable? This is genuinely useful to
+think through because it tells us where the embedding choice is
+actually load-bearing for Hofstra's substantive claims.
+
+**What would change under proper diachronic embedding.**
+
+- **The distal-novelty operationalization itself.** Distal novelty is
+  an embedding-distance metric. Per-era embeddings would change which
+  concept-pairs are classified as "distal" — particularly in earlier
+  decades where vocabulary differs from the global average.
+- **The gender-distal-novelty pattern (Figure 3C).** If women's distal
+  novelty is concentrated in specific eras (e.g., post-2000 cross-
+  disciplinary work), per-era embeddings might recalibrate which
+  decades show the gender distal-novelty gap most strongly. The
+  aggregate finding might survive but the temporal distribution would
+  shift.
+- **The partial-mediation argument (Figure 4 / SQ14).** Partly affected
+  via redefinition of distal novelty. If "distal" gets re-classified,
+  the mediator coefficient changes, and the residual demographic
+  discount changes correspondingly.
+- **Boundary-year findings specifically.** Pre-1990 distal-novelty
+  estimates are most affected. The pre-1990 portion of the gender-
+  distal-novelty finding is on shakier ground than the post-1990
+  portion.
+
+**What would stay stable.**
+
+- **Per-individual novelty count (# new links).** Doesn't depend on
+  embedding distance at all. Just first-pairwise-co-occurrences in the
+  abstract. Stable.
+- **Per-individual uptake count (impactful novelty).** Doesn't depend
+  on embedding distance. Stable.
+- **The headline diversity-innovation finding** ("minorities introduce
+  more novel concept-pairs"). Stable, because it's based on novelty
+  count not distance.
+- **The career discount, controlling for distal novelty.** Mostly
+  stable — the residual demographic effect after distal-novelty
+  mediation isn't directly embedding-dependent (only the mediator is).
+
+**What this tells us.**
+
+The diachronic embedding choice is most load-bearing for the distal-
+novelty mediator and least load-bearing for the headline finding. If
+Hofstra's embedding methodology is flawed, the mediator argument is
+suspect; the rest is more robust than the embedding criticism would
+suggest.
+
+This is actually generous to Hofstra — their core finding survives
+even under aggressive criticism of their embedding methodology. The
+criticism applies to a specific component (Figure 3 distal-novelty
+argument) more than the headline.
+
+**For ws2 specifically.**
+
+Our drift-mitigation ladder is built precisely to handle the analog
+problem. Test IV primary N_p uses one global SPECTER2 (similar to
+Hofstra), but Mitigation 4 (anchor-projection) creates a drift-robust
+subspace, and Stage 3 Flavor A creates per-era alternatives if the
+drift-pilot result indicates need.
+
+**Methodological vindication, not new commitment.** SQ10 already
+covered this. C5's marginal contribution: clarifies that the embedding-
+drift concern primarily affects mediator analyses, not core production-
+and-uptake findings. Useful for thinking about which of our own
+analyses are more vs. less drift-vulnerable.
 
 ### On C6 — combinatorial vs. geometric novelty
 

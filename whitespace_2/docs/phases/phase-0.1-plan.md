@@ -222,6 +222,21 @@ Per ws2 desiderata §10 (new in this phase).
 - Full advisor lineage (Proxy C) — out of scope; flagged in Discussion as
   natural follow-up paper.
 
+**Methods-framing commitment on weight-by-confidence (per Hofstra C4
+walkthrough, lit-review session 2026-04-23).** Weight-by-confidence is
+an *uncertainty-propagation policy*, not an *inference-quality fix*.
+The Methods section states this explicitly in three sentences: (a) we
+do not claim our demographic inferences are reliable in absolute
+terms; (b) we claim that our inference uncertainty is propagated into
+all downstream confidence intervals, so headline numbers carry visibly
+wider bounds where inference is weak; (c) per-region inference
+accuracy is reported alongside every aggregate result, so readers can
+adjudicate which group-level contrasts survive realistic
+misclassification rates. This is a deliberate move away from Hofstra's
+"treat all classifications as equally certain" approach, but it does
+not generate more accurate inferences — it makes the existing accuracy
+visible in the error bars.
+
 **Stage 3 addition:**
 - **Proxy B — coauthor-based advisor inference at scale, validated on
   Math Genealogy + ORCID ground-truth subsample** (2–5K authors). Reported
