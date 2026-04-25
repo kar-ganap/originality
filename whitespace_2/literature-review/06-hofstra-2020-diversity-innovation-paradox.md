@@ -789,7 +789,158 @@ Challenge Corner together.)
 
 ### On C1 — outsider vantage vs. alternatives
 
-(Pending.)
+Working session with user, 2026-04-24.
+
+**User's first-pass observation.** *"I don't know if data would've
+had sufficient power to test these alternate hypotheses given the
+size (likely they would) but the framing seems a bit agenda-driven.
+In any case, what are the lessons for us? Should we consider
+different ways to define demographic diversity?"*
+
+The intuition is correct on both counts: the data does have power to
+test most of the alternatives, and the outsider-vantage framing is
+agenda-driven by the authors' theoretical priors rather than
+data-privileged.
+
+**Which alternatives are actually testable in Hofstra's data.**
+
+Sample size (~800K observations in inferential analyses) is not the
+constraint. The constraint is willingness to run the tests.
+
+- **Topic selection within discipline:** testable. Hofstra has
+  concept tags per thesis. Within-topic novelty comparisons would
+  isolate topic-selection from demographic-novelty. Not done in
+  main text.
+- **Advisor differences:** testable. Advisor IDs are in ProQuest;
+  advisor fixed effects would absorb time-invariant advisor-specific
+  effects. If the minority-novelty finding disappears when adding
+  advisor FE, advisor is the driver. Not done in main text.
+- **Supervisor risk tolerance:** proxy-able via advisor-prior-
+  novelty. Risk-tolerant advisors may attract novelty-inclined
+  students and themselves produce novel work. Not done.
+- **Cross-disciplinary training pipelines:** harder — needs
+  undergraduate-major data not in ProQuest. Testable only with
+  external data merge.
+- **Self-selection into academia:** not testable from post-hoc
+  academic data; requires counterfactual.
+
+Three of five alternatives are directly testable; Hofstra runs none
+of them.
+
+**Outsider-vantage privileged by priors, not data.** The data shows:
+*conditional on institution × discipline × year, minorities produce
+more novelty.* This conditional pattern is compatible with outsider
+vantage AND advisor mediation AND within-discipline topic selection
+AND risk-tolerance differentials AND career-risk calculations
+AND self-selection effects. Any of these alone or in combination
+could produce the observed pattern.
+
+Choosing outsider vantage as THE interpretation reflects:
+
+- Hofstra's theoretical framing (citing Page's diversity-innovation
+  literature heavily)
+- The paper's rhetorical structure (lead with paradox; treat
+  discounting as primary contribution)
+- The pre-existing diversity-science literature the paper contributes
+  to
+
+Sympathetic reading: outsider vantage is the most parsimonious
+theoretical frame. Hostile reading: it's the frame they wanted to
+find. Either way, the alternatives aren't substantively engaged.
+
+**The structural issue C1 surfaces.** The agenda-driven framing
+points at a deeper problem: **the mapping from measurable
+demographic categories to substantive claims about "different
+perspectives" requires an interpretive leap the data cannot support.**
+
+Hofstra's chain is:
+
+> categorical inference (name-based) → demographic category
+> assignment → assumed correspondence with lived experience →
+> assumed correspondence with cognitive diversity → assumed effect
+> on novelty production
+
+Each arrow is an interpretive commitment, not a measurement. The
+paper treats the chain as self-evident; close reading surfaces each
+step as an assumption.
+
+This is the third parallel measurement-construct gap we've
+identified, alongside novelty-vs-innovation (SQ7, SQ11) and
+citation-vs-influence (Synthesis Pointer 12). All three operate on
+the same structural pattern: surface marker, intermediate construct,
+substantive target, with each arrow requiring an interpretive
+commitment the data alone cannot adjudicate.
+
+**Lessons for ws2 — three structural commitments derived from C1.**
+
+User asks: "Should we consider different ways to define demographic
+diversity?" Yes. Three specific moves:
+
+**(a) Multi-operationalization of demographic diversity.** Our
+current Rao's Q metric operates on observed categorical demographics
+(gender, country, institution, prestige, career stage, training
+institution). To reduce reliance on any single proxy chain, run ws2's
+divergence test under multiple operationalizations:
+
+- **Categorical** (current primary): Rao's Q over 7 features.
+- **Lineage-based** (Proxy A, already committed): Gini over training-
+  institution concentration.
+- **Advisor-lineage-based** (Proxy B, Stage 3): inferred-advisor
+  diversity from Math Genealogy + ORCID validated subset.
+- **Network-position-based** (potential Stage 3 addition): variance
+  in coauthor-network centrality measures.
+
+If all show similar divergence trends, multi-operational robustness.
+If they differ, the substantive divergence claim is operationalization-
+specific. **Add to pending batch as a new sub-item under item 11
+(or new item) — Stage 3 Test I/II/III robustness with alternative
+demographic-diversity operationalizations.**
+
+**(b) Explicit Methods-section acknowledgment of the categorical-to-
+substantive proxy chain.** Add to item 9 (Methods framing paragraph)
+a third measurement-construct gap acknowledgment:
+
+> *"Our demographic-diversity metric operates on observed demographic
+> categories (gender, country, institution, etc.) inferred from name
+> and affiliation data. We treat these as proxies for the substantive
+> concept of 'different perspectives' that diversity-innovation
+> theory invokes (lived experience, cognitive priors, intellectual
+> pipelines). The categorical-to-substantive mapping requires
+> interpretive assumptions that our measurements cannot directly
+> validate. Where feasible (Proxy A training-institution
+> concentration, Stage 3 Proxy B advisor lineage), we supplement
+> categorical demographics with lineage-based operationalizations to
+> reduce reliance on any single proxy chain."*
+
+Three-sentence framing commitment; no new analysis.
+
+**(c) Subfield-concentration-of-divergence as robustness against
+alternatives.** Already in our subfield mechanism test, but worth
+framing in Discussion: if divergence is concentrated in canonical-
+concentrated subfields, consistent with actuator-mediated mechanisms;
+if uniform across subfields, more consistent with outsider-vantage-
+like dynamics. The subfield mechanism test already bears on this
+distinction.
+
+**Not adopting.**
+
+- Advisor fixed effects at our scale — too computationally expensive,
+  and our subfield FE absorbs much of the relevant variance.
+- Explicit topic-selection test beyond what subfield mechanism test
+  provides.
+- Undergraduate-major integration — out of scope.
+
+**One-sentence summary.** Three of five alternative explanations
+(topic selection, advisor differences, supervisor risk tolerance)
+are directly testable in Hofstra's data but not tested; the outsider-
+vantage interpretation is privileged by authors' priors rather than
+data. The deeper lesson — categorical demographic measurements proxy
+for substantive diversity in ways that require interpretive leaps —
+is the third parallel measurement-construct gap we've identified
+(alongside novelty-vs-innovation and citation-vs-influence). For
+ws2: multi-operationalization of demographic diversity (item 11
+sub-item / new item), explicit Methods-section acknowledgment (item 9
+extension), and subfield-concentration framing in Discussion.
 
 ### On C2 — distal novelty mediator: real or information-theoretic?
 
