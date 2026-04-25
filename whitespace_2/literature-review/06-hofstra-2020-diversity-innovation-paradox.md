@@ -1340,7 +1340,173 @@ for three whitespaces rather than one).
 
 ### On C9 — dissertations vs. papers
 
-(Pending.)
+Working session with user, 2026-04-23.
+
+**Framing question.** Hofstra studies dissertations — the thing a single
+person writes at the start of a research career. ws2 studies papers — the
+thing a team writes across a career-spanning corpus. C9 asks whether the
+"outsider vantage" mechanism — the substantive engine of Hofstra's
+diversity-innovation finding — transfers cleanly to teams.
+
+**My initial framing was wrong, and the user pushed back.** I had
+characterized within-team dynamics as "averaging individual vantages
+toward consensus" — i.e., advisor effects, communication norms, decision-
+making protocols, and peer-review preferences would dilute an outsider
+contributor's distinctive vantage when integrated into a team product.
+The user's pushback: *that picture is not accurate for CS or physics.*
+In hierarchical-authorship technical fields, first authors and last/PI
+authors carry disproportionate weight in shaping the paper's intellectual
+content; the rest of the author list contributes more narrowly (specific
+analyses, code, data, infrastructure). A "team-averaged" characterization
+is closer to the egalitarian-norm fields (some areas of theory, some
+math) than to the modal CS/physics paper.
+
+**Reframed mechanism.** This means the outsider-vantage transfer from
+dissertation to paper is *more direct than I'd suggested*, with two
+caveats:
+
+1. **Position of the demographically-distinct author matters.** An
+   outsider in the first-author or last/PI seat carries their vantage
+   into the paper's conceptual framing with high fidelity. An outsider
+   in a middle-author seat contributes to a team product whose framing
+   is set elsewhere — the vantage is more attenuated.
+2. **Authorship-norm regime varies by subfield.** High-energy physics
+   (alphabetical authorship, mega-collaborations) is structurally
+   different from condensed-matter physics or experimental CS subfields
+   where first/last author positions are intellectually load-bearing.
+   Pooling all team papers under a single T_p operationalization
+   collapses across these regimes and likely loses signal.
+
+**Three authorship patterns in CS/physics.** The literature treats this
+as a known taxonomy:
+
+- **Hierarchical (first-author-prominent):** modal in CS, much of
+  experimental physics, condensed-matter, biology-adjacent areas.
+  First author = lead intellectual contributor; last author = senior
+  supervisor / PI. Middle authors contribute specific analyses or
+  infrastructure. **Implication for T_p:** weight first and last authors
+  more heavily; middle authors less.
+- **Alphabetical:** dominant in high-energy physics (especially
+  experimental, ATLAS / CMS-style), some areas of math, theoretical CS
+  partially. Author order conveys little about contribution. **Implication
+  for T_p:** uniform weighting is appropriate but information per author
+  is diluted in the limit of mega-author papers (1000+ authors); T_p
+  approaches the field-level T as team size grows, which is a different
+  estimand.
+- **Egalitarian:** some theory subfields, some math, occasional CS
+  collaborative work. Small teams, equal intellectual contribution.
+  **Implication for T_p:** uniform weighting maps directly to the
+  team-product diversity claim.
+
+**Decision: multi-operationalization of T_p as co-primary, not
+sensitivity-only.** Because the authorship-norm regime is itself an
+empirical question per subfield, the right move is to compute T_p
+multiple ways and report co-equally rather than declaring one canonical
+operationalization and treating others as robustness:
+
+- **T_p_full:** Rao's Q over the full author team with uniform weights.
+  This is the "team-as-collective" operationalization; matches the
+  alphabetical-norm regime cleanly and serves as the pooled-corpus
+  primary. Approximates the field-level composite at small team sizes.
+- **T_p_first:** demographic feature vector of the first author only.
+  This is the "lead-intellectual-contributor" operationalization; matches
+  the hierarchical-norm regime cleanly and gives the most direct
+  dissertation-to-paper transfer of Hofstra's finding (single individual
+  → team product is intellectually attributed to a single individual).
+- **T_p_last:** demographic feature vector of the last author only.
+  Reported as sensitivity, not co-primary. Last-author position is more
+  about supervision/funding than about novelty-generating intellectual
+  vantage; expected to behave differently from T_p_first.
+- **T_p_weighted:** Rao's Q with first/last weighted higher than middle
+  authors (e.g., 0.4 first, 0.4 last, 0.2 split among middles, with
+  weight scheme pre-registered). Reported as sensitivity. Captures the
+  hierarchical-norm intuition without a binary first-vs-rest cut.
+
+**Subfield-stratified analysis.** Test IV regressions are fit:
+(a) pooled within field (CS, Physics) with T_p_full, T_p_first, T_p_last,
+T_p_weighted as four separate co-reported estimates;
+(b) stratified by subfield where authorship-norm regime is identifiable
+(high-energy physics vs. condensed-matter vs. experimental CS vs.
+theoretical CS), so that within-stratum T_p is interpretable. Report
+the four operationalizations × stratification grid; let the agreement
+or disagreement across cells be informative.
+
+**Pre-registered interpretive readings of γ₁ patterns.** Because
+multi-operationalization risks "harvest the most interesting story"
+post-hoc, pre-register specific interpretations:
+
+- **γ₁ > 0 across all four operationalizations + all subfield strata:**
+  strongest pro-diversity finding; team diversity translates to novelty
+  regardless of authorship-norm regime. Hofstra at team level, replicated.
+- **γ₁ > 0 for T_p_first but ≈ 0 for T_p_full:** outsider-vantage transfer
+  works specifically at the lead-author level; diluted by team integration.
+  Consistent with a weakened version of the consensus-averaging story
+  that I'd initially overgeneralized — restricted to integration effects,
+  not assumed pervasive.
+- **γ₁ > 0 in egalitarian/hierarchical strata but ≈ 0 in alphabetical
+  (HEP):** team-product novelty mechanism operates only when team
+  composition is intellectually load-bearing; mega-collaborations are
+  structurally different.
+- **γ₁ ≈ 0 across the board:** diversity-novelty link is weak at the
+  team-product level regardless of operationalization; the
+  dissertation-finding does not transfer. Substantively interesting null;
+  publishable as such.
+- **γ₁ < 0 for T_p_full but γ₁ > 0 for T_p_first:** diverse teams
+  *integrate* away novelty even when an individual outsider in the lead
+  seat would produce it. This is the version of the actuator-homogenization
+  story that survives the framing correction — not "consensus averaging"
+  in general, but specifically: integration mechanisms operating on
+  middle-author input dilute the lead-author's distinctive vantage.
+  Worth distinguishing from the simpler "no transfer" null.
+
+**What this commits us to.** Test IV ships with multi-operationalization
+co-reporting and subfield stratification as primary, not as Stage 3
+robustness extensions. This raises Test IV's specification complexity
+but is the right call: the alternative (single operationalization,
+collapsed across authorship-norm regimes) bakes in an assumption that
+the user identified as wrong for our fields. Better to surface the
+ambiguity in the design than to launder it into a single number.
+
+**Connection to ws2 commitments.**
+
+- **Test IV regression** now reports four co-equal estimates of γ₁ per
+  field × per subfield stratum.
+- **Phase 0.2 pre-registration batch:** add T_p multi-operationalization
+  spec, subfield stratification scheme, and the interpretive grid above.
+- **Methods framing (Discussion):** explicitly acknowledge that "team
+  diversity" is a multi-headed construct in fields with heterogeneous
+  authorship norms; the four operationalizations are not redundant
+  measures of the same thing — they answer subtly different substantive
+  questions.
+
+**Action items from this session:**
+
+1. Add T_p multi-operationalization (T_p_full + T_p_first co-primary;
+   T_p_last + T_p_weighted as sensitivity) to Phase 0.2 pre-registration
+   batch.
+2. Add subfield-norm stratification scheme to Phase 0.2 batch.
+3. Add the five-cell pre-registered interpretive grid to Phase 0.2
+   batch.
+4. Update Methods framing: "team diversity" is multi-operationalized;
+   no single canonical T_p.
+
+**Left open for future discussion:**
+
+- How to operationalize subfield authorship-norm regime empirically
+  (mean Spearman correlation between author-list position and
+  contribution-statement keywords? Self-reported convention from the
+  field's flagship journals? Manual subfield-by-subfield assignment?).
+  Decide in early Stage 2 once the OpenAlex sample is in hand and we
+  can inspect author-list distributions per subfield.
+- Whether T_p_weighted's specific weight scheme should be 0.4/0.4/0.2
+  or empirically tuned (e.g., calibrated against contribution statements
+  on the subset where they exist). Empirical tuning is appealing but
+  introduces a researcher-degree-of-freedom; default to pre-registered
+  fixed weights unless calibration meaningfully outperforms.
+- Whether to add a fifth operationalization based on contribution
+  statements where available (post-2010 papers in journals that require
+  them). Likely too narrow a coverage to support a primary Test IV
+  estimate; possibly useful as a diagnostic on the smaller subset.
 
 ### On C10 — boundary conditions for time-series restrictions
 

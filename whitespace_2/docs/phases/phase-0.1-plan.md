@@ -967,11 +967,67 @@ desiderata §9, but same principle).
     operating at a different level of aggregation (paper cross-section vs.
     aggregate time series) and using fundamentally different statistical
     methodology.
-    - **Paper-level team demographic diversity (T_p):** Rao's Q over the
-      author team of paper p, with the same uniform Hamming distance
-      metric as the field-level composite. Single-author papers: T_p = 0
-      by construction, included as baseline (the single-author-vs.-team
-      gradient is itself informative).
+    - **Paper-level team demographic diversity (T_p) — multi-operationalized
+      (per Hofstra C9 framing, lit-review session 2026-04-23).** Authorship-
+      norm regimes differ across our subfields: hierarchical (CS, much
+      experimental physics — first/last authors carry disproportionate
+      intellectual weight); alphabetical (high-energy physics — author order
+      conveys little); egalitarian (some theory subfields). A single T_p
+      operationalization collapses across these regimes and bakes in an
+      assumption the lit-review pushback identified as wrong. Therefore,
+      compute and co-report multiple operationalizations:
+      - **T_p_full (co-primary):** Rao's Q over the full author team with
+        uniform weights. Maps cleanly to alphabetical-norm regime;
+        approximates field-level composite at small team sizes. The
+        "team-as-collective" estimand.
+      - **T_p_first (co-primary):** demographic feature vector of the first
+        author only. Maps cleanly to hierarchical-norm regime; gives the
+        most direct dissertation-to-paper transfer of Hofstra's
+        single-individual finding. The "lead-intellectual-contributor"
+        estimand.
+      - **T_p_last (sensitivity):** demographic feature vector of the last
+        author only. Last-author position is more about
+        supervision/funding than novelty-generating vantage; reported to
+        distinguish supervisor-effect from lead-author-effect.
+      - **T_p_weighted (sensitivity):** Rao's Q with pre-registered weights
+        0.4 first, 0.4 last, 0.2 distributed uniformly over middle authors.
+        Captures hierarchical-norm intuition without the binary
+        first-vs-rest cut.
+      - Single-author papers: T_p_full = T_p_first = T_p_last = 0;
+        T_p_weighted = 0. Included as baseline.
+    - **Subfield authorship-norm stratification.** Test IV regressions
+      are fit (a) pooled within field with all four T_p operationalizations
+      reported separately; (b) stratified by subfield authorship-norm
+      regime (high-energy physics / condensed-matter / experimental CS /
+      theoretical CS / other). Subfield assignment to regime is
+      pre-registered before Test IV runs (deferred to early Stage 2 once
+      author-list distributions per subfield are visible — candidate
+      operationalizations: mean Spearman between author-list position and
+      contribution-statement keywords on the post-2010 subset; manual
+      subfield-by-subfield assignment from flagship-journal conventions;
+      hybrid).
+    - **Pre-registered interpretive grid for γ₁ (across the four
+      operationalizations × stratification cells).** Prevents
+      "harvest-the-most-interesting-story" post-hoc:
+      - γ₁ > 0 across all four ops + all strata → strongest pro-diversity
+        finding; Hofstra at team level, replicated.
+      - γ₁ > 0 for T_p_first but ≈ 0 for T_p_full → outsider-vantage
+        transfer works at the lead-author level but is diluted by team
+        integration; weakened/scoped version of an
+        actuator-homogenization story restricted to integration effects.
+      - γ₁ > 0 in egalitarian/hierarchical strata but ≈ 0 in alphabetical
+        (HEP) → team-product novelty mechanism operates only when team
+        composition is intellectually load-bearing; mega-collaborations
+        are structurally different.
+      - γ₁ ≈ 0 across the board → diversity-novelty link is weak at
+        team-product level regardless of operationalization; the
+        dissertation-finding does not transfer. Substantively interesting
+        null; publishable as such.
+      - γ₁ < 0 for T_p_full but γ₁ > 0 for T_p_first → integration
+        mechanisms operating on middle-author input dilute the
+        lead-author's distinctive vantage; the version of an
+        actuator-homogenization story that survives the C9 framing
+        correction.
     - **Paper-level semantic novelty (N_p) — primary:** cosine distance
       from paper p's embedding to the centroid of embeddings of papers in
       its reference list. High N_p = paper synthesizes distant concepts;
@@ -989,7 +1045,12 @@ desiderata §9, but same principle).
       separate pipeline (co-citation null model). Only if Stage 3 has
       bandwidth.
     - **Regression specification:** N_p = γ₀ + γ₁·T_p + Σ γₖ·Controlₖ +
-      year-FE + subfield-FE + ε_p.
+      year-FE + subfield-FE + ε_p, fit four times — once per T_p
+      operationalization (T_p_full, T_p_first, T_p_last, T_p_weighted).
+      Reported as a single Test IV table with four γ₁ columns. T_p_full
+      and T_p_first are flagged co-primary; T_p_last and T_p_weighted are
+      flagged sensitivity. Stratified-by-subfield-norm-regime fits
+      reported alongside.
       - **Controls:** number of authors, number of references, mean author
         career stage, mean author institutional prestige tier, log paper
         age (for robustness on older papers), field dummy (CS vs. Physics
@@ -1027,6 +1088,18 @@ desiderata §9, but same principle).
       the aggregate team-diversity→novelty relationship over 50 years,
       and pairs it with the field-level tests to ask whether any
       within-paper effect shows up at aggregate scale.
+    - **Methods framing — "team diversity" is multi-headed.** In fields
+      with heterogeneous authorship-norm regimes (CS and physics both
+      qualify), "team diversity" is not a single construct. The four
+      T_p operationalizations are not redundant measures of the same
+      thing — they answer subtly different substantive questions
+      (collective composition vs. lead-author vantage vs. supervisor
+      composition vs. weight-by-canonical-position). The Methods section
+      makes this explicit; the Discussion section interprets the
+      γ₁-pattern across operationalizations using the pre-registered
+      interpretive grid. This is a deliberate move away from a single
+      canonical T_p toward surfacing the construct-validity ambiguity
+      in the design rather than laundering it into a single number.
     - **Causal interpretation caveat (pre-baked):** cross-sectional
       correlations ≠ causal effects of team composition on novelty.
       Direction could reverse (novel work attracts diverse teams; self-
