@@ -1471,6 +1471,59 @@ desiderata §9, but same principle).
     cross-validation knot placement. More principled but introduces
     complexity not used elsewhere in ws2; quadratic + LOWESS captures
     the regime-structure concern proportionately.
+- **Multi-Δ Spearman canonical-concentration co-reporting (per
+  Chu-Evans C2 / SQ7 walkthrough, lit-review session 2026-04-26).**
+  Supersedes the original "Δ=5 single primary" specification in
+  the canonical-metric pre-registration block. Rationale: intrinsic
+  ossification timescale varies across (field × era) regimes (ML
+  post-2012 ~1–2 years; pure math 10+ years; 1970s biochem slow;
+  HEP post-Higgs fast). A single committed Δ systematically
+  mismeasures ossification in regimes whose intrinsic timescale
+  doesn't match Δ. Blind multi-Δ trial = lag-selection p-hacking.
+  Resolution combines pre-registration of multiple Δ values with a
+  pre-registered interpretive grid (parallel to Test IV persistence
+  multi-window pattern from Hofstra C10).
+  - **Pre-registered Δ ∈ {1, 5, 10} as co-primary.** Reported as
+    co-equal columns in the canonical-concentration table, not
+    primary-vs-sensitivity. Δ=1 flagged as **Chu-Evans-comparability
+    anchor** (their published Spearman uses Δ=1).
+  - **Reuse per-stratum empirical uptake-half-life diagnostic**
+    (already committed per Hofstra C10): per (field × subfield ×
+    decade) cell, year by which 50% of eventual C_15 has accumulated.
+    Tells reader which Δ is most apt for which cell; informs
+    interpretation; does not change the pre-registered primary.
+  - **Pre-registered interpretive grid for Δ-disagreement patterns:**
+    - All three Δ stable → ossification detection robust to
+      timescale; strongest version of headline.
+    - Δ=1 stable, Δ=5 not → high-frequency stability that doesn't
+      persist to medium-window; likely measurement-noise-driven;
+      weaker claim.
+    - Δ=1 unstable, Δ=5 stable → fast individual-ranking churn
+      within stable medium-window canon set. Canon-as-set stable;
+      specific rankings churn. Substantively interesting.
+    - Δ=5 stable, Δ=10 unstable → era-bounded ossification;
+      possibly real regime change between eras.
+    - Pattern varies across (field × era) cells consistent with
+      empirical uptake-half-life diagnostic → different timescales
+      operative in different regimes.
+  - **Considered and rejected.**
+    - *Cumulative Spearman as primary.* Structurally different
+      estimand (durable-membership vs. ranking-stability). Defer
+      to Stage 3 if a third operationalization is needed.
+    - *Adaptive Δ per (field × era) cell tuned by uptake-half-life.*
+      Even with pre-registered tuning procedure, introduces
+      researcher-degree-of-freedom complexity. Multi-Δ co-reporting
+      is simpler and more defensible.
+  - **Cost.** Computationally trivial (three correlations per cell
+    instead of one). Methodologically minor (interpretive grid
+    parallels existing Test IV persistence grid).
+  - **Note on existing pre-registration block.** The "Canonical
+    (primary)" line elsewhere in this section originally specified
+    "Δ=5 years"; this commitment supersedes it. The "Canonical
+    (robustness)" line's "Δ ∈ {3, 10}" specification is folded into
+    the new co-primary set (Δ=1 added; Δ=3 dropped in favor of
+    Δ=10 as the longer-window robustness; Δ=5 retained as medium-
+    window default; Δ=1 added as Chu-Evans-comparability anchor).
 - **Specific anchor concepts for Mitigation 4.** List of ~100 concepts with
   representative reference texts, per-field. Phase 0.2 or early Stage 1.
 - **Specific alternative embedding model for Mitigation 2.** Choice between

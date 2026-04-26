@@ -829,6 +829,19 @@ should we report at multiple scales to cover both possibilities?
     linear fit. ~Half-day Stage 2 effort. Captured in pending
     Phase 0.2 batch.
 
+12. **Multi-Δ Spearman canonical-concentration co-reporting
+    (Chu-Evans C2 / SQ7 walkthrough, 2026-04-26).** Supersedes the
+    original Δ=5 single-primary commitment. Pre-register Δ ∈ {1, 5,
+    10} as co-primary, with Δ=1 as Chu-Evans-comparability anchor.
+    Reuse per-stratum empirical uptake-half-life diagnostic (from
+    Hofstra C10) to inform interpretation. Pre-registered
+    interpretive grid for Δ-disagreement patterns. Resolves the
+    single-Δ-blindness vs. blind-multi-Δ-overfitting tension:
+    multi-Δ co-reporting + pre-commitment + diagnostic = no
+    post-hoc lag selection, but timescale heterogeneity across
+    regimes is surfaced. Computationally trivial. Captured in
+    pending Phase 0.2 batch.
+
 ---
 
 ## Discussion Notes
@@ -842,7 +855,94 @@ happens.)
 
 ### On C2 — Spearman lag choice (Δ=1 / Δ=5 / cumulative)
 
-(Pending.)
+Working session with user, 2026-04-26.
+
+**The substantive tension.** User articulated it sharply: ossification
+might occur at different timescales in different periods and for
+different fields/subfields, so a single committed Δ ignores peer-
+review and propagation dynamics. But blind multi-Δ trial would open
+us to overfitting via lag-selection without pre-commitment.
+
+**What Δ actually measures.** Δ is not a nuisance parameter — it's
+part of the estimand. Different Δ values answer subtly different
+questions:
+- Δ=1: high-frequency churn-vs-stability. Sensitive to single-year
+  measurement noise.
+- Δ=5: medium-window stability. Smooths noise; might miss fast
+  ossification dynamics.
+- Δ=10: decade-window durability. Captures slow-ossification regimes
+  but loses temporal resolution.
+
+**Why single Δ is wrong.** Intrinsic ossification timescale varies
+across regimes:
+- ML post-2012: uptake half-life ~1–2 years. Δ=5 would show
+  artificially low Spearman (canon "looks unstable") when it's
+  actually a stable churning regime.
+- Pure mathematics: uptake half-life 10+ years. Δ=5 too short to
+  detect ossification.
+- 1970s biochemistry: slow recognition (no preprints). Δ=10 more
+  appropriate.
+- HEP post-Higgs: fast recognition cycle. Δ=1 appropriate.
+
+A single committed Δ systematically mismeasures ossification in
+regimes whose intrinsic timescale doesn't match Δ. We don't know in
+advance which somewhere.
+
+**Why blind multi-Δ is also wrong.** Trying Δ ∈ {1, 5, 10} and
+reporting the one with the cleanest result is lag-selection p-hacking.
+We need pre-commitment.
+
+**Resolution: multi-Δ co-reporting + pre-registered interpretive grid.**
+
+Structurally identical to how we handled the Test IV persistence
+multi-window question (Hofstra C10 walkthrough). Same shape:
+- Multi-window (Δ=1, 5, 10) reported as co-equal columns, not
+  primary-vs-sensitivity.
+- Δ=1 flagged as Chu-Evans-comparability anchor (their published
+  Spearman uses Δ=1).
+- Per-stratum empirical uptake-half-life diagnostic (already
+  committed per Hofstra C10) tells the reader which Δ is most apt
+  for which (field × era) cell. Doesn't change the pre-registered
+  primary; informs interpretation.
+- Pre-registered interpretive grid for Δ-disagreement patterns:
+
+| Pattern | Substantive interpretation |
+|---|---|
+| All three Δ stable | Ossification detection robust to timescale; strongest version of headline. |
+| Δ=1 stable, Δ=5 not | High-frequency stability that doesn't persist to medium-window. Likely measurement-noise-driven; weaker claim. |
+| Δ=1 unstable, Δ=5 stable | Fast individual-ranking churn within a stable medium-window canon set. Canon-as-set stable; specific rankings within it churn. Substantively interesting. |
+| Δ=5 stable, Δ=10 unstable | Era-bounded ossification (stable for ~5 years but not decade-scale). Possibly real regime change between eras. |
+| Pattern varies across (field × era) cells consistent with empirical uptake-half-life diagnostic | Different timescales operative in different regimes; user's first concern empirically validated. |
+
+**Why this resolves the tension.**
+- Single-Δ-blindness: addressed by multi-Δ co-reporting. Not
+  committing to one timescale; surfacing how stability varies across
+  timescales.
+- Overfitting: addressed by pre-registration of all three Δ values
+  and interpretive grid before any analysis runs. No post-hoc lag
+  selection possible.
+- Variable-timescale-across-regimes: addressed by reusing the per-
+  stratum uptake-half-life diagnostic from Hofstra C10. We're not
+  assuming the same Δ is right everywhere; we're letting the
+  diagnostic surface where the intrinsic timescale matches which Δ.
+
+**Considered and rejected.**
+- *Cumulative Spearman as primary.* "How many year-Y top-N papers
+  are still top-N at Y+T" — structurally different (durable-
+  membership rather than ranking-stability). Less standard in
+  literature; would expand scope. Defer to Stage 3 if we want a
+  third operationalization.
+- *Adaptive Δ per (field × era) cell tuned by uptake-half-life.*
+  More principled but introduces additional researcher-degree-of-
+  freedom even with pre-registration of the tuning procedure.
+  Multi-Δ co-reporting is simpler and more defensible.
+
+**Cost.** Computationally trivial (same data, three correlations
+per cell instead of one). Methodologically minor (interpretive grid
+is parallel to existing Test IV persistence grid). Scope contained
+(no new pipeline, data, or dependencies).
+
+Captured in pending Phase 0.2 batch in `docs/phases/phase-0.1-plan.md`.
 
 ### On C3 — WoS subjects vs. OpenAlex concept tags
 
@@ -1207,7 +1307,20 @@ phase-0.1-plan.md`):
 
 ### SQ7 — Spearman lag choice (Δ=1 / Δ=5 / cumulative)
 
-(Pending.)
+Same content as C2 Discussion Notes (the SQ and Challenge Corner
+items are the same question). See "On C2 — Spearman lag choice" in
+Discussion Notes above for the full walkthrough including:
+- The substantive tension (single-Δ blindness vs. blind multi-Δ
+  overfitting).
+- What each Δ measures.
+- Why intrinsic ossification timescale varies across regimes.
+- Resolution via multi-Δ co-reporting (Δ ∈ {1, 5, 10}) with Δ=1 as
+  Chu-Evans-comparability anchor + pre-registered interpretive grid +
+  reuse of the per-stratum uptake-half-life diagnostic from Hofstra
+  C10.
+- Considered-and-rejected: cumulative Spearman as primary (different
+  estimand; defer to Stage 3); adaptive Δ per stratum (introduces
+  researcher degrees of freedom).
 
 ### SQ8 — Period vs. cohort decomposition (SI Tables S2/S3)
 
