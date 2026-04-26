@@ -1539,6 +1539,46 @@ desiderata §9, but same principle).
     the new co-primary set (Δ=1 added; Δ=3 dropped in favor of
     Δ=10 as the longer-window robustness; Δ=5 retained as medium-
     window default; Δ=1 added as Chu-Evans-comparability anchor).
+- **OpenAlex coverage diagnostic + citation-completeness sensitivity
+  (per Park-Leahey-Funk C2(b) walkthrough, lit-review session
+  2026-04-26).** Holst et al. 2024's WoS reference-truncation
+  threat doesn't transfer directly to ws2 (we use OpenAlex), but a
+  parallel threat exists at a different layer: OpenAlex has variable
+  indexing completeness for older papers (especially pre-1990),
+  affecting citation counts → potentially distorting our canonical-
+  concentration metrics. The bias direction is more favorable than
+  PLF's case: for Spearman top-50 (rank-invariant to citation
+  magnitudes), undercounting is either attenuating or non-directional;
+  for citation Gini, undercounting in older eras could amplify our
+  hypothesized trend. Multi-metric reporting (Spearman + Gini) gives
+  early warning if Gini-only shows the effect. Three small
+  extensions of existing commitments:
+  - **(a) Per-era OpenAlex coverage diagnostic.** Parallel to Hofstra
+    C8 per-era identity-confidence diagnostic. Per (field × decade),
+    report OpenAlex coverage rate — fraction of papers with complete
+    reference lists (Crossref-sourced); fraction of papers indexed
+    relative to expected cross-database baseline. Sample-composition
+    transparency artifact alongside Tests I-III.
+  - **(b) Citation-completeness sensitivity row** in the existing
+    pooled measurement-robustness appendix (from Hofstra C8
+    commitment item (b)). Recompute canonical-concentration metrics
+    (Spearman top-50, citation Gini) under high-completeness
+    restriction (papers with reference completeness ≥ pre-registered
+    threshold; possibly Crossref-sourced subset). One additional
+    row in that appendix.
+  - **(c) Methods-section sentence** extending the C3/SQ10 substrate-
+    acknowledgment paragraph. Acknowledges OpenAlex-coverage analog
+    of the Holst threat; distinguishes the mechanism (indexing-
+    completeness for ws2 vs. reference-truncation for WoS); points
+    to (a) diagnostic and (b) robustness row.
+  - **Cost.** All three are computationally trivial (uses existing
+    OpenAlex coverage metadata; reruns existing analyses on subset;
+    one paragraph addition). No new data or pipeline.
+  - **Why diagnostic-and-document rather than correct-and-restrict.**
+    Bias direction analysis shows the threat is less severe for ws2
+    than for PLF. We document the threat with a diagnostic and a
+    sensitivity row; we don't restrict the primary analysis based
+    on coverage thresholds.
 - **Specific anchor concepts for Mitigation 4.** List of ~100 concepts with
   representative reference texts, per-field. Phase 0.2 or early Stage 1.
 - **Specific alternative embedding model for Mitigation 2.** Choice between

@@ -924,7 +924,129 @@ the actual relationship.
 
 ### On C2 — dataset-artifact bias and ws2's analog
 
-(Pending.)
+Working session with user, 2026-04-26.
+
+**(a) Sub-question deferred to Holst 2024.** "How much of PLF's
+decline could plausibly be attributable to dataset artifact alone?"
+This is the substantive content of Holst et al. 2024 (paper 05 in
+our reading list). We will engage this when we read Holst directly
+rather than walking through PLF speculation. Marked deferred.
+
+**(b) Walkthrough — does ws2 face an analogous threat?**
+
+*The PLF/Holst threat structure recap.* WoS pre-1980 records often
+indexed only first few references in a paper. Mechanism for inflated
+older-era CD_5: truncated reference list → fewer indexed predecessors
+→ smaller pool for citers to "accidentally" cite via Type 2 → fewer
+Type-2 citers → numerator (n_1 − n_2) biased upward → CD_5 inflated
+for older papers. This is a *layer-specific* dataset issue: papers
+themselves are indexed in WoS, but their reference lists are
+incomplete.
+
+*The ws2 analog — same threat at a different layer.* OpenAlex has
+its own version of the threat, structured differently:
+
+- *Better than WoS* for non-English papers, open-access content,
+  newer papers (2010+).
+- *Variable for older papers* — especially pre-1990. Some older
+  papers are missing entirely; some are indexed but with incomplete
+  citation networks.
+- *Reference completeness varies by source* — Crossref-sourced
+  papers typically complete; MAG-sourced or PubMed-sourced papers
+  may have partial reference data.
+
+The threat layer differs from WoS-Holst:
+
+| | WoS-Holst | OpenAlex-ws2 |
+|---|---|---|
+| What's incomplete | Reference lists *of* older papers | Indexing of older papers themselves + their citation networks |
+| Mechanism | Truncated references → fewer Type-2 citers → CD_5 inflated | Missing citing papers → undercounted citations to older papers → distorted citation distribution |
+| What it affects | CD-index numerator and denominator | Citation counts → Spearman top-N rankings + Gini |
+
+We don't inherit the *exact* WoS-Holst issue (reference truncation
+in older indexed papers) but we do inherit *a* dataset-artifact
+threat at a different layer (incomplete indexing of older papers
+and their citation networks).
+
+*Bias direction analysis for our specific metrics.*
+
+**Spearman top-50:** if undercounting is *uniform* across papers
+in a year, ranks are preserved and Spearman is unaffected (rank-
+invariance). If undercounting is *non-uniform* — systematically
+undercounts certain journals, languages, etc. — top-50 list shifts.
+
+Critical question: which direction does the bias go?
+- *Scenario A:* undercounting decreases over time (OpenAlex is
+  better at indexing recent papers). Top-50 lists in 1975 are
+  noisier → Spearman correlation between adjacent years is
+  *attenuated* in older eras → would *attenuate* the canonical-
+  concentration-rises-over-time trend → bias *against* our
+  hypothesized pattern.
+- *Scenario B:* OpenAlex coverage is roughly stable per era but
+  biased toward certain content types throughout the time series.
+  Top-50 lists are systematically biased toward over-represented
+  content types throughout. Spearman stability between adjacent
+  years isn't strongly affected, but the *identity* of the canon
+  is distorted.
+
+In neither scenario does the bias clearly amplify our hypothesized
+trend (in contrast to WoS-Holst, where bias direction aligns with
+PLF's finding).
+
+**Citation Gini:** if older-era citations are systematically
+undercounted, the distribution looks more compressed → lower Gini
+in older eras → bias direction *aligned* with our hypothesized
+canonical-concentration-rises trend. Citation Gini is more
+vulnerable to OpenAlex coverage bias than Spearman top-50 is. Worth
+noting.
+
+*What existing plan already mitigates.*
+
+1. **Post-1990 primary, pre-1985 preliminary** (desiderata §10,
+   plan §13). Era where OpenAlex coverage is most concerning is
+   pre-1990; bounding primary analysis to post-1990 avoids the
+   worst.
+2. **Multi-metric reporting.** Spearman top-50 + citation Gini. If
+   only Gini shows the trend, we'd flag it as potentially driven
+   by coverage bias.
+3. **Pre-1990 with disclaimer.** Acknowledge the limitation.
+
+These collectively address the threat but don't *quantify* it.
+
+*New commitments (Phase 0.2 batch addition).*
+
+Three small extensions of existing commitments rather than
+standalone new pending items:
+
+- **Per-era OpenAlex coverage diagnostic.** Parallel to Hofstra C8
+  per-era identity-confidence diagnostic. Per (field × decade),
+  report OpenAlex coverage rate — fraction of papers with complete
+  reference lists; fraction of papers indexed relative to expected
+  cross-database baseline. Sample-composition transparency artifact.
+- **Citation-completeness sensitivity row** in the existing pooled
+  measurement-robustness appendix (from Hofstra C8 commitment).
+  Recompute canonical-concentration metrics under high-completeness
+  restriction. One additional row; doesn't expand the appendix
+  significantly.
+- **Methods-section sentence** extending the C3/SQ10 substrate-
+  acknowledgment paragraph. Acknowledges the OpenAlex-coverage analog
+  of the Holst threat, distinguishes the mechanism (indexing-
+  completeness rather than reference-truncation), points to the
+  diagnostic and robustness row.
+
+Captured in pending Phase 0.2 batch.
+
+**Why this is a small extension rather than a major commitment.**
+
+The bias direction analysis above suggests the OpenAlex coverage
+threat is *less* threatening to ws2 than the WoS-Holst threat is to
+PLF. For Spearman top-50 specifically (our primary metric), the
+bias is either attenuating (Scenario A) or non-directional
+(Scenario B) — not amplifying. For Gini (secondary), the bias could
+amplify our hypothesized trend, but the multi-metric pattern
+(Spearman + Gini) gives us early warning if Gini-only shows the
+effect. The new commitments are diagnostic-and-document rather than
+correct-and-restrict.
 
 ### On C3 — fixed threshold on shifting distribution
 
