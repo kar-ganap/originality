@@ -899,7 +899,28 @@ happens.)
 
 ### On C1 — citation-inflation math + normalization variants
 
-(Pending.)
+Closed via pointer to SQ7 walkthrough, 2026-04-26.
+
+C1 is a more Socratic version of SQ7's math walkthrough. The
+substantive content — clean notation setup of CD_5, the accidental-
+Type-2 mechanism, walkthrough of all three normalization variants,
+the critical insight that PLF's variants modify only the denominator
+while inflation bias enters the numerator, why DI^nok amplifies
+rather than mitigates, and the ws2 implication (Spearman top-N rank-
+invariance) — is captured in the SQ7 walkthrough above. No new ws2
+framing content here.
+
+**Drafting note (minor):** C1's parentheticals as drafted have the
+orientation reversed. The question reads "is the inflation bias in
+the numerator (which the normalization addresses) or in the
+denominator n_t (which the normalization doesn't address)?" — but
+the actual relationship is the opposite. PLF's normalizations
+*modify the denominator* (subtract from n_3) and *leave the
+numerator unchanged*. The substantive answer in SQ7 is "bias is in
+the numerator; normalizations address the denominator only" —
+opposite of what C1's parentheticals suggest. Minor drafting issue;
+not substantively important since the SQ7 walkthrough works through
+the actual relationship.
 
 ### On C2 — dataset-artifact bias and ws2's analog
 
