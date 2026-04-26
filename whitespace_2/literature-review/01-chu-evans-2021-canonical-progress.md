@@ -1340,8 +1340,127 @@ in `docs/phases/phase-0.1-plan.md`.
 
 ### SQ9 — Disruption predictions under CD-index critique
 
-(Pending.)
+Working session with user, 2026-04-26.
+
+**The structural concern.** Chu-Evans's predictions 5–6 (declining
+disruption with field size) rest on the Wu-Wang-Evans 2019
+disruption measure D, which inherits Funk-Owen-Smith CD-index
+machinery. Petersen-Arroyave-Pammolli 2024 and Holst et al. 2024
+have published critiques of CD-index. Already addressed: ws2 has
+excluded CD-index from primary canonical metrics; we engage the
+critique chain in Discussion.
+
+**New caveat — bias-direction alignment with Chu-Evans's finding.**
+
+Petersen-Holst critiques both point in the same direction:
+- *Petersen (citation inflation):* recent papers appear *less*
+  disruptive because their reference networks are more completely
+  indexed.
+- *Holst (dataset artifacts):* older papers in WoS have systematically
+  missing references, making them look *more* disruptive than they
+  actually were.
+
+Chu-Evans's IV is field size, which correlates with time. So:
+**older papers (smaller fields) → look more disruptive than they are;
+newer papers (larger fields) → look less disruptive than they are.**
+Their predictions 5–6 are *exactly* the pattern these biases would
+mechanically produce, even if no real disruption decline existed.
+
+This is sharper than just "CD-index is contested." The contestation
+goes in the direction that would manufacture Chu-Evans's predictions
+5–6 from measurement artifact alone. We cannot know how much of
+their finding is real vs. artifact without inflation-corrected and
+artifact-corrected re-analysis (which they don't run).
+
+**Commitment for ws2: selective Chu-Evans citation framing.**
+
+ws2 should not cite Chu-Evans monolithically — that implicitly
+endorses the contested predictions 5–6. Instead:
+
+- Cite predictions 1–4 generally (Spearman + Gini + p + τ; none
+  CD-index-dependent): "Chu-Evans 2021 documented durable dominance
+  and entrepreneurial futility in large fields."
+- Explicitly bracket predictions 5–6: "their disruption findings
+  (predictions 5–6) inherit CD-index measurement issues critiqued
+  by Petersen-Arroyave-Pammolli 2024 and Holst et al. 2024 with
+  bias-direction aligned to the finding; we do not lean on these
+  for ws2's argument."
+- ~3 sentences in Methods, ~1 sentence in Discussion. Captured in
+  pending Phase 0.2 batch in `docs/phases/phase-0.1-plan.md`.
+
+**What this preserves.** ws2 can still inherit Chu-Evans's
+methodology (Spearman top-N) and benchmark our findings against
+their predictions 1–4 without endorsing the contested half. This
+is the intellectually-honest position: we don't pretend the
+disruption critiques aren't there, and we don't have to fight them
+ourselves either.
 
 ### SQ10 — WoS subjects vs. OpenAlex concept tags
 
-(Pending.)
+Working session with user, 2026-04-26.
+
+**Already addressed in C3 walkthrough.** Substrate difference
+(granularity, stability, per-paper noise, coverage); Methods-paragraph
+acknowledgment commitment; back-pocket cross-substrate Stage 3
+robustness.
+
+**New caveats surfaced in this walkthrough.**
+
+*(1) Journal-level vs. content-level classification.* WoS subjects
+are *journal-inherited* — a paper's subject classification depends
+on where it publishes. OpenAlex concepts are *paper-level* —
+classification depends on the paper's content regardless of venue.
+
+This affects what "field" means in each substrate:
+- WoS canon-membership tracks journal-prestige hierarchies (canonical
+  papers cluster in canonical journals).
+- OpenAlex canon-membership is content-defined.
+
+When we apply Chu-Evans methodology to OpenAlex data, we're
+potentially measuring **content-canon ossification rather than
+journal-canon ossification**. These could behave differently if
+journal-hierarchy entrenchment is part of the underlying mechanism
+(it likely is, per the journal-prestige-entrenchment alternative
+explanation we discussed when reviewing the sandpile mechanism).
+Worth a sentence in the Methods substrate-paragraph acknowledgment.
+
+*(2) Temporal projection of modern concepts onto older papers.*
+OpenAlex's concept hierarchy is itself a 2020s artifact — concepts
+get added, refined, merged, split over time. Using 2026-vintage
+concept assignments to classify 1975-vintage papers projects modern
+conceptual structure retrospectively. Some 1975 papers may be
+classified into concepts that didn't exist at publication time
+(e.g., "machine learning" as a tag has very different meaning in
+1975 vs. 2026).
+
+Plan §3 classifier-drift mitigation handles classifier-output
+stability over time. This is the orthogonal concern: whether the
+*conceptual frame itself* is era-appropriate. Stage 2 decision —
+whether to bound analysis to concepts stable across 1970–2024
+(subset-of-stable-concepts approach) or accept temporal projection
+with explicit acknowledgment.
+
+*(3) Multi-concept papers and canon-membership ambiguity.* OpenAlex
+assigns multiple concepts per paper (5–15 with confidence scores).
+ws2 uses highest-confidence primary subfield assignment, but a
+paper can appear in multiple subfields' top-50 lists if it's in
+multiple subfields' scope. This induces structural correlation
+across subfields that Chu-Evans don't face (WoS subjects rarely
+overlap papers).
+
+For Spearman correlations *across* subfields, this means observations
+aren't independent. If subfield-canon overlap is high, standard
+errors should be adjusted. **Stage 3 diagnostic:** measure subfield-
+canon overlap rate.
+
+**Commitment for ws2.**
+
+- Extend the C3 Methods-paragraph commitment from ~5 sentences to
+  ~7 sentences, covering caveats (1) and (2) explicitly.
+- Add Stage 3 subfield-canon overlap diagnostic (~half-day effort)
+  per caveat (3); pre-registered thresholds for action: <10% overlap
+  → minor, report and move on; 10–30% → acknowledge in Methods;
+  >30% → adjust standard errors on cross-subfield Spearman
+  correlations.
+- Both captured in pending Phase 0.2 batch in
+  `docs/phases/phase-0.1-plan.md`.

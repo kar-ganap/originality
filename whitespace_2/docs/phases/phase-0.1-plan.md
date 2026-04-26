@@ -1373,13 +1373,13 @@ desiderata §9, but same principle).
       field-specific-time-effect concern in Methods.
   - **Cost.** Computationally cheap — rerun existing analyses on
     subsets. ~1–2 days Stage 2 effort. No new data or API calls.
-- **Classification-substrate acknowledgment (per Chu-Evans C3
-  walkthrough, lit-review session 2026-04-26).** ws2 uses Chu-Evans
-  2021's Spearman top-N methodology for canonical concentration but
-  operates on a structurally different classification substrate
-  (OpenAlex concept tags + arXiv hybrid; ~10–50 subfields per field)
-  than Chu-Evans (WoS subjects; n=241). Three implications: (i) we
-  cannot directly cite their coefficient values as targets to
+- **Classification-substrate acknowledgment (per Chu-Evans C3 +
+  SQ10 walkthroughs, lit-review sessions 2026-04-26).** ws2 uses
+  Chu-Evans 2021's Spearman top-N methodology for canonical
+  concentration but operates on a structurally different classification
+  substrate (OpenAlex concept tags + arXiv hybrid; ~10–50 subfields
+  per field) than Chu-Evans (WoS subjects; n=241). Three implications:
+  (i) we cannot directly cite their coefficient values as targets to
   replicate — Spearman magnitudes are tied to substrate; (ii) any
   qualitative-pattern difference between our findings and theirs
   could reflect real dynamics, real subfield-vs-subject scale
@@ -1388,14 +1388,68 @@ desiderata §9, but same principle).
   (iii) ws2 carries a classifier-drift identification burden
   (handled via plan §3) that Chu-Evans's stable WoS classification
   doesn't face. Commitment: **Methods-paragraph acknowledgment,
-  approximately five sentences** stating substrate difference,
+  approximately seven sentences** stating substrate difference,
   disclaiming direct coefficient comparison, treating Chu-Evans as
-  methodological precedent rather than replication target. Add to
-  §9 Methods framing batch. Cross-substrate Stage 3 robustness
+  methodological precedent rather than replication target.
+  Specifically, the paragraph also covers two structural-classification
+  caveats surfaced in SQ10:
+  - **Journal-level vs. content-level classification.** WoS subjects
+    are journal-inherited (a paper's subject depends on where it
+    publishes); OpenAlex concepts are paper-level (classification
+    depends on the paper's content regardless of venue). When we
+    apply Chu-Evans methodology to OpenAlex data, we're potentially
+    measuring content-canon ossification rather than journal-canon
+    ossification — these could behave differently if journal-
+    hierarchy entrenchment is part of the underlying mechanism.
+  - **Temporal projection of modern concepts onto older papers.**
+    OpenAlex's concept hierarchy is itself a 2020s artifact;
+    applying it to 1975 papers projects modern conceptual structure
+    retrospectively. Some 1975 papers may be classified into
+    concepts that didn't exist at publication time. Plan §3
+    classifier drift mitigation handles classifier-output stability;
+    this is the orthogonal concern about whether the conceptual
+    frame itself is era-appropriate. Stage 2 decision: whether to
+    bound the analysis to concepts stable across 1970–2024
+    (subset-of-stable-concepts approach) or accept temporal
+    projection with explicit acknowledgment.
+  Add to §9 Methods framing batch. Cross-substrate Stage 3 robustness
   (replicate on WoS-OpenAlex overlap subset) **deferred as
   back-pocket** — requires WoS data access not currently in ws2
   plan; trigger only if reviewers specifically request cross-
   substrate replication.
+- **Subfield-canon overlap diagnostic (per Chu-Evans SQ10
+  walkthrough, 2026-04-26).** OpenAlex assigns multiple concepts per
+  paper (5–15 with confidence scores); ws2 uses highest-confidence
+  primary subfield assignment but a paper can appear in multiple
+  subfields' top-50 most-cited lists if it's in multiple subfields'
+  scope. This induces structural correlation across subfields that
+  Chu-Evans don't face (WoS subjects rarely overlap papers).
+  Stage 3 diagnostic: measure subfield-canon overlap rate (fraction
+  of subfield-pair top-50 lists that share papers). If overlap < 10%,
+  issue is minor; report and move on. If 10–30%, acknowledge in
+  Methods. If > 30%, adjust standard errors on Spearman correlations
+  across subfields to account for non-independence. ~half-day Stage
+  3 effort.
+- **Selective Chu-Evans citation framing (per SQ9 walkthrough,
+  2026-04-26).** Chu-Evans 2021 has six predictions across three
+  dimensions; predictions 1–4 (durable dominance + entrepreneurial
+  futility) rest on Spearman + Gini + p + τ, none CD-index-dependent.
+  Predictions 5–6 (reduced disruption) rest on Wu-Wang-Evans 2019's
+  D measure, which is in the Funk-Owen-Smith CD-index family.
+  Petersen-Holst critiques apply directly. Critically, the **bias
+  direction is in the same direction as Chu-Evans's finding** —
+  citation-inflation and dataset-artifact biases mechanically
+  produce the appearance of declining disruption with field size
+  even if no real decline existed. Commitment: **selective citation**
+  in ws2 Methods/Discussion. Cite Chu-Evans's predictions 1–4
+  generally as "Chu-Evans 2021 documented durable dominance and
+  entrepreneurial futility in large fields"; explicitly bracket
+  predictions 5–6 as "their disruption findings (predictions 5–6)
+  inherit CD-index measurement issues critiqued by
+  Petersen-Arroyave-Pammolli 2024 and Holst et al. 2024 with
+  bias-direction aligned to the finding; we do not lean on these
+  for ws2's argument." Approximately three sentences in Methods,
+  one sentence in Discussion. Add to §9 Methods framing batch.
 - **Subfield mechanism test nonlinearity check (per Chu-Evans
   bin-and-regress critique, lit-review session 2026-04-26).** The
   subfield mechanism regression (DivMag_s = γ_0 + γ_1·CanonConc_s +
