@@ -851,7 +851,20 @@ happens.)
 
 ### On C1 — alternative confounds beyond field-age
 
-(Pending.)
+Closed via covered-elsewhere note, 2026-04-26.
+
+The candidate confounds raised in C1 (methodological maturation,
+mega-collaboration dominance in HEP-style fields, citation-norm
+conventions, journal-hierarchy emergence, preprint platforms) are
+Chu-Evans-internal critique territory. ws2's analog confounds —
+specifically size-vs-time confounding for our findings — are
+addressed via SQ6 walkthrough + decoupled-subfield robustness check
+(in pending Phase 0.2 batch). The Chu-Evans-specific list is
+interesting but does not generate ws2 design changes; we don't need
+to evaluate Chu-Evans's identification holistically since we use
+their methodology as a tool rather than treating their substantive
+findings as a replication target (per intellectual-lineage
+calibration).
 
 ### On C2 — Spearman lag choice (Δ=1 / Δ=5 / cumulative)
 
@@ -1048,31 +1061,119 @@ for the resolution.
 
 ### On C5 — disruption predictions under CD-index critique
 
-(Pending.)
+Closed via pointer to SQ9 walkthrough, 2026-04-26.
+
+C5 asks two sub-questions: (a) are predictions 5–6 compromised by
+CD-index critiques?; (b) how should ws2 engage them in Discussion?
+Both are answered substantively in the SQ9 walkthrough above —
+specifically the bias-direction-alignment finding (Petersen-Holst
+biases mechanically produce Chu-Evans's predictions 5–6 even if no
+real disruption decline existed) and the selective-citation framing
+commitment (cite predictions 1–4 generally; bracket 5–6 with
+explicit CD-index caveat). See SQ9 walkthrough for full content;
+no new content here.
 
 ### On C6 — annual count vs. cumulative literature size
 
-(Pending.)
+Closed via covered-elsewhere note, 2026-04-26.
+
+The substantive question (whether the cognitive-overload mechanism
+ties more naturally to cumulative literature size than to annual
+paper count) was discussed in the broader sandpile-mechanism
+conversation (mechanism trim, C4) and in Connection to Our Project →
+"What Chu-Evans do NOT do." ws2 follows Chu-Evans's annual-count
+operationalization for our canonical-concentration time series;
+cumulative-literature-size operationalization is flagged in
+Connection to Our Project as a candidate Stage 2 sensitivity check
+to be triggered if pilot results suggest material divergence
+between operationalizations. No new commitment; the existing flag
+suffices.
 
 ### On C7 — period-dominance implications for actuator-homogenization
 
-(Pending.)
+Closed via pointer to SQ8 walkthrough, 2026-04-26.
+
+C7 asks whether Chu-Evans's period-dominance finding strengthens or
+weakens the actuator-homogenization interpretation of any positive
+ws2 divergence finding, and whether it shifts our expected sign on
+Test IV's γ₁. Both are answered in the SQ8 walkthrough above,
+"Implications for ws2" subsection — specifically: period-dominance
+strengthens the structural-mechanism framing for compass 13-A
+(everyone responds to current attention infrastructure, not just
+specific cohorts) and weakens "old-guard cohort" alternative
+readings of any aggregate divergence finding. No expected-sign
+shift on Test IV's γ₁ committed (we maintain pre-registered
+two-sided test); but the *interpretation* under either sign is
+shaped by period-dominance. See SQ8 walkthrough for full content.
 
 ### On C8 — citing-year vs. cited-year framing of citation flow
 
-(Pending.)
+Closed via brief note, 2026-04-26.
+
+ws2 follows Chu-Evans's citing-year convention: citations *to* a
+focal paper *from* same-subfield papers in the same calendar year
+as the citing paper. This is the convention implicit in our plan §6
+unit-of-analysis specification ("citation-based, top-k share"). The
+implicit assumption — that "field-year" is a well-defined analytical
+frame for that year's citation flow even though citations don't
+respect annual boundaries — applies to our analysis equally. Worth
+one sentence in the Methods substrate-paragraph commitment to make
+the citing-year choice explicit, alongside the other classification-
+substrate framing already committed. No new pending Phase 0.2 item;
+folded into the existing C3/SQ10 Methods-paragraph commitment.
 
 ### On C9 — exogenous classification vs. data-derived clustering
 
-(Pending.)
+Closed via pointer to desiderata §11, 2026-04-26.
+
+C9 raises the methodological lesson that Chu-Evans place classification-
+stability burden on the database provider (Clarivate) while ws2
+places it on a stratification choice we control (cluster-fit on
+temporally-stratified pooled subsample). Both are defensible; ws2's
+choice is captured in `docs/desiderata.md` §11 (cluster-fit temporal
+stratification, non-negotiable) and operationalized in plan §11.
+The hypothetical "would Chu-Evans's findings replicate on
+cluster-derived field boundaries?" is interesting but out of ws2
+scope (we're not running their analysis on our data; we're using
+their methodology for our distinctive question). No new commitment.
 
 ### On C10 — leaning on Chu-Evans as upstream mechanism for ws2
 
-(Pending.)
+Closed via pointer to mechanism-trim + lineage calibration,
+2026-04-26.
+
+C10 asks how heavily ws2 should lean on Chu-Evans as upstream-
+mechanism support for compass 13-A (actuator homogenization), and
+flags the risk of leaning too hard given that their disruption-side
+findings are CD-index-contaminated. Both points are addressed:
+- The mechanism-trim (C4 / Mechanism-pluralism subsection) commits
+  ws2 to using Chu-Evans methodologically + empirically, not
+  mechanistically. We do not lean on any specific Chu-Evans mechanism
+  account as upstream support for compass 13-A.
+- The intellectual-lineage calibration (session 2026-04-26) clarified
+  that ws2's question is broader than Chu-Evans's; we borrow
+  methodology, use their findings as benchmarks, but our thesis
+  (decoupling of demographic from intellectual plurality) is its
+  own distinctive contribution.
+Both together resolve C10 without new commitment.
 
 ### On C11 — aggregation scale (field vs. subfield) for cognitive overload
 
-(Pending.)
+Closed via brief note, 2026-04-26.
+
+ws2 commits to subfield-level analysis (~10–50 subfields per field)
+per plan §5 — finer than Chu-Evans's WoS subjects (n=241). The C11
+sub-question (a) — "their field-size effects might wash out within
+finer subfields" — is interesting but out of ws2 scope (we're not
+testing Chu-Evans's findings at our finer scale; we're computing
+canonical concentration at the scale our analysis already commits
+to). The C11 sub-question (b) — "our subfield-level analysis might
+miss field-wide attention-economy effects" — is a real concern but
+expanding to multi-scale reporting (subfield + field-wide) would
+materially expand ws2 scope without clear payoff for our central
+question. We accept the subfield-scale choice as a design commitment;
+the field-wide-effects-might-be-missed limitation is acknowledged in
+Discussion alongside other scope limits. No new commitment.
 
 ---
 
@@ -1084,15 +1185,21 @@ version. Questions not yet worked through are marked `(Pending)`.)
 
 ### SQ1 — What does "ossification of canon" mean operationally?
 
-(Pending.)
+Skipped — covered via SQ4 walkthrough (Spearman top-50 correlation
+captures identity-persistence component of "durable dominance"
+concept) and Key Ideas §3 (Spearman rank correlation top-50 as
+canon-ossification metric).
 
 ### SQ2 — Cognitive argument for why field size matters
 
-(Pending.)
+Skipped — covered via Key Ideas §7 (Two theoretical mechanisms) and
+Mechanism-pluralism subsection (Connection to Our Project). User
+read these directly.
 
 ### SQ3 — Gini coefficient and the country-inequality analogy
 
-(Pending.)
+Skipped — comprehension-level question; user read Key Ideas §1 and
+Three-Level Results directly.
 
 ### SQ4 — Six predictions across three dimensions
 
