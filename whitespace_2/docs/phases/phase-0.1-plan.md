@@ -1209,6 +1209,78 @@ desiderata §9, but same principle).
   anchors which window is apt for which stratum without giving the
   analyst post-hoc freedom to tune the primary. Approximately one
   paragraph.
+- **Identity-uncertainty diagnostics and measurement-robustness
+  appendix (per Hofstra C8 walkthrough, lit-review session
+  2026-04-25).** Hofstra's matching-error compounding (Pathway C —
+  joint demographic × identity error correlation) has a clean ws2
+  analog: OpenAlex disambiguation accuracy is signal-correlated,
+  varies by name-region, and improved over time. The most important
+  derived threat is **spurious-trend contamination**: observed
+  demographic-diversity rises in Tests I–III could partly reflect
+  measurement-coverage improvements rather than true demographic-
+  pluralization. Five commitments (one diagnostic, three
+  robustness/decomposition, one Methods framing):
+  - **(a) Per-era identity-confidence diagnostic.** Per-decade
+    identity-confidence-pass rate broken out by region-of-origin,
+    plotted over the full 1970–2024 window. Reported alongside Tests
+    I–III as a sample-composition transparency artifact. Identity-
+    confidence threshold operationalized as a derived proxy
+    (candidates: name-frequency × institutional-ROR-completeness ×
+    publication-density; finalized in early Stage 1 once OpenAlex
+    sample is visible). May additionally break out by name-script
+    (Latin vs. non-Latin); decided in Stage 1.
+  - **(b) Pooled measurement-robustness appendix.** Single appendix
+    section reporting each headline number under each measurement-
+    uncertainty restriction. One row per restriction:
+    - demographic-confidence-only restriction (drop low-NamSor);
+    - identity-confidence-only restriction (drop low-disambiguation);
+    - joint-confidence restriction (drop either);
+    - pre-1990 exclusion;
+    - heavy-tail trim (Test IV / Item 11 only);
+    - mediation-control sensitivity (Test IV / Item 11 only).
+    Six rows per headline number for Tests I–III; eight rows for
+    Test IV / Item 11 (additional heavy-tail and mediation rows).
+    Earns C8's place in the design without analytical-grid bloat —
+    no full-grid stratification on the headline tables.
+  - **(c) Staged decomposition trigger on Test IV.** Joint-confidence-
+    restricted Test IV γ₁ reported in (b). If movement >0.02 SD vs.
+    headline, decompose into demographic-confidence-only and
+    identity-confidence-only restrictions and report which dominates.
+    Pre-registered threshold prevents post-hoc decomposition fishing.
+  - **(d) Methods-framing extension on identity uncertainty.** Extend
+    the C4 weight-by-confidence Methods paragraph (in plan §4): "weight-
+    by-confidence applied to demographic inference alone is necessary
+    but not sufficient; identity uncertainty introduces a parallel
+    signal-correlated error structure characterized via the per-era
+    diagnostic (item a) and the restriction-row in the robustness
+    appendix (item b). Headline numbers carry both uncertainty
+    dimensions visibly." Approximately three sentences added to the
+    existing C4 paragraph.
+  - **(e) Pathway-C spurious-trend acknowledgment.** Methods/Discussion
+    framing: observed demographic-diversity rises in Tests I–III could
+    partly reflect measurement-coverage improvements rather than true
+    demographic-pluralization. If the per-era diagnostic (item a)
+    shows pass-rate rising faster for non-Western regions than
+    Western, document the magnitude of measurement-trend contamination
+    in the headline divergence claim. **The most important of the
+    five — addresses a threat specific to ws2's 50-year design that
+    is invisible at the per-paper or per-author level.** Approximately
+    one paragraph.
+  - **What we considered and rejected:**
+    - Full-grid joint-confidence stratification on every headline.
+      Would push results tables from ~50 cells to ~250 cells. Pooled-
+      appendix approach (item b) does the work at much lower cost.
+    - Pathway-B-specific commitment. Variance issue, not bias.
+      Standard errors already absorb it.
+    - Hofstra-style "research faculty" restriction analog. ws2
+      doesn't have a matching-pipeline architecture that motivates
+      this filter; the per-era diagnostic + appendix do equivalent
+      work.
+    - Inverse-pass-rate reweighting of headline divergence. Introduces
+      its own assumptions; default to documenting contamination
+      magnitude rather than correcting it. Revisit only if Stage 2
+      results show measurement-coverage improvement could plausibly
+      account for the headline divergence.
 - **Specific anchor concepts for Mitigation 4.** List of ~100 concepts with
   representative reference texts, per-field. Phase 0.2 or early Stage 1.
 - **Specific alternative embedding model for Mitigation 2.** Choice between

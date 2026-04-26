@@ -1487,7 +1487,171 @@ for three whitespaces rather than one).
 
 ### On C8 — ProQuest-WoS matching error compounding
 
-(Pending.)
+Working session with user, 2026-04-25.
+
+**Disentangling the question.** The 97% precision figure (Hofstra SI
+pp. 19–20) is *precision*, not *recall*. Of records where ProQuest →
+WoS matching succeeded, 3% are mismatches. The thing the precision
+number does not capture is the recall rate — what fraction of real
+ProQuest→WoS pairings the algorithm successfully found. Recall errors
+manifest as missing data: students coded as "no academic publications"
+because matching failed. Both matter for C8.
+
+**Four-pathway decomposition (in decreasing order of substantive
+concern for Hofstra specifically).**
+
+- **Pathway A — Recall asymmetry → mechanical discount.** Non-Western-
+  named students more likely to have failed WoS matches → coded as
+  low career outcomes mechanically. Direction: inflates URM career
+  discount. Hofstra partially defuses via "research faculty"
+  restriction (academic-employment indicator from sources beyond WoS),
+  but recall-within-faculty remains: faculty members' WoS records can
+  still be incomplete. Smaller magnitude than the unrestricted version,
+  but nonzero. Probably explains some fraction of the published
+  discount, not the dominant explanation.
+- **Pathway B — Precision errors → variance, not bias.** Wrong matches
+  attribute the wrong WoS author's career to a ProQuest student. On
+  expectation, the "wrong person" is intermediate-productivity. So
+  per-individual estimates are noisier for non-Western names but the
+  per-group mean isn't necessarily biased. Second-order asymmetry:
+  matching errors may bias toward matching to high-signal (more
+  WoS-findable) authors, which would inflate measured productivity for
+  non-Western mismatches — a counter-bias to Pathway A. Net direction
+  unknown.
+- **Pathway C — Joint-error correlation → analytical-sample
+  composition bias.** Hofstra's analytical sample is the intersection
+  of (i) demographic inference assigned a category and (ii) WoS match
+  succeeded. Both filters select on similar signal-strength criteria.
+  The URM students who appear in the analytical sample are
+  systematically the high-signal subset of URM students — enriched for
+  second-generation, anglicized, US-standard naming patterns. The
+  contrast is computed on samples that aren't truly comparable.
+  Direction: attenuates URM-vs-white differences (analytical URM
+  sample is more assimilated than the true URM population, so its
+  career trajectories are closer to the white norm). **Pathway A and
+  Pathway C pull in opposite directions; net direction of bias on the
+  published estimate is theoretically ambiguous.**
+- **Pathway D — Innovation outcome unaffected.** Innovation is
+  measured from dissertation abstracts (ProQuest), not WoS matches.
+  So the "URM students produce more novelty" half of the paradox is
+  not contaminated by matching errors. Only the "less reward" half is.
+  This means matching errors affect the paradox's magnitude but not
+  its sign, unless Pathway A is large.
+
+**ws2 inheritance — what's different, what's similar.**
+
+- **What's different.** No separate ProQuest→WoS matching step. We
+  work entirely within OpenAlex's namespace. No dissertation-as-unit-
+  of-analysis. Demographic inference operates on author names
+  directly, not on a separate dissertation database that's then
+  matched. Pathway A in Hofstra's specific form does not apply.
+- **What's similar.** OpenAlex author-disambiguation has its own
+  signal-correlated error structure (≈90–95% per pair, plan §10).
+  Disambiguation errors correlate with name-signal strength — same
+  pattern as Hofstra's matching errors. NamSor demographic inference
+  has signal-correlated confidence. Joint confidence (demographic ×
+  identity) varies across our author population, with non-Western
+  authors disproportionately in the low-joint-confidence tail.
+  Pathway C analog applies cleanly.
+- **Pathway A analog at OpenAlex level.** Era-dependent under-
+  disambiguation: pre-1995 OpenAlex coverage thinner for non-US
+  institutions; non-Latin script transliteration less reliable in
+  older records. Manifests as missing *authors* rather than missing
+  *career outcomes* — different mechanism than Hofstra's, but same
+  signal-correlation pattern.
+
+**The Pathway-C spurious-trend threat (the most important threat for
+ws2 specifically).** ws2's measurement apparatus *improved
+differentially over time*. OpenAlex disambiguation of non-Western
+authorship became more reliable in later eras; non-Latin script
+handling improved; institutional ROR coverage filled out. So observed
+demographic-diversity *rises* in Tests I-III could partly reflect
+measurement-coverage improvements rather than true demographic-
+pluralization. Hofstra doesn't have this problem (single-cohort
+sample); ws2 inherits it at amplified magnitude (50-year time series
+across an era of changing measurement coverage). This threatens the
+central ws2 finding in a way that's invisible at the per-paper or
+per-author level but visible in the per-era coverage trend.
+
+**What we commit to (Phase 0.2 batch additions).**
+
+1. **Per-era identity-confidence diagnostic (sample-composition
+   transparency artifact).** Per-decade identity-confidence-pass rate
+   broken out by region-of-origin, plotted over time. Reported
+   alongside Tests I–III. Tells the reader where the analytical
+   sample is most biased.
+2. **Pooled measurement-robustness appendix.** Single section
+   reporting each headline number under each measurement-uncertainty
+   restriction (demographic-confidence-only, identity-confidence-
+   only, joint-confidence, pre-1990 exclusion, heavy-tail trim,
+   mediation control). One row per restriction per headline. Earns
+   C8's place in the design without analytical-grid bloat (~6 rows
+   added per headline, not full grids).
+3. **Staged decomposition trigger on Test IV.** Joint-confidence-
+   restricted Test IV γ₁ reported in measurement-robustness appendix;
+   if movement >0.02 SD vs. headline, decompose into demographic-
+   confidence-only and identity-confidence-only restrictions and
+   report which dominates. Pre-registered threshold prevents post-hoc
+   decomposition fishing.
+4. **Methods-framing extension on identity uncertainty.** Extend the
+   C4 weight-by-confidence paragraph: identity uncertainty introduces
+   a parallel signal-correlated error structure that requires its own
+   diagnostic (item 1) and its own restriction-row in the robustness
+   appendix (items 2–3). Headline numbers carry both uncertainty
+   dimensions visibly.
+5. **Pathway-C spurious-trend acknowledgment in Methods/Discussion.**
+   Explicitly frame: observed demographic-diversity rises in Tests
+   I–III could partly reflect measurement-coverage improvements
+   rather than true demographic-pluralization. If the per-era
+   diagnostic (item 1) shows pass-rate rising faster for non-Western
+   regions than Western, document the magnitude of measurement-trend
+   contamination in the headline divergence claim. Most important of
+   the five — addresses a threat specific to ws2's 50-year design.
+
+**What we considered and rejected.**
+
+- *Full-grid joint-confidence stratification on every headline.* Would
+  push results tables from ~50 cells to ~250 cells. Pooled-appendix
+  approach earns C8's place at much lower analytical-grid cost.
+- *Pathway B specific commitment.* Variance issue, not bias. Standard
+  errors already absorb it. No specific commitment needed.
+- *Hofstra-style "research faculty" restriction analog.* ws2 doesn't
+  have the matching-pipeline architecture that motivates Hofstra's
+  research-faculty filter. The per-era diagnostic + measurement-
+  robustness appendix do equivalent work without the filter.
+
+**Connection to ws2 commitments.**
+
+- Builds on the C4 weight-by-confidence framework: extends from
+  demographic-inference-uncertainty alone to compound (identity ×
+  demographic) uncertainty.
+- Parallel design move to C9 / C10: when uncertainty has a
+  signal-correlated structure that varies by regime (era × region),
+  surface the heterogeneity in the design rather than collapse into
+  a single number.
+- Provides the substantive answer to the natural reviewer question
+  "did your finding survive joint measurement-confidence
+  restrictions?" — without committing to a full-grid stratification
+  that would dilute the headline.
+
+**Left open for future discussion.**
+
+- How to operationalize the identity-confidence threshold. OpenAlex
+  doesn't expose a per-author confidence score directly; we'd need to
+  derive a proxy (e.g., name-frequency × institutional-ROR-completeness
+  × publication-density). Decide in early Stage 1 once the OpenAlex
+  sample is in hand.
+- Whether the per-era diagnostic should also break out by name-script
+  (Latin vs. non-Latin) in addition to region-of-origin. Probably
+  useful for the spurious-trend story; defer to Stage 1 once
+  diagnostic data is visible.
+- Whether to extend item 5 from Methods/Discussion framing to a
+  formal correction (e.g., reweighting the headline divergence by
+  inverse identity-confidence-pass rate). Reweighting introduces its
+  own assumptions; default to documenting magnitude of contamination
+  rather than correcting it. Revisit if Stage 2 results show
+  measurement-coverage improvement is large enough to plausibly
+  account for the headline divergence.
 
 ### On C9 — dissertations vs. papers
 
