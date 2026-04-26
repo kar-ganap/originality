@@ -1121,6 +1121,94 @@ desiderata §9, but same principle).
       selection on risk preference, etc.). Reported as descriptive
       association, not causal effect. No instrumental variable strategy
       attempted in this paper.
+- **Test IV Persistence Extension (Stage 3 pre-registration, per
+  Hofstra C11 + C10 walkthroughs).** Per-paper multi-window persistence
+  analysis to disambiguate "discrimination" from "surface-novelty"
+  readings of γ₁ patterns:
+  - **Variables per paper p:** C_k(p) for k ∈ {3, 5, 10, 15};
+    Persistence(p) = C_10(p) / C_3(p).
+  - **Regression 1 (direct interaction):** log(1 + C_15(p)) = α + β_1·N_p
+    + β_2·T_p + β_3·(N_p × T_p) + controls + year-FE + subfield-FE + ε.
+    Test β_3 sign.
+  - **Regression 2 (persistence ratio):** Persistence(p) = γ_0 + γ_1·N_p
+    + γ_2·T_p + γ_3·(N_p × T_p) + controls + FE + ε. Test γ_3 sign.
+  - **Multi-window co-reporting (per C10):** C_5, C_10, C_15 reported
+    as co-equal columns in a single Test IV Persistence table — not
+    primary-vs-sensitivity. C_10 flagged as the headline-comparability
+    column (Hofstra-era literature comparison), but column placement
+    does not signal weight.
+  - **Heavy-tail trimming robustness (per SQ7):** full sample / top-1%-
+    trimmed / top-5%-trimmed reported alongside.
+  - **Mediation-style control sensitivity (per SQ14):** β_3 reported
+    without novelty-structure controls, with distance-from-canonical-
+    centroid control, with subfield FE, with full control set.
+  - **Pre-registered interpretive grid for γ₁ pattern across windows:**
+    - γ₁ stable across C_5/C_10/C_15 → finding robust to "uptake"
+      operationalization.
+    - γ₁ > 0 at C_5 but ≈ 0 at C_15 → diverse-team novelty has a "fast
+      spike" pattern; doesn't durably persist. The surface-novelty
+      reading.
+    - γ₁ ≈ 0 at C_5 but > 0 at C_15 → diverse-team novelty is slow to
+      be picked up but durable. The discrimination →
+      eventual-rediscovery reading.
+    - γ₁ stable in fast-uptake strata (HEP, ML-post-2012) but unstable
+      in slow-uptake strata → finding generalizes only where uptake
+      is fast.
+    - γ₁ unstable across windows in all strata → multi-headed construct;
+      persistence-class question itself ill-posed at this resolution.
+      Substantively interesting null on measurement.
+  - **Empirical uptake-half-life diagnostic per stratum (Phase 0.2 +
+    early Stage 1).** Per (field × subfield × decade) cell, fit a
+    citation-accumulation curve and report the year by which 50% of
+    eventual C_15 has accumulated. Reported alongside the Test IV
+    Persistence table as a transparency artifact: tells the reader
+    which window is most apt for which cell. Does not change the
+    pre-registered primary or column ordering — informs interpretation,
+    not specification.
+  - **Truncation by window:** C_5 truncates papers at 2019; C_10 at
+    2014; C_15 at 2009. Pre-registered. Cells that fall outside a
+    window's truncation reported as "out of window."
+  - **Standard errors:** double-clustered by lead author and subfield.
+  - **Left-censoring:** OpenAlex citation-indexing completeness improves
+    over time. Add `coverage_rate(year)` as a control in Regression 1.
+  - **Effort:** ~1–2 weeks Stage 3, uses existing OpenAlex data.
+- **Item 11 — Production-capture aggregate decomposition (Stage 3
+  pre-registration).** Per-demographic-group annual production and
+  uptake decomposition to test whether observed aggregate divergence
+  reflects differential capture by demographic groups:
+  - **Variables per (group G, year Y):** N(G, Y) = mean new links per
+    active group-G author in year Y (active = ≥1 paper in Y); C_k(G, Y)
+    for k ∈ {5, 10, 15}.
+  - **Multi-window co-reporting (per C10):** C_5, C_10, C_15 reported
+    side-by-side, parallel to Test IV Persistence. Same interpretive
+    grid for window-disagreement patterns applies.
+  - **Per-active-year normalization as primary (per SQ12):** controls
+    for differential pipeline attrition. Total production reported as
+    secondary.
+  - **Pipeline-survival sub-analysis (per SQ12):** demographic-specific
+    survival rate to ≥10-year publishing window.
+  - **Region-of-origin granularity (per SQ13):** ≥7 region groups, not
+    pooled URM/non-URM.
+- **Stage 3 U-M-S tertiary novelty: 5-year accumulation buffer (per
+  Hofstra C10 walkthrough).** Reference-pair atypicality (Uzzi-Mukherjee-
+  Stringer style) requires a "what's been seen before" baseline. Pre-
+  register: U-M-S computation uses 1975+ papers only; 1970–1974 papers
+  excluded from this specific operationalization (would otherwise look
+  maximally novel by construction since their reference-pair pre-corpus
+  is empty). 1970–1974 papers remain in Test IV primary (centroid
+  distance, no accumulation buffer needed) and in Tests I–III aggregate
+  divergence (data-quality tiers govern).
+- **Methods-framing commitment: windows-as-estimand (per Hofstra C10
+  walkthrough).** Add a Methods paragraph stating that uptake/
+  accumulation windows are part of the estimand, not nuisance
+  parameters. Different windows define different substantive questions
+  ("early hot finding" vs. "durable contribution"). The multi-window
+  grid is a deliberate move away from collapsing these into one
+  number, parallel to the T_p multi-operationalization for team
+  diversity. The empirical uptake-half-life diagnostic transparently
+  anchors which window is apt for which stratum without giving the
+  analyst post-hoc freedom to tune the primary. Approximately one
+  paragraph.
 - **Specific anchor concepts for Mitigation 4.** List of ~100 concepts with
   representative reference texts, per-field. Phase 0.2 or early Stage 1.
 - **Specific alternative embedding model for Mitigation 2.** Choice between

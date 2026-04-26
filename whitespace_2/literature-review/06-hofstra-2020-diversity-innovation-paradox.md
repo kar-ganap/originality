@@ -1661,7 +1661,112 @@ ambiguity in the design than to launder it into a single number.
 
 ### On C10 — boundary conditions for time-series restrictions
 
-(Pending.)
+Working session with user, 2026-04-25.
+
+**Reframing the question.** Hofstra's "1982–2010 with 5/5 buffer" choice
+bundles two distinct boundary issues that should be disentangled before
+asking whether ws2 should adopt an analogous restriction:
+
+1. **Data-quality lower bounds** (pre-X year cutoffs): when does the
+   corpus become reliable enough to compute the metric at all? Driven
+   by abstract coverage, classifier drift, reference-list completeness.
+2. **Process buffers** (uptake / accumulation windows): how long does
+   a paper need on either side of its publication date for the metric
+   to stabilize? Driven by the diffusion process of ideas.
+
+These have different right answers and are independent. Most ws2 tests
+need (1) but not (2); only the persistence-class tests and the Stage 3
+U-M-S tertiary need (2).
+
+**The substantive case for "let the data tell the story" on buffers.**
+Uptake rates vary across regimes by orders of magnitude:
+
+- **Field-level:** physics has rapid theory propagation; sociology has
+  slower uptake; some areas of math have decade-scale rediscovery.
+- **Subfield-level within physics:** high-energy physics is fast (large
+  collaborations, rapid preprint diffusion); condensed-matter is
+  moderate; pure-math subfields are slow.
+- **Era-level:** pre-internet, uptake was slow; post-arXiv (~1991 in
+  physics, late 1990s in CS), uptake accelerated; in ML post-2012,
+  uptake is now subannual for breakthroughs.
+
+A single 5-year (or 10-year) buffer is wrong-by-construction across
+these regimes. It either truncates fast-uptake data unnecessarily or
+undermeasures persistence in slow-uptake regimes. This is the same
+multi-headed-construct issue we faced for Test IV T_p (C9): when the
+underlying construct varies by regime, surface the multi-headedness in
+the design rather than collapse it into one number.
+
+**Countervailing pressures for committing to a primary.**
+
+- *Cross-paper comparability.* Reviewers want a headline number to
+  compare against Hofstra and the existing literature. A
+  pre-registered C_10 primary lets us say "Hofstra-style replication:
+  γ₁ = X" while showing the multi-window grid alongside.
+- *Researcher-degree-of-freedom risk.* "Let the data tell the story
+  via empirical uptake-half-life per stratum" can devolve into
+  post-hoc tuning. Pre-registering a primary forces commitment.
+
+**Per-test resolution.**
+
+| Test | Boundary type | Action |
+|---|---|---|
+| Tests I–III (aggregate divergence) | Data quality only — no buffer needed | Already locked: post-1990 primary, pre-1985 preliminary, pre-1990 with disclaimer (desiderata §11, Phase 0.1 §13). No change. |
+| Test IV primary (centroid distance) | Data quality only | <5-references flag for robustness-only subset already locked. No change. |
+| Test IV Persistence Extension | Buffer applies (uptake) | C_10 pre-registered primary; C_5 and C_15 co-equal in the same table; empirical uptake-half-life diagnostic per field × subfield × era. |
+| Item 11 (Production-capture) | Buffer applies (uptake) | C_10 primary (truncates 2014); C_5 (truncates 2019) and C_15 (truncates 2009) reported alongside. |
+| Stage 3 U-M-S tertiary novelty | Buffer applies (accumulation) | Pre-register 5-year accumulation buffer: 1975+ for U-M-S computation; 1970–1974 papers excluded from this operationalization. |
+
+**Pre-registered interpretive grid for window-disagreement patterns
+(parallel to Test IV T_p γ₁ grid from C9).**
+
+- γ₁ stable across C_5/C_10/C_15 → finding is robust to operationalization
+  of "uptake."
+- γ₁ > 0 at C_5 but ≈ 0 at C_15 → diverse-team novelty has a "fast
+  spike" pattern; doesn't durably persist. The "surface novelty"
+  reading from C11.
+- γ₁ ≈ 0 at C_5 but > 0 at C_15 → diverse-team novelty is slow to be
+  picked up but durable. The "discrimination → eventual rediscovery"
+  reading from C11.
+- γ₁ stable in fast-uptake strata (HEP, ML-post-2012) but unstable in
+  slow-uptake strata → finding generalizes only where uptake is fast.
+- γ₁ unstable across windows in *all* strata → multi-headed construct;
+  the persistence-class question is itself ill-posed at this resolution.
+  Substantively interesting; publishable as an honest null on
+  measurement.
+
+**Methods-framing commitment.** Add a Methods paragraph stating that
+**windows are part of the estimand, not nuisance parameters**.
+Different windows define different substantive questions ("early hot
+finding" vs. "durable contribution"). The multi-window grid is a
+deliberate move away from collapsing these into one number, parallel
+to the T_p multi-operationalization for team diversity. The empirical
+uptake-half-life diagnostic transparently anchors which window is apt
+for which stratum without giving the analyst post-hoc freedom to tune
+the primary.
+
+**What this commits us to (action items for Phase 0.2 batch).**
+
+1. Test IV Persistence: keep C_10 primary; report C_5/C_10/C_15 as
+   co-equal columns, not sensitivity-only. Add empirical uptake-
+   half-life diagnostic per stratum.
+2. Item 11 (Production-capture): same multi-window co-reporting as
+   Test IV Persistence.
+3. Pre-registered interpretive grid for window-disagreement patterns,
+   per the table above.
+4. Stage 3 U-M-S tertiary: pre-register 1975+ accumulation buffer.
+5. Methods-framing paragraph: windows-as-estimand.
+
+**Left open for future discussion.**
+
+- How to operationalize the empirical uptake-half-life diagnostic.
+  Candidate: per (field × subfield × decade) cell, fit a citation-
+  curve and report the year by which 50% of eventual C_15 has
+  accumulated. Pre-register the operationalization in Phase 0.2.
+- Whether to add an even longer window (C_20, C_25) for slow-uptake
+  strata. Possibly useful but truncates the analysis window further
+  (C_25 → papers ≤1999 only, losing 25 years of recent data). Decide
+  after pilot uptake-half-life results land in Stage 1.
 
 ### On C11 — test-of-time / persistence
 
