@@ -874,6 +874,22 @@ reference?
    underlying metric needs to be validated against the threats, not
    just shown to be stable across variants.
 
+9. **Age-dispersion of cited work as auxiliary control variable**
+   (PLF Extended Data Table 1 inheritance, 2026-04-26). PLF include
+   "dispersion in age of cited work" as a regression control;
+   conceptually it captures *temporal* concentration (does the field
+   engage with its history or only with recent work?) — distinct
+   from *paper-identity* concentration captured by CanonConc.
+   Without this control, ws2's subfield mechanism test γ_1 is a
+   blended effect of paper-identity concentration + temporal
+   narrowing; with it, the two mechanisms are separable. Added as
+   subfield-level control in the regression spec (see
+   `docs/phases/phase-0.1-plan.md` subfield mechanism test
+   subsection). Computationally trivial — uses existing OpenAlex
+   reference data. This is the *one* methodology element ws2 directly
+   inherits from PLF; we do not inherit CD-index or any of PLF's
+   primary metrics.
+
 ---
 
 ## Discussion Notes

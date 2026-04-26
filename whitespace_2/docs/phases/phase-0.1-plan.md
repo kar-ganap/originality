@@ -885,10 +885,25 @@ desiderata §9, but same principle).
     post-1990 window (per desiderata §10): CanonConc_s = mean
     Chu-Evans Spearman over subfield time series; DivMag_s = slope of
     standardized gap within subfield. Regress DivMag_s on CanonConc_s
-    with subfield-level controls (log papers, avg team size, subfield
-    age), cluster-robust standard errors. H₁: γ₁ > 0 (canonical-
-    concentrated subfields show more divergence). Separate correction
-    regime from the field-level tests — single test, α=0.05.
+    with subfield-level controls, cluster-robust standard errors.
+    H₁: γ₁ > 0 (canonical-concentrated subfields show more divergence).
+    Separate correction regime from the field-level tests — single
+    test, α=0.05. Subfield-level controls:
+    - log(papers in subfield) — field-size confound (per Chu-Evans
+      SQ6 walkthrough).
+    - mean team size in subfield — Wu-Wang-Evans 2019 confound.
+    - subfield age (years since first paper).
+    - **Mean age-dispersion of cited work** (per Park-Leahey-Funk
+      Extended Data Table 1, lit-review session 2026-04-26): for
+      each paper p in subfield s, compute the standard deviation of
+      publication years of papers in p's reference list; aggregate
+      to subfield-year level by mean. Captures temporal-concentration
+      dimension (does the field engage with its history or only with
+      recent work?) — distinct from CanonConc's paper-identity-
+      concentration dimension. Without this control, γ_1 is a blended
+      effect of paper-identity concentration + temporal narrowing;
+      with it, the two mechanisms are separable. Computationally
+      trivial (uses existing OpenAlex reference data).
   - **Control variables (operationalization for Test II and Test IV):**
     - **log(N papers in year Y) — field size.** Count from OpenAlex
       as-indexed in our snapshot, log-transformed. Captures field expansion
