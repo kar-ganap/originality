@@ -1058,7 +1058,125 @@ correct-and-restrict.
 
 ### On C5 — citing PLF as upstream support: three options
 
-(Pending.)
+Working session with user, 2026-04-26.
+
+**Three options considered.**
+
+*(a) Don't cite PLF as upstream support.* Position ws2 as orthogonal
+to the disruption-decline debate. Safest; lowest impact.
+
+*(b) Cite PLF with critique-chain caveat.* Acknowledge PLF's
+substantive finding; note the Petersen-Holst critique chain; note
+that ws2's evidence is methodologically independent. Most defensible;
+medium impact.
+
+*(c) Engage PLF aggressively as cleaner evidence.* Position ws2's
+semantic-plurality metric as methodologically cleaner than CD-index;
+contribute inflation-immune evidence to the debate. Most ambitious;
+highest impact; highest methodological burden.
+
+**Decision: (c-prime) — refined version of (c).**
+
+Raw option (c) used "resolving the contested PLF claim" framing
+which overclaims. The refined (c-prime) version preserves the
+ambition while calibrating the claims:
+
+- Frame as "contributing inflation-immune evidence to the debate"
+  rather than "resolving."
+- Acknowledge the construct gap explicitly: semantic plurality is
+  *adjacent to* but *not identical to* disruption.
+- Pre-commit to symmetric framings (describe what we find without
+  partisan language).
+
+**What (c-prime) commits us to.** Four concrete pieces:
+
+*(1) Methods-section paragraph defending the inflation-immune
+claim.* ~5 sentences explaining why our semantic-plurality metrics
+(cluster entropy + effective dimensionality + mean pairwise distance)
+are methodologically sounder than CD-index for measuring change-in-
+content-space-over-time:
+- All three operate on paper embeddings, not citation network
+  structure → not subject to citation-inflation bias.
+- Effective dimensionality operates on embedding-space variance →
+  also not subject to citation-inflation.
+- Mean pairwise distance is a direct content-space measurement →
+  orthogonal to citation patterns.
+- All three are robust to the specific accidental-Type-2 mechanism
+  walked through in SQ7 (longer reference lists → mechanically
+  more Type-2 citations).
+
+*(2) Discussion-section paragraph engaging PLF directly.* ~5
+sentences. Cite PLF's substantive claim, cite Petersen-Holst critique
+chain, position ws2's semantic-plurality measurement as inflation-
+immune evidence on the substantively-related question.
+
+*(3) Pre-registered interpretive grid for ws2 outcomes vs. PLF
+debate.* Three cells (or one short paragraph):
+- *Semantic plurality declines over time* → corroborates PLF's
+  substantive direction with cleaner methodology. Strengthens PLF's
+  underlying claim against Petersen-Holst's measurement-artifact
+  reading.
+- *Semantic plurality stable* → contradicts PLF's substantive
+  direction. Strengthens the Petersen-Holst reading that PLF's
+  decline is mostly artifact.
+- *Semantic plurality rising* → strongly contradicts PLF. Supports
+  the view that PLF's decline is mostly artifact (and possibly the
+  underlying scientific dynamics are healthier than PLF claims).
+
+*(4) Calibration paragraph (load-bearing for c-prime framing).*
+~3 sentences. Important — semantic plurality is *adjacent to* but
+*not identical to* "disruption" as PLF measures it. PLF measures
+citation-pattern structure (whether successors cite predecessors);
+we measure content-space structure (whether papers cluster or
+spread). These are related but distinct constructs. We don't claim
+to "resolve" PLF — we claim to contribute methodologically-cleaner
+evidence on the substantively-related question.
+
+**Risks of (c-prime) we accept.**
+
+*(1) The "cleanness" claim itself is contestable.* Our metric isn't
+trivially cleaner than CD-index. It has its own issues we've
+engaged: embedding stability over time, cluster-fit sensitivity,
+subfield assignment drift, OpenAlex coverage. A reviewer could
+push: "you claim your metric is cleaner, but you have these issues
+PLF doesn't have." Our defense is that we've explicitly addressed
+these via drift-mitigation ladder, temporal-stratification commitment,
+and coverage diagnostics. Defense, not automatic win.
+
+*(2) Scope creep risk.* (c-prime) pulls narrative weight from the
+decoupling story (our distinctive contribution) toward PLF positioning.
+Mitigation: the calibration paragraph (commitment #4) explicitly
+keeps PLF engagement bounded — "adjacent to but not identical to"
+prevents the paper from becoming about PLF.
+
+*(3) Discussion-section real estate.* (c-prime) requires ~1.5
+paragraphs Methods + ~1.5 paragraphs Discussion. Manageable but
+not free.
+
+*(4) Participant rather than observer.* Position us as participants
+in the disruption-decline debate. Future commenters will engage us
+specifically on the cleanness claim. We accept this — high-impact
+positioning is the upside.
+
+**Why (c-prime) over (b).** (b) is safer but lower-impact. Given
+that we're going to do most of the methodology work anyway (we have
+to defend our metrics' soundness against citation-inflation
+concerns regardless of whether we explicitly engage PLF), the
+marginal cost of (c-prime) over (b) is small while the substantive
+contribution to a high-profile debate is meaningful. The decoupling
+story remains primary; PLF engagement is secondary but substantive.
+
+**What we don't do under (c-prime).**
+
+- Don't claim to "resolve" the PLF/Petersen-Holst debate.
+- Don't position our metric as a *replacement* for CD-index in
+  general scientometrics.
+- Don't engage PLF beyond the inflation-immune-evidence claim;
+  don't take a stand on the Shapley-Owen author-FE finding, the
+  conservation-of-disruption finding, or the verb-classification
+  evidence.
+
+Captured in pending Phase 0.2 batch.
 
 ### On C6 — author-FE dominance interpretation
 

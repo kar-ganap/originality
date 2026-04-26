@@ -1579,6 +1579,61 @@ desiderata §9, but same principle).
     than for PLF. We document the threat with a diagnostic and a
     sensitivity row; we don't restrict the primary analysis based
     on coverage thresholds.
+- **PLF positioning (c-prime): inflation-immune evidence framing
+  (per Park-Leahey-Funk C5 walkthrough, lit-review session
+  2026-04-26).** Three options considered for citing PLF in ws2's
+  Methods/Discussion: (a) don't cite as upstream support — orthogonal
+  positioning; (b) cite with critique-chain caveat — methodologically-
+  independent positioning; (c) engage aggressively as cleaner
+  evidence. **Decision: (c-prime), a refined version of (c) that
+  preserves ambition while calibrating claims.** Frame ws2 as
+  contributing inflation-immune evidence to the debate rather than
+  "resolving" it; explicitly acknowledge the construct gap (semantic
+  plurality ≠ disruption); pre-commit to symmetric framings. Four
+  concrete commitments:
+  - **(1) Methods-section paragraph defending inflation-immunity.**
+    ~5 sentences. Our semantic-plurality metrics (cluster entropy +
+    effective dimensionality + mean pairwise distance) operate on
+    paper embeddings / embedding-space variance / direct content-
+    space measurement — none on citation network structure. None
+    subject to the accidental-Type-2 citation-inflation mechanism
+    (walked through in PLF SQ7). This is the technical content for
+    the cleanness claim.
+  - **(2) Discussion-section paragraph engaging PLF.** ~5 sentences.
+    Cite PLF's substantive claim, cite Petersen-Arroyave-Pammolli
+    2024 + Holst et al. 2024 critique chain, position ws2's
+    semantic-plurality measurement as inflation-immune evidence on
+    the substantively-related question.
+  - **(3) Pre-registered interpretive grid for ws2 vs. PLF debate.**
+    Three cells:
+    - Semantic plurality *declines* → corroborates PLF substantive
+      direction with cleaner methodology; strengthens PLF claim
+      against Petersen-Holst measurement-artifact reading.
+    - Semantic plurality *stable* → contradicts PLF substantive
+      direction; strengthens Petersen-Holst measurement-artifact
+      reading.
+    - Semantic plurality *rises* → strongly contradicts PLF;
+      supports the view that PLF's decline is mostly artifact.
+  - **(4) Calibration paragraph (load-bearing for c-prime framing).**
+    ~3 sentences explicitly stating that semantic plurality is
+    *adjacent to* but *not identical to* disruption. PLF measures
+    citation-pattern structure; we measure content-space structure.
+    Related but distinct constructs. We do *not* claim to resolve
+    PLF — we contribute methodologically-cleaner evidence on the
+    substantively-related question.
+  - **Total Discussion + Methods real estate:** ~1.5 paragraphs
+    Methods + ~1.5 paragraphs Discussion. Manageable; not free.
+  - **What we explicitly do not do under (c-prime).** Don't claim
+    to resolve PLF/Petersen-Holst debate; don't position our metric
+    as replacement for CD-index in general scientometrics; don't
+    engage PLF beyond inflation-immune-evidence claim (no stand on
+    Shapley-Owen findings, conservation-of-disruption, verb-
+    classification).
+  - **Risks accepted.** Cleanness claim is contestable (we have our
+    own issues: embedding stability, cluster-fit, subfield drift,
+    coverage); scope creep risk (mitigated by calibration paragraph);
+    Discussion real estate cost; positioning as participant in the
+    debate.
 - **Specific anchor concepts for Mitigation 4.** List of ~100 concepts with
   representative reference texts, per-field. Phase 0.2 or early Stage 1.
 - **Specific alternative embedding model for Mitigation 2.** Choice between
