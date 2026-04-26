@@ -814,6 +814,21 @@ should we report at multiple scales to cover both possibilities?
     Stage 3 robustness deferred as back-pocket. Captured in pending
     Phase 0.2 batch.
 
+11. **Subfield mechanism test nonlinearity check (Chu-Evans
+    bin-and-regress critique, 2026-04-26).** Chu-Evans's
+    bin-and-regress strategy has a known weakness: bin-cutpoint
+    choice is arbitrary and a regime shift falling within a bin
+    gets averaged out. Their headline patterns are partially
+    mitigated by LOWESS smoothing in the figures, but the underlying
+    linear-relationship assumption when applied to ws2's subfield
+    mechanism test (DivMag_s = γ_0 + γ_1·CanonConc_s + ...) carries
+    the same vulnerability — if the CanonConc → DivMag relationship
+    has regime structure, a linear fit smears it. Commitment:
+    quadratic term (γ_2·CanonConc_s²) added to the regression spec;
+    LOWESS visualization reported as a diagnostic alongside the
+    linear fit. ~Half-day Stage 2 effort. Captured in pending
+    Phase 0.2 batch.
+
 ---
 
 ## Discussion Notes

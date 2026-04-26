@@ -1396,6 +1396,27 @@ desiderata §9, but same principle).
   back-pocket** — requires WoS data access not currently in ws2
   plan; trigger only if reviewers specifically request cross-
   substrate replication.
+- **Subfield mechanism test nonlinearity check (per Chu-Evans
+  bin-and-regress critique, lit-review session 2026-04-26).** The
+  subfield mechanism regression (DivMag_s = γ_0 + γ_1·CanonConc_s +
+  Σ γ_k·Control_k + ε_s) assumes the CanonConc → DivMag relationship
+  is linear. If the real relationship has regime structure (e.g.,
+  divergence flat for low CanonConc subfields, sharply rising above
+  a threshold), a linear fit smears the regime — underestimates the
+  effect at high CanonConc, overestimates at low CanonConc, reports
+  a "moderate γ_1" that misses the structure. Commitment:
+  - **Quadratic term:** add γ_2·CanonConc_s² to the regression
+    spec. If γ_2 is significant at α=0.05, report curvature
+    coefficient and revised marginal-effect curve; otherwise default
+    to linear-only headline.
+  - **LOWESS visualization:** plot DivMag_s vs. CanonConc_s as
+    scatterplot with LOWESS trendline; visually overlay the linear
+    and quadratic fits. Flag any visible non-monotonic behavior.
+  - **Cost:** ~half-day Stage 2 effort, no new data or API calls.
+  - **Considered and rejected:** spline regression with
+    cross-validation knot placement. More principled but introduces
+    complexity not used elsewhere in ws2; quadratic + LOWESS captures
+    the regime-structure concern proportionately.
 - **Specific anchor concepts for Mitigation 4.** List of ~100 concepts with
   representative reference texts, per-field. Phase 0.2 or early Stage 1.
 - **Specific alternative embedding model for Mitigation 2.** Choice between
