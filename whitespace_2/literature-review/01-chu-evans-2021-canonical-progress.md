@@ -777,6 +777,19 @@ should we report at multiple scales to cover both possibilities?
    3-panel decomposition + Test IV cross-section is the empirical
    bridge across the two.
 
+8. **Cohort-mix interpretation handling (Chu-Evans SQ8 walkthrough,
+   2026-04-26).** Chu-Evans's period-dominance finding (period
+   effects 16–30× larger than cohort effects within-author) bounds
+   the cohort-mix interpretation of any aggregate ws2 divergence
+   finding toward unlikely *a priori*, but the inheritance isn't
+   airtight (their evidence is for citation behavior, not semantic
+   output of papers). ws2 commits to a Discussion-section paragraph
+   leveraging Chu-Evans as upstream evidence, plus a Stage 3
+   simplified cohort decomposition (per (publication year ×
+   lead-author cohort) bins, semantic diversity trajectories). Full
+   author-FE within-author longitudinal analysis on semantic output
+   is deferred as back-pocket (Option C).
+
 ---
 
 ## Discussion Notes
@@ -882,7 +895,132 @@ version. Questions not yet worked through are marked `(Pending)`.)
 
 ### SQ8 — Period vs. cohort decomposition (SI Tables S2/S3)
 
-(Pending.)
+Working session with user, 2026-04-26.
+
+**Cohort vs. period vs. age** (the standard age-period-cohort
+identification triangle). For any individual scientist, three time
+variables are linearly related: age = period − cohort. Without
+restrictions, you can't separately identify all three.
+
+For Chu-Evans:
+- **Cohort** = year of first publication (entry-year).
+- **Period** = year of citing paper publication.
+- **Age** = career stage at time of citing paper.
+
+**Two competing hypotheses Chu-Evans test.**
+
+*Cohort hypothesis:* scholars are imprinted by training-era field-size
+conditions; imprinting persists across careers. Aggregate citation-
+pattern shifts are driven by **generational replacement** — old-cohort
+scholars retire, new-cohort scholars replace them, mix-shift drives
+aggregate change.
+
+*Period hypothesis:* scholars adapt to current field-size conditions
+regardless of entry-cohort. Aggregate shifts are driven by
+**current-state adaptation**, not generational replacement.
+
+These differ in within-author predictions: under cohort-dominance,
+within-author citation patterns are stable across career; under
+period-dominance, within-author patterns track current field size.
+
+**Their identification strategy.**
+
+*Table S2 — within-author variation (author FE).* Regress p(citation
+to top 0.1% / 1% / bottom 50%) on log₁₀N (current field size) and
+year, with author fixed effects. Author FE absorbs all time-invariant
+author characteristics including cohort. The remaining log₁₀N
+coefficient identifies within-author variation: same author, different
+publication years, different field sizes. Result: log₁₀N coefficient
+= 0.018 to 0.021 for top-percentile DVs, p<0.001. The same author
+cites top-cited papers more when the field is large than when it's
+small. Rules out cohort-replacement as the driver — generational
+turnover can't explain within-author shifts.
+
+*Table S3 — direct period-vs-cohort comparison.* Regress same DVs on
+log₁₀N (period) AND log₁₀Ne (entry-year field size, the cohort
+variable) WITHOUT author FE. Both coefficients identifiable. Result
+for top 0.1%: period 0.028–0.030 vs. cohort 0.001 (period 28–30×
+larger). For top 1%: period 0.064–0.065 vs. cohort 0.004 (16× larger).
+Period dwarfs cohort.
+
+**The substantive claim.** Even veteran scholars trained in a small-
+field era change their citation behavior when the field grows large.
+Imprinting effects exist but are dwarfed by current-state adaptation
+by 16–30×.
+
+**Identification caveats (what the regressions don't airtight rule
+out).**
+
+- *Within-author variation conflates period and age.* Same author
+  publishing over 30 years also gets older over those 30 years.
+  Author FE absorbs cohort but not age. The `year` control partially
+  absorbs age but the separation isn't perfect. Possible alternative:
+  older scholars cite top-cited papers more for reasons unrelated to
+  field size (defending established research program, teaching
+  habits, consolidation).
+- *Field-specific (Electrical & Electronic Engineering only).*
+  Generalization to other fields is plausible but not directly
+  demonstrated. Different citation cultures or career-length
+  distributions could shift the period-vs-cohort balance.
+
+**Implications for ws2 — three substantive consequences.**
+
+*(1) Time-FE specification confirmed.* Test IV uses year-FE (current
+publication year), not author-entry-year (cohort). Chu-Evans support
+this — current-period adaptation is operative; we don't need cohort
+controls in the primary specification.
+
+*(2) Weakens "old-guard cohort" interpretation of any divergence
+finding.* If we find demographic diversity rising while semantic
+diversity falls, a tempting alternative interpretation is "old-guard
+cohorts trained pre-1990 kept producing canon-eccentric work; new
+cohorts conform; aggregate semantic diversity falls as cohort mix
+shifts." Chu-Evans say no — even old-guard cohorts conform when the
+field grows. So if we observe homogenization, we *cannot* attribute
+it to cohort selection. Homogenization affects everyone.
+
+*(3) Strengthens "structural mechanism" framing for compass 13-A.*
+Whatever's compressing semantic diversity in large fields operates
+on all scholars, not on a specific cohort or generation. Consistent
+with sandpile / Matthew / journal-prestige / cognitive-overload
+accounts (mechanism-agnostic to who-is-citing); inconsistent with
+imprinting / generational stories.
+
+**Does ws2 need to do its own period-vs-cohort regression?**
+
+Three options considered (in ascending order of effort):
+
+*Option A — Discussion-section acknowledgment + cite Chu-Evans
+period-dominance.* Cite Chu-Evans as upstream evidence that within-
+field cohort imprinting is weak. Their evidence is for citation
+behavior, not semantic-output of papers, so the inheritance isn't
+airtight, but it's the closest direct evidence available. Free
+effort; Discussion-section paragraph + citation.
+
+*Option B — Stage 3 simplified cohort decomposition.* For each paper,
+identify lead author's first-publication year as cohort proxy. Bin
+papers by (publication year × lead-author cohort), compute mean
+semantic diversity per bin, plot trajectories. Read interpretation
+off pattern: all cohorts slope similarly → period effect operative;
+divergent cohort-trajectories → cohort effect operative. ~1 week
+Stage 3 effort; uses existing OpenAlex data; no new API calls.
+
+*Option C (back-pocket) — full Chu-Evans-style within-author
+longitudinal analysis on semantic output.* Define per-author
+semantic-diversity-output construct (e.g., variance of an author's
+papers' embeddings); take authors who published in both early and
+late eras; fit author-FE regressions with current canonical
+concentration as period predictor. Methodologically heavy: author
+disambiguation at scale (compounds the C8 issue), long-career-author
+selection bias, novel construct definition. 2–3 weeks Stage 3
+methodology work + own validation pipeline. Deferred unless Option
+B leaves cohort-mix question unresolved.
+
+**Decision (committed):** **Combine A + B; keep C as back-pocket.**
+The Discussion paragraph (A) leverages existing evidence; the Stage 3
+decomposition (B) provides ws2-specific data; (C) is fallback if B's
+results are ambiguous. Phase 0.2 batch additions captured separately
+in `docs/phases/phase-0.1-plan.md`.
 
 ### SQ9 — Disruption predictions under CD-index critique
 

@@ -1281,6 +1281,56 @@ desiderata §9, but same principle).
       magnitude rather than correcting it. Revisit only if Stage 2
       results show measurement-coverage improvement could plausibly
       account for the headline divergence.
+- **Cohort-mix interpretation handling (per Chu-Evans SQ8 walkthrough,
+  lit-review session 2026-04-26).** If aggregate semantic diversity
+  declines while demographic diversity rises (Tests I-III positive),
+  one alternative interpretation is cohort-mix: old cohorts trained
+  pre-1990 produced canon-eccentric work; new cohorts produce canon-
+  anchored work; aggregate decline reflects the cohort mix shifting
+  rather than all cohorts adapting. Chu-Evans 2021 (SI Tables S2/S3)
+  directly addresses the analogous question for citation behavior
+  and finds period effects dominate cohort effects by 16–30× within-
+  author, suggesting within-field cohort imprinting is weak. Their
+  evidence is for citation behavior, not semantic-output of papers,
+  so the inheritance bounds the cohort-mix interpretation toward
+  unlikely a priori but doesn't airtight rule it out. ws2 commits
+  to a two-part response (with a back-pocket option):
+  - **(A) Discussion-section paragraph (item under §9 framing
+    commitments).** Acknowledge cohort-mix as an alternative
+    interpretation; cite Chu-Evans's period-dominance finding as
+    upstream evidence weakening it; note that the inheritance is
+    indirect (their DV is citation behavior, ours is semantic-output);
+    point to (B) as ws2-specific evidence. Approximately one
+    paragraph.
+  - **(B) Stage 3 simplified cohort decomposition.** For each paper,
+    identify lead author's first-publication year as cohort proxy.
+    Bin papers by (publication year × lead-author cohort) cells;
+    compute mean semantic diversity per cell; plot per-cohort
+    trajectories. Interpretation grid:
+    - All cohorts' trajectories slope similarly → period effect
+      operative; cohort-mix not driving aggregate finding.
+    - Divergent cohort-trajectories with old-cohort high and
+      new-cohort low at same calendar year → cohort effect operative;
+      cohort-mix could be driving aggregate finding.
+    - Mixed pattern → ambiguous; trigger Option C.
+    Methodologically thin (lead-author-only cohort proxy; rough
+    cohort bins; no author FE; no within-author longitudinal claim),
+    but answers the Discussion question with ws2 data rather than
+    inheriting solely from Chu-Evans. Cost: ~1 week Stage 3 effort,
+    existing OpenAlex data, no new API calls.
+  - **(C) Back-pocket: full author-FE within-author longitudinal
+    analysis on semantic output.** Define per-author semantic-
+    diversity-output construct (candidates: variance of an author's
+    papers' embeddings; distance from author-specific centroid; mean
+    pairwise cosine distance among author's papers). Take authors
+    who published in both early-era (1970–1990) and late-era
+    (2000–2024); fit author-FE regressions with current canonical
+    concentration as the period predictor. Methodologically heavy
+    — author disambiguation at scale (compounds C8 issue), long-
+    career-author selection bias, novel construct requiring its own
+    validation pipeline. Cost: 2–3 weeks Stage 3 methodology work.
+    **Deferred unless Option B's results are ambiguous (mixed
+    pattern in the interpretation grid).**
 - **Specific anchor concepts for Mitigation 4.** List of ~100 concepts with
   representative reference texts, per-field. Phase 0.2 or early Stage 1.
 - **Specific alternative embedding model for Mitigation 2.** Choice between
