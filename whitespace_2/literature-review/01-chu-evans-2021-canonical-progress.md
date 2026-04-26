@@ -802,6 +802,18 @@ should we report at multiple scales to cover both possibilities?
    headline tests replicated on each subset; pre-registered
    interpretive grid. Captured in pending Phase 0.2 batch.
 
+10. **Classification-substrate acknowledgment (Chu-Evans C3
+    walkthrough, 2026-04-26).** WoS subjects (n=241, stable, sparse)
+    vs. OpenAlex concept tags (~65K, drifting, dense) are structurally
+    different classification substrates. ws2 uses Chu-Evans's
+    Spearman top-N methodology but cannot claim direct replication
+    of their coefficient values; classification-substrate confound
+    on any qualitative-pattern difference is unresolvable without
+    parallel analysis. Commitment: Methods-paragraph acknowledgment
+    + status-quo methodology-inheritance framing; cross-substrate
+    Stage 3 robustness deferred as back-pocket. Captured in pending
+    Phase 0.2 batch.
+
 ---
 
 ## Discussion Notes
@@ -819,7 +831,85 @@ happens.)
 
 ### On C3 — WoS subjects vs. OpenAlex concept tags
 
-(Pending.)
+Working session with user, 2026-04-26.
+
+**Structural differences in classification substrate.**
+
+- *Granularity.* Chu-Evans uses WoS subjects (n=241). OpenAlex concept
+  tags are ~65K concepts in a hierarchical tree. ws2 uses a hybrid
+  subfield assignment at ~10–50 per field — finer than WoS subjects,
+  coarser than raw OpenAlex concepts.
+- *Stability.* WoS classification is curated and slow-changing;
+  OpenAlex concepts evolve over time (hierarchy updates + classifier
+  improvements). ws2's plan §3 classifier drift mitigation is the
+  response.
+- *Per-paper noise.* WoS subject tags are sparse/discrete (1–few per
+  paper). OpenAlex concept tags are dense/probabilistic (5–15 per
+  paper with confidence scores). ws2 commits to "highest-confidence
+  concept tag or primary arXiv category" for primary subfield
+  assignment.
+- *Coverage.* OpenAlex covers more papers — non-English, open-access,
+  non-Western institutions. **Advantageous for ws2 demographic-plurality
+  measurement** (WoS would systematically under-sample non-Western
+  authorship in ways that would confound demographic metrics; this
+  was a load-bearing reason for using OpenAlex over WoS in the first
+  place — see Hofstra C8 walkthrough).
+
+**Three concrete implications for ws2.**
+
+*(A) We cannot directly cite Chu-Evans's coefficient values.* Their
+Spearman correlation rises from 0.25 (N=1K) to 0.74 (N=100K). Those
+specific numbers are tied to their classification substrate. Our
+Spearman values will differ — possibly substantially — even if the
+qualitative pattern matches. We can say "we apply their methodology"
+but not "we replicate their coefficients."
+
+*(B) Classification-substrate confound on our findings.* If our
+canonical-concentration time series differs in shape from Chu-Evans's,
+three explanations are possible and not separable without parallel
+analysis on both substrates: (i) real difference in dynamics across
+1970–2024 vs. 1960–2014; (ii) real difference in subfield-level vs.
+subject-level dynamics; (iii) classification-substrate artifact —
+OpenAlex tags vs. WoS subjects producing different patterns on the
+same data. We won't decompose these without WoS data access (not in
+ws2 plan).
+
+*(C) ws2 carries an identification burden Chu-Evans doesn't.* Their
+WoS classification is stable; ours drifts. We must argue that our
+canonical-concentration findings aren't artifacts of classifier
+drift, *on top of* the size-vs-time threat (which they also face).
+Our identification problem is structurally harder.
+
+**Three options considered.**
+
+*(1) Status quo — methodology inheritance, no replication claim.*
+Use Chu-Evans's Spearman top-N methodology; cite as methodological
+precedent; explicitly disclaim direct replication. Position findings
+as "Chu-Evans-style canonical concentration applied to OpenAlex
+data." Free effort.
+
+*(2) Methods-paragraph acknowledgment.* Add a Methods paragraph
+(approximately five sentences) explicitly stating substrate
+difference, that quantitative coefficient comparisons are not
+meaningful, and that we treat Chu-Evans as methodological precedent
+rather than direct comparison.
+
+*(3) Cross-substrate Stage 3 robustness (back-pocket).* Run the
+analysis on the WoS-OpenAlex overlap subset where both classifications
+agree. Requires WoS data access (not in ws2 plan, would require
+Clarivate negotiation or partner institution). High cost.
+
+**Decision (committed): (1) + (2); keep (3) as back-pocket.** The
+Methods-paragraph acknowledgment (2) is cheap, defensible, and
+pre-empts the natural reviewer question without forcing the
+expensive cross-substrate analysis. Structurally parallel to the
+cohort-mix handling pattern (SQ8) and the windows-as-estimand
+handling (Hofstra C10): address the concern proportionately in
+Methods, do lightweight ws2-specific checks where applicable, defer
+expensive versions.
+
+Phase 0.2 batch addition captured separately in
+`docs/phases/phase-0.1-plan.md`.
 
 ### On C4 — direct tests of cognitive overload and sandpile mechanisms
 

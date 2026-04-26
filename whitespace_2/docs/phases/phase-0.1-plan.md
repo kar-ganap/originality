@@ -1373,6 +1373,29 @@ desiderata §9, but same principle).
       field-specific-time-effect concern in Methods.
   - **Cost.** Computationally cheap — rerun existing analyses on
     subsets. ~1–2 days Stage 2 effort. No new data or API calls.
+- **Classification-substrate acknowledgment (per Chu-Evans C3
+  walkthrough, lit-review session 2026-04-26).** ws2 uses Chu-Evans
+  2021's Spearman top-N methodology for canonical concentration but
+  operates on a structurally different classification substrate
+  (OpenAlex concept tags + arXiv hybrid; ~10–50 subfields per field)
+  than Chu-Evans (WoS subjects; n=241). Three implications: (i) we
+  cannot directly cite their coefficient values as targets to
+  replicate — Spearman magnitudes are tied to substrate; (ii) any
+  qualitative-pattern difference between our findings and theirs
+  could reflect real dynamics, real subfield-vs-subject scale
+  differences, or substrate artifacts — not separable without
+  parallel analysis on both substrates (which ws2 will not run);
+  (iii) ws2 carries a classifier-drift identification burden
+  (handled via plan §3) that Chu-Evans's stable WoS classification
+  doesn't face. Commitment: **Methods-paragraph acknowledgment,
+  approximately five sentences** stating substrate difference,
+  disclaiming direct coefficient comparison, treating Chu-Evans as
+  methodological precedent rather than replication target. Add to
+  §9 Methods framing batch. Cross-substrate Stage 3 robustness
+  (replicate on WoS-OpenAlex overlap subset) **deferred as
+  back-pocket** — requires WoS data access not currently in ws2
+  plan; trigger only if reviewers specifically request cross-
+  substrate replication.
 - **Specific anchor concepts for Mitigation 4.** List of ~100 concepts with
   representative reference texts, per-field. Phase 0.2 or early Stage 1.
 - **Specific alternative embedding model for Mitigation 2.** Choice between
