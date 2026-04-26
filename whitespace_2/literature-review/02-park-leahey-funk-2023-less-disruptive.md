@@ -1057,7 +1057,175 @@ Discussion.
 
 ### SQ7 — Citation-inflation and normalization variants
 
-(Pending.)
+Working session with user, 2026-04-26.
+
+**Setting up the formula in clean notation.**
+
+For a focal paper p, take all citations within 5 years of p's
+publication. Each citer falls into one of three types:
+
+- **Type 1 (n_1):** cites p but *not* p's predecessors. Disruptive.
+- **Type 2 (n_2):** cites p *and* at least one predecessor.
+  Consolidating.
+- **Type 3 (n_3):** cites at least one predecessor but *not* p
+  itself. Irrelevant to p directly but counted in PLF's denominator.
+
+PLF's formula:
+
+CD_5 = (n_1 − n_2) / (n_1 + n_2 + n_3)
+
+The numerator (n_1 − n_2) is the "disruption signal" — disruptive
+minus consolidating citations. The denominator includes n_3
+(citations to p's predecessors that don't cite p itself).
+
+**Where citation inflation enters.**
+
+Citation networks have densified over time in two ways:
+
+*(1) More citing papers per focal paper.* All three counts (n_1,
+n_2, n_3) grow proportionally if disruption rates are constant.
+
+*(2) Longer reference lists per citing paper.* Mean references per
+WoS paper rose from ~10 in 1945 to ~30+ in 2010. This is the
+substantively important inflation.
+
+**The accidental-Type-2 mechanism (the Petersen critique core).**
+
+Consider a citing paper i with reference list of length R_i. Suppose
+i cites p (so it's Type 1 or Type 2). Whether i is Type 2 depends
+on whether *any* of i's other R_i − 1 references happens to be one
+of p's m predecessors.
+
+If references were distributed uniformly at random across literature
+of size T:
+
+P(i cites at least one predecessor of p | i cites p) ≈ 1 − (1 − m/T)^(R_i − 1)
+
+As R_i grows (longer reference lists), this probability rises. So
+*conditional on citing p*, more recent citers are mechanically more
+likely to also cite p's predecessors → pushing them into Type 2
+rather than Type 1.
+
+This biases the (n_1 − n_2) numerator downward over time even if
+the underlying intellectual relationship between citing and cited
+papers is identical. **A 1945 paper and a 2010 paper with the same
+true disruption-vs-consolidation pattern would have different
+observed (n_1, n_2) ratios purely from reference-list length
+growth.**
+
+This is in the *numerator*, not the denominator.
+
+**What PLF's normalization variants do.**
+
+*Paper-normalized:* subtract focal paper's backward citations N_b
+from n_3.
+
+CD^paper_norm = (n_1 − n_2) / (n_1 + n_2 + max(0, n_3 − N_b))
+
+Intuition (PLF's): if p has many references, more "opportunities"
+for n_3. Subtracting N_b corrects for trivial growth in n_3 due to
+p having a longer reference list.
+
+*Field × year normalized:* subtract field-year mean N_b instead.
+
+CD^field_year_norm = (n_1 − n_2) / (n_1 + n_2 + max(0, n_3 − N_b^mean))
+
+Intuition: in fields/eras where everyone cites more, n_3 grows for
+everyone; subtracting field-year mean normalizes against this.
+
+*Bornmann's DI^nok:* drop n_3 entirely.
+
+DI^nok = (n_1 − n_2) / (n_1 + n_2)
+
+Drops the irrelevant-denominator term completely.
+
+**What's wrong with all three normalizations.**
+
+**They all address denominator inflation. None address numerator
+inflation.**
+
+The numerator is always (n_1 − n_2) across all three variants. The
+variants only modify the denominator. But the inflation bias from
+the accidental-Type-2 mechanism is in the numerator — n_2 grows
+mechanically as reference lists lengthen, biasing (n_1 − n_2)
+downward.
+
+DI^nok makes things worse in one specific sense: dropping n_3 from
+the denominator means DI^nok = (n_1 − n_2) / (n_1 + n_2). When n_2
+grows mechanically while n_1 stays constant, both the numerator
+decreases AND the denominator increases. The metric falls faster,
+not slower. PLF's Extended Data Fig. 7 shows DI^nok declining
+steeply — they present this as robustness, but it's also consistent
+with stronger numerator-bias amplification.
+
+**Residual bias after PLF's strongest normalization.**
+
+(n_1 − n_2) / [(n_1 + n_2) + adjusted denominator]
+
+The numerator is biased downward at a rate proportional to how much
+reference-list lengths have grown, scaled by predecessor density.
+For typical fields where reference lengths roughly tripled between
+1945 and 2010 (10 → 30+), the implied numerator bias is substantial.
+Petersen-Arroyave-Pammolli 2024 computes specific magnitudes; their
+core finding is that under inflation-corrected analyses, the apparent
+disruption decline shrinks substantially or disappears for several
+fields.
+
+**Lesson on PLF's robustness battery.**
+
+PLF claim the decline is robust because all three normalization
+variants show declines. But all three address the same problem
+(n_3 inflation) while leaving the more important problem (n_2
+inflation) untouched. **Robustness across variants that share the
+same vulnerability isn't robustness against the vulnerability
+itself.** General lesson: robustness machinery needs to attack
+different threats through different mechanisms, not the same threat
+through different formulas.
+
+**Why ws2 excludes CD-index — concrete reason now visible.**
+
+The underlying functional form of CD-index makes it intrinsically
+vulnerable to citation-inflation in the (n_1 − n_2) numerator. No
+reformulation that keeps the (Type-1 minus Type-2) signal can avoid
+this. To fix it, you'd need to redefine the disruption signal in a
+way that's invariant to reference-list length — which would be a
+different metric, not a CD-index variant.
+
+ws2's primary canonical-concentration metric (Chu-Evans Spearman
+rank correlation top-N) is *rank*-invariant to citation magnitudes.
+Whether papers cite 10 or 30 references doesn't affect the top-N
+most-cited list's identity-stability across years. We avoid the
+CD-index family's specific vulnerability by choosing a fundamentally
+different measurement — concentration of attention via ranks rather
+than disruption via local citation-pattern signals.
+
+ws2's secondary canonical metric (citation Gini) is also more
+robust — it's about the citation distribution's concentration, not
+about local disruption-vs-consolidation network structure. Reference-
+list-length growth might shift the distribution somewhat but doesn't
+systematically bias Gini the way it biases (n_1 − n_2).
+
+**For ws2 Discussion engagement with PLF.**
+
+The substantive position when we cite Petersen-Arroyave-Pammolli 2024
+alongside our CD-index exclusion: not just "CD-index is contested"
+but "CD-index has a specific structural vulnerability — numerator
+inflation from reference-list growth — that PLF's normalization
+variants do not address. Our canonical-concentration metric
+(Spearman top-N) is methodologically immune to this specific
+vulnerability by being rank-invariant."
+
+This is a stronger Discussion-section position than just citing a
+contested paper. It explains *why* CD-index is the wrong tool for
+cross-decade comparison while *our* tool is the right one.
+
+No new Phase 0.2 batch addition — the substantive engagement strategy
+is captured in the existing "selective Chu-Evans citation framing"
+batch item (which extends naturally to PLF) and the existing
+"Methods-section paragraph on the CD-index decision" batch item
+(under the eventual ws2 paper Methods/Discussion framing). This
+walkthrough provides the technical substance for those existing
+commitments rather than triggering new ones.
 
 ### SQ8 — Dataset-artifact correction implications
 
