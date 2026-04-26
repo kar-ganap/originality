@@ -419,6 +419,24 @@ an open question.
   decide based on Stage 2 pilot if material divergence between the
   two operationalizations.
 
+### Mechanism-pluralism: how we use Chu-Evans
+
+Chu-Evans offer two theoretical mechanisms (cognitive overload + canon
+anchoring; sandpile critical-state interference). Simpler accounts —
+Matthew-effect / preferential attachment, journal-prestige
+entrenchment — predict the same empirical pattern (τ collapse, canon
+ossification, citation inequality rising) through different mechanisms.
+Chu-Evans do not adjudicate among these; their evidence is consistent
+with all four. **ws2's use of Chu-Evans is methodological + empirical,
+not mechanistic.** We inherit Spearman top-N as our canonical-
+concentration metric; we cite their empirical pattern (canonical
+concentration rises with field size) as a benchmark for positioning
+our findings; we do *not* lean on any specific mechanism account as
+upstream support for compass 13-A (actuator homogenization). In the
+ws2 Discussion section, we will note that several mechanisms plausibly
+contribute to canonical concentration at scale and that adjudicating
+among them is out of ws2 scope.
+
 ---
 
 ## Key Quotes
@@ -561,14 +579,13 @@ say about whether their findings are about "canon ossification" as
 a fundamental phenomenon or about "WoS classification + citation
 dynamics" specifically?
 
-**C4:** Two theoretical mechanisms are advanced (cognitive overload
-+ sandpile criticality) but not directly tested. The paper's
-empirical pattern is consistent with both, but it's also consistent
-with simpler explanations (e.g., status-attainment dynamics,
-journal-hierarchy entrenchment, Matthew-effect amplification). What
-would a *direct* test of cognitive overload look like? What would
-a direct test of sandpile criticality look like? Why might both be
-practically untestable at the population scale Chu-Evans operate at?
+**C4 (closed via calibration; see Discussion Notes):** Two theoretical
+mechanisms are advanced (cognitive overload + sandpile criticality)
+but not directly tested. The paper's empirical pattern is consistent
+with both, and also with simpler explanations (Matthew /
+preferential attachment, journal-prestige entrenchment).
+**Out of ws2 scope** — our use of Chu-Evans is methodological +
+empirical, not mechanistic. Resolution captured in Discussion Notes.
 
 **C5:** Predictions 5–6 (disruption) rely on the Wu-Wang-Evans 2019
 D measure, which is in the Funk-Owen-Smith CD-index family.
@@ -781,7 +798,23 @@ happens.)
 
 ### On C4 — direct tests of cognitive overload and sandpile mechanisms
 
-(Pending.)
+Closed via calibration discussion, 2026-04-25 (not a full walkthrough).
+
+The mechanism-which-is-it question is **out of ws2 scope**. Chu-Evans
+offer two mechanisms (cognitive overload + canon anchoring; sandpile
+critical-state interference); simpler accounts (Matthew /
+preferential attachment; journal-prestige entrenchment) predict the
+same τ-collapse pattern through different mechanisms; Chu-Evans do
+not adjudicate. Our use of Chu-Evans is methodological + empirical,
+not mechanistic — we inherit Spearman top-N and cite the empirical
+pattern, but do not commit to any specific mechanism. A direct test
+of either Chu-Evans mechanism would require infrastructure ws2
+doesn't have (longitudinal attention/cascade measurement on citation
+networks at fine temporal resolution; cognitive-process measurement
+on actual reviewers). The C4 question stands as legitimate scientific
+inquiry but is out of scope for ws2 design or interpretation. See
+the "Mechanism-pluralism" subsection of Connection to Our Project
+for the resolution.
 
 ### On C5 — disruption predictions under CD-index critique
 
