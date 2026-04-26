@@ -790,6 +790,18 @@ should we report at multiple scales to cover both possibilities?
    author-FE within-author longitudinal analysis on semantic output
    is deferred as back-pocket (Option C).
 
+9. **Decoupled-subfield robustness check (Chu-Evans SQ6 walkthrough,
+   2026-04-26).** Chu-Evans's identification-defense move (Fig. S1)
+   examines subjects where year and field size are weakly
+   correlated, showing that size-effects on citation dynamics
+   persist in those decoupled subjects. ws2 inherits an analogous
+   threat — observed demographic-vs-semantic divergence could
+   reflect two unrelated time trends rather than a real decoupling.
+   Commitment: per-subfield year–log-size correlation; pre-registered
+   thresholds (r < 0.5, r < 0.7, r < 0.9) define decoupled subsets;
+   headline tests replicated on each subset; pre-registered
+   interpretive grid. Captured in pending Phase 0.2 batch.
+
 ---
 
 ## Discussion Notes
@@ -887,7 +899,87 @@ version. Questions not yet worked through are marked `(Pending)`.)
 
 ### SQ6 — Field size vs. field age (SI Table S1)
 
-(Pending.)
+Working session with user, 2026-04-26.
+
+**The threat.** Chu-Evans's central claim is "bigger fields → canon
+ossifies." Their evidence is correlational: at a given moment, fields
+with larger N have higher top-50 Spearman correlation; longitudinally
+within a field, as N grows, Spearman rises. The immediate counter:
+maybe it's not size — it's just time. Fields mature, accumulate
+canon, and naturally ossify. Size and time are correlated within
+most fields, so distinguishing their effects requires structure.
+
+**Their identification strategy (Table S1).** Regress top-50 Spearman
+correlation on log₁₀N + time controls + subject FE.
+
+- Model 1: log₁₀N + year (continuous) + subject FE
+- Model 2: log₁₀N + year-dummies + subject FE
+
+The year terms absorb common-across-subjects time effects. What
+remains for log₁₀N to explain is *the deviation of a subject's
+Spearman from what year-effects-alone would predict, attributable to
+that subject's specific N.*
+
+Result: log₁₀N coefficient = 0.091 (Model 1), 0.090 (Model 2), both
+p<0.001. **A 10× field-size increase is equivalent in effect to ~15
+years of field maturation** (0.090 ÷ 0.006 ≈ 15). Size matters after
+time is absorbed.
+
+**The residual concern they acknowledge.** Year and field size are
+heavily collinear within most subjects — Pharmacology r=0.95, Math
+r=0.95, CS r=0.97–0.98. With near-perfect collinearity, separating
+year and log₁₀N coefficients is statistically thin; the regression
+machinery is leaning on a sliver of variance.
+
+**Their robustness move (Fig. S1).** Examine subjects where year
+and size are *less* correlated:
+- Biochemistry & Molecular Biology: r = 0.32
+- Applied Physics: r = 0.58
+
+In these decoupled subjects, citation-dynamics-by-field-size patterns
+are similar to the highly collinear subjects. So when size and time
+*can* be cleanly separated (because they don't move together), size
+still predicts citation dynamics. This is the move that distinguishes
+"size matters" from "size is just time in disguise."
+
+**Residual concern after the robustness move.** Year controls absorb
+common-across-fields time effects but not *field-specific* time
+effects. A subfield could have its own time-trajectory dynamics
+(e.g., maturation pattern specific to ML post-2012, or specific to
+HEP post-Higgs) that aren't captured by year-dummies (which absorb
+the common trend across all fields, not idiosyncratic per-field
+trends). The decoupled-subjects evidence partially mitigates this
+but doesn't fully address it.
+
+**Implications and commitment for ws2.** The same identification
+threat applies to ws2's headline divergence findings. If we observe
+demographic plurality rising while semantic plurality falls, one
+plausible alternative: the divergence is two unrelated time trends
+(demographic-pluralization-over-time + canon-ossification-with-
+field-size) rather than a real demographic-vs-semantic decoupling.
+
+**ws2 commits to a Chu-Evans-style decoupled-subfield robustness
+check** (added to pending Phase 0.2 batch in `docs/phases/
+phase-0.1-plan.md`):
+
+- For each subfield s in our analysis, compute within-subfield
+  correlation between calendar year and log subfield size over
+  1970–2024.
+- Sort subfields by correlation; identify "decoupled" subset using
+  pre-registered thresholds (r < 0.5, r < 0.7, r < 0.9 — multi-
+  threshold reporting).
+- Replicate Tests I–III, subfield mechanism test, and Test IV on
+  the decoupled subset.
+- Pre-registered interpretive grid:
+  - Divergence holds in decoupled subfields → robust to time
+    confound.
+  - Divergence weakens → time confound contributes; magnitude
+    estimable.
+  - Divergence reverses → strong evidence full-sample finding is
+    time-confounded; substantively interesting null.
+  - Decoupled subfield count too low (<5 per field) → document
+    inheritance of Chu-Evans's residual field-specific-time-effect
+    concern; can't perform check.
 
 ### SQ7 — Spearman lag choice (Δ=1 / Δ=5 / cumulative)
 

@@ -1331,6 +1331,48 @@ desiderata §9, but same principle).
     validation pipeline. Cost: 2–3 weeks Stage 3 methodology work.
     **Deferred unless Option B's results are ambiguous (mixed
     pattern in the interpretation grid).**
+- **Decoupled-subfield robustness check (per Chu-Evans SQ6
+  walkthrough, lit-review session 2026-04-26).** Chu-Evans 2021
+  Fig. S1 demonstrates an identification-defense move: when year
+  and field size are weakly correlated within a subject (e.g.,
+  Biochemistry r=0.32, Applied Physics r=0.58), citation-dynamics-
+  by-field-size patterns persist — ruling out "size is just time in
+  disguise." A residual concern remains: year controls absorb
+  common-across-fields time effects but not field-specific time
+  effects. ws2 inherits an analogous threat. Observed demographic-
+  vs-semantic divergence (Tests I–III positive) could reflect two
+  unrelated time trends — demographic-pluralization-over-time +
+  canon-ossification-with-field-size — rather than a real
+  decoupling. The decoupled-subfield robustness check directly
+  addresses this:
+  - **Per-subfield year–log-size correlation diagnostic.** For each
+    subfield s in the post-1990 analytical window, compute within-
+    subfield Pearson correlation between calendar year and log
+    subfield size over 1970–2024. Report distribution of correlations
+    across subfields.
+  - **Pre-registered decoupled-subset thresholds:** r < 0.5,
+    r < 0.7, r < 0.9. Multi-threshold reporting prevents post-hoc
+    threshold tuning. Headline replication on each threshold's
+    decoupled subset.
+  - **Replicated tests:** Tests I–III aggregate divergence; subfield
+    mechanism test (CanonConc_s on DivMag_s); Test IV (γ₁ at headline
+    operationalization). All three rerun on each decoupled subset.
+  - **Pre-registered interpretive grid:**
+    - Divergence pattern stable across full sample, r<0.9, r<0.7,
+      r<0.5 subsets → robust to size-time confound. Strongest version
+      of headline.
+    - Divergence weakens monotonically as decoupling threshold
+      tightens → time confound contributes to full-sample finding;
+      contamination magnitude estimable from threshold-by-threshold
+      attenuation.
+    - Divergence absent or reverses in r<0.5 subset → strong evidence
+      full-sample finding is time-confounded; substantively
+      interesting null on the divergence claim.
+    - Decoupled subset count too small (n<5 per field at r<0.5) →
+      check cannot run; document inheritance of Chu-Evans's residual
+      field-specific-time-effect concern in Methods.
+  - **Cost.** Computationally cheap — rerun existing analyses on
+    subsets. ~1–2 days Stage 2 effort. No new data or API calls.
 - **Specific anchor concepts for Mitigation 4.** List of ~100 concepts with
   representative reference texts, per-field. Phase 0.2 or early Stage 1.
 - **Specific alternative embedding model for Mitigation 2.** Choice between
