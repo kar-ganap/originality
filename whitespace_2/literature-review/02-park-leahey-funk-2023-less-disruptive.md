@@ -1188,7 +1188,101 @@ Captured in pending Phase 0.2 batch.
 
 ### On C8 — Fig. 6 as more-usable evidence than Fig. 2
 
-(Pending.)
+Working session with user, 2026-04-26.
+
+**The easy version of C8 (initial framing).** Cite PLF Fig. 6a/6d
+("diversity of cited work" declining over time) as upstream evidence
+for canonical concentration trends; disclaim Fig. 2 (CD-index decline)
+due to citation-inflation issues. Cleanly separable.
+
+**The actual challenges that surface when you push on it.**
+
+*(1) Construct alignment is imperfect.* PLF Fig. 6a/6d measures
+*normalized entropy of citation distribution* — closest to ws2's
+Gini metric (within-year citation inequality), *not* to Spearman
+top-N (cross-year stability of top-cited list). If we cite as
+"upstream evidence for canonical concentration," we should be
+specific: it aligns with our **Gini secondary metric**, not our
+**Spearman-top-N primary**.
+
+*(2) Fig. 6a/6d still inherits Holst dataset-artifact concern.*
+Computed on the same WoS data with pre-1980 reference truncation
+issues. Truncated reference list → fewer cited papers per focal
+paper → diversity measurement biased. Different vulnerability
+mechanism than Petersen citation-inflation, but same data origin.
+Citation strategy needs to acknowledge this.
+
+*(3) Selective citation creates positioning tension.* Citing
+Fig. 6a/6d while rejecting Fig. 2 looks principled (different
+metrics with different vulnerabilities) OR cherry-picking. Defense
+requires precise articulation: "Fig. 2 has the citation-inflation
+vulnerability we methodologically reject; Fig. 6a/6d has the
+dataset-artifact vulnerability that affects ws2 too but more weakly
+given our methodological mitigations."
+
+*(4) **Causal-pathway endorsement risk** — the load-bearing
+challenge.* PLF presents Fig. 6 collectively as a *causal narrowing-
+mechanism story*: declining diversity of cited work + increasing
+self-citation + increasing age of cited work → mechanisms for
+declining disruption. Citing Fig. 6a/6d in particular, or Fig. 6
+collectively, risks endorsing PLF's causal claim that "scientists
+are narrowing their use of prior knowledge → causes declining
+disruption."
+
+This conflicts with ws2's observational scope per desiderata. ws2
+is explicitly a descriptive/observational study:
+- Test IV: "cross-sectional correlations ≠ causal effects... Reported
+  as descriptive association, not causal effect."
+- Tests I–III: aggregate divergence tests — observational time-series.
+- We don't claim demographic causes semantic, semantic causes
+  canonical, or any specific causal direction.
+
+**Citation patterns illustrate the gradient.**
+
+*Pattern A (pure descriptive — fine):* "PLF document declining
+entropy of citation distribution over time (Fig. 6a/6d), an
+alternative operationalization of canonical concentration that
+aligns with our Gini-based finding." No causal claim.
+
+*Pattern B (mixed — risky):* "Our finding aligns with PLF's
+documented *narrowing* of cited-work diversity." Uses PLF's
+"narrowing" language → causal connotation.
+
+*Pattern C (causal endorsement — violates scope):* "Our finding is
+consistent with PLF's *narrowing-mechanism account*, which documents
+[Fig. 6 panels collectively] as mechanisms for the disruption
+decline." Explicit causal-pathway endorsement.
+
+**Decision: prune scope to stay clean of causal framing.**
+
+ws2 commits to **Pattern A only** for any PLF Fig. 6 citation:
+
+- *Cite Fig. 6a/6d* as alternative operationalization of within-year
+  citation concentration, aligned with our Gini secondary metric.
+  Frame as "consistent with," "alternative operationalization,"
+  "complements" — not "supports narrowing," "evidence for
+  narrowing."
+- ***Do not cite* Fig. 6b/6e (self-citation) or Fig. 6c/6f (age of
+  cited work).** These only land as relevant evidence if we're
+  endorsing the narrowing-mechanism causal story; we're not.
+- *Acknowledge* Fig. 6a/6d still inherits the Holst dataset-artifact
+  concern (less severe than CD-index inflation; not zero) — folded
+  into the C2(b) Methods-paragraph extension.
+- *Specify construct alignment:* Fig. 6a/6d aligns with our **Gini**
+  metric specifically, not Spearman-top-N primary.
+
+**Connection to broader principle (ws2 doesn't endorse upstream
+causal mechanism stories).** This pattern matches our Chu-Evans
+mechanism-trim (we used Chu-Evans methodologically + empirically,
+not mechanistically). The same principle applies to PLF: we cite
+empirical observations, not causal-mechanism narratives. This is a
+meta-commitment that runs across our engagement with all upstream
+papers.
+
+**Phase 0.2 batch update.** Adds commitment (5) to the existing
+PLF (c-prime) item: causal-pathway non-endorsement, with explicit
+operational rules above. Captured in
+`docs/phases/phase-0.1-plan.md`.
 
 ### On C9 — field-level differential decline rates
 

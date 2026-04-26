@@ -1605,15 +1605,26 @@ desiderata §9, but same principle).
     semantic-plurality measurement as inflation-immune evidence on
     the substantively-related question.
   - **(3) Pre-registered interpretive grid for ws2 vs. PLF debate.**
-    Three cells:
-    - Semantic plurality *declines* → corroborates PLF substantive
-      direction with cleaner methodology; strengthens PLF claim
-      against Petersen-Holst measurement-artifact reading.
-    - Semantic plurality *stable* → contradicts PLF substantive
-      direction; strengthens Petersen-Holst measurement-artifact
-      reading.
-    - Semantic plurality *rises* → strongly contradicts PLF;
-      supports the view that PLF's decline is mostly artifact.
+    Three cells. Language tightened to be about *empirical alignment
+    only*, not endorsement of any causal mechanism (per C8
+    walkthrough):
+    - Semantic plurality *declines* → empirically aligned with PLF's
+      observed direction. Pattern is consistent with PLF's documented
+      decline using a methodology immune to citation-inflation;
+      reduces (without eliminating) the Petersen-Holst measurement-
+      artifact reading.
+    - Semantic plurality *stable* → empirical contradiction of PLF's
+      observed direction. Pattern is consistent with the Petersen-
+      Holst reading that PLF's observed decline is substantially a
+      measurement artifact.
+    - Semantic plurality *rises* → strong empirical contradiction of
+      PLF's observed direction. Pattern is consistent with PLF's
+      observed decline being mostly a measurement artifact.
+    Note language: "empirically aligned/contradicts," "consistent
+    with PLF's observed direction" — not "supports/contradicts PLF's
+    narrowing-mechanism causal story." The grid documents
+    observational alignment; it does not endorse or refute causal
+    claims.
   - **(4) Calibration paragraph (load-bearing for c-prime framing).**
     ~3 sentences explicitly stating that semantic plurality is
     *adjacent to* but *not identical to* disruption. PLF measures
@@ -1634,6 +1645,31 @@ desiderata §9, but same principle).
     coverage); scope creep risk (mitigated by calibration paragraph);
     Discussion real estate cost; positioning as participant in the
     debate.
+  - **(5) Causal-pathway non-endorsement (per PLF C8 walkthrough,
+    lit-review session 2026-04-26).** All PLF citations under
+    (c-prime) are descriptive/measurement-only. ws2 does *not*
+    endorse PLF's narrowing-mechanism causal story (Fig. 6 as
+    collective evidence for "scientists narrowing prior-knowledge
+    use → declining disruption"). Operational rules:
+    - *Cite Fig. 6a/6d* as alternative operationalization of within-
+      year citation concentration aligned with our **Gini secondary
+      metric** (specifically, not Spearman-top-N primary).
+    - *Do not cite* Fig. 6b/6e (self-citation) or Fig. 6c/6f (age
+      of cited work). These only land as relevant evidence if we're
+      endorsing the narrowing-mechanism causal story; we're not.
+    - *Use neutral language:* "alternative operationalization,"
+      "consistent with," "complements." Avoid "narrowing,"
+      "scientists are increasingly relying on...," "supports
+      narrowing-mechanism," etc.
+    - *Acknowledge in C2(b) Methods-paragraph extension* that
+      Fig. 6a/6d still inherits the Holst dataset-artifact concern
+      (less severe than CD-index inflation; not zero).
+    - *Connection to broader principle:* matches our Chu-Evans
+      mechanism-trim. Meta-commitment running across all upstream-
+      paper engagements: cite empirical observations, not causal-
+      mechanism narratives. This preserves ws2's observational
+      scope per program desiderata and per the Test IV "Causal
+      interpretation caveat (pre-baked)" stance.
 - **Specific anchor concepts for Mitigation 4.** List of ~100 concepts with
   representative reference texts, per-field. Phase 0.2 or early Stage 1.
 - **Specific alternative embedding model for Mitigation 2.** Choice between
