@@ -996,11 +996,130 @@ version. Questions not yet worked through are marked `(Pending)`.)
 
 ### SQ4 — Six predictions across three dimensions
 
-(Pending.)
+Working session with user, 2026-04-26.
+
+**The three dimensions and their two predictions each.**
+
+| Dimension | Prediction 1 | Prediction 2 |
+|---|---|---|
+| **Durable dominance** | Citations flow disproportionately to top-cited papers (Gini ↑) | Top-cited list ossifies (top-50 Spearman ↑) |
+| **Entrepreneurial futility** | P(new paper reaches canon) drops (p ↓) | When new papers do reach canon, not gradually (τ ↓) |
+| **Reduced disruption** | Proportion of D > 0 papers declines | Proportion of top-5%-disruption papers declines |
+
+**What the two-predictions-per-dimension structure buys.**
+
+*(1) Concept-coverage check.* Each dimension is a substantive concept
+that has multiple measurable manifestations. The two predictions
+together pin down the concept; either alone is ambiguous.
+- "Durable dominance" requires both *concentration* (citations flow
+  to a few) AND *identity persistence* (the same papers stay top).
+  High Gini + low Spearman = "concentrated but churning" — not
+  durable dominance. Low Gini + high Spearman = "stable list but no
+  dominance." Both together = the concept applies.
+- "Entrepreneurial futility" requires both *rare entry* AND *broken
+  gradual path*. Just rare entry is consistent with "selective but
+  gradual still works"; just broken gradual path is consistent with
+  "everyone who enters does so fast." Both together = the gradual-
+  attention path is gone, period.
+- "Reduced disruption" requires both *distribution-level shift* AND
+  *extreme-tail shrinkage*. Either alone is consistent with simpler
+  stories.
+
+*(2) Robustness against operationalization-dependence.* Each prediction
+uses a specific metric. If only one prediction per dimension confirmed,
+the finding could be an artifact of that metric. With both confirmed
+via different metrics, the finding is robust to operationalization
+choice.
+
+*(3) Reduces false-positive probability under chance.* Six predictions
+all going the same direction is unlikely under a null where each is
+independent and chance-driven.
+
+**For ws2.** This pattern matches our compass + desiderata §8
+commitment: ≥2 metrics per substantive dimension (Shannon + Gini +
+Rao for demographic; cluster entropy + effective dim + pairwise
+distance for semantic; Spearman top-N + citation Gini for canonical).
+Chu-Evans's six-prediction structure is methodologically what we
+already aim for with our four-co-primary-tests + multi-metric
+reporting. No new commitments — confirms existing design pattern.
 
 ### SQ5 — Why bin by log₁₀N? What does within-bin regression measure?
 
-(Pending.)
+Working session with user, 2026-04-26.
+
+**Part A: Why log₁₀N rather than linear N?**
+
+Field sizes span ~3–4 orders of magnitude (~100 papers/year in small
+subjects to ~100,000+ in mega-fields). Three reasons for log scale:
+
+*(1) Distribution shape.* Linear N is heavily right-skewed with most
+data clustering at low values. Log binning makes the distribution
+more uniform across the range; each bin gets reasonable data density.
+Linear binning would either give huge high-N bins with sparse data
+or tiny low-N bins with most observations.
+
+*(2) Coefficient interpretability.* Log₁₀N units correspond to 10×
+multiplicative changes. "A 10× increase in N produces X effect" is
+more useful than "an additional 1000 papers produces X effect"
+(which depends sensitively on baseline N).
+
+*(3) Theoretical match.* Preferential-attachment dynamics scale
+multiplicatively, not additively. A paper at the 99th percentile of
+a 10K-paper field is structurally analogous to a paper at the 99th
+percentile of a 100K-paper field. Log scale captures this proportional
+structure.
+
+**Part B: What does the within-bin regression measure?**
+
+Within each (log₁₀N range × citation percentile) cell, regress
+year-(Y+1) citations on year-Y citations for papers in that cell.
+The regression coefficient is **the citation decay rate** (technically
+1−λ where λ is the loss rate per year).
+
+Interpretation by coefficient value:
+- **Coefficient = 1:** papers retain all their citations year over
+  year (no decay).
+- **Coefficient < 1:** papers lose citations year over year.
+- **Coefficient > 1:** papers gain citations year over year (rich-
+  get-richer dynamics).
+
+Headline finding: in large fields, the coefficient → 1 for top-
+percentile papers (their citations don't decay) but stays substantially
+< 1 for all other percentiles (everyone else's citations decay). In
+small fields, coefficient is similar across percentiles (all papers'
+citations decay at roughly the same rate).
+
+**Why within-bin?** The relationship between percentile and decay
+rate isn't linear. Stratifying by both field size AND percentile
+lets the data reveal the joint structure: at what combination of
+(field size, percentile) does the rich-get-richer-and-everyone-else-
+loses dynamic kick in?
+
+**Substantive payoff.** The within-bin regression localizes the regime
+change. It's not just "fields above 100K papers/year ossify" — it's
+"fields above 100K papers/year ossify *specifically because top-
+percentile papers stop decaying while everyone else continues
+decaying.*" The decay-rate decomposition is the mechanism-localization
+piece.
+
+**For ws2.** We don't directly use within-bin citation-decay regression
+for canonical concentration — Spearman top-N is a different
+operationalization. The broader methodological pattern (log-binning
+skewed continuous variables; stratifying by another covariate to
+localize regime structure) we partially adopt (log subfield size as
+control in subfield mechanism test). Could potentially extend to
+year × subfield-size stratified plots of canonical concentration as
+a Stage 2 visualization choice; not a Phase 0.2 commitment.
+
+**Connection to user's bin-and-regress critique** (separate
+walkthrough): the within-bin regression is exactly where the bin-
+choice arbitrariness has bite. A regime shift falling within a
+specific (log₁₀N range × percentile) cell gets averaged out. Their
+LOWESS smoothing in the figures partially mitigates for the headline
+patterns; the within-bin decay-rate analysis is the most bin-
+sensitive part of their methodology. ws2's nonlinearity check
+(quadratic + LOWESS on subfield mechanism test) addresses the
+analog concern in our design.
 
 ### SQ6 — Field size vs. field age (SI Table S1)
 
