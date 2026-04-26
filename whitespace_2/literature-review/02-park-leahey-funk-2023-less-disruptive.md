@@ -955,7 +955,89 @@ version. Questions not yet worked through are marked `(Pending)`.)
 
 ### SQ2 — Interpretation of "100% decline" in CD_5
 
-(Pending.)
+Working session with user, 2026-04-26.
+
+**The math.** "100% decline" = starting value reduced to 0, treating
+starting value as the denominator. For social sciences: 0.36 (1945)
+→ 0.00 (2010); (0.36 − 0.00) / 0.36 = 100%. For life sciences:
+0.52 → 0.04; (0.52 − 0.04) / 0.52 = 92.3%.
+
+Arithmetic is straightforward. The framing is the issue.
+
+**Three problems with percentage-decline framing on a [−1, +1] metric.**
+
+*(1) The denominator is the starting value, not the metric range.*
+On a [−1, +1] metric, the *maximum possible decline* is Δ = −2
+(going from +1 to −1). PLF's "100% decline" in social sciences
+corresponds to Δ ≈ −0.36 — about 18% of the metric's full range.
+"100% decline" is technically correct under the percentage-of-baseline
+definition but rhetorically suggests "as much decline as possible,"
+which it isn't.
+
+*(2) The framing breaks down near zero.* A metric going from 0.05
+to 0.005 is also a "90% decline" — but the absolute change is tiny
+(Δ = −0.045). Percentage-decline framing collapses information
+about magnitude relative to the metric's range. A 90% decline from
+0.5 (Δ = −0.45) and a 90% decline from 0.05 (Δ = −0.045) look
+identical in PLF's framing despite being 10× different in absolute
+terms.
+
+*(3) "100% decline" does NOT mean "maximally consolidating."* This
+is the critical interpretive point. The 2010 social-sciences mean
+of 0.00 means the average paper is *neutral* — equally split
+between disruption and consolidation. Maximally consolidating
+would be CD_5 = −1, where every citing paper cites both the focal
+paper *and* its predecessors. PLF's data shows convergence toward
+neutral, not movement toward the consolidating extreme. The "100%
+decline" phrasing obscures this distinction.
+
+**What the data actually shows in absolute terms.**
+
+| Field | CD_5 1945 | CD_5 2010 | Δ | % of [−1,+1] range |
+|---|---|---|---|---|
+| Life sciences | 0.52 | 0.04 | −0.48 | 24% of range |
+| Physical sciences | ~0.40 | ~0.03 | ~−0.37 | ~19% of range |
+| Social sciences | 0.36 | 0.00 | −0.36 | 18% of range |
+| Technology | 0.46 | 0.10 | −0.36 | 18% of range |
+
+The shifts are 18–24% of the metric's full range. Real, but
+materially different from the "100% decline" framing's connotation.
+The fields are converging toward the neutral midpoint, not
+approaching the consolidating extreme.
+
+**Why this matters for ws2.**
+
+*(1) Framing inflates the apparent magnitude of PLF's finding.* A
+substantively meaningful but bounded shift toward neutrality is
+presented through the percentage framing as "complete decline." If
+we engage with PLF's quantitative results, we should be aware of
+this and cite absolute Δ values rather than the 92.3%–100%
+percentage-decline framing.
+
+*(2) Compounds with the citation-inflation critique.* Petersen-Holst
+argue that the *direction* of CD_5 movement is partly artifact. The
+PLF framing magnifies the apparent magnitude of that
+artifact-influenced movement. If we discount the magnitude-of-decline
+by both (a) absolute-vs-percentage reframing AND (b) citation-
+inflation correction, the substantive remaining finding might be
+quite modest — possibly a Δ of −0.10 to −0.20 across the metric's
+[−1, +1] range, or 5–10% of full range. Whether that constitutes
+"decline of disruption in any meaningful substantive sense" becomes
+a much closer call than PLF's framing suggests.
+
+*(3) Lesson for ws2 reporting.* When we report headline numbers from
+ws2's metrics, prefer absolute changes and percentage-of-range
+framing over percentage-of-baseline framing — particularly for
+bounded metrics like Spearman correlation (also bounded in [−1, +1])
+and Gini (bounded in [0, 1]). This is good methodological hygiene
+in any case; PLF illustrates what goes wrong without it.
+
+No new Phase 0.2 batch commitment from this walkthrough — the
+absolute-Δ-reporting practice is good methodological hygiene we
+should follow regardless of PLF, and a Methods-section caveat
+specifically addressing this would be over-engineered. Captured
+here for our future reference if we cite PLF magnitudes in
+Discussion.
 
 ### SQ3 — Cross-database robustness logic
 
