@@ -1330,11 +1330,18 @@ landscape with explicit scope-bounding.
 
 ### SQ1 — PNAS vs. PNAS Plus quasi-experiment
 
-(Pending.)
+Skipped — covered via Key Idea #2 (quasi-experiment basics), SQ6
+walkthrough (external validity caveats), and C1 walkthrough (the
+meta-question of whether QE buys ws2 anything). No substantive
+content beyond what those entries capture.
 
 ### SQ2 — Why 0.06σ / 0.09σ are "noise level"
 
-(Pending.)
+Skipped — covered via Key Idea #8 (effect-size magnitude lesson)
+and the Phase 0.2 batch threshold-calibration commitment (raising
+Test IV |γ_1| to 0.10σ). The "what would substantive look like"
+sub-question is implicitly answered by our 0.10σ threshold —
+anything reliably above 0.10σ clears noise.
 
 ### SQ3 — Quadratic specification and team-size sign reversal
 
@@ -1342,11 +1349,20 @@ landscape with explicit scope-bounding.
 
 ### SQ4 — Percentile-amplification of small effects
 
-(Pending.)
+Skipped — covered via C3 walkthrough (WWE setup, per-metric audit,
+rank-invariance vs. percentile-amplification distinction). The
+mechanics of how percentile transformation amplifies tiny absolute
+effects in a concentrated distribution are explained in detail
+there.
 
 ### SQ5 — Post-2006 incremental disruption increase
 
-(Pending.)
+Skipped — covered via C2 walkthrough (substantive drivers analysis,
+three readings of 0.06σ over a decade, predictive interpretive
+grid for ws2 findings vs. post-2006 uptick). The "real shift in
+science?" question we can't adjudicate; ws2 engages the post-2006
+finding as concurrent observation rather than something we
+litigate.
 
 ### SQ6 — PNAS vs. PNAS Plus external validity
 
