@@ -1067,11 +1067,41 @@ correct-and-restrict.
 
 ### On C3 — fixed threshold on shifting distribution
 
-(Pending.)
+Closed via pointer to SQ2 walkthrough + brief note, 2026-04-26.
+
+C3's core concern (a fixed threshold on a metric whose distribution
+shifts over time produces apparent "stability" that may be
+threshold-mismatch artifact) is structurally similar to SQ2's
+critique of percentage-decline framing on a bounded metric. SQ2
+walked through how PLF's framing inflates magnitudes; C3 is the
+Fig. 4 conservation-finding analog (counts of papers above a fixed
+CD_5 threshold may reflect threshold mismatch rather than stable
+phenomenon).
+
+For ws2: our Spearman top-50 metric is also a fixed-N threshold,
+but it doesn't have the same vulnerability because Spearman is
+*rank-based* (top-50 is always the top-50, by definition, not papers
+above a fixed citation count). The SQ2 lesson (prefer absolute
+changes / percentage-of-range over percentage-of-baseline framing)
+is the operational takeaway; no additional commitment needed.
 
 ### On C4 — verb-classification methodology weight
 
-(Pending.)
+Closed via brief note, 2026-04-26.
+
+PLF's verb-classification methodology (Fig. 3c, 3f) was challenged
+in peer review by Reviewer #2 — the word selection used a
+3-respondent wiki-survey on All Our Ideas; "the words themselves
+did not appear semantically distinct or self-describing disruptive
+vs. consolidation." Authors removed the explicit "disruptive vs.
+consolidation" verb framing in revision but kept the verb-frequency
+observations.
+
+For ws2: under (c-prime), we cite PLF Fig. 6a/6d as alternative
+operationalization of canonical concentration; we do *not* cite
+verb-shift evidence (Fig. 3c, 3f). Not relevant for ws2 design.
+The peer-review evidence reinforces our caution about citing PLF
+beyond the inflation-immune evidence framing.
 
 ### On C5 — citing PLF as upstream support: three options
 
@@ -1197,11 +1227,46 @@ Captured in pending Phase 0.2 batch.
 
 ### On C6 — author-FE dominance interpretation
 
-(Pending.)
+Closed via pointer to Chu-Evans SQ8 walkthrough, 2026-04-26.
+
+PLF's Shapley-Owen decomposition (Extended Data Fig. 5) shows
+author fixed effects dominate field effects in explaining CD_5
+variance (0.20 vs. 0.02 for papers; 0.17 vs. 0.01 for patents).
+This is complementary to Chu-Evans's period-dominates-cohort
+finding (SI Tables S2/S3, period effect 16-30× cohort).
+
+The two findings together shape ws2's structural-mechanism framing
+for compass 13-A, captured in the Chu-Evans SQ8 walkthrough's
+"Implications for ws2" subsection. Specifically: author-level +
+period-level factors dominate over generational replacement and
+field-specific factors. Whatever's compressing semantic diversity
+in modern fields operates on *all* scholars at *current period* —
+neither cohort selection (Chu-Evans cohort effect ≈ 0) nor
+field-specific factors (PLF field effect ≈ 0) is the explanation.
+
+No new content for C6; the substantive cross-paper synthesis is
+in Chu-Evans SQ8.
 
 ### On C7 — cross-database robustness questioning
 
-(Pending.)
+Closed via brief note, 2026-04-26.
+
+Reviewer #3 questioned whether PLF's JSTOR/APS/MAG/PubMed analyses
+were genuinely run on those datasets or on WoS records overlapping
+with them. The methodology section's description was ambiguous;
+the authors' rebuttal did not directly resolve the question. If
+the cross-database analyses share substantial WoS infrastructure,
+the cross-database robustness claim is much weaker than presented.
+
+For ws2: under (c-prime), we engage with PLF's findings *despite*
+this concern — the cross-database robustness is one of multiple
+defensive moves with limitations, and we don't lean on it
+specifically. Our (c-prime) framing emphasizes that ws2 contributes
+inflation-immune evidence; the strength of PLF's cross-database
+robustness isn't load-bearing for our citation strategy. If our
+own findings differ from PLF's at the WoS-OpenAlex overlap layer,
+we have the back-pocket Stage 3 substrate-replication option
+(C3/SQ10).
 
 ### On C8 — Fig. 6 as more-usable evidence than Fig. 2
 
@@ -1303,11 +1368,43 @@ operational rules above. Captured in
 
 ### On C9 — field-level differential decline rates
 
-(Pending.)
+Closed via brief note, 2026-04-26.
+
+PLF report differential decline rates by field (100% social
+sciences vs. 91.9% physical sciences for papers; 78.7% computers
+and communications vs. 91.5% drugs and medical for patents). They
+treat the universality across fields as strength; the SQ2
+walkthrough already noted that the percentage-decline framing
+collapses substantively different patterns into similar-looking
+"100%-ish decline" framings.
+
+For ws2: our cross-field replication is CS + Physics primary
+(committed in compass and plan §X). Field-level heterogeneity is
+something we'll engage in Discussion if our findings show field
+heterogeneity, but it's not a load-bearing design question now.
+Under the meta-commitment, even our discussion of field
+heterogeneity will be observational ("CS and Physics show
+different patterns of X") rather than mechanistic ("CS and Physics
+differ because of Y"). No new commitment.
 
 ### On C10 — high-prestige venue robustness limits
 
-(Pending.)
+Closed via brief note, 2026-04-26.
+
+PLF's Fig. 5 shows the CD_5 decline persists even at Nature/PNAS/
+Science/Nobel-winning papers. The reviewer concern (raised by
+Reviewer #2 implicitly) is that prestige-venue selection criteria
+themselves shift over time — what counts as Nature-worthy in 2010
+is different from 1945, so this restriction doesn't cleanly rule
+out quality-related explanations.
+
+For ws2: this isn't load-bearing because we don't restrict to
+prestige venues. Our scope is aggregate divergence across the
+full corpus of CS + Physics, not within-prestige-venue analysis.
+Worth noting for our Discussion if reviewers ask why ws2 doesn't
+do an analogous prestige-restriction analysis — answer is that
+our scope is different (aggregate divergence, not disruption
+decline). No new commitment.
 
 ### On C11 — PLF vs. Chu-Evans theoretical relationship
 
@@ -1367,7 +1464,9 @@ version. Questions not yet worked through are marked `(Pending)`.)
 
 ### SQ1 — CD index operationalization
 
-(Pending.)
+Skipped — comprehension-level question; user read directly. The
+clean notation setup (n_1 / n_2 / n_3 with formula CD_5 = (n_1 −
+n_2) / (n_1 + n_2 + n_3)) is captured in SQ7 walkthrough.
 
 ### SQ2 — Interpretation of "100% decline" in CD_5
 
@@ -1457,19 +1556,27 @@ Discussion.
 
 ### SQ3 — Cross-database robustness logic
 
-(Pending.)
+Skipped — comprehension-level. Cross-database concerns addressed
+in C7 close-out (we engage despite the limitations).
 
 ### SQ4 — Conservation finding reconciliation
 
-(Pending.)
+Skipped — comprehension-level. Substantive conservation-finding
+critique covered in C3 close-out (fixed-threshold-on-shifting-
+distribution issue).
 
 ### SQ5 — Correlation vs. causation in narrowing mechanism
 
-(Pending.)
+Skipped — comprehension-level. Substantively addressed by the
+program-aware observational-scope meta-commitment: we don't endorse
+PLF's narrowing-mechanism causal story regardless of how strong
+the correlational evidence is.
 
 ### SQ6 — Shapley-Owen decomposition implications
 
-(Pending.)
+Skipped — comprehension-level. Substantive content covered in C6
+close-out (cross-paper synthesis with Chu-Evans's period-dominates-
+cohort).
 
 ### SQ7 — Citation-inflation and normalization variants
 
@@ -1645,12 +1752,21 @@ commitments rather than triggering new ones.
 
 ### SQ8 — Dataset-artifact correction implications
 
-(Pending.)
+Deferred to Holst 2024 reading. SQ8's substantive content (how
+dataset artifacts in old WoS records inflate older-era CD_5) is
+the central contribution of Holst et al. 2024 (paper 05). We will
+engage this directly when reading Holst rather than walking through
+PLF speculation. The ws2-specific implications (OpenAlex coverage
+analog) are covered in C2(b) close-out.
 
 ### SQ9 — Verb-classification methodology weight
 
-(Pending.)
+Skipped — comprehension-level. Closed via C4 close-out (we don't
+cite verb-shift evidence under (c-prime)).
 
 ### SQ10 — Cross-database analyses: WoS-shared infrastructure question
 
-(Pending.)
+Skipped — comprehension-level. Closed via C7 close-out (cross-
+database robustness has limitations but we engage despite, since
+under (c-prime) we contribute inflation-immune evidence rather than
+relying on PLF's robustness machinery).

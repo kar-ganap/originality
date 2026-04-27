@@ -16,7 +16,7 @@ unless needed.
 | # | Paper | Role for ws2 | Status |
 |---|---|---|---|
 | 01 | **Chu & Evans 2021**, *PNAS* 118(41), "Slowed canonical progress in large fields of science" | Canonical-concentration methodology (Chu-Evans Spearman top-N). Our primary canonical metric inherits their operationalization. | complete |
-| 02 | **Park, Leahey & Funk 2023**, *Nature* 613, "Papers and patents are becoming less disruptive over time" | The contested headline we're positioning against. We decline to use CD-index as primary; we must engage this paper. | draft (Discussion Notes pending) |
+| 02 | **Park, Leahey & Funk 2023**, *Nature* 613, "Papers and patents are becoming less disruptive over time" | The contested headline we're positioning against. We decline to use CD-index as primary; we must engage this paper. | complete |
 | 03 | **Petersen, Arroyave & Pammolli 2024**, *QSS* 5(4), "The disruption index is biased by citation inflation" | Broader citation-inflation critique. **Positioning read (~2 hrs)** justifying CD-index exclusion. | pending |
 | 04 | **Petersen, Arroyave & Pammolli 2025**, *J. of Informetrics* 19(1), team-size / CD re-analysis | **Close methodological read (~4 hrs).** Directly challenges Wu-Wang-Evans team-size interpretation — load-bearing for our Test II team-size control and Test IV team-diversity × novelty setup. | pending |
 | 05 | **Holst, Algaba, Tori, Wenmackers & Ginis 2024**, arXiv:2402.14583, "Dataset Artefacts are the Hidden Drivers of the Declining Disruptiveness in Science" | Dataset-artifact critique of Park-Leahey-Funk. Load-bearing for 13-F measurement-artifact null. | pending |
