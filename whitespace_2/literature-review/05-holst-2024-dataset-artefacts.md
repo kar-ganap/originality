@@ -931,7 +931,99 @@ This is methodological humility matching Holst's lesson.
 
 ### On C3 — analogous hand-validation for ws2
 
-(Pending.)
+Working session with user, 2026-04-27.
+
+**What Holst's hand-validation accomplished.** 100 random samples
+from a *binary-outcome* category (zero references / has references);
+verified against ground truth (original PDFs); 98% / 93% turned
+out to be misleadingly labeled. Strong evidence; tight CI at
+n=100; methodology works for binary outcomes with verifiable
+ground truth.
+
+**Six candidate ws2 hand-validations identified.**
+
+| Category | What it affects | Outcome type | Ground truth source |
+|---|---|---|---|
+| Abstract availability | Semantic plurality metrics | Binary | Publisher pages, DOI links |
+| Author-affiliation extraction | Demographic plurality (country, institution, prestige) | Mostly binary | Original publication |
+| Subfield assignment | Subfield-level analyses | Continuous (degree of fit) | Domain expert judgment |
+| Demographic inference (gender) | Demographic plurality directly | Binary | ORCID self-reports |
+| Citation count | Canonical concentration | Continuous (% match) | Semantic Scholar, Google Scholar |
+| Reference list completeness | Test IV N_p (especially N_p^author) | Continuous-but-binarizable | Crossref, original PDF |
+
+**Best fits for Holst-style binary hand-validation:**
+
+*(a) Gender inference accuracy.* Sample 100 names with ORCID
+match. Compare NamSor's predicted gender to ORCID self-report.
+Binary outcome. ORCID accessible programmatically. ~3 hours.
+
+*(b) Reference list completeness.* Sample 100 papers (post-1990;
+non-zero OpenAlex reference count). Compare OpenAlex reference
+list to Crossref. Binarize: complete match / partial mismatch /
+OpenAlex-fewer. ~3 hours.
+
+**Less tractable categories:**
+
+- *Subfield assignment:* continuous outcome; requires domain
+  expert per paper; better covered by classifier drift audit.
+- *Citation count:* continuous outcome; Google Scholar over-counts
+  vs. WoS; comparison ambiguous.
+- *Author-affiliation:* subsumed by demographic inference
+  validation downstream.
+- *Abstract availability:* high coverage assumed; marginal value
+  of explicit hand-validation low.
+
+**Existing ws2 validations (diagnostic-style, not hand-validation):**
+
+- ORCID validation subsample for demographic inference (Phase 0.1
+  §4)
+- Concept classifier drift audit (sanity Check 2)
+- Demographic inference coverage check (sanity Check 3)
+- Author disambiguation spot-check (sanity Check 4)
+
+These are statistical patterns over many samples, not Holst-style
+hand-verification of specific samples against ground truth.
+Different evidence type — complementary.
+
+**Plus Culbert et al. 2024/2025 (Tier 2 paper 16) provides
+broader OpenAlex coverage validation.** Their published validation
+is population-level evidence; our hand-validations would be
+individual-level evidence. Complementary.
+
+**Three handling options:**
+
+*Option A:* Comprehensive hand-validation across multiple
+categories (~15 hours). Strong but expensive.
+
+*Option B:* Targeted hand-validation of two high-payoff binary-
+outcome categories (gender inference + reference list completeness;
+~6 hours).
+
+*Option C:* Rely on existing diagnostics + Culbert et al. validation
+(0 additional hours; indirect).
+
+**Decision: Option B.** Reasons:
+1. Both validations directly affect load-bearing ws2 metrics
+   (demographic plurality + Test IV N_p).
+2. Both have binary outcomes (Holst-style methodology applies
+   cleanly).
+3. Both have accessible ground truth (ORCID + Crossref).
+4. ~6 hours is reasonable in early Stage 1.
+5. Strong evidence for two metric channels > weak evidence across
+   many.
+
+**What we skip:** abstract availability (high coverage); subfield
+assignment (continuous; needs domain expert); citation count
+(continuous; ambiguous comparison); author-affiliation (subsumed).
+
+**Phase 0.2 batch additions: two targeted hand-validations**
+captured separately in plan with pre-registered interpretive
+thresholds.
+
+**Why this matters substantively.** Without these validations,
+we're trusting OpenAlex on faith for two metric channels affecting
+headline findings. With them, we have specific evidence about
+pipeline accuracy citable in Methods and Limitations.
 
 ### On C4 — OpenAlex-specific metadata-quality concerns
 

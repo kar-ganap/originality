@@ -2469,6 +2469,53 @@ desiderata §9, but same principle).
   defensible given citation-window-aggregated metrics but
   represents a methodological choice." Folds into Methods.
 
+- **Gender inference accuracy hand-validation (per Holst C3
+  walkthrough, 2026-04-27).** Stage 1 hand-validation of NamSor
+  gender-prediction accuracy. Methodology:
+  - Sample 100 author names from ws2 corpora (50 pre-1990 + 50
+    post-1990; stratified to ensure region diversity).
+  - Match each against ORCID where available.
+  - Compare NamSor's predicted gender to ORCID self-reported
+    gender.
+  - Binary outcome per name: match / mismatch.
+  - Report per-region accuracy (Anglo / East-Asian / South-Asian /
+    other) and per-era accuracy (pre-1990 / post-1990).
+  - **Pre-registered interpretive thresholds:**
+    - ≥ 90% per-region accuracy → confirm pipeline; weight-by-
+      confidence sufficient.
+    - 80-90% per-region accuracy → caveat in Methods specific to
+      that region; expand NamSor coverage if budget permits.
+    - < 80% per-region accuracy → trigger expanded NamSor +
+      manual-review pipeline for that region; possibly drop
+      regions falling below threshold from headline analysis.
+  - Cost: ~3 hours of hand-validation work in early Stage 1.
+  - Why binary: ORCID provides binary self-report; NamSor outputs
+    binary prediction; comparison is binary match/mismatch.
+    Holst-style methodology applies cleanly.
+
+- **Reference list completeness hand-validation (per Holst C3
+  walkthrough, 2026-04-27).** Stage 1 hand-validation of OpenAlex
+  reference list completeness. Methodology:
+  - Sample 100 papers from ws2 corpus (post-1990; non-zero
+    OpenAlex reference count; DOI accessible via Crossref).
+  - For each: get reference count from Crossref + OpenAlex.
+  - Compute completeness ratio = OpenAlex_count / Crossref_count.
+  - Binarize: complete match (ratio ≥ 0.95) / partial mismatch
+    (0.7 ≤ ratio < 0.95) / OpenAlex-fewer (ratio < 0.7).
+  - **Pre-registered interpretive thresholds (median completeness
+    ratio):**
+    - ≥ 0.90 → confirm pipeline; Test IV N_p^author estimates
+      reliable.
+    - 0.70 - 0.90 → caveat in Methods; Test IV N_p^author
+      estimates have known systematic undercounting.
+    - < 0.70 → trigger expanded reference-completeness sensitivity
+      in robustness appendix; consider supplementing OpenAlex
+      reference data with Crossref where available.
+  - Cost: ~3 hours of hand-validation work in early Stage 1.
+  - Why direct ground truth: Crossref reference data is well-
+    validated and accessible; provides clean binary-or-continuous
+    comparison to OpenAlex.
+
 - **Specific anchor concepts for Mitigation 4.** List of ~100 concepts with
   representative reference texts, per-field. Phase 0.2 or early Stage 1.
 - **Specific alternative embedding model for Mitigation 2.** Choice between
