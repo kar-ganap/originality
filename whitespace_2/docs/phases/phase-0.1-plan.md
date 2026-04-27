@@ -796,7 +796,21 @@ Deliverables in rough order:
   classification and semantic embedding. Worst-case years get a bounded
   mitigation strategy.
 - **Output:** plot + summary table in `experiments/phase-0.1/abstract-coverage.{png,md}`.
-- **Expected:** high (>95%) from ~1990 onward; drops sharply before ~1985.
+- **Expected (pre-run):** high (>95%) from ~1990 onward; drops sharply before ~1985.
+- **Status (run 2026-04-27):** **complete; expectation falsified.** The
+  pre-run hypothesis was qualitatively wrong. Actual coverage is a smooth
+  gentle rise from ~30% (1970) to ~70% (2024) in CS, with **no sharp
+  pre-1985 drop** and **neither field ever crossing 80%**. Physics
+  consistently ~15 pp above CS. Spot-check confirms `has_abstract` logic
+  is correct; the finding reflects OpenAlex's actual abstract coverage
+  (publishers do not all permit redistribution). Strict §13 escalation
+  rule is not triggered (CS pre-1990 mean = 33% > 30% threshold), but
+  the **bigger finding** — post-1990 coverage at ~50% rather than ~95%
+  — is a structural surprise that warrants discussion before Check 2.
+  See `experiments/phase-0.1/abstract-coverage.md` for the full result
+  and recommended next steps (re-evaluate §12 full-text policy as
+  primary rather than robustness; pause Check 2 design until selection-
+  bias implications are addressed).
 
 ### Check 2 — Concept classifier drift audit
 
