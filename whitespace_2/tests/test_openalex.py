@@ -199,3 +199,72 @@ def test_has_arxiv_handles_none_source() -> None:
     # Real OpenAlex responses sometimes have null source on a location.
     work = {"id": "W1", "locations": [{"source": None}, {"source": {"id": "https://openalex.org/S4306400194"}}]}
     assert openalex.has_arxiv(work) is True
+
+
+def test_extract_doi_strips_url_prefix() -> None:
+    work = {"ids": {"doi": "https://doi.org/10.48550/arxiv.1706.03762"}}
+    assert openalex.extract_doi(work) == "10.48550/arxiv.1706.03762"
+
+
+def test_extract_doi_handles_bare_doi() -> None:
+    work = {"ids": {"doi": "10.1145/12345"}}
+    assert openalex.extract_doi(work) == "10.1145/12345"
+
+
+def test_extract_doi_returns_none_when_missing() -> None:
+    assert openalex.extract_doi({"id": "W1"}) is None
+    assert openalex.extract_doi({"id": "W1", "ids": {}}) is None
+    assert openalex.extract_doi({"id": "W1", "ids": {"doi": None}}) is None
+
+
+def test_extract_first_country_from_authorships() -> None:
+    work = {
+        "authorships": [
+            {
+                "institutions": [
+                    {"country_code": "US", "display_name": "MIT"},
+                    {"country_code": "GB", "display_name": "Cambridge"},
+                ]
+            },
+            {"institutions": [{"country_code": "JP"}]},
+        ]
+    }
+    assert openalex.extract_first_country(work) == "US"
+
+
+def test_extract_first_country_handles_no_institutions() -> None:
+    assert openalex.extract_first_country({"authorships": []}) is None
+    assert openalex.extract_first_country({"authorships": [{"institutions": []}]}) is None
+    assert openalex.extract_first_country({"id": "W1"}) is None
+
+
+def test_extract_first_country_skips_empty_institution_to_next_authorship() -> None:
+    work = {
+        "authorships": [
+            {"institutions": []},
+            {"institutions": [{"country_code": "DE"}]},
+        ]
+    }
+    assert openalex.extract_first_country(work) == "DE"
+
+
+def test_extract_top_concept_id_picks_highest_score_at_target_level() -> None:
+    work = {
+        "concepts": [
+            {"id": "https://openalex.org/C1", "level": 0, "score": 0.5, "display_name": "low"},
+            {"id": "https://openalex.org/C2", "level": 0, "score": 0.9, "display_name": "high"},
+            {"id": "https://openalex.org/C3", "level": 1, "score": 0.99, "display_name": "deeper"},
+        ]
+    }
+    assert openalex.extract_top_concept_id(work, level=0) == "C2"
+
+
+def test_extract_top_concept_id_returns_none_when_no_match() -> None:
+    work = {
+        "concepts": [
+            {"id": "https://openalex.org/C3", "level": 2, "score": 0.99},
+        ]
+    }
+    assert openalex.extract_top_concept_id(work, level=0) is None
+    assert openalex.extract_top_concept_id({"concepts": []}, level=0) is None
+    assert openalex.extract_top_concept_id({"id": "W1"}, level=0) is None

@@ -130,6 +130,65 @@ def has_abstract(work: dict[str, Any]) -> bool:
     return len(abstract) > 0
 
 
+def extract_doi(work: dict[str, Any]) -> str | None:
+    """Pull bare DOI string (no URL prefix) from a work record's ids.doi field."""
+    ids = work.get("ids") or {}
+    if not isinstance(ids, dict):
+        return None
+    doi = ids.get("doi")
+    if not isinstance(doi, str):
+        return None
+    if doi.startswith("https://doi.org/"):
+        return doi[len("https://doi.org/") :]
+    if doi.startswith("http://doi.org/"):
+        return doi[len("http://doi.org/") :]
+    return doi
+
+
+def extract_first_country(work: dict[str, Any]) -> str | None:
+    """ISO country code of the first authorship's first non-empty institution.
+
+    Walks authorships in order; for each, returns the first institution's
+    country_code if available. Returns None if no authorship/institution has
+    a country_code.
+    """
+    authorships = work.get("authorships") or []
+    if not isinstance(authorships, list):
+        return None
+    for authorship in authorships:
+        if not isinstance(authorship, dict):
+            continue
+        institutions = authorship.get("institutions") or []
+        if not isinstance(institutions, list):
+            continue
+        for institution in institutions:
+            if not isinstance(institution, dict):
+                continue
+            country = institution.get("country_code")
+            if isinstance(country, str) and country:
+                return country
+    return None
+
+
+def extract_top_concept_id(work: dict[str, Any], level: int = 0) -> str | None:
+    """Bare concept ID (e.g., 'C41008148') of the highest-score concept at the
+    given level, or None if no concept at that level.
+    """
+    concepts = work.get("concepts") or []
+    if not isinstance(concepts, list):
+        return None
+    candidates = [
+        c for c in concepts if isinstance(c, dict) and c.get("level") == level
+    ]
+    if not candidates:
+        return None
+    top = max(candidates, key=lambda c: c.get("score") or 0.0)
+    raw_id = top.get("id")
+    if not isinstance(raw_id, str):
+        return None
+    return raw_id.rsplit("/", 1)[-1] if "/" in raw_id else raw_id
+
+
 def latest_snapshot_date() -> str:
     """Record the request-time as a snapshot proxy.
 

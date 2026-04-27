@@ -867,6 +867,41 @@ Deliverables in rough order:
   Limitations and proceed with the narrower analytical population. See
   `experiments/phase-0.1/s2ag-coverage.md` for full interpretation and
   proposed next steps.
+- **Status (Check 1f, run 2026-04-27):** **bias-of-missingness diagnostic
+  surfaces three structurally important biases, each aligned with one of
+  ws2's substantive measurement axes.** Path (B) without corrections is
+  unsafe; we are partially in (M3) territory.
+  - **Citation count → canonical-concentration (significant):** CS low-
+    citation tertile (0-1 cites) has 36.7% abstract coverage; mid-citation
+    tertile (2+) has 62.5% — a **26 pp gap**. Abstract-having CS papers
+    are systematically the higher-impact papers. Physics shows same
+    direction, smaller magnitude.
+  - **Concept → semantic-plurality (moderate):** 93 level-1 concepts span
+    20.3% – 89.0% coverage (IQR 13.3%). Subfields differ wildly.
+  - **Country → demographic-plurality (compounded):** 25 known countries
+    span 41-99% (IQR 11.0%) — moderate, but **55% of papers (n=12,174)
+    have UNKNOWN first-affiliation country** in OpenAlex's authorship
+    data. Demographic-plurality measurement is doubly precarious.
+  - **Recommended path: (M2 + bounded M3).** Path (B) with selection-on-
+    observables corrections via inverse-probability-of-abstract-
+    availability weighting (propensity fit on year × field × type ×
+    citation-tertile × concept-cluster × known-country). Bound
+    corrections by propensity-model reliability. Restrict demographic-
+    plurality claims to the ~45% with determinable country. Report
+    corrected and uncorrected aggregates with explicit selection-bias
+    bounds.
+  - **New Phase 0.2 commitment:** formally define ws2 analytical
+    population as "OpenAlex CS+Physics 1970-2024 with non-empty
+    abstract_inverted_index"; demographic-plurality analyses additionally
+    require a determinable first-authorship country.
+  - **New diagnostic layer added to the Holst three-layer defense
+    pattern:** selection-bias-correction-as-empirical-diagnostic, parallel
+    to the within-between decomposition (§9b). Methods overview (§14)
+    gains a fourth construct-validity layer for the selection-bias
+    correction itself.
+  - See `experiments/phase-0.1/missingness-bias.md` for full
+    interpretation including impact on §13 pre-1990 retention, §9a/b/c/d
+    Lockhart audit chain, and the three-layer defense.
 
 ### Check 2 — Concept classifier drift audit
 
