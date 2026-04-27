@@ -765,7 +765,96 @@ session happens.)
 
 ### On C4 — three-conditions framework applied to ws2
 
-(Pending.)
+Working session with user, 2026-04-26.
+
+**The three conditions (PAP 2025 Discussion).**
+
+1. *Stationary distribution over time.* Metric's distribution
+   should have stable mean/variance/higher moments across eras.
+   Cross-era comparisons require apples-to-apples distributions.
+2. *Most weakly sensitive to secular growth.* Even if approximately
+   stationary, a metric should not have its values mechanically
+   driven by citation network density growth.
+3. *Captures consensus of broader scientific community.* Metric
+   should reflect community attention, not author choices (e.g.,
+   focal paper's own reference list composition).
+
+**Why CD-index fails all three.**
+
+- Condition 1: CD distribution mechanically pushed toward 0 over
+  time as R_k grows; not stationary.
+- Condition 2: CD = CD^nok / (1 + R_k); R_k grows with citation
+  network density; mechanically driven by network growth.
+- Condition 3: CD's signal (N_i − N_j) depends on which
+  predecessors the focal author chose to cite; heavily author-
+  choice-dependent.
+
+**Why the conjunction is hard.** If a metric satisfies all three,
+it must be invariant to network growth AND to author choices.
+This rules out:
+- Network-structural metrics like CD (fail 2 and 3).
+- Raw citation count metrics (fail 1 and 2).
+- Reference-list-composition metrics (fail 3).
+
+What survives:
+- Field-year-normalized citation metrics (z-scores within field ×
+  year) — satisfy 1 by construction.
+- Rank-based metrics — satisfy 2 trivially; satisfy 3 because
+  ranks reflect community-wide citation patterns.
+
+**Application to ws2 metrics — explicit pass/fail per condition.**
+
+| Metric | Cond 1 (stationarity) | Cond 2 (CI-robustness) | Cond 3 (community consensus) |
+|---|---|---|---|
+| Spearman top-N | ✓ bounded in [−1, 1]; rank-stable across years | ✓ rank-invariant by construction | ✓ top-N determined by community citation patterns |
+| Citation Gini | ✓ bounded in [0, 1] | Partial — undercoverage in older eras could compress distribution; tested by detrended diagnostic | ✓ based on community-wide citation distribution |
+| Cluster entropy | ✓ bounded entropy; stationary if cluster fits temporally stratified (desiderata §11) | ✓ embedding-based, not citation-based | ✓ clusters reflect content distribution across field |
+| Effective dim | ✓ ratio of singular values; bounded above | ✓ embedding-based | ✓ year-Y embedding distribution |
+| Mean pairwise distance | ✓ bounded distance metric; stable if embedding model stable | ✓ embedding-based | ✓ pairwise structure reflects community distribution |
+
+**Net: all five ws2 canonical-concentration / semantic-plurality
+metrics pass all three conditions** — with two caveats:
+- Citation Gini's condition 2 holds conditional on the detrended
+  correlation-with-r(t) diagnostic showing |corr| < 0.7 (already
+  pre-registered).
+- Cluster entropy's condition 1 holds conditional on the temporal-
+  stratification cluster-fit (already committed via desiderata §11).
+- Effective dim and pairwise distance condition 1 holds conditional
+  on embedding-model stability (already committed via drift-
+  mitigation ladder).
+
+So the three-conditions check doesn't generate new commitments —
+it provides a *unified framework* for the structural defenses we've
+already committed to elsewhere.
+
+**Are there conditions PAP 2025 misses that should also matter for
+ws2?**
+
+Two potential additions worth flagging:
+- *Robustness to author-disambiguation errors.* For our demographic-
+  plurality metrics, this is load-bearing (we use OpenAlex
+  disambiguation). PAP 2025 doesn't engage demographic-style metrics.
+- *Robustness to missing references in early-era data.* PAP 2025
+  acknowledges this via reference to Macher 2024 and Holst 2024 but
+  doesn't add it as a fourth condition. ws2 has explicit pre-1990
+  data-quality tier handling (per desiderata §10 and Phase 0.1 §13).
+
+These extensions are already addressed by our existing commitments
+(C2(b) OpenAlex coverage diagnostic; pre-1990 tier specifications;
+identity-confidence diagnostic from Hofstra C8). The three
+conditions plus these two extensions = a complete framework for
+ws2's metric defense.
+
+**For the eventual ws2 paper Methods section.**
+
+The three-conditions framework provides clean exposition of why
+our metric choices are appropriate for cross-temporal analysis.
+Adding to Phase 0.2 batch (extension of (c-prime) sub-commitment
+1): use PAP 2025's three conditions as the *organizing structure*
+for the Methods-section paragraph defending inflation-immunity,
+with our specific structural arguments (rank-invariance, bounded
+distribution, embedding-orthogonality) as the answers under each
+condition.
 
 ### On C5 — quadratic terms in ws2 regression specifications
 

@@ -1591,14 +1591,38 @@ desiderata §9, but same principle).
   "resolving" it; explicitly acknowledge the construct gap (semantic
   plurality ≠ disruption); pre-commit to symmetric framings. Four
   concrete commitments:
-  - **(1) Methods-section paragraph defending inflation-immunity.**
-    ~5 sentences. Our semantic-plurality metrics (cluster entropy +
-    effective dimensionality + mean pairwise distance) operate on
-    paper embeddings / embedding-space variance / direct content-
-    space measurement — none on citation network structure. None
-    subject to the accidental-Type-2 citation-inflation mechanism
-    (walked through in PLF SQ7). This is the technical content for
-    the cleanness claim.
+  - **(1) Methods-section paragraph defending inflation-immunity,
+    organized via PAP 2025's three-conditions framework (per PAP
+    2025 C4 walkthrough, lit-review session 2026-04-26).** ~7-9
+    sentences. PAP 2025's Discussion lays out three conditions any
+    cross-temporal citation metric should satisfy: (i) stationary
+    distribution over time; (ii) most weakly sensitive to secular
+    growth (especially CI from r(t) and n(t) growth); (iii)
+    captures consensus of broader scientific community, not entirely
+    dependent on author choices. CD-index fails all three
+    structurally; ws2's metrics pass all three by construction or
+    via committed mitigations. Use this as organizing structure
+    for the Methods paragraph:
+    - Spearman top-N satisfies (i) bounded in [−1, 1] + rank-
+      stable; (ii) rank-invariant; (iii) determined by community
+      citation patterns.
+    - Citation Gini satisfies (i) bounded in [0, 1]; (ii) tested
+      by detrended diagnostic; (iii) based on community-wide
+      citation distribution.
+    - Cluster entropy / effective dim / mean pairwise distance
+      satisfy all three via embedding-space orthogonality to
+      citation network structure (with cluster-fit temporal
+      stratification per desiderata §11 and drift-mitigation
+      ladder ensuring (i)).
+    Two ws2-specific extensions of the framework: (iv) robustness
+    to author-disambiguation errors (handled by Hofstra C8
+    identity-confidence diagnostic); (v) robustness to missing
+    references in early-era data (handled by pre-1990 tier
+    specifications). Methods paragraph cites PAP 2025 as the
+    framework source and notes ws2 satisfies the conjunction.
+    This is methodologically stronger than purely defensive
+    structural arguments because it appeals to a published criterion
+    set rather than ad-hoc claims of inflation-immunity.
   - **(2) Discussion-section paragraph engaging PLF.** ~5 sentences.
     Cite PLF's substantive claim, cite Petersen-Arroyave-Pammolli
     2024 + Holst et al. 2024 critique chain, position ws2's
