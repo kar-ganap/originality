@@ -2100,6 +2100,110 @@ desiderata §9, but same principle).
   maintaining bounded scope. We don't take positions on individual
   papers; we acknowledge the landscape exists and focus on what's
   load-bearing for ws2.
+- **Threat-to-check mapping as Methods deliverable (per Holst C2
+  walkthrough, lit-review session 2026-04-27).** For each
+  pre-registered ws2 robustness check, build an explicit mapping:
+  what threats does this check target? At what level does it
+  operate? What's the failure mode (false positive of robustness)?
+  Format: small Methods-section table or appendix. Approximate
+  initial mapping (per Holst C2 walkthrough captured in PAP review
+  file):
+  - Detrended correlation w/ r(t) → citation inflation via reference
+    list growth; metric-covariate correlation level; misses
+    non-r(t) threats.
+  - Multi-Δ Spearman / Multi-N robustness → window/threshold choice
+    as artefact; window/N choice level; misses if all values miss
+    true regime.
+  - Decoupled-subfield robustness → field-size-vs-time confound;
+    subfield × time correlation level; misses if subfield count
+    low at strict thresholds.
+  - Pooled measurement-robustness appendix → measurement-uncertainty
+    restrictions; per-restriction row level; misses threats
+    preserved across restrictions.
+  - Cohort decomposition Option B → cohort-mix-driven divergence;
+    year × cohort bins; lead-author cohort proxy limited.
+  - Citation-difference-near-threshold → rank-instability near
+    top-N; input-side stability; heavy-tail near top is
+    field-specific.
+  - OpenAlex coverage diagnostic → coverage variability; per-era ×
+    region rate; coverage-metric joint distribution.
+  - Citation-completeness sensitivity → undercoverage of citations;
+    completeness threshold; completeness measure itself biased.
+  - Subfield mechanism nonlinearity check → linear masks regime
+    shift; quadratic + LOWESS; non-monotonic shapes quadratic
+    can't capture.
+  - Test II quadratic fallback / Test IV with/without c_p →
+    captured separately.
+  Cost: ~half-day to construct; informs Methods exposition;
+  documents what we do and don't claim to robustly defend against.
+
+- **Limitations-section paragraph on uncovered threats (per Holst
+  C2 walkthrough, 2026-04-27).** Explicit acknowledgment that
+  ws2's robustness checks address specific threats at specific
+  levels; threats operating at levels not covered by our machinery
+  may persist as potential confounds. Specifically acknowledge
+  five threats not well-covered:
+  - **(A) System-wide OpenAlex artefacts:** none of our committed
+    checks operate on alternative data; cross-substrate
+    WoS-OpenAlex overlap is back-pocket only.
+  - **(B) Embedding-model bias:** drift-mitigation addresses
+    cross-era stability but not training-data bias; alternative-
+    model robustness (Stage 2) verifies embedding-model swap is
+    complete, not just adapter swap.
+  - **(C) Compound-threat interactions:** single-threat-at-a-time
+    checks may not capture interactions; not directly addressable.
+  - **(D) Demographic inference systematic bias:** ORCID validation
+    on non-random subsample (people with ORCID); inherent
+    limitation.
+  - **(E) Subfield-classifier drift cascading effects:** classifier
+    drift audit (sanity Check 2) is metric-level; downstream
+    handling decided contingent on audit results.
+  Approximately one paragraph (~150 words). Methodologically
+  humble; matches Holst's lesson against overclaiming.
+
+- **Robustness consolidation pass framework (refines existing
+  Phase 0.1 closure gate #10, per Holst C2 walkthrough,
+  2026-04-27).** During the existing committed Phase 0.1 closure
+  consolidation pass (gate #10), apply Holst-derived framework:
+  for each existing robustness commitment, evaluate whether it is:
+  - **Threat-specific** (targets one well-defined threat at the
+    right level) → keep as-is; document threat targeting in the
+    threat-to-check mapping.
+  - **Generic stability check** (just "let's see if results are
+    stable") → replace with threat-specific framing or drop.
+  - **Redundant** (multiple checks at the same level for the same
+    threat) → consolidate into single check with clearer threat
+    targeting.
+  - **Missing** (threat identified but not covered by any check) →
+    add new check OR acknowledge gap in Limitations OR defer to
+    back-pocket if expensive.
+  This refines gate #10's existing consolidation scope by adding
+  threat-specificity as the explicit evaluation criterion.
+
+- **Pre-registered exclusion of degenerate cases for ws2 metrics
+  (per Holst recommendation, 2026-04-27).** Holst's "exclude
+  degenerate cases prior to analysis" methodological principle
+  applied to ws2. Per-metric degenerate-case list:
+  - **Spearman top-N:** field-year cells with fewer than 2N papers
+    excluded (insufficient ranks for stable correlation).
+  - **Citation Gini:** field-year cells with fewer than 50 papers
+    excluded (small-sample Gini high variance).
+  - **Cluster entropy / effective dim / pairwise distance:**
+    field-year cells with fewer than 100 papers excluded
+    (insufficient for stable cluster fit / embedding statistics).
+  - **Test IV N_p:** papers with fewer than 5 references excluded
+    from primary analysis (insufficient for stable centroid);
+    already committed.
+  - **Test IV T_p:** single-author papers (T_p = 0 by construction)
+    handled as baseline comparison group, not excluded; already
+    committed.
+  - **Demographic plurality metrics:** authors with no
+    demographic-confidence-passing inference excluded; already
+    handled via weight-by-confidence + per-region accuracy
+    reporting.
+  Pre-registered exclusions documented in Methods. Each exclusion
+  threshold has a stated rationale tied to metric-stability or
+  small-sample concerns.
 - **Specific anchor concepts for Mitigation 4.** List of ~100 concepts with
   representative reference texts, per-field. Phase 0.2 or early Stage 1.
 - **Specific alternative embedding model for Mitigation 2.** Choice between

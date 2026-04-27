@@ -718,7 +718,102 @@ session happens.)
 
 ### On C2 — robustness-check threat-level analysis for ws2
 
-(Pending.)
+Working session with user, 2026-04-27.
+
+**Four failure modes from Holst's analysis.**
+
+PLF's robustness checks failed in specific ways. Generalized to
+ws2:
+
+1. *Threat operates at a different level than the check.* PLF's
+   regression operated on continuous covariates; couldn't capture
+   node-level (zero-references) discontinuity. PLF's rewiring
+   preserved node-level structure; couldn't detect node-level
+   threats.
+2. *Threat preserved across all check variations.* PLF's three
+   CD-variants all preserved the (1 + R_k) denominator structure.
+   Variations didn't perturb the relevant level.
+3. *Check lacks power for the threat.* Small effects buried in
+   variance, or threat manifests at low frequency.
+4. *Multiple checks share the same blind spot.* If multiple checks
+   all operate at the same wrong level, "robust across multiple
+   checks" is illusory.
+
+**Per-check audit for ws2's existing robustness machinery.**
+
+| Check | Threat targeted | Level | Failure mode |
+|---|---|---|---|
+| Detrended correlation w/ r(t) | Citation inflation via reference list growth | Metric-covariate correlation, time-detrended | Misses non-r(t) growth-related threats |
+| Stationarity diagnostic | Metric distribution drift over time | Distribution-level test | Misses small but real drift |
+| Multi-Δ Spearman | Δ-window choice as artefact | Window choice | Misses if all Δ miss true regime |
+| Multi-N robustness (Spearman) | Top-N threshold sensitivity | N choice | Misses if all N miss true regime |
+| Citation-difference-near-threshold | Rank-instability near top-N | Input-side stability | Heavy-tail near top is field-specific |
+| Decoupled-subfield robustness | Field-size-vs-time confound | Subfield × time correlation | Subfield count low at strict thresholds |
+| Pooled measurement-robustness appendix | Measurement-uncertainty restrictions | Per-restriction row | Threats preserved across restrictions |
+| Cohort decomposition Option B | Cohort-mix-driven divergence | Year × cohort bins | Lead-author cohort proxy limited |
+| OpenAlex coverage diagnostic | Coverage variability | Per-era × region rate | Coverage-metric joint distribution |
+| Citation-completeness sensitivity | Undercoverage of citations | Completeness threshold | Completeness measure itself biased |
+| Subfield mechanism nonlinearity check | Linear masks regime shift | Quadratic + LOWESS | Non-monotonic shapes quadratic can't capture |
+| Test II quadratic fallback | Non-monotonic team-size effects | Linear-vs-quadratic | Same as nonlinearity check |
+| Test IV with/without c_p | Bad-control problem | Confounder vs. mediator | c_p as complicated mixture |
+
+**Threats potentially not well-covered.**
+
+*Threat A: System-wide OpenAlex artefacts.* None of our committed
+checks operate on alternative data. Holst found dataset artefacts
+in WoS *and* PatentsView *and* SciSciNet *and* PubMed *and* JSTOR
+*and* MAG — same artefact across "independent" databases.
+Analogous risk for ws2: any OpenAlex-systematic issue passes all
+our within-OpenAlex checks. **Mitigation: cross-substrate
+WoS-OpenAlex overlap robustness in back-pocket (C3/SQ10 PLF
+commitment); trigger if reviewers force.**
+
+*Threat B: Embedding-model bias.* Our drift-mitigation ladder
+addresses cross-era stability but not training-data bias. If
+SPECTER2 has systematic biases (e.g., trained on disproportionately
+Anglo content), all embedding-based metrics inherit the bias.
+**Mitigation: alternative-model robustness (BGE-M3 / text-embedding-
+3-large vs. SPECTER2) is committed for Stage 2; verify it swaps
+embedding model entirely, not just adapter.**
+
+*Threat C: Compound-threat interactions.* Our checks are
+single-threat-at-a-time. If multiple threats interact, collective
+effect could look substantive while no individual check flags
+concern. **Mitigation: not directly addressable; acknowledge in
+Limitations.**
+
+*Threat D: Demographic inference systematic bias.* Even with
+weight-by-confidence, if NamSor has systematic biases by region
+we don't capture, demographic plurality is mis-measured.
+**Mitigation: ORCID validation subsample (Phase 0.1 §4); validation
+necessarily on non-random subsample (people with ORCID).
+Acknowledge in Limitations.**
+
+*Threat E: Subfield-classifier drift cascading effects.* If
+subfield assignment changes over time, all subfield-level analyses
+inherit the drift. **Mitigation: classifier drift audit (Phase 0.1
+sanity Check 2); audit metric-level; if drift identified, downstream
+handling decided.**
+
+**Four actions to prevent robustness-check failure.**
+
+1. **Build a threat-to-check mapping** as Methods-section deliverable.
+   The audit table above, formalized for the eventual ws2 paper.
+2. **Identify uncovered threats explicitly** and decide handling
+   (back-pocket Stage 3, Limitations acknowledgment, or new check).
+3. **Acknowledge uncovered threats in Limitations.** Don't pretend
+   robustness machinery is comprehensive. Match Holst's lesson:
+   don't overclaim.
+4. **Re-examine each existing robustness commitment** during Phase
+   0.1 closure consolidation pass (gate #10) for threat-specificity,
+   redundancy, missing threats.
+
+**Phase 0.2 batch additions captured separately in plan.**
+
+The substantive payoff: ws2's robustness machinery becomes
+*honestly demarcated* rather than over-claimed. We document what
+each check rules out and what remains as residual uncertainty.
+This is methodological humility matching Holst's lesson.
 
 ### On C3 — analogous hand-validation for ws2
 
