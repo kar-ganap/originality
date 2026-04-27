@@ -964,7 +964,122 @@ we examine and what direction it moves.
 
 ### On C3 — percentile-amplification in ws2 metrics
 
-(Pending.)
+Working session with user, 2026-04-26.
+
+**The WWE 2019 amplification pattern (what we're checking against).**
+
+WWE 2019 used percentile-rank values of CD as their dependent
+variable rather than raw CD values. Combined with CD's extremely
+concentrated distribution (95.5% within ±2σ of CD ≈ 0; σ small),
+this amplifies tiny absolute effects into apparent large effect
+sizes in percentile-rank units. PAP 2025's reanalysis finds the
+underlying raw effect is 0.09σ (noise level); WWE's percentile-
+based reporting made it appear substantively significant.
+
+**The vulnerability requires two conditions co-occurring.**
+
+1. *Percentile transformation:* take individual paper's metric
+   value, transform to percentile rank within field-year, regress
+   on covariates.
+2. *Highly concentrated underlying distribution:* σ small relative
+   to range, so small absolute shifts → large percentile shifts.
+
+If either condition is absent, WWE-style amplification doesn't
+operate.
+
+**Per-metric audit for ws2.**
+
+| Metric | Percentile transform? | Concentrated dist? | Vulnerable? |
+|---|---|---|---|
+| Spearman top-N (canonical primary) | No — list-stability between years, not per-paper percentile | N/A | No |
+| Citation Gini (canonical secondary) | Lorenz-curve in construction, but single per-year aggregate | Bounded [0,1], reasonable variance | No |
+| Cluster entropy (semantic primary A) | No — entropy on probability dist | N/A | No |
+| Effective dimensionality (semantic primary B) | No — eigenvalue-based | N/A | No |
+| Mean pairwise distance (semantic secondary) | No — direct distance | N/A | No |
+| Demographic plurality (Shannon, Gini-Simpson, Rao's Q) | No | N/A | No |
+| Test IV T_p | No — Rao's Q over team | N/A | No |
+| Test IV N_p (community + author + combinatorial) | No — direct cosine distance; z-scoring is not percentile transform | N/A | No |
+
+**Key distinction surfaced: rank-invariance ≠ percentile-amplification
+vulnerability.**
+
+These are *different* properties:
+- *Rank-invariance:* metric stable under monotonic transformations
+  of input values. Spearman top-N has this.
+- *Percentile-amplification vulnerability:* small absolute
+  differences → large percentile-rank differences. Requires
+  percentile transformation + concentrated distribution.
+
+A metric can be rank-invariant AND not vulnerable. A metric can
+also be neither rank-invariant nor vulnerable. The two properties
+address different aspects of metric behavior.
+
+**ws2 reporting style matches PAP 2025's recommended practice.**
+
+- Test I slope: SD/year (raw metric units).
+- Test IV γ_1: σ-standardized units of T_p and N_p (z-scored for
+  coefficient comparability — *not* percentile-transformed).
+- Tests I-III: distributions of metrics with bootstrap CIs in raw
+  units.
+
+**Subtler vulnerability: rank-instability near the top-N threshold.**
+
+The closest analog to percentile-amplification that could operate
+in ws2 is rank-instability in our Spearman top-N list driven by
+small absolute citation differences for papers near rank N.
+
+Scenario:
+- Paper A has 100 citations, ranked #50.
+- Paper B has 99 citations, ranked #51.
+- A small shift (10 citations) flips their ranks.
+- Affects Spearman correlation by changing list membership.
+
+**Mitigation already in place:**
+- Citation distribution is heavy-tailed near top — papers at rank
+  45-55 typically differ in citation counts by 10-20%, not single
+  digits. List is more stable than WWE-concentrated case.
+- Multi-N robustness already pre-registered (N ∈ {30, 50, 100}).
+- Multi-Δ Spearman co-reporting (1, 5, 10) provides additional
+  stability check.
+
+**New explicit sensitivity check (added 2026-04-26).** To verify
+the heavy-tail assumption empirically and bound the rank-instability
+concern, add a citation-difference-near-threshold diagnostic:
+
+For each (field × year), compute:
+- Δ_50 = citation count at rank 50 minus citation count at rank 51
+- Δ_50_relative = Δ_50 / citation count at rank 50
+- Plot distribution of Δ_50_relative across (field × year) cells.
+
+Pre-registered interpretive thresholds:
+- Median Δ_50_relative > 5% → heavy-tail assumption holds; rank-
+  instability concern minimal.
+- Median Δ_50_relative 1-5% → moderate; multi-N robustness check
+  becomes more load-bearing.
+- Median Δ_50_relative < 1% → heavy-tail assumption fails; rank-
+  instability is a real concern; trigger expanded multi-N
+  reporting (additional N ∈ {200, 500} for robustness).
+
+Cost: ~half-day Stage 2 effort. Computational only; uses existing
+data.
+
+**Methods-section addition.** Sentence acknowledging PAP 2025's
+percentile-amplification critique and ws2's compliant reporting:
+"Following PAP 2025's recommended practice, ws2 reports effect
+sizes in σ-units of raw metrics rather than percentile-rank
+transformations. Our metrics are not vulnerable to WWE-style
+percentile-amplification because they either operate at the
+aggregate level (Tests I-III metrics, computed once per
+field-year) or use direct value-based measurements (Test IV T_p
+and N_p)." Folds into (c-prime) sub-commitment 1 (the three-
+conditions framework Methods paragraph).
+
+**No major new Phase 0.2 batch additions** — primarily confirms
+our existing methodological choices are correct. Three small
+additions:
+1. Methods-sentence in (c-prime) sub-commitment 1.
+2. Citation-difference-near-threshold sensitivity check.
+3. Pre-registered interpretive grid for the diagnostic.
 
 ### On C4 — three-conditions framework applied to ws2
 

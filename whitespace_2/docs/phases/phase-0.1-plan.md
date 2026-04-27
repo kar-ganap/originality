@@ -2032,6 +2032,50 @@ desiderata §9, but same principle).
   pre-registered list; doesn't expand analytical scope. The
   Bonferroni correction across 6 candidates (rather than 5) for
   CS slightly tightens significance threshold; manageable.
+- **Citation-difference-near-threshold sensitivity check (per PAP
+  2025 C3 walkthrough, lit-review session 2026-04-26).** PAP 2025's
+  WWE 2019 critique highlights percentile-amplification as a
+  methodological pitfall. ws2's metrics are not vulnerable to the
+  classic WWE pattern (no per-paper percentile transformation
+  combined with concentrated distribution). However, a subtler
+  related concern is rank-instability in our Spearman top-N list
+  driven by small absolute citation differences for papers near
+  rank N. To bound this empirically rather than relying solely on
+  the heavy-tail assumption:
+  - **Diagnostic:** for each (field × year), compute citation count
+    at rank 50 minus citation count at rank 51 (Δ_50). Compute
+    relative version Δ_50_relative = Δ_50 / (citation count at
+    rank 50). Plot distribution across (field × year) cells.
+  - **Pre-registered interpretive thresholds:**
+    - Median Δ_50_relative > 5% → heavy-tail assumption holds;
+      rank-instability concern minimal; existing multi-N
+      robustness (N ∈ {30, 50, 100}) sufficient.
+    - Median Δ_50_relative 1-5% → moderate; multi-N robustness
+      check becomes more load-bearing in interpretation.
+    - Median Δ_50_relative < 1% → heavy-tail assumption fails;
+      rank-instability is real concern; trigger expanded multi-N
+      reporting (N ∈ {200, 500} for additional robustness).
+  - **Cost:** ~half-day Stage 2 effort. Computational only; uses
+    existing OpenAlex citation data.
+  - **Why this complements existing multi-N robustness.** Multi-N
+    robustness tests how Spearman varies across N choice; this
+    diagnostic empirically tests the *heavy-tail assumption* that
+    underlies our claim that small-magnitude citation differences
+    don't cause rank-flip artifacts. The two are complementary:
+    multi-N tests outcome stability; near-threshold diagnostic
+    tests input-side stability assumption.
+- **Methods-section sentence on percentile-amplification compliance
+  (per PAP 2025 C3 walkthrough, 2026-04-26).** Add to (c-prime)
+  sub-commitment 1 (three-conditions Methods paragraph): one
+  sentence acknowledging PAP 2025's percentile-amplification
+  critique and ws2's compliant reporting practice. Specifically:
+  "Following PAP 2025's recommended practice, ws2 reports effect
+  sizes in σ-units of raw metrics rather than percentile-rank
+  transformations. Our metrics are not vulnerable to WWE-style
+  percentile-amplification because they either operate at the
+  aggregate level (Tests I-III metrics, computed once per
+  field-year) or use direct value-based measurements (Test IV T_p
+  and N_p)." Cost: one sentence in existing Methods paragraph.
 - **Specific anchor concepts for Mitigation 4.** List of ~100 concepts with
   representative reference texts, per-field. Phase 0.2 or early Stage 1.
 - **Specific alternative embedding model for Mitigation 2.** Choice between
