@@ -53,6 +53,8 @@ def fetch_works(
     sample_size: int | None = None,
     seed: int | None = None,
     select: list[str] | None = None,
+    sort: str | None = None,
+    per_page: int | None = None,
     mailto: str = _DEFAULT_MAILTO,
     max_retries: int = 5,
 ) -> list[dict[str, Any]]:
@@ -60,7 +62,9 @@ def fetch_works(
 
     If ``sample_size`` is set, OpenAlex returns a random sample of that size
     (server-side, reproducible with ``seed``). Otherwise the first page of
-    results is returned.
+    results is returned. ``sort`` is an OpenAlex sort spec like
+    ``publication_year:asc``. ``per_page`` overrides default page size; capped
+    at 200 by OpenAlex.
     """
     params: dict[str, Any] = {
         "filter": _build_filter_string(filters),
@@ -72,7 +76,11 @@ def fetch_works(
         params["seed"] = seed
     if select:
         params["select"] = ",".join(select)
-    if sample_size is not None:
+    if sort:
+        params["sort"] = sort
+    if per_page is not None:
+        params["per-page"] = min(per_page, 200)
+    elif sample_size is not None:
         params["per-page"] = min(sample_size, 200)
 
     payload = _request_with_retry(f"{_BASE_URL}/works", params, max_retries)
@@ -89,6 +97,27 @@ def get_concept(
     """Fetch a single concept entity by ID (e.g., 'C41008148')."""
     params = {"mailto": mailto}
     return _request_with_retry(f"{_BASE_URL}/concepts/{concept_id}", params, max_retries)
+
+
+def search_concepts(
+    query: str,
+    per_page: int = 10,
+    mailto: str = _DEFAULT_MAILTO,
+    max_retries: int = 5,
+) -> list[dict[str, Any]]:
+    """Search the /concepts endpoint by display name. Returns up to per_page
+    matches sorted by relevance.
+    """
+    params: dict[str, Any] = {
+        "search": query,
+        "per-page": per_page,
+        "mailto": mailto,
+    }
+    payload = _request_with_retry(f"{_BASE_URL}/concepts", params, max_retries)
+    results = payload.get("results", [])
+    if not isinstance(results, list):
+        return []
+    return results
 
 
 def get_work(

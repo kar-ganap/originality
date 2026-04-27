@@ -268,3 +268,51 @@ def test_extract_top_concept_id_returns_none_when_no_match() -> None:
     assert openalex.extract_top_concept_id(work, level=0) is None
     assert openalex.extract_top_concept_id({"concepts": []}, level=0) is None
     assert openalex.extract_top_concept_id({"id": "W1"}, level=0) is None
+
+
+def test_fetch_works_passes_sort_param() -> None:
+    payload = {"results": [], "meta": {"count": 0}}
+    with patch("whitespace2.openalex.requests.Session.get") as mock_get:
+        mock_get.return_value = _mock_response(200, payload)
+        openalex.fetch_works(
+            filters={"publication_year": "1990"},
+            sort="publication_year:asc",
+        )
+    _call_args, call_kwargs = mock_get.call_args
+    params = call_kwargs.get("params") or {}
+    assert params["sort"] == "publication_year:asc"
+
+
+def test_search_concepts_returns_results() -> None:
+    payload = {
+        "results": [
+            {
+                "id": "https://openalex.org/C108583219",
+                "display_name": "Deep learning",
+                "level": 2,
+                "works_count": 12345,
+            },
+            {
+                "id": "https://openalex.org/C999999",
+                "display_name": "Deep learning theory",
+                "level": 3,
+                "works_count": 100,
+            },
+        ]
+    }
+    with patch("whitespace2.openalex.requests.Session.get") as mock_get:
+        mock_get.return_value = _mock_response(200, payload)
+        results = openalex.search_concepts("deep learning")
+    assert len(results) == 2
+    assert results[0]["display_name"] == "Deep learning"
+    _call_args, call_kwargs = mock_get.call_args
+    params = call_kwargs.get("params") or {}
+    assert params["search"] == "deep learning"
+
+
+def test_search_concepts_returns_empty_when_no_match() -> None:
+    payload = {"results": []}
+    with patch("whitespace2.openalex.requests.Session.get") as mock_get:
+        mock_get.return_value = _mock_response(200, payload)
+        results = openalex.search_concepts("nonexistent gibberish term xyz")
+    assert results == []

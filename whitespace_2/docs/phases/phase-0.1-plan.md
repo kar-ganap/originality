@@ -926,6 +926,52 @@ Per ws2 desiderata §10. Five sub-checks:
 - **Decision:** depending on severity, confirms or tightens the post-1990
   default in Mitigation A.
 
+- **Status (Check 2 a/b/c, run 2026-04-27):** 2a undefined as sampled (every
+  paper has the field concept by sampling design — needs a different sampling
+  strategy; deferred to plan revision). 2b: modest temporal trend in concepts-
+  per-paper (CS 8.05→9.29 +15%, Physics 13.18→14.42 +10%) — not a red flag.
+  2c: confidence scores era-stable (CS max-score 0.58→0.60; Physics 0.75→0.76)
+  — no drift. Within papers the classifier tags, tag confidence is reliable
+  across eras. The **deeper question is tagging *correctness***, addressed by
+  2d + 2e. See `experiments/phase-0.1/classifier-drift.md`.
+- **Status (Check 2d, run 2026-04-27):** **decisive red flag — 14 of 20
+  modern concepts (70%) show multi-decade anachronistic tagging.** Examples:
+  Deep learning earliest=1907 (gap 99 yr); CRISPR earliest=1905 (gap 107 yr);
+  Internet earliest=1901 (gap 89 yr); Cloud computing earliest=1901 (gap 105
+  yr). Many "earliest" years cluster suspiciously at 1901-1907, suggesting
+  either retroactive label assignment or sentinel/junk publication_year
+  metadata propagating into modern-tagged papers — either way, the
+  `publication_year × concept_id` join is unreliable for identifying topic
+  origins. See `experiments/phase-0.1/anachronism-audit.md`.
+- **Status (Check 2e setup + directional read, run 2026-04-27):** **OpenAlex
+  concept tagger is promiscuous in both eras.** Top-cited papers tagged with
+  "Operating system" 1975: ~90% off-target (Kahneman-Tversky, Salton, Tinto,
+  Mayhew, etc.); 2020: ~95% off-target (bioinformatics, COVID dashboards,
+  vision ML, structural biology). Compilers 1975: ~50% off-target. Tag
+  promiscuity is era-stable (consistent with 2c) but tag *correctness* is
+  poor regardless. Full 200-row hand-audit pending; directional read is
+  decisive. See `experiments/phase-0.1/hand-audit-papers.md`.
+- **Combined Check 2 verdict:** **OpenAlex concept tags cannot be used as
+  reliable subfield labels at any era.** The classifier produces
+  multi-decade anachronistic tags (2d) AND promiscuously attaches modern
+  topic tags to peripheral papers (2e). What survives:
+  - Level-0 field tags (CS C41008148, Physics C121332964) for population
+    restriction — but with documented field-restriction noise that adds to
+    Check 1f's selection-bias-correction burden.
+  - Concept-count and confidence-score *features* per paper (2b/2c stable).
+  - **What does NOT survive:** OpenAlex concepts as the granular subfield
+    ontology for semantic-plurality measurement.
+  - **New Phase 0.2 commitment (strengthened from desiderata §11):**
+    semantic-plurality measurement uses embedding-cluster-based subfield
+    assignment exclusively; OpenAlex concept tags are NOT used as the
+    subfield ontology. Concept tags retained only for population
+    restriction (level-0) and as features.
+  - This **strengthens** the §11 cluster-fit-on-temporally-stratified-
+    pooled-subsample commitment from "preferred approach" to "necessary
+    approach." Methods-section framing of the subfield mechanism shifts
+    from "concept-tag-based with embedding-cluster robustness" to
+    "embedding-cluster-based with concept-tag features as auxiliaries."
+
 ### Check 3 — Demographic inference coverage
 
 - **3a — Gender coverage via Genderize.io on pilot:** fraction of authors
