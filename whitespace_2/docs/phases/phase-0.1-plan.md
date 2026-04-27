@@ -388,6 +388,81 @@ and the resulting operational refinements:
 These refinements are framing + budget-light operational changes; the
 core pipeline (NamSor + Genderize + ORCID validation) is unchanged.
 
+#### 9b. Within-between decomposition — composition-shift artifact diagnostic
+
+Surfaced from the Lockhart C1 walkthrough. The Lockhart finding (name-
+based inference accuracy heterogeneous across regions: 43% misgendering
+for Chinese women, ~7% for Anglo women) combined with the empirical
+fact that ws2's regional composition shifts substantially over
+1970–2024 creates a measurement-artifact alternative explanation for
+any temporal demographic-plurality trend: apparent change in plurality
+could be (a) substantive within-region behavioral change OR
+(b) cross-region composition shift interacting with subgroup-specific
+misclassification rates.
+
+This is structurally identical to the Holst 2024 critique of PLF
+(composition shift in zero-reference papers driving the apparent
+CD-index decline). The defense is structurally analogous: a Holst-style
+three-layer pattern with an empirical-diagnostic layer specifically
+designed to discriminate (a) from (b).
+
+**Commitment.** For every reported temporal demographic-plurality
+trend, compute and report a within-between decomposition of the change:
+
+  ΔP(t → t+Δt) = Δ_within + Δ_between + interaction
+
+where Δ_within holds regional composition fixed at t (isolates within-
+region behavioral change); Δ_between holds within-region rates fixed
+at t (isolates composition shift); interaction is the residual cross-
+term.
+
+Two operationalizations reported in parallel:
+- **Primary (Theil-style additive decomposition):** uses the Theil
+  index's natural additivity across partitions (T_total = T_within +
+  T_between). Report ΔT_within and ΔT_between separately. Theil is
+  already in ws2's committed plurality-metric basket per desiderata §8.
+- **Secondary (DFL-style counterfactual reweighting):** for non-
+  additively-decomposable plurality metrics (Shannon entropy, Gini),
+  construct counterfactual distributions at t+Δt with t's composition
+  vs. with t's within-region rates; compute the resulting plurality
+  changes. Reported as confirmation of the Theil-based diagnostic.
+
+**Trigger threshold.** If |Δ_between| / |Δ_total| > 0.33 for any
+reported temporal trend, the composition-shift artifact concern is
+load-bearing for that trend, and three-way (gender × region × era)
+accuracy validation becomes mandatory for that trend. Threshold chosen
+asymmetric-cost: failure to validate when validation was needed
+(methodological-artifact attack on headline) is higher-cost than
+extra-validation when not strictly needed; lower-third threshold biases
+toward methodological caution.
+
+**Three-way validation source when triggered.** ORCID subsample
+stratified by region × era (primary), supplemented by extended hand-
+validation if any era × region cell has insufficient ORCID coverage.
+Per-cell accuracy estimates feed a bias-corrected version of the
+headline trend, reported alongside the uncorrected version with the
+bias-uncertainty band of §9a P5.
+
+**Residual concern (Limitations).** The decomposition assumes within-
+region inference rates are correctly measured, but Lockhart's findings
+imply within-region heterogeneity (Chinese-women specifically are
+heavily misclassified relative to other East-Asian-coded women). The
+decomposition therefore diagnoses *measured* within-vs-between
+contributions, not *true* contributions. Limitations paragraph
+(~3 sentences) flags this residual concern explicitly; full resolution
+would require either custom region-population-specific training models
+(Lockhart Principle 3, deferred per §9a) or substantially expanded
+hand-validation budget at sub-regional resolution.
+
+**Three-layer defense — demographic side (parallel to canonical
+side's PAP+Holst+PAP-2025 chain):**
+- **Theoretical layer:** Lockhart 2023 principle-by-principle audit
+  (§9a).
+- **Empirical-diagnostic layer:** within-between decomposition (§9b,
+  this section).
+- **Controlled-analysis layer:** conditional three-way validation when
+  diagnostic triggers (§9b trigger).
+
 ### 10. Disambiguation error floor
 
 - **Acknowledgment:** OpenAlex author-disambiguation accuracy ≈ 90–95% per
