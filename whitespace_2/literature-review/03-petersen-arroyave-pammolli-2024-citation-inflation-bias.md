@@ -553,11 +553,23 @@ important?
    for the inflation-magnitude argument. Useful in Discussion when
    defending (c-prime) inflation-immune-evidence framing.
 
-3. **Synthetic citation networks at Dryad** are a Stage 3 candidate
-   for stress-testing ws2's canonical-concentration metrics for
-   inflation robustness. Low priority — analytical rank-invariance
-   argument suffices for primary defense; synthetic-network
-   demonstration would be nice-to-have.
+3. **PAP-style observational-data diagnostics for inflation
+   vulnerability (Phase 0.2 batch commitment, 2026-04-26).** PAP
+   offers three diagnostics that don't require synthetic networks:
+   (a) algebraic decomposition test (metric-level, structural — ws2's
+   metrics pass by construction); (b) stationarity test on per-year
+   metric distributions; (c) correlation-with-r(t) test. These are
+   observational-data diagnostics computable on our actual data.
+   Pre-registered interpretive thresholds: |corr| < 0.3 = robust;
+   0.3-0.7 = investigate; ≥ 0.7 = trigger synthetic-network stress-
+   test. Captured as new Phase 0.2 batch item alongside the existing
+   C2(b) OpenAlex coverage commitment.
+
+3a. **Synthetic citation networks at Dryad** remain as Stage 3
+   back-pocket for stress-testing ws2's canonical-concentration
+   metrics if the observational-data diagnostics (#3 above) surface
+   concerning patterns. Lower priority than direct observational
+   diagnostics.
 
 4. **Team-size finding (b_k > 0) seeds PAP 2025.** Anticipate
    engaging PAP 2025 (paper 04) carefully for Test II team-size

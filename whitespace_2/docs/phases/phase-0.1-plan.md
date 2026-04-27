@@ -1732,6 +1732,59 @@ desiderata §9, but same principle).
     sentences total across Methods + Discussion + Limitations).
     The framing doesn't reduce ambition — the decoupling finding
     is bold enough on its own without causal-mechanism additions.
+- **PAP-style inflation diagnostics on canonical-concentration
+  metrics (per Petersen-Arroyave-Pammolli 2024 / lit-review session
+  2026-04-26).** PAP 2024 offers three observational-data diagnostics
+  for citation-inflation vulnerability that don't require synthetic-
+  network stress-testing. Complementary to the C2(b) OpenAlex
+  coverage commitment (which probes dataset-artifact threats); these
+  diagnostics directly probe the citation-inflation threat as a
+  separate vulnerability mechanism.
+  - **(a) Algebraic decomposition statement (Methods, ~one
+    paragraph).** Explicitly state that ws2's canonical-concentration
+    metrics pass the PAP algebraic test:
+    - Spearman top-N is rank-invariant — has no extensive R_k-like
+      denominator term that grows with citation network density.
+    - Citation Gini is bounded in [0, 1] — no extensive growth term.
+    - Cluster entropy / effective dimensionality / mean pairwise
+      distance operate on embedding space, orthogonal to citation
+      network density.
+    PAP's deductive test (CD = CD^nok / (1 + R_k) form) does not
+    apply to any ws2 metric. Pass by construction; no empirical
+    test needed for (a).
+  - **(b) Stationarity diagnostic.** Compute per-year distribution
+    of Spearman top-50 and citation Gini over the post-1990
+    analysis window. Test for time-stationarity of distribution
+    mean and variance. Per PAP Fisher-Tippett observation: under
+    inflation-immune regimes, metric distributions become time-
+    stationary; non-stationarity tracking r(t) growth is the
+    smoking gun for inflation. Report alongside headline metrics.
+  - **(c) Correlation-with-r(t) diagnostic.** Compute Pearson
+    correlation between (i) CanonConc time series (Spearman top-50
+    and citation Gini, separately) and (ii) per-year mean r(t)
+    (reference list length) time series. Should be ~0 if our
+    metrics are inflation-immune as we argue analytically. High
+    correlation would be a substantive finding requiring
+    investigation.
+  - **Pre-registered interpretive thresholds for (c):**
+    - |corr| < 0.3 → metric is inflation-robust as argued; no
+      action.
+    - 0.3 ≤ |corr| < 0.7 → modest correlation; document and
+      investigate whether mediated by other variables.
+    - |corr| ≥ 0.7 → strong correlation; metric may have hidden
+      inflation vulnerability we haven't identified analytically;
+      trigger Stage 3 synthetic-network stress-test (back-pocket
+      from PAP review).
+  - **Cost.** Computationally trivial. Same data, simple
+    aggregations and correlations. ~half-day Stage 2 effort.
+  - **Why direct observational diagnostics complement the synthetic-
+    network stress-test.** The diagnostics test our metrics on our
+    actual data (direct evidence); the synthetic networks would
+    test our metrics under known-synthetic CI conditions (indirect
+    inference). Both have value, but observational diagnostics are
+    higher-priority and lower-cost. Synthetic-network stress-test
+    remains as Stage 3 back-pocket; trigger if (b) or (c)
+    diagnostics surface concerning patterns.
 - **Specific anchor concepts for Mitigation 4.** List of ~100 concepts with
   representative reference texts, per-field. Phase 0.2 or early Stage 1.
 - **Specific alternative embedding model for Mitigation 2.** Choice between
