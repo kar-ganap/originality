@@ -773,11 +773,30 @@ session happens.)
 
 ### On C3 — ascription-vs-identity framing for ws2
 
-(Pending.)
+**Closed via pointer.** Operationalized in Phase 0.1 §9a Principle 2
+commitment: "ascribed-X" / "name-coded-X" headline-claim language;
+Reading-A (ascription) is the primary substantive frame; Reading-B
+(identity) is reported as a caveated extension with explicit proxy-
+quality acknowledgment (small gap for Anglo subgroups, large for
+Chinese-women / trans / nonbinary). Discussion paragraph (~1 paragraph)
+walks through the distinction explicitly. No additional Methods-level
+commitments needed beyond what §9a P2 already locks. The hybrid framing
+(Reading-A primary, Reading-B caveated extension) is honest about the
+proxy-vs-thing-of-interest gap without dissolving it.
 
 ### On C4 — information-theoretic-limit acknowledgment
 
-(Pending.)
+**Closed via pointer.** Operationalized in Phase 0.1 §9a Principle 3
+deferral: Lockhart Principle 3 (population-specific training) deferred
+as out of scope (multi-month engineering project incompatible with
+ws2's timeline; doubly-circular given ORCID-having vs. ORCID-lacking
+compositional difference). Limitations paragraph (~3 sentences) names
+the information-theoretic limit as a hard constraint — not a
+"future-tools-will-improve" hand-wave. The paragraph is what's needed;
+no further analytical commitments. Note that information-theoretic-limit
+acknowledgment also overlaps with §9c's "residual coverage-gap concern
+as a hard limit on principle-5-compliance" — both are honest naming of
+constraints that ws2's design cannot dissolve, only bound.
 
 ### On C5 — spillover effects in ws2's multi-dimensional design
 
