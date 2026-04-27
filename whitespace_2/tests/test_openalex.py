@@ -139,3 +139,63 @@ def test_get_concept() -> None:
         concept = openalex.get_concept("C41008148")
     assert concept["display_name"] == "Computer science"
     assert concept["level"] == 0
+
+
+def test_get_work_strips_url_prefix() -> None:
+    payload = {"id": "https://openalex.org/W123", "publication_year": 2020}
+    with patch("whitespace2.openalex.requests.Session.get") as mock_get:
+        mock_get.return_value = _mock_response(200, payload)
+        # Should accept either bare 'W123' or full URL form
+        work = openalex.get_work("https://openalex.org/W123")
+    assert work["id"] == "https://openalex.org/W123"
+    call_args, _call_kwargs = mock_get.call_args
+    url = call_args[0]
+    assert url.endswith("/works/W123")
+
+
+def test_get_work_bare_id() -> None:
+    payload = {"id": "https://openalex.org/W456", "publication_year": 2010}
+    with patch("whitespace2.openalex.requests.Session.get") as mock_get:
+        mock_get.return_value = _mock_response(200, payload)
+        openalex.get_work("W456")
+    call_args, _call_kwargs = mock_get.call_args
+    url = call_args[0]
+    assert url.endswith("/works/W456")
+
+
+def test_has_arxiv_via_location_source_id() -> None:
+    work = {
+        "id": "W1",
+        "locations": [
+            {"source": {"id": "https://openalex.org/S99999"}},
+            {"source": {"id": "https://openalex.org/S4306400194"}},
+        ],
+    }
+    assert openalex.has_arxiv(work) is True
+
+
+def test_has_arxiv_via_arxiv_doi() -> None:
+    work = {"id": "W1", "ids": {"doi": "https://doi.org/10.48550/arxiv.1706.03762"}}
+    assert openalex.has_arxiv(work) is False or openalex.has_arxiv(work) is True
+    # Disambiguate: implementation should treat arxiv DOI as positive signal.
+    assert openalex.has_arxiv(work) is True
+
+
+def test_has_arxiv_false_when_no_signal() -> None:
+    work = {
+        "id": "W1",
+        "ids": {"doi": "https://doi.org/10.1145/12345"},
+        "locations": [{"source": {"id": "https://openalex.org/S99999"}}],
+    }
+    assert openalex.has_arxiv(work) is False
+
+
+def test_has_arxiv_false_when_empty() -> None:
+    assert openalex.has_arxiv({"id": "W1"}) is False
+    assert openalex.has_arxiv({"id": "W1", "locations": [], "ids": {}}) is False
+
+
+def test_has_arxiv_handles_none_source() -> None:
+    # Real OpenAlex responses sometimes have null source on a location.
+    work = {"id": "W1", "locations": [{"source": None}, {"source": {"id": "https://openalex.org/S4306400194"}}]}
+    assert openalex.has_arxiv(work) is True

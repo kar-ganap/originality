@@ -91,6 +91,35 @@ def get_concept(
     return _request_with_retry(f"{_BASE_URL}/concepts/{concept_id}", params, max_retries)
 
 
+def get_work(
+    work_id: str,
+    mailto: str = _DEFAULT_MAILTO,
+    max_retries: int = 5,
+) -> dict[str, Any]:
+    """Fetch a single work by ID. Accepts bare 'W123' or full URL form."""
+    bare_id = work_id.rsplit("/", 1)[-1] if "/" in work_id else work_id
+    params = {"mailto": mailto}
+    return _request_with_retry(f"{_BASE_URL}/works/{bare_id}", params, max_retries)
+
+
+_ARXIV_SOURCE_ID = "https://openalex.org/S4306400194"
+_ARXIV_DOI_PREFIX = "10.48550/arxiv."
+
+
+def has_arxiv(work: dict[str, Any]) -> bool:
+    """True if work has an arXiv linkage via location source or arXiv DOI."""
+    locations = work.get("locations") or []
+    for location in locations:
+        source = location.get("source") if isinstance(location, dict) else None
+        if isinstance(source, dict) and source.get("id") == _ARXIV_SOURCE_ID:
+            return True
+    ids = work.get("ids") or {}
+    doi = ids.get("doi") if isinstance(ids, dict) else None
+    if isinstance(doi, str) and _ARXIV_DOI_PREFIX in doi.lower():
+        return True
+    return False
+
+
 def has_abstract(work: dict[str, Any]) -> bool:
     """True iff work has a non-empty abstract_inverted_index."""
     abstract = work.get("abstract_inverted_index")

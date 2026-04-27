@@ -824,6 +824,33 @@ Deliverables in rough order:
   alternative data path. Proposed follow-up Check 1d: measure
   arXiv-has-an-ID rate and joint OpenAlex-OR-arXiv coverage by year ×
   field. See `experiments/phase-0.1/abstract-coverage-by-type.md`.
+- **Status (Check 1d, run 2026-04-27):** **two findings, one clean null
+  and one inconvenient surprise.**
+  - **Access-method verification (clean null):** 100-paper spot-check
+    re-fetched no-abstract papers via direct ID lookup (different code
+    path than `?filter`+`?sample`). 100/100 confirmed no abstract via
+    direct path. The ~50% bottleneck is **not** an artifact of anonymous
+    access or `?sample` interaction — it is the real OpenAlex data
+    state.
+  - **arXiv linkage in OpenAlex is essentially absent (surprise):**
+    only 1.4% (CS post-1991) / 4.8% (Physics post-1991) of papers have
+    an arXiv linkage flagged in OpenAlex's `locations`. Joint
+    (abstract OR arxiv) coverage is essentially identical to abstract-
+    only coverage. This **rules out path (A) as originally conceived**
+    (use OpenAlex `locations` to find arXiv-supplemented papers).
+    OpenAlex's source-linkage to arXiv is conservative — most CS/Physics
+    papers with arXiv preprints don't have arXiv flagged as a location.
+  - **Refined options:**
+    - **(A')** Direct arXiv API integration via DOI/title matching —
+      slow (1 req/3s rate limit), feasible but multi-day batch.
+    - **(C)** S2AG (Semantic Scholar) as primary abstract source —
+      already in `data/README.md` as primary SPECTER2 embedding source;
+      likely has better abstract coverage and arXiv linkage. Worth a
+      Check 1e (measure S2AG abstract coverage on the same 22K
+      sample, ~5 min, $0).
+    - **(B)** Acknowledge in Limitations and proceed with narrower
+      analytical population (~50% of OpenAlex CS+Physics papers).
+  - See `experiments/phase-0.1/arxiv-coverage.md`.
 
 ### Check 2 — Concept classifier drift audit
 
