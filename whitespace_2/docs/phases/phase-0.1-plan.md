@@ -1863,14 +1863,33 @@ desiderata §9, but same principle).
   walkthrough, lit-review session 2026-04-26).** Test IV is a
   paper-level regression like PAP 2025's, so PAP 2025's lessons
   transfer directly. Specific refinements:
-  - **Add c_p (citation impact of paper p) as paper-level control**
-    — paper's own citation count at 5 years post-publication.
-    Currently NOT in our spec. Critical because c_p correlates with
-    both T_p (team diversity may correlate with citation impact via
-    international collaborations) and N_p (highly-cited papers may
-    have systematically more diverse or more concentrated reference
+  - **Add c_p (citation impact of paper p) as paper-level control,
+    with bad-control handling per SQ8 walkthrough.** Paper's own
+    citation count at 5 years post-publication. Currently NOT in
+    our spec. Critical because c_p correlates with both T_p (team
+    diversity may correlate with citation impact via international
+    collaborations) and N_p (highly-cited papers may have
+    systematically more diverse or more concentrated reference
     lists). Without c_p control, γ₁ absorbs whatever c_p is doing —
     classic omitted-variable bias.
+    - **Bad-control problem:** adding c_p as a control assumes
+      citation impact is a *confounder*, not a *mediator*. If
+      diverse teams *produce* more impactful papers, c_p is partly
+      a *mediator* of T_p → outcome. Controlling for c_p would
+      absorb part of the team-diversity effect.
+    - **Resolution: pre-register both specifications.** Spec A
+      (without c_p) captures total team-diversity → novelty effect
+      including via citation-impact mediation if any. Spec B (with
+      c_p) captures direct effect excluding mediation via c_p.
+    - **Pre-registered interpretive grid:**
+      - γ_1 similar in A and B → c_p isn't a mediator; either
+        spec is fine; B is more conservative.
+      - γ_1 substantially smaller in B than A → c_p is a mediator
+        of T_p → novelty; A captures total effect, B captures
+        direct effect; report both with substantive interpretation.
+      - γ_1 changes sign between A and B → c_p has complex
+        relationship with T_p and outcome; substantive
+        investigation needed before headline claim.
   - **Add log(number of authors)² — quadratic on team size** —
     captures non-monotonic team-size effects per PAP 2025.
   - **Add log(number of references)² — quadratic on reference list

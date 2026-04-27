@@ -922,12 +922,198 @@ condition.
 
 ### SQ6 — PNAS vs. PNAS Plus external validity
 
-(Pending.)
+Working session with user, 2026-04-26.
+
+**Why the "100% explained by r_p" claim is strong evidence.** PNAS
+and PNAS Plus articles are peer-reviewed by the same editorial
+process, accepted to the same journal, with format determined by
+author choice. PAP 2025's Fig. S3 shows the two subsamples are
+indistinguishable on multiple observed covariates. The 39%
+difference in average r_p translates into the entire observed
+|CD| gap — within this clean comparison, the evidence is
+compelling.
+
+**Three alternative explanations to worry about.**
+
+*(1) Author-format-choice mechanism.* Format choice is non-random.
+Possible the choice mechanism correlates with substantive
+characteristics that aren't observed:
+- *Article type:* PNAS Plus may attract more *review-style* or
+  *comprehensive* articles (which naturally have longer reference
+  lists *and* are likely more synthesizing → less disruptive).
+- *Author seniority:* senior authors write longer papers and choose
+  PNAS Plus more often. The r_p-CD correlation could partly reflect
+  senior-author-CD correlation.
+- *Topic complexity:* topics requiring more background
+  contextualization tend to have longer reference lists *and* tend
+  to be more synthesizing.
+
+PAP 2025's Fig. S3 controls for *observed* covariates, but
+unobserved ones could still operate.
+
+*(2) Length itself rather than r_p specifically.* PNAS Plus
+articles are *longer overall* (more pages, more methods detail).
+The "100% explained by r_p" claim assumes r_p is the active causal
+channel, but article length is the upstream variable. If length
+itself causes CD effects (longer papers more comprehensive →
+synthesizing → less disruptive), then r_p is a proxy for length.
+
+This matters because: capping reference list lengths (PAP 2025's
+policy proposal) wouldn't help if length itself is the issue.
+
+*(3) High-prestige sample selection.* PNAS is a high-prestige
+multidisciplinary journal. Generalizability to specialty journals,
+arXiv preprints, or patent literature is plausible but not
+directly demonstrated.
+
+**How seriously to take the claim.**
+
+The 100% point estimate is *suggestive* of r_p being the dominant
+driver in this comparison. Alternative explanations could partly
+explain the same correlation. **The conjunction with PAP 2024's
+deductive critique + Macher 2024 + Holst 2024 makes the overall
+case strong even if the PNAS quasi-experiment alone has
+limitations.**
+
+For ws2: cite PAP 2025's PNAS evidence as *one piece* of supporting
+evidence, not as the load-bearing demonstration. The (c-prime)
+framing already does this — we engage the *aggregate* critique
+chain rather than relying on any single piece.
 
 ### SQ7 — Three-conditions framework constructibility
 
-(Pending.)
+Working session with user, 2026-04-26.
+
+**Candidate metrics that satisfy all three conditions.**
+
+*(a) Field-year normalized citation z-scores: z_p = (c_p − μ_jt) / σ_jt.*
+- Cond 1: ✓ z-scores have unit variance by construction.
+- Cond 2: ✓ normalization removes secular growth.
+- Cond 3: ✓ citation count comes from community.
+- *But:* measures citation impact, not disruption. Not a
+  CD-replacement.
+
+*(b) Rank-based metrics like Spearman top-N.*
+- All three pass. *But:* measures canonical-list stability, not
+  disruption.
+
+*(c) Citation-distribution-shape metrics (Gini, entropy).*
+- Pass all three with caveats. *But:* measures concentration, not
+  disruption.
+
+*(d) Direct community-reception metrics (e.g., "fraction of papers
+in field-year that cite p without citing p's predecessors").*
+- Almost CD's numerator (N_i / total citers).
+- Cond 1: depends on whether the measure stabilizes across eras.
+- Cond 2: vulnerable to citation density growth.
+- Cond 3: ✓ community-driven.
+- *Mixed pass.*
+
+**The honest conclusion: no-go theorem implication.**
+
+The three conditions essentially rule out any citation-network
+metric that depends heavily on the focal paper's own reference list
+composition. What survives are "what does the community do with
+this paper" metrics — citation count metrics, citation-rank
+metrics, citation-distribution metrics.
+
+**Disruption specifically (in the CD-index sense) is fundamentally
+about the relationship between citers and the focal paper's
+predecessors, which involves the focal paper's reference list.** So
+disruption is structurally tied to author choice in a way that may
+rule out a clean cross-temporal disruption metric satisfying all
+three conditions.
+
+**This may be a no-go theorem for citation-network-based disruption
+metrics.** The community may need a *different conceptual framework*
+for measuring scientific disruption — perhaps text-based novelty,
+reception-based attention, or hybrid approaches — rather than a
+better CD-variant within the citation-network paradigm.
+
+**For ws2.** We don't need a disruption metric. Our metrics measure
+canonical concentration and semantic plurality, both of which
+satisfy the three conditions. The no-go theorem doesn't constrain
+us. *But* the lesson is methodologically interesting: when reading
+scientometric papers proposing "improved" CD-variants, expect them
+to fail one or more of the conditions, since the conjunction may
+be unsatisfiable.
 
 ### SQ8 — c_p as control variable in ws2 regressions
 
-(Pending.)
+Working session with user, 2026-04-26.
+
+**For Test II (year-level gap regression).**
+
+Aggregate c(t) [mean citation impact at year-level] correlates
+with r(t) (citation inflation), n(t) (publication growth), and
+demographic plurality (since later eras have both more citations
+available and more demographically diverse authorship).
+
+Without c(t) control, our β_t (gap-trend coefficient — the
+headline finding) absorbs whatever c(t) is doing. Possible
+directions:
+- *Upward bias on β_t:* if c(t) growth correlates with rising
+  demographic plurality and falling semantic plurality.
+- *Downward bias on β_t:* if c(t) growth is causally related to a
+  third factor that suppresses the gap.
+
+Without explicit c(t) control, can't distinguish these scenarios.
+Bias direction unclear, but risk is real — and a reviewer
+noticing the omission could push hard on this.
+
+**Without c_p in Test II:** confounded β_t that doesn't isolate
+the demographic-vs-semantic gap shift from secular changes in
+citation impact. Headline finding becomes vulnerable to reviewer
+pushback ("did you control for citation impact?").
+
+**For Test IV (paper-level regression).**
+
+The omitted-variable bias issue is more direct. c_p correlates
+with both T_p and N_p in non-trivial ways:
+
+- *c_p ↔ T_p:* highly-cited papers may attract more international
+  collaborations (high T_p) — *or* may be from established (often
+  less demographically diverse) labs (low T_p). Direction unclear.
+- *c_p ↔ N_p:* highly-cited papers may have more diverse reference
+  lists (high N_p) — *or* may follow canonical templates (low N_p).
+  Direction unclear.
+
+Without c_p control, γ_1 absorbs whatever c_p contributes — exactly
+the WWE 2019 omitted-variable bias pattern PAP 2025 critiques.
+
+**Without c_p in Test IV:** confounded γ_1 that doesn't isolate the
+team-diversity → novelty effect from citation-impact effects.
+
+**The bad-control problem (subtle methodological concern).**
+
+Adding c_p as a control assumes citation impact is a *confounder*,
+not a *mediator*. But:
+- If diverse teams *produce* more impactful papers, c_p is partly a
+  *mediator* of T_p → outcome.
+- Controlling for c_p absorbs part of the team-diversity effect we
+  want to estimate.
+
+This is the classic "bad control" problem in causal inference.
+Whether c_p is a confounder or a mediator depends on causal-
+direction assumptions we haven't made.
+
+**The right move: pre-register both specifications.**
+- *Specification A:* without c_p control. Captures total
+  team-diversity → novelty effect (including via citation-impact
+  mediation if any).
+- *Specification B:* with c_p control. Captures direct effect
+  (excluding mediation via c_p).
+
+If γ_1 differs materially between A and B, that itself is
+informative — tells us whether team diversity affects novelty
+primarily through citation-impact mediation or directly. If γ_1 is
+similar in both, c_p isn't a mediator and B is the right
+specification.
+
+Pre-registered transparency rather than picking sides.
+
+**Phase 0.2 batch refinement to Test IV spec:** add both
+with-c_p and without-c_p specifications to the pre-registered
+analysis plan, with interpretive grid for whether to read γ_1 as
+direct or total effect. (Captured in the Test IV refinement
+commitment alongside the c_p control addition.)
