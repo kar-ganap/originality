@@ -1,0 +1,21 @@
+query,popular_year,category,concept_id,matched_name,n_pre1990_papers,n_score_ge_0.3,n_score_ge_0.5,frac_score_ge_0.3,frac_score_ge_0.5
+Deep learning,2006,medium,C108583219,Deep learning,50,43,16,0.86,0.32
+Transformer (machine learning model),2017,hard,,,0,0,0,,
+Generative adversarial network,2014,hard,C2988773926,Generative adversarial network,3,3,1,1.0,0.3333333333333333
+BERT,2018,hard,,,0,0,0,,
+Convolutional neural network,1989,soft,C81363708,Convolutional neural network,50,50,36,1.0,0.72
+Recurrent neural network,1986,soft,C147168706,Recurrent neural network,50,13,8,0.26,0.16
+Word embedding,2013,hard,C2777462759,Word embedding,2,2,1,1.0,0.5
+CRISPR,2012,medium,C98108389,CRISPR,50,40,40,0.8,0.8
+Cloud computing,2006,hard,C79974875,Cloud computing,50,23,11,0.46,0.22
+Internet of things,1999,hard,C81860439,Internet of Things,50,25,14,0.5,0.28
+Big data,2005,hard,C75684735,Big data,50,48,35,0.96,0.7
+Bitcoin,2009,hard,,,0,0,0,,
+Smartphone,2007,hard,C3020250448,Smartphone application,1,1,0,1.0,0.0
+Augmented reality,1992,soft,C153715457,Augmented reality,50,48,16,0.96,0.32
+World Wide Web,1991,hard,C136764020,World Wide Web,50,18,0,0.36,0.0
+MapReduce,2004,hard,,,0,0,0,,
+Quantum computing,1985,soft,C119382340,Superconducting quantum computing,5,5,0,1.0,0.0
+Machine learning,1959,soft,C119857082,Machine learning,50,17,1,0.34,0.02
+Artificial intelligence,1956,soft,C154945302,Artificial intelligence,50,24,7,0.48,0.14
+Neural network,1943,soft,C50644808,Artificial neural network,50,29,17,0.58,0.34

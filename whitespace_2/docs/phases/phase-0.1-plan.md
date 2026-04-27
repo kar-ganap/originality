@@ -1010,6 +1010,46 @@ Per ws2 desiderata §10. Five sub-checks:
     it" set. Always score-threshold client-side. Logged in
     `tasks/lessons.md`.
 
+- **Status (Check 2d within-window verification, run 2026-04-27):**
+  **within-window anachronism IS real, but confined to specific concept
+  types via two mechanisms.** 6 of 10 testable hard-category modern
+  concepts have meaningful pre-1990 score≥0.3 tagging, mostly anachronistic.
+  Soft-category concepts (Neural network, Machine learning, AI, RNN) have
+  pre-1990 score≥0.3 tagging that is *legitimate* (genuine 1980s precursor
+  papers correctly identified). Two distinct anachronism mechanisms:
+  - **Mechanism 1 — keyword-match false positives:** "Big data" tags
+    1974 fish-pharmacokinetics paper at score=0.75; "Cloud computing"
+    tags 1976 atmospheric-physics paper at score=0.76; "Word embedding"
+    tags 1975 abstract-algebra paper at score=0.56. The classifier
+    matches isolated keywords without semantic context.
+  - **Mechanism 2 — junk publication_year metadata:** "Augmented
+    reality" tags a paper titled "Brave new world: Mobile phones,
+    museums..." with year=1970 at score=0.89; "CNN" tags an "R-CNN
+    BRAIN TUMOR DETECTION" paper with year=1970 at score=0.79. The
+    paper content is correctly classified; the year is sentinel/default
+    (likely meaning "year unknown" but stored as 1970), propagating
+    modern papers into the wrong era bucket.
+  - **§11 cluster-fit commitment regains force, but for a different
+    reason:** embedding-cluster subfields avoid Mechanism 1 (keyword-
+    match) entirely. This is the substantive reason §11 remains the
+    preferred subfield mechanism, NOT because OpenAlex concepts are
+    broadly broken (see Check 2 correction).
+  - **New Stage-1 commitment — junk-year-metadata filter:** papers with
+    `publication_year < 1990` whose abstract/title contains tokens
+    indicating post-2000 origin ("R-CNN", "IoT", "mobile phone",
+    "blockchain", etc.) get a `suspect_year` flag. Flagged papers are
+    excluded from era-stratified analyses unless year is independently
+    verified (e.g., via DOI registration date or citation graph).
+  - **New Phase 0.2 commitment — concept-tag safety classification:**
+    if using OpenAlex concepts as auxiliary features for subfield
+    identification, soft-category concepts (terms older than 1990:
+    Neural network, ML, AI, RNN, etc.) are pre-1990-safe; hard-category
+    concepts (Big data, Cloud computing, IoT, GAN, BERT, etc.) are NOT
+    pre-1990-safe. The list of concept-tag-safe-pre-1990 vs
+    concept-tag-unsafe-pre-1990 is maintained as a Methods-section table.
+  - See `experiments/phase-0.1/within-window-anachronism.md` for the
+    detailed score table and spot-check titles.
+
 ### Check 3 — Demographic inference coverage
 
 - **3a — Gender coverage via Genderize.io on pilot:** fraction of authors
