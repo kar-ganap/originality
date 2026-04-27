@@ -324,6 +324,70 @@ visible in the error bars.
   gender-inference accuracy from the ORCID validation subsample. No
   results reported without this accuracy table.
 
+#### 9a. Lockhart 2023 principle-by-principle audit refinements
+
+Surfaced from the Lockhart Key Idea #7 walkthrough. The five principles
+form a decision hierarchy (1 → 2 → 3 → {4, 5}); ws2's compliance posture
+and the resulting operational refinements:
+
+- **Principle 1 (Critical refusal) — partial.** Race/ethnicity inference
+  refused per ws2 desiderata exclusion (post-hoc validated by Lockhart's
+  reported 65–73% error rates for Black and MENA subgroups). Gender +
+  country-of-affiliation retained with substantive justification (the
+  decoupling-claim requires at least one demographic variable and these
+  have the most defensible inference posture). **Commitment:** Methods
+  paragraph names the refusal explicitly and articulates the substantive
+  justification for retained inference — not a default-to-use posture.
+
+- **Principle 2 (Align mechanism with method) — tension acknowledged.**
+  ws2 has a genuine Reading-A (ascription) vs. Reading-B (identity)
+  tension. **Commitment:** headline-claim language consistently uses
+  "ascribed-X" or "name-coded-X" terminology rather than "actually-X."
+  Reading-A is the primary substantive frame; Reading-B is reported as
+  an extension with explicit caveats around proxy-quality (the gap is
+  small for Anglo subgroups, large for Chinese-women / trans / nonbinary).
+  Discussion paragraph (~1 paragraph) walks through this distinction
+  explicitly.
+
+- **Principle 3 (Population-specific training) — deferred (out of scope).**
+  Custom-trained name-inference model on academic CS+Physics 1970–2024 is
+  a multi-month engineering project incompatible with ws2's timeline, and
+  doubly-circular given the ORCID-having vs. ORCID-lacking compositional
+  difference. **Commitment:** Limitations paragraph (~3 sentences)
+  explicitly invokes Principle 3 as deferred future work, not as a
+  fixable-in-current-study limitation.
+
+- **Principle 4 (High-accuracy subgroups) — refines Holst C3 commitment.**
+  The existing Holst C3 commitment to a 100-name gender hand-validation
+  is upgraded to **200 names, stratified by name-region** (Anglo ~50,
+  East Asian ~50, South Asian ~30, Arabic-speaking ~30, Slavic ~20, other
+  ~20). Per-stratum accuracy is reported in Methods. Subgroups with
+  per-stratum accuracy below a pre-registered threshold (locked in Phase
+  0.2; tentative 70%) are flagged in Limitations and bound headline
+  claims that disproportionately depend on that stratum. The 100→200
+  upgrade is the cost of supporting per-stratum accuracy CIs of usable
+  width.
+
+- **Principle 5 (Aggregate + bias-quantification on target population) —
+  refines the ORCID validation methodology with a bias-uncertainty band.**
+  ORCID-having authors are not a random sample of ws2's target population
+  (younger, OS-norms-stronger fields, multi-publication-incentivized,
+  US/EU/CN-skewed). The bias-quantification on ORCID-having subset is
+  therefore a *partial* bias quantification. **Commitment:** aggregate
+  bias correction is reported as a band rather than a point estimate:
+  - Lower bound: aggregate corrected by ORCID-only-quantified
+    disagreement matrix (assumes ORCID-bias generalizes to non-ORCID).
+  - Upper bound: aggregate corrected by combining ORCID-quantified
+    matrix with NamSor's published per-region accuracy tables (treats
+    ORCID and NamSor sources as bracketing).
+  Headline demographic-plurality claims are reported with this
+  bias-uncertainty band (e.g., "women share in CS-2020: 28–32% under
+  bias-uncertainty bracket"), not as point estimates. Methods explicitly
+  cites Lockhart 2023 Principle 5 as the operational basis.
+
+These refinements are framing + budget-light operational changes; the
+core pipeline (NamSor + Genderize + ORCID validation) is unchanged.
+
 ### 10. Disambiguation error floor
 
 - **Acknowledgment:** OpenAlex author-disambiguation accuracy ≈ 90–95% per
@@ -496,6 +560,18 @@ analysis pre-registration):
 These join the existing candidate set (CS: 1991–93, 1998–2000, 2008–09,
 2012, 2018–20; Physics: 1991, 1995–2000, 2012) with Bonferroni
 correction within each field's expanded candidate list.
+
+### 14. Methods overview framing — three parallel construct-validity audits
+
+The Methods overview paragraph frames ws2's three metric channels
+(demographic, semantic, canonical) as parallel construct-validity audits,
+each with a structured proxy-vs-thing-of-interest gap and a corresponding
+external audit framework: Lockhart 2023 principles 1–5 for demographic;
+embedding-drift checks (desiderata §3) + within-family robustness for
+semantic; PAP 2024 three-conditions framework for canonical. Headline
+claims on each channel are bounded by the respective audit's documented
+residual uncertainty. Framing-only commitment (no new operational change);
+locked here so the Methods drafting phase does not re-open it.
 
 ## Sanity checks (this phase's empirical work)
 
