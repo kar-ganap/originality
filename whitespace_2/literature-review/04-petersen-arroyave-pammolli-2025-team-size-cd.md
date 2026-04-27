@@ -863,7 +863,104 @@ reference if reviewers push on causal-identification questions.
 
 ### On C2 — post-2006 disruption increase in ws2 context
 
-(Pending.)
+Working session with user, 2026-04-26.
+
+**Sub-question (a): consistent or contradictory with ws2's expected
+findings?**
+
+Canonical concentration and disruption measure different facets:
+
+| Concept | What it measures |
+|---|---|
+| Canonical concentration | *Which papers* dominate citation distribution at year Y (Spearman top-N stability + citation Gini) |
+| Disruption (CD-index post-corrections) | *How citation networks form* around individual papers (Type-1 vs. Type-2 citer ratios) |
+
+**Two scenarios where rising disruption + rising canonical
+concentration coexist consistently:**
+
+*(1) New canonical papers emerging via disruption.* New disruptive
+papers post-2006 (e.g., AlphaGo, ML methods, COVID-era bio
+breakthroughs) become canonical themselves — replacing predecessors
+in the citation network. Canon "rises" in the sense of consolidated
+attention; disruption "rises" because new entrants displace
+predecessors. Substantively interesting: scientific renewal at the
+canon level.
+
+*(2) Distribution-shape vs. list-stability decoupling.* Our two
+canonical-concentration metrics measure different things:
+- *Spearman top-N* (primary): adjacent-year stability. Should
+  *decline* if new disruptive papers enter canon.
+- *Gini* (secondary): citation distribution concentration. Could
+  rise if new disruptive papers concentrate attention on
+  themselves.
+
+Spearman top-N rising while disruption rises would be *contradictory*.
+Gini rising while disruption rises is *consistent* (new disruptive
+papers aggregating citations to themselves).
+
+**Predictive interpretive grid:**
+
+| ws2 finding pattern | Interpretation |
+|---|---|
+| Spearman top-N rises post-2006 | Tension with disruption-rising narrative; our metric capturing list-stability dynamics distinct from disruption |
+| Gini rises post-2006 | Consistent with disruption-rising; new canonical papers concentrating attention |
+| Both rise | Different facets; report transparently |
+| Both fall | Contradicts disruption-rising; suggests metrics measure neither aligned-with nor opposite-to disruption |
+
+**Sub-question (b): does 0.06σ over a decade matter?**
+
+Mechanical interpretation: σ for CD_5 in PAP 2025 is small
+(distribution concentrated around 0). 0.06σ ≈ 0.0006–0.003 in
+absolute CD units; ~0.06–0.3% of [−1, 1] range over a decade. Tiny.
+
+Three readings:
+
+*(1) Truly noise.* Argument against: four independent re-analyses
+finding same direction is unlikely under pure noise.
+
+*(2) Real but small.* Genuine post-2006 increase but too small to
+reverse longer-term decline. Most likely reading.
+
+*(3) Leading edge of regime change.* 9 years is a short window; if
+increase continues, cumulative effect could be substantial.
+Plausible substantive drivers: ML/AI emergence post-2012,
+computational biology, COVID-era acceleration. But small magnitude
+suggests slow regime change if any.
+
+**For ws2's analytical window (1990–2024):** roughly the second
+half is post-2006. The disruption-uptick literature operates within
+our window. Our findings should be interpreted in this context —
+not as competing theory but as concurrent observations of
+related-but-distinct phenomena.
+
+**Real-world phenomena corresponding to 0.06σ over a decade:**
+- ML/AI domain emergence post-2012 (AlexNet, transformers, LLMs);
+  plausibly 0.01–0.02σ alone via field restructuring.
+- Computational biology / bioinformatics post-2010 (CRISPR, GWAS
+  at scale).
+- COVID-era biomedical acceleration (2020+); high-velocity
+  publication + uptake.
+- Aggregated, 0.06σ over a decade is plausible. Not nothing, not
+  large.
+
+**Phase 0.2 batch refinements (small).**
+
+*(1) Add post-2006 disruption-uptick context to (c-prime) Discussion
+paragraph.* One sentence acknowledging the four-paper convergence
+(PAP 2025, Bentley 2023, Holst 2024, Macher 2024). Frame as
+concurrent observation, not competing/supporting our findings.
+
+*(2) Add 2006 as Test I pre-registered break-point candidate.*
+Currently 1991-93, 1998-2000, 2008-09, 2012, 2018-20 for CS;
+adding 2006 aligns with disruption-literature convergence.
+
+Both are small, defensible, fold cleanly into existing commitments.
+
+**Substantive takeaway: the post-2006 finding gives us interpretive
+context, not a competing theory.** Our metrics measure different
+facets than disruption; the relationship between our findings and
+the post-2006 uptick depends on which canonical-concentration metric
+we examine and what direction it moves.
 
 ### On C3 — percentile-amplification in ws2 metrics
 

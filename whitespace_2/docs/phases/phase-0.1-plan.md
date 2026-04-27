@@ -2000,6 +2000,38 @@ desiderata §9, but same principle).
   passes condition 3 cleanly (N_p^community), which has partial
   vulnerability (N_p^author), and report multi-operationalization
   as a hedge.
+- **Post-2006 disruption-uptick context in (c-prime) Discussion (per
+  PAP 2025 C2 walkthrough, lit-review session 2026-04-26).** Add
+  one sentence to the (c-prime) Discussion-section paragraph
+  acknowledging the four-paper convergence (PAP 2025, Bentley 2023,
+  Holst 2024, Macher 2024) on a small post-2006 incremental
+  disruption increase (~0.06σ). Frame as concurrent observation of
+  a related-but-distinct phenomenon, not as competing/supporting
+  ws2's findings. Specifically: "Post-2006, multiple independent
+  re-analyses find a small incremental increase in disruption after
+  CI controls. Our findings on canonical concentration and semantic
+  plurality should be interpreted in this context — concurrent
+  observations of related but distinct phenomena." Cost: one
+  sentence; folds into existing (c-prime) Discussion paragraph.
+  Why this matters: pre-empts reviewer pushback ("how does your
+  finding relate to the recent disruption-uptick literature?")
+  with a calibrated answer that doesn't expand scope.
+
+- **Test I break-point candidate refinement: add 2006 (per PAP 2025
+  C2 walkthrough, lit-review session 2026-04-26).** Currently
+  pre-registered Test I break-point candidates for CS: 1991-93
+  (arXiv launch); 1998-2000 (dot-com peak; demographic
+  broadening); 2008-09 (financial crisis; academic-market
+  consolidation); 2012 (AlexNet / deep learning); 2018-20
+  (foundation models). **Add 2006** as additional candidate
+  aligned with the four-paper convergence on post-2006 disruption-
+  uptick (PAP 2025, Bentley 2023, Holst 2024, Macher 2024).
+  Substantive justification: independent disruption-literature
+  convergence on 2006 as a candidate inflection year for
+  scientific dynamics. Cost: one additional candidate in
+  pre-registered list; doesn't expand analytical scope. The
+  Bonferroni correction across 6 candidates (rather than 5) for
+  CS slightly tightens significance threshold; manageable.
 - **Specific anchor concepts for Mitigation 4.** List of ~100 concepts with
   representative reference texts, per-field. Phase 0.2 or early Stage 1.
 - **Specific alternative embedding model for Mitigation 2.** Choice between
