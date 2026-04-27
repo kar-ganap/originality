@@ -21,7 +21,7 @@ unless needed.
 | 04 | **Petersen, Arroyave & Pammolli 2025**, *J. of Informetrics* 19(1), team-size / CD re-analysis | **Close methodological read (~4 hrs).** Directly challenges Wu-Wang-Evans team-size interpretation — load-bearing for our Test II team-size control and Test IV team-diversity × novelty setup. | complete |
 | 05 | **Holst, Algaba, Tori, Wenmackers & Ginis 2024**, arXiv:2402.14583, "Dataset Artefacts are the Hidden Drivers of the Declining Disruptiveness in Science" | Dataset-artifact critique of Park-Leahey-Funk. Load-bearing for 13-F measurement-artifact null. | complete |
 | 06 | **Hofstra, Kulkarni, Munoz-Najar Galvez, He, Jurafsky & McFarland 2020**, *PNAS* 117(17), "The Diversity-Innovation Paradox in Science" | Direct precedent for Test IV (team-diversity × novelty). Must engage their novelty-detection pipeline and minority-group operationalization. | complete |
-| 07 | **Lockhart, King & Munsch 2023**, *Nature Human Behaviour* 7(7), "Name-based demographic inference and the unequal distribution of misrecognition" | Structural critique of name-based gender/race inference — directly load-bearing for our Genderize+NamSor pipeline. Grounds the "weight-by-confidence" choice in plan subsection 9. | pending |
+| 07 | **Lockhart, King & Munsch 2023**, *Nature Human Behaviour* 7(7), "Name-based demographic inference and the unequal distribution of misrecognition" | Structural critique of name-based gender/race inference — directly load-bearing for our Genderize+NamSor pipeline. Grounds the "weight-by-confidence" choice in plan subsection 9. | draft (Discussion Notes pending) |
 
 ### Tier 2 — Methodological underpinnings (read for method, not every claim)
 
