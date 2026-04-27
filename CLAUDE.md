@@ -26,7 +26,9 @@ with each prior study de-risking the next.
 - **Active whitespace:** `whitespace_2/`
 - **Program-level phase:** Scaffold complete; all downstream work happens
   inside the active whitespace.
-- **Next:** `whitespace_2/` Phase 0.1 — OpenAlex scoping + field definitions.
+- **Next:** `whitespace_2/` Phase 0.1 N1 — wholesale plan revision based
+  on Phase 0.1 sanity-check 1+2 findings (see `whitespace_2/tasks/todo.md`
+  "Next session — N1 wholesale plan revision").
 
 ## Navigating This Repo
 

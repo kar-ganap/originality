@@ -12,9 +12,20 @@ claim is disconfirmed — a successful null.
 ## Current State
 
 - **Current Stage:** Stage 0 — Foundation
-- **Current Phase:** none yet (phase-0.1-plan.md pending)
-- **Completed:** repo scaffold
-- **Next:** Phase 0.1 — OpenAlex API scoping + field/concept ID definitions
+- **Current Phase:** Phase 0.1 — sanity checks 1 + 2 complete; N1 plan
+  revision pending
+- **Completed:**
+  - Repo scaffold
+  - Tier 1 literature review (`literature-review/` 01-07)
+  - Phase 0.1 plan with 14 numbered methodology commitments (§1-§14)
+  - Phase 0.1 Check 1 (abstract availability) + extensions 1c (by paper
+    type), 1d (arXiv linkage + access-method verification), 1e (S2AG
+    coverage), 1f (bias-of-missingness across substantive measurement axes)
+  - Phase 0.1 Check 2 a/b/c (concept-classifier drift) + 2d (anachronism
+    audit) + 2e (hand-audit setup) + Check 2 score-thresholding correction
+    + within-window anachronism verification
+- **Next:** Phase 0.1 N1 — wholesale plan revision (see
+  `tasks/todo.md` "Next session — N1 wholesale plan revision")
 
 ## Constraints
 
