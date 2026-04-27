@@ -811,6 +811,19 @@ Deliverables in rough order:
   and recommended next steps (re-evaluate §12 full-text policy as
   primary rather than robustness; pause Check 2 design until selection-
   bias implications are addressed).
+- **Status (Check 1c, run 2026-04-27):** **type-disaggregation does not
+  rescue coverage.** Articles (~80% of sample) are at 45-60% coverage —
+  almost exactly the overall rate. Scoping to articles-only or excluding
+  the worst types (book-chapter, book, paratext) yields only a 3-pp
+  improvement (CS: 44%→47%). The constraint is genuinely uniform across
+  analytically-relevant paper types. **One bright signal:** preprints
+  have 81-87% coverage, consistent with the arXiv-supplementation
+  hypothesis (arXiv records have abstracts; missing coverage is
+  concentrated in non-arXiv-sourced records). This sharpens the case
+  for promoting arXiv full-text from §12 robustness check to primary
+  alternative data path. Proposed follow-up Check 1d: measure
+  arXiv-has-an-ID rate and joint OpenAlex-OR-arXiv coverage by year ×
+  field. See `experiments/phase-0.1/abstract-coverage-by-type.md`.
 
 ### Check 2 — Concept classifier drift audit
 
