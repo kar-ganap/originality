@@ -39,7 +39,37 @@
 
 If many concepts are anachronistically tagged, the OpenAlex classifier is retroactively assigning modern labels to older papers — likely via shared keywords or text patterns that happen to match. This biases ws2's semantic-plurality measurement: pre-1990 papers may be mis-tagged as covering modern topics, inflating apparent semantic continuity across eras.
 
-## Detailed implications
+## CORRECTION (after user pushback on Check 2e)
+
+The "earliest paper" search uses `concepts.id:X` + `sort=publication_year:asc`,
+which returns the oldest paper where concept X appears in the concepts array
+**regardless of score**. As shown in the related Check 2 correction (see
+`check2-correction-score-thresholds.md`), OpenAlex's concepts array can
+include concepts scored at 0.0 — i.e., concepts the classifier explicitly
+rejected.
+
+Spot-check of the earliest papers from this audit:
+
+- "Deep learning" earliest=1907 ("Spa Treatment of Neurasthenia"): score=**0.527**
+  — non-trivial. So the classifier really did assign deep-learning relevance to
+  a 1907 medical paper.
+- "CRISPR" earliest=1905 ("Stump in Appendicectomy"): score=**0.590** — also
+  non-trivial.
+- "Cloud computing" earliest=1901 ("The Purple Cloud"): score=**0.416** — also
+  non-trivial.
+
+So **the anachronism finding is real for these specific concepts** — these are
+NOT zero-score noise; the classifier really does produce meaningful scores for
+modern concepts on very old papers, likely via keyword matching (the words
+"deep", "cloud" etc. trigger relevance even in unrelated contexts).
+
+**However:** these are pre-1920 papers, well outside ws2's analytical window
+(1970-2024). Within ws2's window, the question is open — needs a corrected
+within-window anachronism check before drawing strong conclusions. The
+multi-decade-anachronism framing below is correct for the very-old tail but
+may not apply within ws2's actual scope.
+
+## Detailed implications (some superseded — see correction above)
 
 **The headline number is decisive: 14 of 20 modern concepts (70%) have anachronistic
 tagging by margins of 30 to 107 years.** This is not "5 years off" — it's

@@ -18,7 +18,34 @@ Then count the false-positive rate per (subfield, year) cell:
 If the false-positive rate differs substantially across eras (e.g., 1975 has 30% off-target but 2020 has 5%), the classifier is drifting in reliability across eras — this biases ws2's semantic-
 plurality measurement.
 
-## Interpretation (directional, from spot-check of top-10 rows of each cell)
+## CORRECTION (after user pushback)
+
+**Important caveat — added retroactively.** The "off-target" interpretation below
+is largely a query artifact, not a classifier failure. OpenAlex's `concepts`
+array on each paper includes ALL concepts the classifier considered, including
+those scored 0.0 (correctly identified as NOT about the topic). The
+`concepts.id:X` filter returns ANY paper where X appears in the array
+*regardless of score*.
+
+So filtering "Operating system" papers via `concepts.id:C111919701` returned
+papers where the classifier scored OS at exactly 0.0. The classifier WAS doing
+its job correctly; my interpretation of its outputs was wrong.
+
+Corrected score-thresholded counts (from `check2-correction-score-thresholds.md`):
+
+- OS × 1975 top-50: 45/50 zero-score; **0/50 score≥0.3**.
+- OS × 2020 top-50: 41/50 zero-score; **1/50 score≥0.3**.
+- Compilers × 1975 top-50: 2/50 zero-score; **46/50 score≥0.3** (and ≥0.5).
+- Compilers × 2020 top-50: 4/50 zero-score; **45/50 score≥0.3**; 30/50 ≥0.5.
+
+The classifier is **reliable when score-thresholded**. The "OS 95% off-target"
+framing below should be read as "OS-tagged-at-any-score 95% off-target" —
+which only matters if a downstream pipeline uses the unscore-thresholded
+`concepts.id:X` filter. ws2's pipeline must respect score thresholds.
+
+The original directional read below is preserved for historical record.
+
+## Interpretation (directional, from spot-check of top-10 rows of each cell — superseded by correction above)
 
 Full hand-audit of all 200 rows still pending. Directional read on top-10:
 

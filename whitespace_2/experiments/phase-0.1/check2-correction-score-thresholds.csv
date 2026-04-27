@@ -1,0 +1,5 @@
+subfield,year,concept_id,n_papers_in_filter,n_zero_score,n_score_ge_0.1,n_score_ge_0.3,n_score_ge_0.5,frac_zero_score,frac_score_ge_0.3,frac_score_ge_0.5
+operating systems,1975,C111919701,50,45,1,0,0,0.9,0.0,0.0
+operating systems,2020,C111919701,50,41,7,1,0,0.82,0.02,0.0
+compilers,1975,C169590947,50,2,48,46,46,0.04,0.92,0.92
+compilers,2020,C169590947,50,4,46,45,30,0.08,0.9,0.6

@@ -972,6 +972,44 @@ Per ws2 desiderata §10. Five sub-checks:
     from "concept-tag-based with embedding-cluster robustness" to
     "embedding-cluster-based with concept-tag features as auxiliaries."
 
+- **CORRECTION (Check 2 re-analysis, 2026-04-27, user-prompted):** the Check
+  2e "~95% off-target" framing was a query artifact, NOT a classifier failure.
+  OpenAlex's `concepts` array on each paper includes ALL concepts the
+  classifier considered, including those scored 0.0 (explicitly rejected).
+  The `concepts.id:X` filter returns ANY paper where X appears in the array
+  regardless of score. Score-thresholded results (see
+  `check2-correction-score-thresholds.md`):
+  - OS × 1975 top-50: 45/50 are zero-score; **0/50 score≥0.3**.
+  - OS × 2020 top-50: 41/50 are zero-score; **1/50 score≥0.3**.
+  - Compilers × 1975 top-50: 2/50 zero-score; **46/50 score≥0.3** (and ≥0.5).
+  - Compilers × 2020 top-50: 4/50 zero-score; **45/50 score≥0.3**.
+  When score-thresholded, the classifier is reliable. The "promiscuous in
+  both eras" finding below is **retracted**.
+  - **Retract the strengthened §11 commitment.** OpenAlex concept tags are
+    NOT broken; the issue was using `concepts.id:X` without score
+    thresholding. The §11 cluster-fit commitment remains the *preferred*
+    subfield mechanism per the original desiderata, but is no longer
+    "necessary." Both mechanisms (score-thresholded concept tags AND
+    embedding-cluster-based) are viable; the choice is based on substantive
+    criteria (cluster coherence, era-stability, etc.), not on a perceived
+    failure of one.
+  - **New Phase 0.2 commitment:** ws2's pipeline must respect score
+    thresholds when filtering by OpenAlex concept ID. Default thresholds
+    for subfield-membership claims: score ≥ 0.3 (loose, inclusive) or ≥ 0.5
+    (strict). Pre-register specific thresholds per use case in Phase 0.2.
+  - **Note on Check 2d anachronism:** the multi-decade anachronism finding
+    is REAL — earliest "deep learning" papers from 1907 actually have
+    score=0.527; "Cloud computing" 1901 has score=0.416. Not zero-score
+    noise. The classifier really does produce meaningful scores for modern
+    concepts on very old papers, likely via keyword matching ("deep",
+    "cloud") in unrelated contexts. **However:** these are pre-1920 papers,
+    outside ws2's 1970-2024 analytical window. Within-window anachronism
+    needs a separate score-thresholded check before drawing conclusions.
+  - **lesson learned:** OpenAlex's `concepts` array semantics differ from
+    typical concept-tagging APIs — it's a "considered" set, not an "about
+    it" set. Always score-threshold client-side. Logged in
+    `tasks/lessons.md`.
+
 ### Check 3 — Demographic inference coverage
 
 - **3a — Gender coverage via Genderize.io on pilot:** fraction of authors
