@@ -753,7 +753,113 @@ session happens.)
 
 ### On C1 — PNAS vs. PNAS Plus quasi-experimental validity
 
-(Pending.)
+Working session with user, 2026-04-26.
+
+**The user's meta-question.** "Does a quasi-experiment buy us
+anything in ws2 irrespective of what specifically it'd look like?"
+This reframes C1 from "what specific QE setting could we use?" to
+"do we *want* QE-style identification at all given our scope?"
+
+**What QE buys you in general.** Quasi-experiments support claim
+types that pure observation can't:
+1. Causal claims ("X causes Y" not just "X correlates with Y").
+2. Counterfactual claims ("If X were different, Y would be
+   different").
+3. Mechanism claims ("X is the active causal channel" not just "X
+   is associated with Y").
+
+PAP 2025's PNAS quasi-experiment buys exactly this — converts
+correlational "CD declines with r_p" into quasi-causal "r_p alone
+causes the CD effect."
+
+**Applied to ws2's claim structure.**
+
+*Tests I-III (aggregate divergence):*
+- Claim: time series covary or decouple in specific ways.
+- Identification needed: none. Descriptive structural questions.
+- QE benefit: zero. Not making causal claims at this level.
+
+*Test IV (cross-sectional team-diversity × novelty):*
+- Claim: T_p and N_p correlate cross-sectionally.
+- Identification needed: descriptive. Pre-baked "Causal
+  interpretation caveat" already disclaims causal direction.
+- QE benefit: could give causal direction claim. But we've
+  explicitly decided not to claim this.
+
+*Subfield mechanism test (CanonConc_s → DivMag_s):*
+- Claim: subfields with higher canonical concentration show more
+  divergence.
+- Identification needed: descriptive subfield-level association.
+- QE benefit: theoretically could establish causation, but hard to
+  imagine a QE setting on canonical concentration (slow-moving
+  aggregate; no natural variation source).
+
+*Metric-validity claims (inflation-immunity):*
+- Claim: our metrics are inflation-immune by construction.
+- Identification needed: analytical + observational (already
+  committed: rank-invariance + detrended correlation diagnostic).
+- QE benefit: arXiv-vs-journal-version style design could
+  empirically demonstrate metric stability under r_p variation.
+  But analytical defense + observational diagnostic already
+  address this. Marginal gain.
+
+**Substantive answer.**
+
+*For central claims: no QE benefit.* Observational by design;
+program-aware observational-scope meta-commitment makes this
+explicit. Adding QE identification would either pull us into causal
+territory we've disclaimed, or address concerns already addressed
+via cheaper means.
+
+*For methodological credibility against reviewer pushback:
+marginally yes.* QE pre-empts "how do you know this isn't
+confounded?" pushback. But the benefit is bounded — reviewers
+reading carefully see our scope is observational by design.
+
+*For very specific sub-claims: theoretically yes, practically not.*
+The metric-inflation-immunity claim is the only place QE might add
+beyond existing defense. Setting it up requires additional Stage 3
+work; marginal info gain is small; expanding scope without
+commensurate payoff.
+
+**Recommendation: out of scope, mental-banked.**
+
+QE is out of scope for ws2 given:
+1. Observational-scope meta-commitment.
+2. Claims being descriptive/correlational by design.
+3. Existing analytical + observational defenses sufficient.
+
+Worth mental banking:
+- If reviewers push hard on causal questions in the eventual ws2
+  paper, ready answer about why we declined QE pursuit.
+- Follow-up ws2-extended studies (post-program) might benefit from
+  QE designs.
+
+**Substantive observation: program-level distributed QE.**
+
+The 3-whitespace program structure is itself partly a
+quasi-experimental architecture, distributed across whitespaces:
+
+| Whitespace | Methodology | What it provides |
+|---|---|---|
+| **ws2 (observational)** | Real-data covariation documentation | Empirical patterns |
+| **ws3 (formal model, future)** | Theoretical mechanism specification | Causal hypotheses |
+| **ws1 (LLM-agent simulation, future)** | Counterfactual simulation | Mechanism testing |
+
+ws3 + ws1 together provide the causal claims that ws2 deliberately
+avoids. Causal identification is *distributed across the program*,
+not concentrated in ws2. This is a strength of the program design —
+each whitespace contributes the evidence its methodology is best
+at; the conjunction of evidence supports causal claims.
+
+ws2 doesn't need within-ws2 QE identification because ws1 + ws3 are
+doing that work *at the right epistemic layer* for that kind of
+claim.
+
+**No new Phase 0.2 batch additions from C1.** This is a
+methodological observation rather than a design refinement. The
+substance is captured in this Discussion Notes entry for future
+reference if reviewers push on causal-identification questions.
 
 ### On C2 — post-2006 disruption increase in ws2 context
 
