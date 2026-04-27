@@ -1917,6 +1917,70 @@ desiderata §9, but same principle).
     Raising the threshold is a defensive move that doesn't change
     our analysis, just our claim of what counts as substantively
     significant. Better conservative than vulnerable.
+- **Test IV N_p primary/secondary label flip (per disruption-novelty
+  discussion in PAP 2025 walkthrough, 2026-04-26).** Currently the
+  Test IV N_p specification (Phase 0.1 plan, "Open decisions
+  deferred" Test IV block) has:
+  - N_p primary: cosine distance to centroid of papers in p's
+    reference list
+  - N_p secondary: cosine distance to year-Y canonical centroid
+    (top-100 most-cited)
+  - N_p tertiary (Stage 3): Uzzi-Mukherjee-Stringer reference-pair
+    atypicality
+
+  **The issue.** N_p primary as currently labeled depends on focal
+  paper's *reference list choice* — exactly the condition-3
+  vulnerability PAP 2025 raises about CD-index ("depends on author
+  choice, not community consensus"). Conversely, N_p secondary uses
+  the year-Y canonical centroid which is *community-determined*
+  (top-100 most-cited papers in year Y).
+
+  **Why this matters.** Disruption (CD-index) and novelty (our N_p)
+  are conceptually associated metrics. Our N_p variants span a
+  spectrum on author-vs-community dependence. The variant we
+  labeled "primary" is the *most author-choice-dependent*, which is
+  the *most vulnerable* under PAP 2025's framework. Reporting this
+  as the headline metric inverts the desirable property: we should
+  put our cleanest metric forward as primary, not the most
+  vulnerable one.
+
+  **Refinement: relabel and reorder.**
+  - **N_p^community (new primary):** cosine distance to year-Y
+    canonical centroid. Community-driven, condition 3 cleanly
+    satisfied. Methodologically defensible as headline.
+  - **N_p^author (new secondary):** cosine distance to reference
+    centroid. Author-choice-dependent, partial condition 3.
+    Reported alongside as alternative operationalization, with
+    explicit framing that it has the same author-choice
+    vulnerability PAP 2025 raises about CD.
+  - **N_p^combinatorial (Stage 3, unchanged):** U-M-S atypicality.
+
+  **Why this is parallel to (c-prime) framing.** Just as we report
+  inflation-immune metrics as primary against PLF, we should report
+  community-driven novelty metrics as primary against disruption-
+  index critique. Same defensive logic.
+
+  **What this preserves vs. changes.**
+  - Preserves: the multi-operationalization commitment (we report
+    all three).
+  - Preserves: the substantive Test IV question (does team
+    diversity correlate with paper-level novelty?).
+  - Changes: which N_p is the headline metric. Discussion section
+    can engage both — "headline N_p^community shows X; alternative
+    N_p^author shows Y; consistent vs. divergent results discussed."
+  - Changes: which N_p the pre-registered γ_1 effect-size threshold
+    applies to (now applies to N_p^community by default).
+
+  **Cost.** Computationally trivial. Same underlying computation;
+  just different label and reporting order. The substantive
+  refinement is methodological, not analytical.
+
+  **Methods-paragraph framing.** This refinement also strengthens
+  the Methods-section three-conditions defense (commitment 1 of
+  c-prime): we explicitly identify which Test IV operationalization
+  passes condition 3 cleanly (N_p^community), which has partial
+  vulnerability (N_p^author), and report multi-operationalization
+  as a hedge.
 - **Specific anchor concepts for Mitigation 4.** List of ~100 concepts with
   representative reference texts, per-field. Phase 0.2 or early Stage 1.
 - **Specific alternative embedding model for Mitigation 2.** Choice between

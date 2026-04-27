@@ -812,8 +812,40 @@ What survives:
 | Effective dim | ✓ ratio of singular values; bounded above | ✓ embedding-based | ✓ year-Y embedding distribution |
 | Mean pairwise distance | ✓ bounded distance metric; stable if embedding model stable | ✓ embedding-based | ✓ pairwise structure reflects community distribution |
 
-**Net: all five ws2 canonical-concentration / semantic-plurality
-metrics pass all three conditions** — with two caveats:
+**Refinement (added 2026-04-26 after disruption-novelty discussion).**
+The above table covers our *aggregate* metrics for canonical
+concentration and semantic plurality (Tests I-III). Test IV's N_p
+metrics need separate treatment because they're at the paper level
+and depend on focal-paper-specific data:
+
+| Test IV N_p variant | Cond 1 | Cond 2 | Cond 3 |
+|---|---|---|---|
+| N_p^author (cosine distance to reference centroid) | ✓ bounded | ✓ embedding-based | **Partial fail** — depends on focal paper's reference choices |
+| N_p^community (cosine distance to year-Y canonical centroid) | ✓ bounded | ✓ embedding-based | ✓ canonical centroid is community-determined |
+| N_p^combinatorial (U-M-S reference-pair atypicality, Stage 3) | depends on null-model stability | ✓ rank-based comparison | **Mixed** — depends on focal-paper reference pairs (author choice) but evaluated against community co-citation null |
+
+**The substantive observation: Test IV N_p^author inherits the same
+condition-3 vulnerability that PAP 2025 raises about CD-index.**
+N_p^author depends on what the focal paper chose to cite, which is
+exactly the "depends on author choice" failure mode. This was an
+oversight in the original C4 assessment.
+
+**Mitigation already partly in place:** our multi-operationalization
+commitment for Test IV's N_p (primary + secondary + tertiary) hedges
+across the spectrum of condition-3 dependence. N_p^community is the
+cleanest community-driven measure.
+
+**Refinement to commit (separate Phase 0.2 batch item):** flip Test
+IV N_p primary/secondary labels — make N_p^community the headline
+primary metric (cleanest condition-3 satisfaction) and N_p^author the
+secondary/alternative operationalization. This is parallel to the
+(c-prime) inflation-immune-evidence framing: report the *cleanest*
+metric as primary, not the most-historically-used.
+
+**Net: all aggregate ws2 metrics pass all three conditions; Test
+IV N_p^community passes; Test IV N_p^author and N_p^combinatorial
+have partial condition-3 vulnerabilities documented openly.** Two
+caveats remain on the broader set:
 - Citation Gini's condition 2 holds conditional on the detrended
   correlation-with-r(t) diagnostic showing |corr| < 0.7 (already
   pre-registered).
