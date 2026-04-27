@@ -1875,7 +1875,7 @@ the design rather than collapse it into one number.
 
 | Test | Boundary type | Action |
 |---|---|---|
-| Tests I–III (aggregate divergence) | Data quality only — no buffer needed | Already locked: post-1990 primary, pre-1985 preliminary, pre-1990 with disclaimer (desiderata §11, Phase 0.1 §13). No change. |
+| Tests I–III (aggregate divergence) | Data quality only — no buffer needed | Already locked: span 1970–2024 with pre-1990 retained per Phase 0.1 §13 non-negotiable (13-B baseline + 13-D variation + 13-F null-rebuttal); drift-mitigation ladder handles measurement concerns; pre-1990 exclusion appears as one row in the pooled measurement-robustness appendix (Hofstra C8 commitment). No change. |
 | Test IV primary (centroid distance) | Data quality only | <5-references flag for robustness-only subset already locked. No change. |
 | Test IV Persistence Extension | Buffer applies (uptake) | C_10 pre-registered primary; C_5 and C_15 co-equal in the same table; empirical uptake-half-life diagnostic per field × subfield × era. |
 | Item 11 (Production-capture) | Buffer applies (uptake) | C_10 primary (truncates 2014); C_5 (truncates 2019) and C_15 (truncates 2009) reported alongside. |

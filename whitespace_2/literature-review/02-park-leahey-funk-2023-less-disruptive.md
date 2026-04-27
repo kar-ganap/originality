@@ -1019,14 +1019,24 @@ noting.
 
 *What existing plan already mitigates.*
 
-1. **Post-1990 primary, pre-1985 preliminary** (desiderata §10,
-   plan §13). Era where OpenAlex coverage is most concerning is
-   pre-1990; bounding primary analysis to post-1990 avoids the
-   worst.
-2. **Multi-metric reporting.** Spearman top-50 + citation Gini. If
+1. **Drift-mitigation ladder.** Per desiderata §3 + Phase 0.1 plan,
+   embedding-drift and classifier-drift mitigations are committed
+   for the full 1970–2024 window. Tests I-III span 1970–2024 with
+   pre-1990 retained per Phase 0.1 §13 non-negotiable (13-B
+   baseline requirement + 13-D variation + 13-F null-rebuttal
+   strengthening). Pre-1990 is *not* clipped from primary analyses;
+   measurement weaknesses are addressed via drift mitigation, not
+   restriction.
+2. **Asymmetric handling for one analysis only.** The *subfield
+   mechanism test* alone is restricted to post-1990 (per desiderata
+   §10 — classifier drift on pre-1990 subfield tags is untenable
+   for that specific analysis).
+3. **Multi-metric reporting.** Spearman top-50 + citation Gini. If
    only Gini shows the trend, we'd flag it as potentially driven
    by coverage bias.
-3. **Pre-1990 with disclaimer.** Acknowledge the limitation.
+4. **Pre-1990 exclusion as one robustness row** in the pooled
+   measurement-robustness appendix (Hofstra C8 commitment).
+   Provides sensitivity check without clipping primary analysis.
 
 These collectively address the threat but don't *quantify* it.
 

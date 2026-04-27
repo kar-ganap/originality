@@ -1236,10 +1236,11 @@ count increase.
 
 **Sub-question (b): Statistical power concern?**
 
-*Test II (year-level):* 35 years post-1990 × 2 fields = 70
-field-year observations; existing ~10 covariates. Adding 1-2
-quadratic coefficients reduces effective DOF from ~60 to ~58-59.
-Modest power impact but real.
+*Test II (year-level):* 55 years 1970–2024 × 2 fields = 110
+field-year observations (Tests I-III span 1970–2024 per Phase 0.1
+§13 non-negotiable); existing ~10 covariates. Adding 1-2 quadratic
+coefficients reduces effective DOF from ~100 to ~98-99. Negligible
+power impact.
 
 *Test IV (paper-level):* millions of observations. Adding 1-2
 coefficients has negligible power impact. Not a concern.

@@ -40,13 +40,18 @@ discovered:
    original PDFs. These are dataset artefacts, not real
    zero-reference works.
 
-For ws2: **this paper validates and extends our existing pre-1990
-data-quality tier specification** (desiderata §10, post-1990 default
-analysis). Pre-1990 data has more metadata-quality issues; our
-restriction protects against a Holst-style artefact. The paper
-also gives us a **general framework for thinking about
-metric-discontinuities at data-quality boundaries** — applicable
-to our C2(b) OpenAlex coverage diagnostic.
+For ws2: **this paper validates ws2's drift-mitigation approach to
+pre-1990 data** (Phase 0.1 §13 non-negotiable retention policy
+backed by drift-mitigation ladder + per-1990 robustness row in
+pooled appendix), rather than mandating clipping. Tests I-III
+span 1970–2024 with pre-1990 retained per the §13 substantive
+rationale (13-B baseline, 13-D variation, 13-F null-rebuttal
+strengthening). Only the *subfield mechanism test* is restricted
+to post-1990 per desiderata §10. The Holst paper also gives us a
+**general framework for thinking about metric-discontinuities at
+data-quality boundaries** — applicable to our C2(b) OpenAlex
+coverage diagnostic *and* to our pre-1990 dummy-variable test
+(see C1 walkthrough below).
 
 This paper is the one we deferred PLF SQ8 to (dataset-artefact
 correction implications). The deferred content lives here.
@@ -398,13 +403,18 @@ disentangled.
 
 ### What ws2 takes from Holst 2024
 
-**(1) Validation of our pre-1990 data-quality tier specification.**
-We've already committed (desiderata §10) to post-1990 default
-analysis with pre-1985 preliminary and pre-1990 with disclaimer.
-Holst's findings strongly validate this design choice. The
-pre-1990 era is exactly where dataset-quality issues like
-zero-reference artefacts are most concentrated. **Our existing
-pre-1990 caution is methodologically vindicated.**
+**(1) Validation of ws2's pre-1990 handling approach.** Phase 0.1
+§13 commits to *retaining* pre-1990 data in Tests I-III primary
+analysis (1970–2024 span) for substantive reasons (13-B baseline,
+13-D variation, 13-F null-rebuttal). Measurement weaknesses are
+addressed via the drift-mitigation ladder (desiderata §3) plus
+pre-1990 exclusion as one row in the pooled measurement-robustness
+appendix (Hofstra C8 commitment). The subfield mechanism test
+alone is post-1990-restricted (desiderata §10). Holst's findings
+validate this asymmetric approach: dataset-quality issues are
+concentrated in pre-1990, but clipping isn't the right response —
+*drift mitigation + sensitivity-check-via-robustness-row* is.
+Holst confirms our drift-mitigation work is doing real lifting.
 
 **(2) "Identify degenerate cases prior to analysis" lesson.** Holst
 recommends (p. 3): "it is best practice to exclude zero reference
@@ -447,10 +457,13 @@ specific values), include explicit dummies for those discontinuity
 points.
 
 For ws2, this could apply to:
-- *Pre-1990 vs. post-1990 dummy* in our gap regression — we already
-  have year-FE which absorbs this, but a specific pre-1990 dummy
-  could test whether pre-1990 era contributes systematically
-  different signal.
+- *Pre-1990 vs. post-1990 dummy* in our Tests I-III specifications.
+  Year-FE absorbs year-specific shifts equally for all years; a
+  specific pre-1990 dummy tests whether the pre-1990 era contributes
+  a systematic shift *beyond* what year-FE absorbs. Given Tests I-III
+  span 1970–2024 (pre-1990 retained per §13), the discontinuity at
+  the 1990 boundary is in our analysis space. **This is now committed
+  as a Phase 0.2 batch addition.**
 - *Single-author vs. team paper dummy* in Test IV — captures the
   T_p = 0 boundary case.
 
@@ -475,9 +488,12 @@ diagnostic strategies.
 
 These are mostly extensions or validations of existing commitments:
 
-- **Reaffirms post-1990 data-quality tier specification** (already
-  in desiderata §10). Holst validates this design choice; no
-  refinement needed.
+- **Reaffirms ws2's asymmetric pre-1990 handling.** Phase 0.1 §13
+  retention policy + drift mitigation + pooled-appendix robustness
+  row + post-1990 restriction for subfield mechanism test only.
+  Holst validates this asymmetric approach (drift mitigation +
+  sensitivity check rather than clipping primary analysis). No
+  design refinement needed.
 - **Add pre-registered exclusion of degenerate cases for ws2
   metrics.** Phase 0.2 batch addition: per-metric list of
   degenerate cases excluded prior to analysis, with justification.
@@ -664,10 +680,12 @@ lesson change how we'd interpret a positive replication result?
    re-analysis with proper controls; Holst is the data-quality
    artefact critique.
 
-2. **Holst validates ws2's pre-1990 data-quality tier specification.**
-   The pre-1990 era is exactly where dataset-quality issues are
-   concentrated. Our existing post-1990 default is methodologically
-   vindicated.
+2. **Holst validates ws2's asymmetric pre-1990 handling**: drift-
+   mitigation + sensitivity-check-via-robustness-row, not clipping
+   primary analysis. Phase 0.1 §13 retention policy is the right
+   design choice; the pre-1990 era is exactly where drift mitigation
+   does its work. The subfield mechanism test alone is post-1990-
+   restricted (per desiderata §10).
 
 3. **"Exclude degenerate cases prior to analysis" methodological
    principle.** Generalizes to ws2: identify and exclude degenerate

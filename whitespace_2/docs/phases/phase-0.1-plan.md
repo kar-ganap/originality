@@ -1777,12 +1777,17 @@ desiderata §9, but same principle).
     apply to any ws2 metric. Pass by construction; no empirical
     test needed for (a).
   - **(b) Stationarity diagnostic.** Compute per-year distribution
-    of Spearman top-50 and citation Gini over the post-1990
-    analysis window. Test for time-stationarity of distribution
-    mean and variance. Per PAP Fisher-Tippett observation: under
-    inflation-immune regimes, metric distributions become time-
-    stationary; non-stationarity tracking r(t) growth is the
-    smoking gun for inflation. Report alongside headline metrics.
+    of Spearman top-50 and citation Gini over the 1970–2024
+    primary analysis window (Tests I-III span per Phase 0.1 §13).
+    Test for time-stationarity of distribution mean and variance.
+    Per PAP Fisher-Tippett observation: under inflation-immune
+    regimes, metric distributions become time-stationary;
+    non-stationarity tracking r(t) growth is the smoking gun for
+    inflation. Report alongside headline metrics. Note: pre-1990
+    era is included by design per §13 non-negotiable retention
+    policy; if stationarity test reveals pre-1990 era shows
+    systematic distribution-shape deviation, that's diagnostic
+    information for the pre-1990 dummy-variable robustness check.
   - **(c) Detrended correlation-with-r(t) diagnostic (per PAP SQ3
     walkthrough, lit-review session 2026-04-26).** Compute
     *detrended* Pearson correlation between (i) CanonConc time
@@ -1800,10 +1805,10 @@ desiderata §9, but same principle).
       between two smoothly monotonic time series is ≈ 0.9+ even
       for causally unrelated variables (shared-trend artifact).
       Both r(t) and CanonConc(t) are smoothly monotonic over the
-      post-1990 analysis window (r(t) exponential at g_r ≈ 0.018;
-      CanonConc plausibly monotonic if hypothesized trend is
-      real). Raw correlation would trigger stress-test for
-      everything, providing no information. Detrending isolates
+      1970–2024 primary analysis window (r(t) exponential at
+      g_r ≈ 0.018; CanonConc plausibly monotonic if hypothesized
+      trend is real). Raw correlation would trigger stress-test
+      for everything, providing no information. Detrending isolates
       the year-to-year variation not explained by smooth trends —
       the substantive signal of interest.
     - **Note on PAP's R² = 0.96:** PAP report this as raw R²
@@ -1851,12 +1856,14 @@ desiderata §9, but same principle).
     rule:** if quadratic coefficient is not significant at p<0.05,
     default to linear specification for headline; if significant,
     report non-linear version. Pre-registered to prevent post-hoc
-    specification decision. Why fallback matters here specifically
-    (Test II vs. Test IV): Test II has ~70 field-year observations
-    with ~10 covariates; adding quadratic coefficients reduces DOF
-    from ~60 to ~58-59 (modest power impact). For Test IV
-    (paper-level, millions of observations) the fallback isn't
-    needed; quadratic runs by default.
+    specification decision. Why fallback matters: Test II has
+    ~110 field-year observations (1970–2024 × 2 fields) with ~10
+    covariates; adding quadratic coefficients reduces DOF from
+    ~100 to ~98-99 (negligible power impact). The fallback rule
+    is *methodological discipline* (no post-hoc choice between
+    linear and quadratic specifications), not a power-driven
+    necessity. For Test IV (paper-level, millions of observations)
+    quadratic runs by default; no fallback needed.
   - **Add team-size × year interaction** — controls for team size
     growing over time, parallel to PAP 2025's b_{kxt} term.
   - **Switch year-trend (β_t·Y) to year fixed effects** — more
@@ -2264,6 +2271,65 @@ desiderata §9, but same principle).
   pre-registered stability criteria, not desired-result criteria.
   Methodologically clean approach to a real EDA-vs-pre-registration
   tension.
+- **Single-author dummy in Test IV regression (per Holst dummy-
+  variable-controls walkthrough, 2026-04-27).** T_p (Rao's Q) has
+  a definitional discontinuity at k_p = 1: single-author papers
+  have T_p = 0 *by construction* (Rao's Q undefined for n=1, set
+  to 0 by convention); team papers have T_p > 0 *measured value*.
+  The current linear regression treats T_p = 0 (single-author
+  definitional) and T_p ≈ 0 (homogeneous team measured) as
+  interchangeable cases, but they're conceptually different.
+  - **Spec refinement:** N_p = γ_0 + γ_1·T_p + γ_2·1[k_p = 1] +
+    γ_3·c_p + ... + ε_p. γ_2 captures the discontinuous shift for
+    single-author papers; γ_1 captures the continuous slope for
+    team papers.
+  - **Pre-registered fallback rule:** if γ_2 not significant at
+    p<0.05, default to spec without dummy; if significant, report
+    with dummy. Parallel to PAP 2025 quadratic fallback; prevents
+    post-hoc specification choice.
+  - **Why this matters substantively:** if single-author papers
+    behave qualitatively differently from team papers (e.g.,
+    systematically lower or higher N_p), γ_2 will be significant
+    and we report a substantively interesting finding. If similar
+    to homogeneous teams, γ_2 ≈ 0 and our linear specification
+    was treating them interchangeably without harm.
+  - **Cost:** computationally trivial. One additional regression
+    coefficient. Methodological cleanness gain regardless of γ_2
+    significance.
+
+- **Pre-1990 dummy in Tests I-III specifications (per Holst dummy-
+  variable-controls walkthrough + Phase 0.1 §13 alignment,
+  2026-04-27).** Tests I-III span 1970–2024 with pre-1990 retained
+  per §13 non-negotiable. Pre-1990 metadata quality differs from
+  post-1990 in known ways (sparser abstracts, weaker demographic
+  inference, classifier drift, OpenAlex coverage variability).
+  Year fixed effects absorb year-specific shifts equally for all
+  years; a specific pre-1990 dummy tests whether the pre-1990 era
+  contributes a systematic shift *beyond* what year-FE absorbs —
+  parallel to Holst's zero-references dummy in PLF's regression.
+  - **Spec refinement:** add θ·1[Y < 1990] dummy to existing Tests
+    I-III specifications (Test I trend regression; Test II gap
+    regression; Test III cross-correlation models with appropriate
+    adaptation).
+  - **Pre-registered interpretive grid:**
+    - θ small and not significant → drift mitigation absorbed
+      pre-1990 measurement effects; existing year-FE specification
+      sufficient. Headline finding robust.
+    - θ significant and large → drift mitigation didn't fully
+      absorb pre-1990 effects; report with explicit pre-1990
+      segmentation; consider partition-by-era reporting.
+    - θ significant but small → pre-1990 era contributes a
+      systematic shift but not load-bearing for headline; report
+      with dummy; document magnitude.
+  - **Why this is the *operational diagnostic* for §13 retention
+    policy.** §13 commits to retaining pre-1990 substantively;
+    drift mitigation is the technical handler; the pre-1990
+    dummy *tests whether the technical handler did its job*.
+    Without this dummy, we have no specific-test for the
+    drift-mitigation-success claim.
+  - **Cost:** computationally trivial. One additional coefficient
+    per Tests I-III regression.
+
 - **Specific anchor concepts for Mitigation 4.** List of ~100 concepts with
   representative reference texts, per-field. Phase 0.2 or early Stage 1.
 - **Specific alternative embedding model for Mitigation 2.** Choice between
