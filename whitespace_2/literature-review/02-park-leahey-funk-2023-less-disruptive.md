@@ -1311,7 +1311,51 @@ operational rules above. Captured in
 
 ### On C11 — PLF vs. Chu-Evans theoretical relationship
 
-(Pending.)
+Closed via meta-commitment + cite-separately decision, 2026-04-26.
+
+**Most of C11 trimmed by the meta-commitment.** The "theoretical
+relationship" framing, "mechanistically adjacent," "complementary
+or conflicting" phrasing all live in mechanism-territory. Under
+the program-aware observational-scope meta-commitment (captured
+in pending Phase 0.2 batch), these are out of scope:
+- *"Theoretical positioning vis-a-vis Chu-Evans"* → out of scope.
+- *"Are they complementary or conflicting theoretically?"* → out
+  of scope.
+- *"Same underlying phenomenon?"* → out of scope (mechanism-claim).
+
+**The "right upstream reference for ws2" sub-question is already
+answered by existing commitments:**
+- Canonical-concentration *methodology*: Chu-Evans Spearman top-N
+  (committed in canonical-metric pre-registration spec; refined
+  via multi-Δ co-reporting per Chu-Evans C2/SQ7).
+- Empirical alignment with the *disruption-decline debate*: PLF
+  under (c-prime) inflation-immune evidence framing.
+- *Selective* Chu-Evans citations: predictions 1-4 generally;
+  bracket predictions 5-6 (CD-index-dependent) per Chu-Evans SQ9.
+
+**Small remaining decision: cite separately or jointly?** Three
+options were considered:
+- *(a) Cite separately.* Chu-Evans cited where Spearman top-N
+  methodology is used; PLF cited where (c-prime) framing is
+  invoked. No joint citation.
+- *(b) Cite jointly with empirical-alignment framing.* "Prior
+  literature documents observational patterns of rising canonical
+  concentration..."
+- *(c) Cite jointly with structural-relationship framing.* "Both
+  documenting the same phenomenon..." → crosses into mechanism
+  territory; off-limits.
+
+**Decision: option (a), cite separately.** Each paper gets cited
+where it's load-bearing for our specific claims. Option (b) is
+defensible but invites the "how exactly are they aligned?" question
+we've decided not to answer. Option (c) is excluded by the
+meta-commitment.
+
+**No new Phase 0.2 batch addition.** Cite-separately is an
+operational rule that follows from existing commitments; doesn't
+require its own pending item. Captured in this Discussion Notes
+entry for future reference if Discussion drafting raises the
+joint-vs-separate question again.
 
 ---
 
