@@ -1027,7 +1027,69 @@ pipeline accuracy citable in Methods and Limitations.
 
 ### On C4 — OpenAlex-specific metadata-quality concerns
 
-(Pending.)
+Closed via close-via-pointer + brief residual-concerns
+acknowledgment, 2026-04-27.
+
+**Substantive content covered by existing commitments + planned
+EDA.** Audit checked OpenAlex-specific concerns against our
+committed machinery:
+- Concept tag drift → classifier drift audit (sanity Check 2)
+- Reference list completeness → hand-validation (C3 commitment)
+- Demographic inference accuracy → hand-validation (C3 commitment)
+  + existing ORCID validation
+- Per-era coverage variability → coverage diagnostic (PLF C2(b))
+- Identifier disambiguation reliability → disambiguation spot-
+  check (sanity Check 4)
+- Distribution-shape oddities → pilot metric convergence (sanity
+  Check 5)
+
+**Residual concerns possibly not fully covered:**
+- OpenAlex-specific MAG-legacy quirks (PDF parsing artifacts,
+  name normalization). Mitigation: Culbert et al. 2024/2025
+  (Tier 2 paper 16) provides MAG-vs-OpenAlex comparison; engage
+  during Tier 2 reading.
+- OpenAlex ID instability within a snapshot. Mitigation: snapshot-
+  pinning (already in desiderata).
+- ROR-based institution taxonomy issues (multiple ROR IDs per
+  institution; missing ROR IDs). Not directly covered; small
+  magnitude expected.
+- Country boundary changes (USSR dissolution, etc.). Out of ws2
+  scope.
+
+**Decision: no new Phase 0.2 batch additions.** Existing
+machinery + planned EDA + Tier 2 Culbert reading is sufficient.
+Residual structural quirks acknowledged in Methods/Limitations
+paragraph (per Threat F preprocessing-decisions commitment).
+
+### On C5 — cross-substrate robustness interpretation
+
+Closed via brief note, 2026-04-27.
+
+**The Holst lesson:** cross-database "robustness" doesn't actually
+demonstrate robustness against artefacts shared between databases
+(PLF's six-database replication doesn't help when same artefact is
+present in all six). Generalizes to ws2's back-pocket WoS-OpenAlex
+cross-substrate robustness commitment (from PLF C3/SQ10).
+
+**For ws2: bounded interpretive value of cross-substrate
+replication.** If the back-pocket is triggered (reviewer pushback)
+and findings converge across WoS-OpenAlex overlap subset, this
+demonstrates robustness *against artefacts differing between WoS
+and OpenAlex* but does *not* demonstrate robustness *against
+artefacts shared between them* (e.g., pre-1990 metadata-quality
+issues affecting both substrates similarly).
+
+**Refinement to existing back-pocket commitment.** Add one
+sentence to the C3/SQ10 cross-substrate Stage 3 robustness
+back-pocket: "Per Holst C5 lesson: cross-substrate replication
+establishes robustness against substrate-differential artefacts
+but not against artefacts shared across substrates. Pre-1990
+metadata-quality issues operating in both WoS and OpenAlex
+similarly are not directly testable by this approach."
+
+This is a small interpretive caveat, not a new commitment. No
+Phase 0.2 batch addition; refinement folds into existing
+back-pocket commitment.
 
 ### On C5 — cross-substrate robustness interpretation
 
@@ -1039,23 +1101,32 @@ pipeline accuracy citable in Methods and Limitations.
 
 ### SQ1 — Why CD_5 = 1 for zero-reference papers
 
-(Pending.)
+Skipped — covered via Key Idea #2 (CD_5 = 1 + zero references
+mechanism). Substantive content captured there.
 
 ### SQ2 — Why seaborn bug didn't affect PLF's regression
 
-(Pending.)
+Skipped — comprehension-level. Bug affected histograms only;
+regression operated on raw data. Trivially answered from Key
+Idea #1.
 
 ### SQ3 — Mechanical decline from CD_5 = 1 frequency change
 
-(Pending.)
+Skipped — covered via Key Idea #3 (metadata-quality time trend
+creating mechanical decline). Substantive content captured there.
 
 ### SQ4 — Confidence intervals on hand-validation percentages
 
-(Pending.)
+Skipped — comprehension-level statistical question. 95% binomial
+CI on 98% at n=100 is approximately [93%, 100%]; on 93% at n=100
+is approximately [86%, 97%]. Tight enough for binary claims.
 
 ### SQ5 — R² jump as evidence of misspecification
 
-(Pending.)
+Skipped — covered via Key Idea #5 (why PLF's robustness checks
+failed). The R² jump (0.10 → 0.52, 0.15 → 0.95) when adding
+zero-references dummy is exactly the diagnostic-of-discontinuity-
+via-residual-pattern lesson captured there.
 
 ### SQ6 — Empirical vs. structural critique complementarity
 
@@ -1178,4 +1249,8 @@ captured separately in plan.**
 
 ### SQ7 — Robustness-check-failure level analysis
 
-(Pending.)
+Skipped — covered via C2 walkthrough (full robustness-check
+threat-level analysis for ws2's 13 existing commitments + four
+failure modes from Holst's PLF analysis). The substantive content
+of SQ7 ("walk through why each failed at the level it operates at")
+is captured in C2's per-check audit table.
