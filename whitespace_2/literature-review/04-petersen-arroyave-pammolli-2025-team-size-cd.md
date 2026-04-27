@@ -1208,7 +1208,117 @@ condition.
 
 ### On C5 — quadratic terms in ws2 regression specifications
 
-(Pending.)
+Working session with user, 2026-04-26.
+
+**Sub-question (a): What's the principled reason for quadratic
+terms?**
+
+PAP 2025's empirical finding: team-size relationship to CD shifts
+from negative to positive at k_p ≥ 8 — non-monotonic. Linear-only
+specification would miss this entirely.
+
+Substantive logic for *why* the relationship might be non-monotonic:
+- *Very small teams (1-2):* too small to take on ambitious
+  disruptive projects; constrained by individual capacity.
+- *Small-to-medium teams (3-7):* sweet spot — cohesive enough to
+  coordinate, large enough to attempt ambitious problems.
+- *Large teams (8+):* shift toward big-question collaborative
+  projects (HEP collaborations, bioinformatics consortia) that
+  themselves can be disruptive at field level.
+
+Whether this exact pattern applies to *team-diversity → novelty*
+in ws2 is unclear. We don't have strong priors on functional form.
+
+**Decision: defensive specification.** Add quadratic terms with
+the rule: if coefficient is near zero, behavior reduces to linear;
+if non-zero, we capture non-monotonicity. Cost: minor coefficient-
+count increase.
+
+**Sub-question (b): Statistical power concern?**
+
+*Test II (year-level):* 35 years post-1990 × 2 fields = 70
+field-year observations; existing ~10 covariates. Adding 1-2
+quadratic coefficients reduces effective DOF from ~60 to ~58-59.
+Modest power impact but real.
+
+*Test IV (paper-level):* millions of observations. Adding 1-2
+coefficients has negligible power impact. Not a concern.
+
+**Resolution.**
+
+*For Test II:* report results both with and without quadratic
+terms. If quadratic coefficients are not significant at p<0.05,
+default to linear specification for headline. If significant,
+report non-linear version. **Pre-registered fallback rule** —
+prevents post-hoc decision about which specification to feature.
+
+*For Test IV:* run quadratic by default; power isn't a concern.
+
+**Phase 0.2 batch refinement to existing Test II commitment.** Add
+linear-vs-quadratic fallback rule to existing "add quadratic on
+log(avg team size)" addition.
+
+### On C6 — broader landscape of post-PLF critiques in Discussion
+
+Working session with user, 2026-04-26.
+
+**Sub-question (a): Other potentially-artifactual scientometric
+findings.**
+
+PAP 2025 explicitly critiques several papers:
+- WWE 2019: team-size → disruption
+- PLF 2023: time → disruption
+- Lin et al. 2023a: collaboration distance → disruption (omits
+  r_p, c_p; uses sign of CD)
+
+Implicitly critiques (mentioned but not deeply):
+- Wang et al. 2023b: geographic dispersion → disruption
+- Leahey et al. 2023: novelty types
+
+The general pattern: any scientometric paper using CD-index in
+regression with an X variable that grows over time is at risk if
+it omits r_p, c_p, year-FE.
+
+**Should ws2 audit these specifically?** No — out of scope. We
+engage the critique chain collectively, not paper-by-paper
+critiques. We're not in the business of post-mortem on the
+post-PLF literature.
+
+**Sub-question (b): Discussion paragraph on the broader landscape?**
+
+Two competing considerations:
+
+*Pros:* demonstrates methodological awareness; pre-empts reviewer
+pushback on related papers; connects ws2 to richer scholarly
+conversation.
+
+*Cons:* scope creep; Discussion length expansion (we're already
+adding paragraphs via (c-prime), three-conditions framework,
+post-2006 disruption-uptick context); risk of seeming to take
+sides on debates not central to ws2.
+
+**Decision: brief mention is right.**
+
+Add one sentence within the (c-prime) Discussion paragraph
+acknowledging the broader landscape: "The broader post-PLF
+critique landscape extends to other CD-based scientometric findings
+(e.g., Lin et al. 2023a on collaboration distance; Wang et al.
+2023b on geographic dispersion). ws2 engages the citation-inflation
+question specifically rather than auditing related findings."
+
+Don't expand to a separate paragraph. Don't take positions on
+individual papers. Just acknowledge landscape exists and mark our
+scope.
+
+This is enough to demonstrate awareness without expanding scope.
+Reviewers who push for detailed engagement get the honest answer:
+"those debates are out of ws2's scope; we focus on citation-
+inflation specifically because it directly affects our methodology
+defense."
+
+**Phase 0.2 batch refinement to (c-prime) Discussion paragraph.**
+One-sentence addition acknowledging broader post-PLF critique
+landscape with explicit scope-bounding.
 
 ### On C6 — broader landscape of post-PLF critiques
 

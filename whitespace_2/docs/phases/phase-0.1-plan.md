@@ -1844,9 +1844,19 @@ desiderata §9, but same principle).
   - **Add aggregate c(t) control** — median citations per paper at
     5 years post-publication, aggregated to year-level. Currently
     NOT in our spec; PAP 2025 lesson implies it should be.
-  - **Add quadratic on log(avg team size)** — captures non-monotonic
+  - **Add quadratic on log(avg team size) with fallback rule (per
+    PAP 2025 C5 walkthrough, 2026-04-26)** — captures non-monotonic
     team-size effects PAP 2025 documented (negative for small
-    teams, positive for k_p ≥ 8). Currently linear-only.
+    teams, positive for k_p ≥ 8). Currently linear-only. **Fallback
+    rule:** if quadratic coefficient is not significant at p<0.05,
+    default to linear specification for headline; if significant,
+    report non-linear version. Pre-registered to prevent post-hoc
+    specification decision. Why fallback matters here specifically
+    (Test II vs. Test IV): Test II has ~70 field-year observations
+    with ~10 covariates; adding quadratic coefficients reduces DOF
+    from ~60 to ~58-59 (modest power impact). For Test IV
+    (paper-level, millions of observations) the fallback isn't
+    needed; quadratic runs by default.
   - **Add team-size × year interaction** — controls for team size
     growing over time, parallel to PAP 2025's b_{kxt} term.
   - **Switch year-trend (β_t·Y) to year fixed effects** — more
@@ -2076,6 +2086,20 @@ desiderata §9, but same principle).
   aggregate level (Tests I-III metrics, computed once per
   field-year) or use direct value-based measurements (Test IV T_p
   and N_p)." Cost: one sentence in existing Methods paragraph.
+- **Broader post-PLF critique landscape acknowledgment in (c-prime)
+  Discussion (per PAP 2025 C6 walkthrough).** Add one sentence to
+  the (c-prime) Discussion-section paragraph acknowledging that
+  PAP 2025's critique pattern extends beyond PLF 2023 itself to
+  other CD-based scientometric findings (e.g., Lin et al. 2023a on
+  collaboration distance; Wang et al. 2023b on geographic
+  dispersion). Explicitly mark ws2's scope: "ws2 engages the
+  citation-inflation question specifically rather than auditing
+  related findings." Cost: one sentence; folds into existing
+  (c-prime) Discussion paragraph. Why this matters: pre-empts
+  reviewer pushback on related papers we don't address while
+  maintaining bounded scope. We don't take positions on individual
+  papers; we acknowledge the landscape exists and focus on what's
+  load-bearing for ws2.
 - **Specific anchor concepts for Mitigation 4.** List of ~100 concepts with
   representative reference texts, per-field. Phase 0.2 or early Stage 1.
 - **Specific alternative embedding model for Mitigation 2.** Choice between
