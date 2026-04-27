@@ -2181,29 +2181,89 @@ desiderata §9, but same principle).
   threat-specificity as the explicit evaluation criterion.
 
 - **Pre-registered exclusion of degenerate cases for ws2 metrics
-  (per Holst recommendation, 2026-04-27).** Holst's "exclude
-  degenerate cases prior to analysis" methodological principle
-  applied to ws2. Per-metric degenerate-case list:
-  - **Spearman top-N:** field-year cells with fewer than 2N papers
-    excluded (insufficient ranks for stable correlation).
-  - **Citation Gini:** field-year cells with fewer than 50 papers
-    excluded (small-sample Gini high variance).
-  - **Cluster entropy / effective dim / pairwise distance:**
-    field-year cells with fewer than 100 papers excluded
-    (insufficient for stable cluster fit / embedding statistics).
+  with two-stage calibration protocol (per Holst recommendation +
+  EDA-needs walkthrough, 2026-04-27).** Holst's "exclude degenerate
+  cases prior to analysis" methodological principle applied to
+  ws2. The threshold values themselves split into two categories:
+  *theoretically grounded* (can lock now in Phase 0.2) and
+  *empirically dependent* (need EDA on pilot data before locking).
+
+  **Stage A — Phase 0.2 pre-registration (lock now):**
+
+  *Principle:* small-sample field-year cells excluded from
+  metric computation prior to analysis. Each exclusion has a
+  stated rationale tied to metric-stability or small-sample
+  concerns.
+
+  *Theoretically-grounded exclusions (lock now):*
   - **Test IV N_p:** papers with fewer than 5 references excluded
-    from primary analysis (insufficient for stable centroid);
-    already committed.
+    from primary analysis. Rationale: insufficient reference
+    points for stable centroid in cosine-distance computation.
+    Already committed; defensible from principle.
   - **Test IV T_p:** single-author papers (T_p = 0 by construction)
-    handled as baseline comparison group, not excluded; already
-    committed.
+    handled as baseline comparison group, not excluded. Already
+    committed; definitional.
   - **Demographic plurality metrics:** authors with no
-    demographic-confidence-passing inference excluded; already
-    handled via weight-by-confidence + per-region accuracy
-    reporting.
-  Pre-registered exclusions documented in Methods. Each exclusion
-  threshold has a stated rationale tied to metric-stability or
-  small-sample concerns.
+    demographic-confidence-passing inference excluded; weight-by-
+    confidence + per-region accuracy reporting. Already committed
+    via Hofstra C4 framework.
+
+  *Empirically-dependent exclusions (initial heuristics; refine in
+  Stage B):*
+  - **Spearman top-N:** initial heuristic n ≥ 2N for stable
+    correlation. Reason for empirical refinement: variance of
+    Spearman under different (n, N) combinations is data-dependent;
+    citation distribution shape near rank-N matters.
+  - **Citation Gini:** initial heuristic n ≥ 50 (rule-of-thumb for
+    stable Gini under Miller-Madow correction). Reason for
+    empirical refinement: heavy-tailed distributions may need more;
+    actual variance scaling with n is data-dependent.
+  - **Cluster entropy / effective dim / pairwise distance:** initial
+    heuristic n ≥ 100. Reason for empirical refinement: K=50
+    clusters needs a few papers per cluster, but skewed within-
+    cluster distribution affects this; embedding-space spread
+    affects pairwise distance stability.
+
+  **Stage B — Phase 0.1 sanity Check 5 / early Stage 1 EDA-driven
+  calibration:**
+
+  Specific calibration tasks for each empirically-dependent
+  metric:
+
+  - **Spearman top-N stability:** for each (field, year) cell in
+    pilot sample, compute Spearman top-50 between adjacent years
+    at varying n thresholds (n ≥ 100, 200, 500, 1000). Plot
+    variance of Spearman as function of n. Identify inflection
+    point where variance stops decreasing materially. Update
+    threshold to that empirical point. Connects to existing
+    citation-difference-near-threshold diagnostic (PAP 2025 C3 +
+    SQ3 commitment) — same data, complementary angle.
+  - **Citation Gini stability:** for each cell, compute Gini at
+    varying n via bootstrap. Plot bootstrap CI width as function
+    of n. Identify where CI width stabilizes. Update threshold.
+  - **Cluster entropy / eff dim / pairwise distance stability:**
+    bootstrap subsamples at varying sample sizes; plot variance
+    and bias as function of n; identify minimum stable threshold.
+
+  **Update protocol pre-registered:**
+  - If empirically-calibrated threshold is *higher* than initial
+    heuristic → adopt empirical threshold; document rationale.
+  - If empirically-calibrated threshold is *lower* than initial
+    heuristic → adopt empirical threshold only if doing so
+    preserves stability claims; document the looser threshold.
+  - If empirical and heuristic are similar → adopt heuristic;
+    document validation.
+  - All deviations documented in Methods with rationale.
+
+  **Why this two-stage structure matters.** Pre-registering
+  arbitrary thresholds risks either over-exclusion (losing valid
+  data) or under-exclusion (analyzing degenerate cases). EDA-driven
+  calibration matches thresholds to actual data characteristics.
+  But pre-registering the *protocol* prevents post-hoc threshold
+  manipulation to favor desired findings — the calibration follows
+  pre-registered stability criteria, not desired-result criteria.
+  Methodologically clean approach to a real EDA-vs-pre-registration
+  tension.
 - **Specific anchor concepts for Mitigation 4.** List of ~100 concepts with
   representative reference texts, per-field. Phase 0.2 or early Stage 1.
 - **Specific alternative embedding model for Mitigation 2.** Choice between
