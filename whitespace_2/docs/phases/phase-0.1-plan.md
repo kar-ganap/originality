@@ -359,14 +359,17 @@ and the resulting operational refinements:
 
 - **Principle 4 (High-accuracy subgroups) — refines Holst C3 commitment.**
   The existing Holst C3 commitment to a 100-name gender hand-validation
-  is upgraded to **200 names, stratified by name-region** (Anglo ~50,
-  East Asian ~50, South Asian ~30, Arabic-speaking ~30, Slavic ~20, other
-  ~20). Per-stratum accuracy is reported in Methods. Subgroups with
-  per-stratum accuracy below a pre-registered threshold (locked in Phase
-  0.2; tentative 70%) are flagged in Limitations and bound headline
-  claims that disproportionately depend on that stratum. The 100→200
-  upgrade is the cost of supporting per-stratum accuracy CIs of usable
-  width.
+  is upgraded to **300 names, stratified by name-region × era** —
+  six name regions (Anglo, East Asian, South Asian, Arabic-speaking,
+  Slavic, other) crossed with three era buckets (pre-1990, 1990–2010,
+  2010–2024) yielding 18 cells at ~17 names each. Per-cell accuracy is
+  reported in Methods. Cells with per-cell accuracy below a pre-
+  registered threshold (locked in Phase 0.2; tentative 70%) are flagged
+  in Limitations and bound headline claims that disproportionately
+  depend on that cell. The 100→300 upgrade is the cost of supporting
+  per-cell accuracy CIs of usable width across both axes; the
+  region × era stratification (rather than region-only) is forced by
+  C5 spillover-pattern (ii) (gender × era inference-drift, see §9d).
 
 - **Principle 5 (Aggregate + bias-quantification on target population) —
   refines the ORCID validation methodology with a bias-uncertainty band.**
@@ -462,6 +465,139 @@ side's PAP+Holst+PAP-2025 chain):**
   this section).
 - **Controlled-analysis layer:** conditional three-way validation when
   diagnostic triggers (§9b trigger).
+
+#### 9c. ORCID coverage transparency + multi-source bias-quantification
+
+Surfaced from the Lockhart C2 walkthrough. §9a P5 commits to a bias-
+uncertainty band leaning primarily on ORCID-quantified disagreement
+matrices. Lockhart Principle 5 explicitly requires bias-quantification
+on the *target* population. ORCID-having authors are not a random
+sample of ws2's target — coverage is structurally weakest in the
+exact subgroups where Lockhart predicts the largest misclassification:
+
+- Pre-1990 cohort (ORCID launched 2012; pre-1990 retroactive adoption
+  near zero) — interacts adversarially with the §13 pre-1990
+  retention non-negotiable.
+- Non-Western subgroups (Chinese, Indian, much of Global South — local
+  ID systems substitute; ORCID adoption uneven).
+- Possibly women (some empirical evidence of gender-asymmetric ORCID
+  adoption).
+- Career-stage skew (multi-publication mid/senior researchers
+  overrepresented; one-paper authors undercount).
+- Self-reported gender field is optional within ORCID, narrowing the
+  validated subsample further.
+
+§9a P5's bias-uncertainty band as currently specified is structurally
+too tight in the regions of the target population where Lockhart
+predicts the largest misclassification. C2's resolution is fundamentally
+partial — there is no diagnostic that fully escapes the ORCID coverage
+gap. The commitment is to acknowledge the partial nature, supplement
+with multi-source bracketing, widen the band where coverage is weakest,
+and acknowledge the residual.
+
+**Commitments:**
+
+1. **Coverage transparency.** Report ORCID-validated coverage rate
+   per (era × region × gender) cell in Methods. Cells with coverage
+   below a pre-registered threshold (locked in Phase 0.2; tentative
+   20%) are flagged as bias-quantification-weak.
+
+2. **Multi-source bias-quantification.** For each cell of interest,
+   combine three sources of bias estimate:
+   - (a) ORCID-derived disagreement matrix (where coverage permits).
+   - (b) NamSor's published per-region accuracy tables (vendor-
+     published bracketing).
+   - (c) Targeted hand-validation specifically filling cells with weak
+     ORCID coverage (drawn from the §9a P4 300-name budget where
+     possible; supplemented if necessary).
+   The bias estimate per cell is the multi-source combination, weighted
+   by source-credibility per cell.
+
+3. **Subgroup-conditional bias-correction (conditional).** Fit
+   *conditional* disagreement matrices per (era × region) cell where
+   data permits, rather than a single population-wide matrix. Used
+   when §9b within-between decomposition triggers a load-bearing
+   concern for a specific cell.
+
+4. **Bias-uncertainty band widens proportional to coverage strength.**
+   For cells with weak ORCID coverage, the §9a P5 band is widened by
+   an additional Δ (locked in Phase 0.2) reflecting the lower-
+   confidence bias estimate. Reported widening is per-cell, transparent
+   in Methods.
+
+5. **Limitations paragraph (~4 sentences).** Acknowledges the residual
+   coverage-gap concern as a hard limit on principle-5-compliance for
+   ws2 — full resolution requires either custom region-population-
+   specific training (Lockhart Principle 3, deferred per §9a) or
+   substantially expanded hand-validation. The residual is named, not
+   dissolved.
+
+#### 9d. Cross-dimensional spillover — enumeration + sensitivity checks
+
+Surfaced from the Lockhart C5 walkthrough. ws2 has 7+ inferred or
+derived demographic dimensions (gender, country of current affiliation,
+country of earliest affiliation, institution type, prestige tier,
+career stage, training-institution concentration). Errors in any one
+dimension propagate to inferences about correlated dimensions through
+analyses that condition on or stratify by them.
+
+Lockhart's specific examples (disability × nonbinary spillover) don't
+apply directly to ws2 (different demographic dimensions), but the
+structural phenomenon does. Methods explicitly enumerates the six
+anticipated spillover patterns rather than the aggregate "spillover is
+a known concern" framing — honoring Holst-style methodological
+discipline (name alternative explanations, then rule them out or
+absorb them into uncertainty bounds):
+
+**(i) gender × name-region — circularity, not classical spillover.**
+NamSor uses name-region as a feature in gender inference. Per-region
+NamSor accuracy is partly diagnostic of NamSor's internal feature
+dependency, not an independent validation. Independent validation
+comes from ORCID + hand-labeled ground truth (per §9a P4, §9c).
+Methods explicitly distinguishes these. No additional sensitivity
+check needed (already addressed by §9a P4 + §9c).
+
+**(ii) gender × era inference-drift — load-bearing for headline
+trend.** Romanization conventions and naming patterns shift across
+eras (Pinyin standardization 1958 with uneven academic-publishing
+uptake through 1980s; women's citation conventions evolved through
+20th century). Inference accuracy plausibly differs across eras
+independent of region. **Sensitivity check:** Holst C3 / §9a P4 hand-
+validation is stratified region × era (forced here by C5 spillover
+(ii); 300 names across 18 cells); per-cell accuracy reported.
+
+**(iii) name-region × country-of-affiliation — diaspora confounding.**
+Most East-Asian-named authors work at East-Asian institutions;
+diaspora is the unusual case. Errors confusing diaspora with domestic
+propagate to country-of-affiliation comparisons. **Sensitivity check
+(Stage 3 robustness sweep):** repeat country-of-affiliation analyses
+on the domestic-only subset (excluding likely diaspora — name-region ≠
+affiliation-region); trend stability is the test.
+
+**(iv) gender × prestige — entangling regional composition.** Top-50
+institutions have historically had different regional composition than
+non-prestige. Prestige-stratified gender-plurality claims entangle
+substantive gender-prestige correlation, regional composition by
+prestige, and region-specific misclassification. **Sensitivity check
+(Stage 3):** disaggregate gender plurality by prestige tier *and* by
+region; report decomposition.
+
+**(v) country-of-affiliation × institution type — industry concen-
+tration confound.** Industry-heavy countries (US, UK, Israel) bias
+institution-type analyses through country correlation. **Sensitivity
+check (Stage 3):** institution-type analyses run with country fixed
+effects.
+
+**(vi) career stage × gender × era — publication-gap interaction.**
+Career-stage inference uses year of first publication. Women
+historically had publication-gap interruptions; the career-stage
+estimator may be biased for these cohorts. **Acknowledged in
+Limitations** — no sensitivity check committed (lower-priority
+secondary concern).
+
+Patterns (i) and (ii) are addressed within Phase 0.2 / §9a / §9c
+framework; (iii), (iv), (v) are committed as Stage 3 robustness sweep
+deliverables; (vi) is Limitations-only.
 
 ### 10. Disambiguation error floor
 
