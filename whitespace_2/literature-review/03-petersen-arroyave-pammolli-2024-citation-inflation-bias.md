@@ -592,7 +592,117 @@ important?
 
 ### On C1 — deductive reformulation and inflation-spotting lesson
 
-(Pending.)
+Closed via brief walkthrough + pointer to algebraic decomposition
+commitment, 2026-04-26.
+
+**The substantive lesson.** PAP's reformulation `CD = CD^nok /
+(1 + R_k)` exposes a general algebraic vulnerability: *any metric
+of the form "intensive_quantity / (1 + extensive_density_term)" is
+citation-inflation-vulnerable*. The original CD definition `CD =
+(N_i − N_j) / (N_i + N_j + N_k)` doesn't make this obvious — it
+takes the rewriting to surface that the (1 + R_k) factor is what
+forces CD → 0 as R_k → ∞.
+
+**Lesson for designing/vetting metrics.** When evaluating any
+network-based bibliometric metric for cross-temporal use, look for
+this algebraic structure. Specifically:
+- Does the metric have a denominator that grows with citation
+  network density?
+- Can the denominator be decomposed as `(stable_term) +
+  (extensive_term_growing_with_network_density)`?
+- If yes, the metric is inflation-vulnerable; if no, it's
+  structurally protected.
+
+**ws2's metrics pass this test by construction.** Already captured
+in the algebraic decomposition statement we committed to in Phase
+0.2 batch ((a) of the PAP-style inflation diagnostics item):
+- Spearman top-N is rank-based; no extensive denominator.
+- Citation Gini is bounded in [0, 1]; no extensive denominator.
+- Cluster entropy / effective dim / mean pairwise distance operate
+  on embedding space; orthogonal to citation density.
+
+No new content beyond what's in the existing commitment. C1's
+substantive lesson — "structural decomposition reveals inflation
+vulnerability" — is exactly what the algebraic decomposition
+statement captures.
+
+### On C2 — synthetic-network sensitivity and Stage 3 stress-test
+
+Closed as out of scope, 2026-04-26.
+
+C2(a) asks how sensitive PAP's synthetic-network conclusions are
+to alternative model specifications. This is a *PAP-internal*
+methodological critique — does PAP get the right answer? For ws2,
+this doesn't change our positioning: our argument relies on the
+deductive critique (algebraic, model-agnostic) + empirical
+detrended correlation + general inflation-vulnerability reasoning.
+If PAP's synthetic-network conclusions were partially wrong, the
+deductive and empirical pieces would still stand. Out of scope.
+
+C2(b) asks what we'd test on PAP's networks. Honest answer: PAP's
+networks are *citation-only* (no author identities for demographic
+plurality; no paper content for embedding-based semantic plurality).
+The only ws2 metrics testable are Spearman top-50 and citation
+Gini — and our argument for these metrics' inflation-immunity is
+*analytical* (rank-invariance, bounded distribution) — synthetic-
+network confirmation provides minimal additional information beyond
+our analytical defense + observational diagnostics. Stage 3 back-
+pocket only; trigger if observational diagnostics surface concern.
+
+### On C3 — WWE → PAP 2024 → PAP 2025 critique chain structure
+
+Deferred to PAP 2025 reading, 2026-04-26.
+
+The substantive content of C3 (how does each step in the WWE 2019
+→ PAP 2024 → PAP 2025 critique chain tighten the case?) lives in
+PAP 2025 itself. We've previewed the team-size finding (b_k > 0)
+in PAP 2024 Key Idea #5; the deeper engagement with what this
+means for ws2's Test II / Test IV team-size handling happens when
+we read PAP 2025 directly.
+
+### On C4 — structural fix vs. immunity-by-design tradeoffs
+
+Closed via brief acknowledgment, 2026-04-26.
+
+**The methodological choice.** PAP proposes a *structural fix*
+(capping reference list lengths) to address citation inflation.
+ws2 takes the opposite approach: *immunity-by-design* (rank-
+invariant Spearman, bounded Gini, embedding-space metrics
+orthogonal to citation density).
+
+**The substantive tradeoff:**
+- *Structural fix* attacks the root cause (citation inflation) and
+  in principle preserves the CD-index for cross-temporal use.
+  Cost: requires coordinated change in publishing practice
+  (journal-level enforcement); doesn't help analyses already done
+  on inflation-contaminated data.
+- *Immunity-by-design* sidesteps the issue at the metric level by
+  choosing measurements robust to citation network density growth.
+  Cost: doesn't address citation inflation as a phenomenon; just
+  avoids it.
+
+**For ws2.** We've already chosen immunity-by-design (committed in
+desiderata + Phase 0.1 plan). The tradeoff is methodologically
+interesting but doesn't change our design. Brief acknowledgment
+sufficient; the Methods-section paragraph defending the
+inflation-immune claim (PLF (c-prime) commitment #1) already
+articulates why we chose this approach. PAP's structural-fix
+proposal is mentioned in our PAP review for completeness but
+isn't load-bearing for ws2 positioning.
+
+### On C5 — substrate-diversity vs. synthetic-network argument strength
+
+Closed as out of scope, 2026-04-26.
+
+C5 asks whether PAP's synthetic-network approach (substrate-
+agnostic by construction) gives them stronger conclusions than
+PLF's empirical multi-database approach. This is a *PAP vs. PLF
+methodological adjudication* question — interesting but doesn't
+affect ws2's design or positioning. We engage both PAP and PLF
+through their substantive findings + our (c-prime) inflation-
+immune evidence framing; the relative merits of their respective
+methodologies are out of scope. C3/SQ10 already addresses our
+own substrate concerns separately.
 
 ### On C2 — synthetic-network sensitivity and Stage 3 stress-test
 
@@ -619,11 +729,14 @@ ws2-relevant if any are walked through collaboratively.)
 
 ### SQ1 — R_k as extensive vs. intensive
 
-(Pending.)
+Skipped — comprehension-level. Substantive content captured in
+Key Idea #2 (CD = CD^nok / (1+R_k) reformulation) and the
+algebraic decomposition statement in Phase 0.2 batch.
 
 ### SQ2 — Three-line critique structure contributions
 
-(Pending.)
+Skipped — comprehension-level. Paper-organization understanding;
+not load-bearing for ws2 design.
 
 ### SQ3 — R²=0.96 methodological significance
 
@@ -791,16 +904,28 @@ substantive signal. Captured in
 
 ### SQ4 — Why CD_5 increases without CI
 
-(Pending.)
+Skipped — substantively interesting but ws2 doesn't claim to model
+underlying citation dynamics. The result that pure preferential-
+attachment + no CI produces *increasing* CD over time is consistent
+with PAP's argument that CI is the dominant decline cause; that's
+all we need for ws2 positioning.
 
 ### SQ5 — Why no CD-index variant can be inflation-robust
 
-(Pending.)
+Skipped — covered via Key Idea #2 (algebraic reformulation) + PLF
+SQ7 (PLF's normalization variants don't address numerator
+inflation) + the Phase 0.2 algebraic decomposition statement
+commitment.
 
 ### SQ6 — Omitted-variable bias lesson for scientometrics
 
-(Pending.)
+Deferred to PAP 2025. The substantive content (omitted-variable
+bias in scientometric regressions; what other findings might be
+suspect) lives in PAP 2025's deeper team-size re-analysis. We'll
+engage SQ6 in the PAP 2025 review.
 
 ### SQ7 — Fisher-Tippett distribution proposal viability
 
-(Pending.)
+Skipped — ws2 doesn't need a CD-index replacement metric (we have
+our own). PAP's Fisher-Tippett proposal is underdeveloped in the
+paper and out of ws2 scope.
