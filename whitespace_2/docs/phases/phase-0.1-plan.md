@@ -1833,6 +1833,90 @@ desiderata §9, but same principle).
     higher-priority and lower-cost. Synthetic-network stress-test
     remains as Stage 3 back-pocket; trigger if (b) or (c)
     diagnostics surface concerning patterns.
+- **Test II gap regression specification refinement (per PAP 2025
+  walkthrough, lit-review session 2026-04-26).** PAP 2025's lesson
+  generalizes: when team size is a regressor in any scientometric
+  analysis, also include reference list length and citation impact
+  as controls because all three correlate strongly over time.
+  Without these, β_t (the gap-trend coefficient — our headline
+  finding) is potentially contaminated by omitted-variable bias.
+  Specific refinements to existing Test II controls list:
+  - **Add aggregate c(t) control** — median citations per paper at
+    5 years post-publication, aggregated to year-level. Currently
+    NOT in our spec; PAP 2025 lesson implies it should be.
+  - **Add quadratic on log(avg team size)** — captures non-monotonic
+    team-size effects PAP 2025 documented (negative for small
+    teams, positive for k_p ≥ 8). Currently linear-only.
+  - **Add team-size × year interaction** — controls for team size
+    growing over time, parallel to PAP 2025's b_{kxt} term.
+  - **Switch year-trend (β_t·Y) to year fixed effects** — more
+    flexible specification, and we already have year-FE elsewhere
+    in the plan.
+  - **Already have:** median references per paper (aggregate r(t)
+    proxy); avg team size (linear); other secular-growth covariates.
+  - **Cost:** computationally trivial. Same data, refined regression
+    specification.
+  - **Bias direction without these:** unclear (could push β_t up
+    or down depending on c(t) and quadratic-team-size dynamics).
+    The risk is real even if direction is uncertain.
+- **Test IV regression specification refinement (per PAP 2025
+  walkthrough, lit-review session 2026-04-26).** Test IV is a
+  paper-level regression like PAP 2025's, so PAP 2025's lessons
+  transfer directly. Specific refinements:
+  - **Add c_p (citation impact of paper p) as paper-level control**
+    — paper's own citation count at 5 years post-publication.
+    Currently NOT in our spec. Critical because c_p correlates with
+    both T_p (team diversity may correlate with citation impact via
+    international collaborations) and N_p (highly-cited papers may
+    have systematically more diverse or more concentrated reference
+    lists). Without c_p control, γ₁ absorbs whatever c_p is doing —
+    classic omitted-variable bias.
+  - **Add log(number of authors)² — quadratic on team size** —
+    captures non-monotonic team-size effects per PAP 2025.
+  - **Add log(number of references)² — quadratic on reference list
+    length** — captures non-linear citation-inflation effects.
+  - **Already have:** number of authors (linear), number of
+    references (linear), mean career stage, mean prestige, log
+    paper age, field dummy, year-FE, subfield-FE, double-clustered
+    SEs.
+  - **Cost:** computationally trivial. Three additional regression
+    coefficients (c_p, log(authors)², log(refs)²).
+  - **Why this isn't load-bearing for our central γ₁ estimate** but
+    is load-bearing for *defensible* γ₁ estimate: the omitted-
+    variable bias from missing c_p could be small in magnitude (we
+    have year-FE and subfield-FE absorbing many confounds), but
+    PAP 2025's WWE 2019 critique demonstrates this kind of bias can
+    flip signs of small effects.
+- **Effect-size threshold calibration review (per PAP 2025
+  walkthrough, lit-review session 2026-04-26).** PAP 2025 reports
+  residual effect sizes of **0.06σ (time)** and **0.09σ (team
+  size)** as "noise level" in their post-controls regressions. The
+  general lesson: in scientometric regressions involving network-
+  density-correlated covariates, anything below ~0.1σ is at the
+  noise floor.
+  - **Specific concern: Test IV |γ₁| ≥ 0.05σ threshold is below
+    PAP 2025's noise level.** Our pre-registered Test IV threshold
+    of 0.05σ for substantive significance falls *below* what PAP
+    2025 calls noise. If our analysis returns γ₁ = 0.06σ, we'd
+    report it as a substantively significant headline finding —
+    but it would be at the same magnitude PAP 2025 dismisses as
+    noise. **Decision: raise Test IV threshold from 0.05σ to
+    0.10σ** to safely clear the published noise calibration.
+  - **Test I threshold review.** Currently Test I slope ≥ 0.02
+    SD/year (a 1-SD gap change over 50 years). Different units
+    than PAP 2025's σ-units; not directly comparable. Need to
+    compute what 0.02 SD/year corresponds to in σ-units terms over
+    our 1990-2024 window — probably moderate effect, but worth
+    checking. If conversion shows Test I threshold is also below
+    0.10σ-equivalent, raise.
+  - **Cost:** zero — just re-pre-registering thresholds before
+    Stage 2 runs.
+  - **Why this matters substantively.** If our pre-registered
+    threshold is below the noise floor, our headline claim becomes
+    methodologically indefensible against PAP 2025-style critique.
+    Raising the threshold is a defensive move that doesn't change
+    our analysis, just our claim of what counts as substantively
+    significant. Better conservative than vulnerable.
 - **Specific anchor concepts for Mitigation 4.** List of ~100 concepts with
   representative reference texts, per-field. Phase 0.2 or early Stage 1.
 - **Specific alternative embedding model for Mitigation 2.** Choice between
