@@ -732,7 +732,63 @@ session happens.)
 
 ### On C1 — degenerate cases of ws2 metrics
 
-(Pending.)
+Working session with user, 2026-04-27.
+
+**Already explicitly handled (existing commitments):**
+- Test IV N_p: < 5 references → exclude
+- Test IV T_p: single-author → baseline (definitional T_p = 0)
+- Demographic plurality: weight-by-confidence + per-region accuracy
+- Spearman top-N / Gini / embedding metrics: small-sample exclusion
+  via two-stage calibration protocol
+
+**Possibly missed degenerate cases identified in this audit:**
+
+*(1) Test IV upper-bound on team size — large-team saturation.*
+HEP-style collaborations (k_p > 500) may have T_p saturated near
+maximum (every demographic group represented mechanically). Three
+options considered:
+- (a) Exclude k_p > 50 from primary (initial recommendation —
+  rejected; loses too much data)
+- (b) Large-team binary dummy at arbitrary threshold (rejected;
+  fuzzy discontinuity, not well-modeled by binary)
+- (c) Sensitivity check at high threshold k_p > 500 (HEP-specific
+  saturation regime)
+
+**Refined recommendation: option (c) with k_p > 500.** Adds one
+row to existing measurement-robustness appendix; primary spec
+unchanged. The existing (log k_p)² quadratic from PAP 2025
+refinement handles 50-500 range non-linearity; only the extreme
+saturation tail (k_p > 500, < 1% of papers, concentrated in HEP)
+needs separate handling.
+
+*(2) Test IV papers with c_p = 0 (uncited at 5 years).* Direct
+Holst parallel: PLF set CD-index of uncited papers to "non-defined"
+or 0 by convention. We now have c_p as a control (per PAP 2025
+SQ8). Papers with c_p = 0 have ill-defined relationships with N_p
+(no community uptake → can't really test "team diversity →
+community-recognized novelty"). Pre-register: exclude c_p = 0 from
+Test IV primary; include as sensitivity-only subset.
+
+*(3) Subfield mechanism test temporal-window degeneracy.* Subfields
+with < N years of data → can't compute meaningful CanonConc_s or
+DivMag_s time series slope. Pre-register: subfields with fewer
+than 10 years of post-1990 coverage excluded from subfield
+mechanism test.
+
+*(4) Demographic plurality coverage threshold per year.* Years
+with extremely sparse demographic inference might give unstable
+estimates. Pre-register: years where < 50% of authors have
+confident demographic inference flagged with disclaimer (not
+excluded; reported with explicit caveat).
+
+*(5) Anchor-concept distribution for drift mitigation.* Mitigation
+4 (anchor-projection) requires anchor concepts well-distributed
+across subfields. Subfields with fewer than ~5 anchor concepts
+might give unstable anchor-projection. Pre-register: anchor-concept
+distribution diagnostic (sanity check) as part of Phase 0.1
+classifier-drift audit.
+
+**Phase 0.2 batch additions captured separately in plan.**
 
 ### On C2 — robustness-check threat-level analysis for ws2
 
@@ -812,6 +868,46 @@ subfield assignment changes over time, all subfield-level analyses
 inherit the drift. **Mitigation: classifier drift audit (Phase 0.1
 sanity Check 2); audit metric-level; if drift identified, downstream
 handling decided.**
+
+**Additional threats identified in audit (2026-04-27):**
+
+*Threat F: Preprocessing decision biases.* Upstream of metric
+computation: abstract text cleaning rules; citation count
+aggregation method; subfield assignment tie-breaking; author
+identity merging when ORCID conflicts with OpenAlex disambiguation.
+**No metric-level robustness check catches these.** Mitigation:
+pre-register preprocessing rules in detail; document choices;
+acknowledge in Limitations as inherent uncertainty.
+
+*Threat G: Citation-window choice (5-year aggregation).* Spearman
+top-N and Gini use citations within Δ=5 of publication. The
+choice of 5 vs. 3 vs. 10 years is methodological; could affect
+findings. Multi-Δ Spearman commitment addresses *adjacent-year
+stability* but not *underlying citation-window aggregation*.
+Mitigation: extend to Δ_aggregate ∈ {3, 5, 10} sensitivity.
+
+*Threat H: Multiple-comparisons across full analysis landscape.*
+Hundreds of statistical tests across our pre-registration
+(Tests I-IV × multi-N × multi-Δ × subfield × etc.). Bonferroni
+correction within test-types; no global adjustment. Mitigation:
+pre-register hierarchy — headline claim requires *agreement
+across* Tests I-IV, not significance in any single test (parallel
+to Chu-Evans's six-prediction structure).
+
+*Threat I: Bootstrap CI failure modes.* We use 200-replicate
+bootstrap CIs. Bootstrap can fail under heavy tails, dependent
+observations, or small samples. Test I/II uses Newey-West HAC SEs
+(handles autocorrelation); other bootstrap CIs may not. Mitigation:
+sensitivity check — compare bootstrap CIs to alternative-method
+CIs (jackknife, BCa) for headline metrics.
+
+*Threat J: Temporal binning choice (year-level aggregation).*
+Year-level aggregation could obscure finer dynamics or coarser
+trends. Mitigation: one-sentence acknowledgment in Methods of
+year-level choice; not load-bearing for ws2 design.
+
+**Eight Phase 0.2 batch additions from C1 + C2 audit captured
+separately in plan.**
 
 **Four actions to prevent robustness-check failure.**
 

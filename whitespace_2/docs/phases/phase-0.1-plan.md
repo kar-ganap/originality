@@ -2363,6 +2363,112 @@ desiderata §9, but same principle).
   - **Cost:** computationally trivial. One additional coefficient
     per Tests I-III regression.
 
+- **Test IV k_p > 500 sensitivity row (per Holst C1 walkthrough,
+  2026-04-27).** Add one row to existing pooled measurement-
+  robustness appendix (Hofstra C8 commitment): Test IV regression
+  restricted to papers with k_p ≤ 500. Captures HEP-saturation
+  regime specifically (large collaborations where T_p saturates
+  near maximum because every demographic group represented
+  mechanically). Primary spec unchanged — existing (log k_p)²
+  quadratic from PAP 2025 refinement handles 50-500 range; this
+  addresses extreme tail only (< 1% of papers, concentrated in
+  HEP). Cost: one additional row in robustness appendix.
+
+- **Test IV exclude c_p = 0 papers from primary (per Holst C1
+  walkthrough, 2026-04-27).** Direct Holst-parallel: PLF set
+  CD-index of uncited papers to "non-defined" or 0 by convention.
+  Papers with c_p = 0 (uncited at 5 years post-publication) have
+  ill-defined relationships with N_p — no community uptake means
+  we can't test "team diversity → community-recognized novelty"
+  for these papers. Pre-register: exclude c_p = 0 from Test IV
+  primary analysis; include as sensitivity-only subset (one row
+  in robustness appendix). Substantive rationale matches PLF's
+  treatment of CD = 0 cases.
+
+- **Subfield mechanism test temporal-coverage threshold (per Holst
+  C1 walkthrough, 2026-04-27).** Subfields with < 10 years of
+  post-1990 coverage excluded from subfield mechanism test.
+  Insufficient time series for stable slope estimation in either
+  CanonConc_s (mean Spearman over time series) or DivMag_s (slope
+  of standardized gap). Refinement to existing subfield mechanism
+  test specification.
+
+- **Demographic plurality per-year coverage disclaimer (per Holst
+  C1 walkthrough, 2026-04-27).** Years where < 50% of authors
+  have confident demographic inference flagged with explicit
+  disclaimer (not excluded). Years below threshold reported with
+  caveat in headline figures and tables: "demographic plurality
+  estimate for year Y based on partial coverage; interpret with
+  caution." Refinement to existing weight-by-confidence handling.
+
+- **Anchor-concept distribution diagnostic (per Holst C1
+  walkthrough, 2026-04-27).** Add to Phase 0.1 sanity Check 2
+  (concept classifier drift audit) a check: per-subfield count
+  of anchor concepts. Subfields with < 5 anchor concepts flagged
+  as having unstable anchor-projection (Mitigation 4); downstream
+  handling: subfield-level anchor-projection results for these
+  subfields reported with caveat or excluded from anchor-projected
+  semantic-diversity metrics. Refinement to existing classifier-
+  drift audit.
+
+- **Multiple-comparisons hierarchy pre-registration (per Holst C2
+  Threat H walkthrough, 2026-04-27).** Pre-register that ws2's
+  *headline claim* requires agreement across Tests I, II, III,
+  and IV — not significance in any single test. Parallel to
+  Chu-Evans's six-prediction structure (where the substantive
+  claim required agreement across all six predictions, not just
+  any one). Existing Bonferroni correction within test-types is
+  retained for *within-test-type* multiple comparisons; the
+  *across-test-type* multiple-comparisons concern is addressed by
+  the agreement requirement, not by additional Bonferroni.
+  Specifically:
+  - **Headline divergence claim** (gap-trend > 0): requires
+    Test I significant + Test II significant + Test III shows
+    no aggressive lagged-tracking pattern + Test IV consistent
+    direction.
+  - **Disagreement across tests** → substantively interesting;
+    report all four with explicit interpretive grid; don't claim
+    headline.
+  - **All four agree** → headline claim defensible; conjunction
+    is the multiple-comparisons-correction strategy.
+  Documented in Methods alongside the per-test Bonferroni rules.
+
+- **Citation-window aggregation sensitivity (per Holst C2 Threat G
+  walkthrough, 2026-04-27).** Extend existing multi-Δ Spearman
+  commitment (Δ ∈ {1, 5, 10} adjacent-year-stability lag) to
+  also include Δ_aggregate ∈ {3, 5, 10} sensitivity for the
+  underlying citation-window aggregation. The two are different
+  parameters (Δ = stability lag between top-N lists; Δ_aggregate
+  = years of citations counted to identify "top-N"). Report both
+  as sensitivity rows in robustness appendix. Extends existing
+  multi-Δ commitment from one parameter to two.
+
+- **Bootstrap CI alternative-method sensitivity (per Holst C2
+  Threat I walkthrough, 2026-04-27).** For headline metrics in
+  Tests I-III, compare 200-replicate Pearson bootstrap CIs to
+  alternative-method CIs (jackknife, BCa bootstrap, or analytical
+  SEs where available). Sensitivity check at headline level only
+  — not exhaustive coverage. If alternative-method CIs differ
+  materially (>20% width difference), flag and investigate.
+  Single sensitivity row in robustness appendix.
+
+- **Preprocessing acknowledgment in Limitations (per Holst C2
+  Threat F walkthrough, 2026-04-27).** Methods/Limitations
+  paragraph documenting that preprocessing decisions (abstract
+  cleaning, citation aggregation, tie-breaking, identity-merging)
+  are pre-registered but represent inherent uncertainty not
+  captured by metric-level robustness checks. ~100 words.
+  Methodologically humble; matches Holst's lesson on robustness-
+  check-failure-modes (level-mismatch).
+
+- **Year-level aggregation acknowledgment in Methods (per Holst
+  C2 Threat J walkthrough, 2026-04-27).** One-sentence
+  acknowledgment: "ws2 aggregates to year-level for the temporal
+  axis. Finer (monthly, quarterly) or coarser (5-year period)
+  aggregations are not pursued; year-level is methodologically
+  defensible given citation-window-aggregated metrics but
+  represents a methodological choice." Folds into Methods.
+
 - **Specific anchor concepts for Mitigation 4.** List of ~100 concepts with
   representative reference texts, per-field. Phase 0.2 or early Stage 1.
 - **Specific alternative embedding model for Mitigation 2.** Choice between
