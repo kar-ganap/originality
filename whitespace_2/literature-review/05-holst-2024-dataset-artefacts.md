@@ -871,7 +871,122 @@ This is methodological humility matching Holst's lesson.
 
 ### SQ6 — Empirical vs. structural critique complementarity
 
-(Pending.)
+Working session with user, 2026-04-27.
+
+**The three critique types in the post-PLF chain.**
+
+*PAP 2024 — deductive structural critique.* Attacks CD-index *as
+a metric*, regardless of dataset. Mathematical: CD = CD^nok /
+(1+R_k); R_k grows with citation density; CD → 0 mechanically.
+Generalizable to any dataset where citation networks densify.
+Methodology: algebraic + synthetic-network simulation.
+
+*Holst 2024 — empirical data-quality critique.* Attacks PLF's
+*specific empirical results*. Empirical: zero-reference papers in
+early eras → CD_5 = 1 mechanically; metadata quality improvement
+over time → declining average CD. Less generalizable; depends on
+which datasets have which quality issues. Methodology: dataset
+diagnosis + hand-validation + cross-database replication.
+
+*PAP 2025 — empirical re-analysis with proper controls.* Attacks
+PLF's *interpretation*. Even controlling for r_p, c_p, year-FE,
+k_p with quadratic terms, residual effects 0.06σ (time) /
+0.09σ (team size) — at noise level. Methodology: multivariate
+regression + PNAS quasi-experiment.
+
+**Are they complementary, redundant, or conflicting?**
+
+**Complementary.** Each individually has limitations the others
+address:
+
+| Critique | What's strong | What's weak |
+|---|---|---|
+| PAP 2024 | Theoretical certainty; metric-level vulnerability provable | "Maybe in real data the bias is small" — no empirical magnitude |
+| Holst | Strong empirical evidence on specific dataset | "Fix the data and the decline reappears" — doesn't address metric vulnerability |
+| PAP 2025 | Controlled-analysis noise-level result | "Maybe controls over-correct" — doesn't address structural metric problem |
+
+Each is defensible-against individually. The conjunction is much
+harder to defend.
+
+**What the conjunction proves: triple-jeopardy defense burden.**
+
+To preserve PLF's claim, a defender must simultaneously:
+
+1. Refute the structural vulnerability (PAP 2024) — *very hard*;
+   algebra is direct.
+2. AND show artefacts aren't dominant in their data (Holst) —
+   *very hard*; hand-validation is direct.
+3. AND show controlled analyses find substantive non-noise
+   magnitude (PAP 2025) — *very hard*; multiple independent
+   re-analyses converge.
+
+Failing any one collapses the defense. Three independent successes
+required. Individual critiques might be parried; the chain is hard
+to break.
+
+**Potential conflicts considered.**
+
+- *PAP 2024's structural critique vs. Holst's artefact-driven
+  decline?* Compatible. Artefact-driven decline operates *through*
+  the structural vulnerability.
+- *PAP 2025's noise-level vs. Holst's artefact-driven decline?*
+  Different methodologies on related datasets. Both report same
+  direction (decline disappears post-correction). Convergent
+  evidence; could have diverged but didn't. Slightly over-
+  determined but that's a strength, not weakness.
+
+**The general methodological lesson — three-layer defense pattern.**
+
+The post-PLF critique chain illustrates a generalizable pattern:
+
+| Layer | Type | Purpose |
+|---|---|---|
+| Theoretical/analytical | Show structural property of metric | Establishes when metric is/isn't valid |
+| Empirical diagnostic | Show specific data behaves as theory predicts | Validates theory in actual conditions |
+| Controlled analysis | Show effect persists/disappears under proper controls | Removes alternative explanations |
+
+For ws2's own methodological defense, we should aim for the same
+three-layer pattern. **We already have all three layers committed:**
+
+| Layer | ws2's existing commitment |
+|---|---|
+| Theoretical/analytical | Rank-invariance argument; algebraic decomposition statement; PAP 2025 three-conditions framework — all in (c-prime) sub-commitment 1 |
+| Empirical diagnostic | PAP-style inflation diagnostics (stationarity, detrended correlation); decoupled-subfield robustness; pre-1990 dummy operational diagnostic |
+| Controlled analysis | Test II/IV regression specifications with proper controls (c_p, quadratics, year-FE, subfield-FE); PAP 2025-style refinements |
+
+The SQ6 walkthrough validates that ws2's methodological defense
+follows the same successful structure as the post-PLF critique
+chain.
+
+**Refinement: explicit three-layer framing in Methods.**
+
+Currently our defenses are scattered across commitments. Organizing
+them as an explicit three-layer structure makes the conjunction
+visible:
+
+- *Layer 1 (theoretical):* "Our metrics are structurally
+  inflation-immune [three-conditions framework]."
+- *Layer 2 (empirical diagnostic):* "Our metrics empirically pass
+  inflation-vulnerability diagnostics [stationarity + detrended
+  correlation results]."
+- *Layer 3 (controlled analysis):* "Our findings persist under
+  proper-control regression specifications [PAP 2025-style
+  controls]."
+
+This is an organizational refinement to (c-prime) sub-commitment 1
+(Methods paragraph defending inflation-immunity). Same content;
+better structure. ~7-9 sentences becomes 3 short paragraphs.
+
+**Methodologically stronger because:**
+
+- Explicitly mirrors the structure of the most successful critique
+  chain in the post-PLF literature.
+- Makes triple-convergence visible to reviewers.
+- Pre-empts pushback on any individual layer with the
+  conjunction-strength argument.
+
+**Phase 0.2 batch refinement: three-layer Methods structure
+captured separately in plan.**
 
 ### SQ7 — Robustness-check-failure level analysis
 

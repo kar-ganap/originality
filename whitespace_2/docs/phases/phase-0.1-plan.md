@@ -1591,21 +1591,24 @@ desiderata §9, but same principle).
   "resolving" it; explicitly acknowledge the construct gap (semantic
   plurality ≠ disruption); pre-commit to symmetric framings. Four
   concrete commitments:
-  - **(1) Methods-section paragraph defending inflation-immunity,
-    organized via PAP 2025's three-conditions framework (per PAP
-    2025 C4 walkthrough, lit-review session 2026-04-26).** ~7-9
-    sentences. PAP 2025's Discussion lays out three conditions any
-    cross-temporal citation metric should satisfy: (i) stationary
-    distribution over time; (ii) most weakly sensitive to secular
-    growth (especially CI from r(t) and n(t) growth); (iii)
-    captures consensus of broader scientific community, not entirely
-    dependent on author choices. CD-index fails all three
-    structurally; ws2's metrics pass all three by construction or
-    via committed mitigations. Use this as organizing structure
-    for the Methods paragraph:
-    - Spearman top-N satisfies (i) bounded in [−1, 1] + rank-
-      stable; (ii) rank-invariant; (iii) determined by community
-      citation patterns.
+  - **(1) Methods-section three-layer defense of inflation-immunity
+    (per PAP 2025 C4 + Holst SQ6 walkthroughs, lit-review sessions
+    2026-04-26 / 2026-04-27).** Structure as three short paragraphs
+    explicitly mirroring the post-PLF critique chain pattern. The
+    conjunction provides triple-convergence evidence; each layer
+    addresses limitations of the others.
+
+    *Layer 1 (theoretical/analytical):* organized via PAP 2025's
+    three-conditions framework. PAP 2025's Discussion lays out
+    three conditions any cross-temporal citation metric should
+    satisfy: (i) stationary distribution over time; (ii) most
+    weakly sensitive to secular growth; (iii) captures consensus
+    of broader scientific community, not entirely dependent on
+    author choices. CD-index fails all three structurally; ws2's
+    metrics pass all three:
+    - Spearman top-N satisfies (i) bounded + rank-stable;
+      (ii) rank-invariant; (iii) determined by community citation
+      patterns.
     - Citation Gini satisfies (i) bounded in [0, 1]; (ii) tested
       by detrended diagnostic; (iii) based on community-wide
       citation distribution.
@@ -1614,15 +1617,45 @@ desiderata §9, but same principle).
       citation network structure (with cluster-fit temporal
       stratification per desiderata §11 and drift-mitigation
       ladder ensuring (i)).
-    Two ws2-specific extensions of the framework: (iv) robustness
-    to author-disambiguation errors (handled by Hofstra C8
-    identity-confidence diagnostic); (v) robustness to missing
-    references in early-era data (handled by pre-1990 tier
-    specifications). Methods paragraph cites PAP 2025 as the
-    framework source and notes ws2 satisfies the conjunction.
-    This is methodologically stronger than purely defensive
-    structural arguments because it appeals to a published criterion
-    set rather than ad-hoc claims of inflation-immunity.
+    Two ws2-specific extensions: (iv) robustness to author-
+    disambiguation errors (Hofstra C8 identity-confidence
+    diagnostic); (v) robustness to missing references in early-era
+    data (drift-mitigation ladder + pre-1990 dummy diagnostic).
+    Cite PAP 2025 as framework source; note ws2 satisfies the
+    conjunction.
+
+    *Layer 2 (empirical diagnostic):* document that our metrics
+    empirically pass inflation-vulnerability diagnostics. Reference
+    PAP-style observational diagnostics (stationarity test,
+    detrended correlation-with-r(t)). Pre-registered interpretive
+    thresholds. If diagnostics surface concerning patterns, fall
+    back to back-pocket synthetic-network stress-test.
+
+    *Layer 3 (controlled analysis):* document that ws2's findings
+    persist under proper-control regression specifications. Test
+    II + Test IV regression refinements (c_p control, quadratic
+    terms, year-FE, subfield-FE) per PAP 2025 lessons. Effect-size
+    threshold calibrated to PAP 2025's 0.10σ noise floor. Both
+    with-c_p and without-c_p specifications pre-registered for
+    bad-control transparency.
+
+    **Why three layers matters methodologically.** The post-PLF
+    critique chain illustrates that single-layer evidence is
+    defensible-against; conjunction across theoretical + empirical-
+    diagnostic + controlled-analysis is much harder to defend
+    against. Each layer addresses the limitations of the others:
+    Layer 1 establishes when metric is valid (theoretical);
+    Layer 2 validates theory in actual conditions (empirical);
+    Layer 3 removes alternative explanations (controlled). Same
+    pattern as PAP 2024 + Holst + PAP 2025 critique-chain
+    structure. This is methodologically stronger than purely
+    defensive structural arguments because it explicitly mirrors
+    the most successful critique-chain pattern in the post-PLF
+    literature.
+
+    **Length:** ~3 short paragraphs (~5-7 sentences each) instead
+    of single ~7-9 sentence paragraph. Same content, better
+    structure that makes the conjunction visible to reviewers.
   - **(2) Discussion-section paragraph engaging PLF.** ~5 sentences.
     Cite PLF's substantive claim, cite Petersen-Arroyave-Pammolli
     2024 + Holst et al. 2024 critique chain, position ws2's
