@@ -851,6 +851,22 @@ Deliverables in rough order:
     - **(B)** Acknowledge in Limitations and proceed with narrower
       analytical population (~50% of OpenAlex CS+Physics papers).
   - See `experiments/phase-0.1/arxiv-coverage.md`.
+- **Status (Check 1e, run 2026-04-27):** **path (C) decisively ruled out.**
+  S2AG fill rate on OpenAlex no-abstract subset post-1990 is 2.2% (CS) /
+  5.2% (Physics) — far below the 50% threshold. S2AG actually has *less*
+  abstract coverage than OpenAlex on this sample (9.7% / 15.5% post-1990),
+  not more. The two sources overlap heavily on abstract-having papers;
+  joint (OA OR S2AG) is only 1-2 pp higher than OpenAlex alone. The mental
+  model "SPECTER2 trained on S2AG → S2AG has best CS/Physics coverage" is
+  backwards: SPECTER2 was trained on *the S2AG corpus that exists*, which
+  is dramatically smaller than OpenAlex's CS+Physics population. DOI-join
+  feasibility is also weaker than expected (55.8% / 72.1% DOI rate; 69.6%
+  / 85.8% S2AG-found rate among DOI-having). **Remaining options:** path
+  (A') direct arXiv API integration (multi-day batch job, fragile DOI/title
+  matching), or path (B) acknowledge the structural ~50% bottleneck in
+  Limitations and proceed with the narrower analytical population. See
+  `experiments/phase-0.1/s2ag-coverage.md` for full interpretation and
+  proposed next steps.
 
 ### Check 2 — Concept classifier drift audit
 
