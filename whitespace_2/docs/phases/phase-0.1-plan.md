@@ -1670,6 +1670,68 @@ desiderata §9, but same principle).
       mechanism narratives. This preserves ws2's observational
       scope per program desiderata and per the Test IV "Causal
       interpretation caveat (pre-baked)" stance.
+- **Program-aware observational-scope framing (meta-commitment, per
+  PLF C8 + program-structure walkthrough, lit-review session
+  2026-04-26).** Generalizes the Chu-Evans mechanism-trim and PLF
+  C8 causal-pathway non-endorsement into a paper-wide framing
+  commitment. ws2 is the empirical/observational layer of a
+  3-whitespace research program (ws2 = empirical decomposition;
+  ws3 = theoretical reconciliation, future; ws1 = agent simulation,
+  future). Causal claims live in ws3 (formal model) and ws1
+  (counterfactual simulation), not in ws2. ws2 documents covariation
+  in time series; we do not claim causal direction or mechanism.
+  Three operational moves to make this visible in the eventual ws2
+  paper:
+  - **(1) Methods-section observational-scope statement.** ~3
+    sentences. ws2 documents covariation in three time series at
+    the field-aggregate level (demographic plurality, semantic
+    plurality, canonical concentration); we do not claim causal
+    direction or mechanism; mechanistic explanation is reserved
+    for the follow-up theoretical (ws3) and simulation (ws1)
+    studies in our research program. Pin down once; refer back as
+    needed.
+  - **(2) Discussion-section: route mechanism speculation to
+    follow-up work.** When discussing implications, frame mechanism
+    speculation as questions for ws3/ws1, not answers from ws2.
+    Concrete language pattern: "if our finding reflects actuator-
+    homogenization, the next step is to test this counterfactually
+    (ws1) or formalize it (ws3)" — not "our finding establishes
+    that actuator-homogenization is operative." Apply consistently
+    across Discussion paragraphs that gesture toward mechanism.
+  - **(3) Limitations section: scope as deliberate design choice.**
+    Explicitly state the observational-scope limitation, framed as
+    deliberate epistemic-layer separation rather than methodological
+    weakness. Pre-empts reviewers who might frame it as a flaw.
+    Specifically: "ws2's observational scope is a design choice,
+    not a limitation of available data. Causal claims about the
+    mechanisms underlying any observed divergence require the
+    formal modeling and counterfactual simulation that constitute
+    the follow-up whitespaces of this research program."
+  - **Connection to existing commitments.** This generalizes the
+    Test IV "causal interpretation caveat (pre-baked)" stance to
+    apply paper-wide; matches the Chu-Evans mechanism-trim (we use
+    Chu-Evans methodologically + empirically, not mechanistically);
+    matches the PLF C8 causal-pathway non-endorsement (we cite PLF
+    descriptively, not as endorsement of narrowing-mechanism story).
+    The meta-principle: *ws2 cites empirical observations from
+    upstream papers and presents its own findings as covariation
+    documentation; mechanism specification is reserved for ws3
+    and ws1.*
+  - **Why this scope trimming is appropriate.** Two-fold: (a)
+    program-structure coherence — keeping ws2 observational
+    preserves clean epistemic-layer separation across the
+    3-whitespace program; if ws2 made causal claims, it would step
+    on ws3 / ws1 territory and weaken the program's overall
+    coherence; (b) cleaner peer-review path — at the Nature/PNAS
+    level (the natural peer set), reviewers are alert to
+    overclaiming and prefer descriptive findings with clear
+    interpretation boundaries; strict observational scope preempts
+    "what's your identification strategy?" pushback and signals
+    methodological maturity.
+  - **Cost: minimal Discussion-section real estate** (~3-5
+    sentences total across Methods + Discussion + Limitations).
+    The framing doesn't reduce ambition — the decoupling finding
+    is bold enough on its own without causal-mechanism additions.
 - **Specific anchor concepts for Mitigation 4.** List of ~100 concepts with
   representative reference texts, per-field. Phase 0.2 or early Stage 1.
 - **Specific alternative embedding model for Mitigation 2.** Choice between

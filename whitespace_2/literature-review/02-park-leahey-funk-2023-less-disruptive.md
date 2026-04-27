@@ -890,6 +890,23 @@ reference?
    inherits from PLF; we do not inherit CD-index or any of PLF's
    primary metrics.
 
+10. **Program-aware observational-scope framing — meta-commitment
+    (PLF C8 + program-structure walkthrough, 2026-04-26).**
+    Generalizes the Chu-Evans mechanism-trim and PLF C8 causal-
+    pathway non-endorsement into a paper-wide framing commitment.
+    ws2 is the empirical/observational layer of a 3-whitespace
+    research program (ws2 = empirical decomposition; ws3 =
+    theoretical reconciliation, future; ws1 = agent simulation,
+    future). Causal claims live in ws3 and ws1, not in ws2. Three
+    operational moves: (1) Methods-section observational-scope
+    statement; (2) Discussion-section routing mechanism speculation
+    to ws3/ws1 follow-up work; (3) Limitations section framing
+    scope as deliberate design choice rather than methodological
+    weakness. The meta-principle: ws2 cites empirical observations
+    from upstream papers and presents its own findings as
+    covariation documentation; mechanism specification is reserved
+    for ws3 and ws1. Captured as Phase 0.2 batch item.
+
 ---
 
 ## Discussion Notes
