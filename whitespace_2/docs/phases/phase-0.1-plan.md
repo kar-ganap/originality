@@ -1759,22 +1759,46 @@ desiderata §9, but same principle).
     inflation-immune regimes, metric distributions become time-
     stationary; non-stationarity tracking r(t) growth is the
     smoking gun for inflation. Report alongside headline metrics.
-  - **(c) Correlation-with-r(t) diagnostic.** Compute Pearson
-    correlation between (i) CanonConc time series (Spearman top-50
-    and citation Gini, separately) and (ii) per-year mean r(t)
-    (reference list length) time series. Should be ~0 if our
-    metrics are inflation-immune as we argue analytically. High
-    correlation would be a substantive finding requiring
-    investigation.
-  - **Pre-registered interpretive thresholds for (c):**
+  - **(c) Detrended correlation-with-r(t) diagnostic (per PAP SQ3
+    walkthrough, lit-review session 2026-04-26).** Compute
+    *detrended* Pearson correlation between (i) CanonConc time
+    series (Spearman top-50 and citation Gini, separately) and
+    (ii) per-year mean r(t) (reference list length) time series.
+    Should be ~0 if our metrics are inflation-immune as we argue
+    analytically.
+    - **Detrending operationalization:** first-difference both
+      series — Δr(t) = r(t) − r(t−1) and ΔCanonConc(t) =
+      CanonConc(t) − CanonConc(t−1) — and correlate differences.
+      Robustness check: trend-residual correlation (fit LOWESS to
+      each, take residuals, correlate). Both should give similar
+      results.
+    - **Why detrending is necessary:** raw Pearson correlation
+      between two smoothly monotonic time series is ≈ 0.9+ even
+      for causally unrelated variables (shared-trend artifact).
+      Both r(t) and CanonConc(t) are smoothly monotonic over the
+      post-1990 analysis window (r(t) exponential at g_r ≈ 0.018;
+      CanonConc plausibly monotonic if hypothesized trend is
+      real). Raw correlation would trigger stress-test for
+      everything, providing no information. Detrending isolates
+      the year-to-year variation not explained by smooth trends —
+      the substantive signal of interest.
+    - **Note on PAP's R² = 0.96:** PAP report this as raw R²
+      between r(t) and R_k(t), not detrended. The number is
+      partly artifactual due to shared-trend correlation; the
+      detrended R² would be lower. PAP's argument doesn't rest on
+      R² alone (they triangulate with deduction and synthetic
+      networks), but their headline number is overstated.
+  - **Pre-registered interpretive thresholds for (c) — applied to
+    detrended correlation:**
     - |corr| < 0.3 → metric is inflation-robust as argued; no
       action.
-    - 0.3 ≤ |corr| < 0.7 → modest correlation; document and
-      investigate whether mediated by other variables.
-    - |corr| ≥ 0.7 → strong correlation; metric may have hidden
-      inflation vulnerability we haven't identified analytically;
-      trigger Stage 3 synthetic-network stress-test (back-pocket
-      from PAP review).
+    - 0.3 ≤ |corr| < 0.7 → modest correlation in detrended
+      residuals; document and investigate whether mediated by
+      other variables.
+    - |corr| ≥ 0.7 → strong correlation in detrended residuals;
+      metric may have hidden inflation vulnerability we haven't
+      identified analytically; trigger Stage 3 synthetic-network
+      stress-test (back-pocket from PAP review).
   - **Cost.** Computationally trivial. Same data, simple
     aggregations and correlations. ~half-day Stage 2 effort.
   - **Why direct observational diagnostics complement the synthetic-

@@ -627,7 +627,167 @@ ws2-relevant if any are walked through collaboratively.)
 
 ### SQ3 — R²=0.96 methodological significance
 
-(Pending.)
+Working session with user, 2026-04-26.
+
+**What R² = 0.96 means.** PAP's R² between r(t) and R_k(t) over
+1945–2012 means r(t) explains 96% of the variance in R_k(t); only
+4% is unexplained. For their argument ("the decline in CD_5(t) is
+essentially entirely explained by R_k(t), which is essentially
+entirely explained by r(t)"), the 4% residual matters: it's
+defensible as "noise" or as "potentially substantive" depending on
+how strict you want to be about residual signal.
+
+R² = 0.96 is *strong* evidence but not *case-closed*. Why does PAP
+get away with calling it case-closed?
+
+**Why R² thresholds are slippery in general.**
+
+Three reasons R² values can mislead:
+
+*(1) Time-series with shared trends inflate R² spuriously.* Any two
+variables that grow monotonically over the same window will have
+high R² even if causally unrelated. The "noise floor" R² for
+time-series with shared trends is much higher than for
+cross-sectional data.
+
+*(2) Sample size affects what's "significant."* With 67 annual
+observations, R² = 0.5 is statistically significant at p < 0.001
+just from sheer power.
+
+*(3) Functional form sensitivity.* Linear R² assumes linear
+relationship. Nonlinear true relationships are underestimated by
+linear R²; flexible fits (polynomial, splines) change the value.
+
+**Three principles for coming up with a "good" threshold.**
+
+*(1) Calibrate against a null model.* What R² emerges under "no
+real relationship"? For two time-series that both grow, the null
+isn't 0 — it's whatever R² emerges from any pair of growing time-
+series. If unrelated growing variables routinely produce R² > 0.7,
+then 0.96 isn't surprisingly high — it's slightly above floor.
+
+*(2) Asymmetric evidence standards.* The threshold depends on the
+claim:
+
+| Claim type | R² needed | Correlation needed |
+|---|---|---|
+| "Metric is fully driven by X" (no residual signal) | ≥ 0.95 | ≥ 0.97 |
+| "Metric and X are strongly related" | ≥ 0.7 | ≥ 0.84 |
+| "Some relationship exists" | ≥ 0.1 | ≥ 0.32 |
+| "Metric is fully robust to X" (rejection claim) | ≤ 0.1 | ≤ 0.32 |
+
+PAP's claim is the first row (no residual signal). They cleared
+the high bar at R² = 0.96; just barely.
+
+ws2's correlation-with-r(t) diagnostic is the *opposite* claim
+(last row): we want low correlation as evidence of metric
+robustness. Different bar, different threshold.
+
+*(3) Triangulate across diagnostics.* Single thresholds are
+fragile; conjunctions are robust. PAP doesn't rely on R² alone —
+they triangulate (deductive + empirical R² + computational
+simulations). ws2 should follow the same pattern: pre-registered
+thresholds, calibration against null, triangulation with other
+diagnostics.
+
+**Question 1: What's the null model for ws2?**
+
+Four candidate approaches:
+
+*(a) Other growing time series.* Compute correlation of r(t) with
+paper count n(t), mean team size k(t), distinct authors per year,
+mean citation count per paper. Establish ambient correlation
+floor. Problem: many of these *are* causally related to citation
+network density.
+
+*(b) Permutation/randomization.* Shuffle year labels and recompute.
+Problem: destroys the trend structure that's the source of
+spurious correlation; null is too strict.
+
+*(c) Synthetic time series with matched growth rates.* Simulate
+two unrelated series both growing at rate g_r = 0.018 with
+independent noise; correlate; repeat for null distribution.
+Closer to right.
+
+*(d) Detrending.* Compute first differences (Δr(t), ΔCanonConc(t))
+and correlate the differences. Or fit smooth trend to each, take
+residuals, correlate residuals. Removes trend-driven correlation;
+isolates year-to-year fluctuation. **Methodologically cleanest.**
+
+**Decision: (d) detrending is the right null for ws2.** Direct
+removal of the "both are growing, so they correlate" floor; no
+strong assumptions about right null variables.
+
+**Question 2: Does growth rate affect correlation?**
+
+Yes, importantly. The math:
+
+- Two perfectly linear time series with shared time domain and any
+  positive growth rates → Pearson correlation ≈ 1.0 (intercepts
+  don't affect Pearson; rates only affect via deviation from
+  perfect linearity).
+- Two smooth monotonic time series with different growth rates →
+  correlation can still be > 0.95 even if causally unrelated, as
+  long as both are monotonic over the window.
+- Time series with different functional forms (linear vs.
+  exponential vs. logistic) → correlations are lower because
+  curves diverge.
+
+If both r(t) and our CanonConc(t) are smoothly monotonic over
+1990–2024 — likely given r(t) is exponential at g_r = 0.018 and
+CanonConc may be roughly monotonic — we'd expect raw correlations
+of ≈ 0.9+ even if they're causally unrelated.
+
+**This means our pre-registered raw-correlation thresholds (|corr|
+< 0.3 / 0.3-0.7 / ≥ 0.7) are too lenient for raw correlation.**
+Almost any monotonic time series will have raw |corr| > 0.7 with
+r(t) just from shared trends. The diagnostic would trigger
+stress-test for everything, providing no information.
+
+**The right operationalization: detrended correlation.**
+
+Two equivalent approaches:
+
+*Option 1 — First differences.* Compute Δr(t) = r(t) − r(t−1) and
+ΔCanonConc(t) = CanonConc(t) − CanonConc(t−1). Correlate
+differences. Removes linear-trend correlation; year-to-year
+fluctuation correlation remains.
+
+*Option 2 — Trend-residual correlation.* Fit smooth function
+(linear, polynomial, LOWESS) to each series. Subtract to get
+residuals. Correlate residuals.
+
+Both isolate the same thing: variation that *isn't* explained by
+smooth trends. If our metric is truly inflation-immune, its
+detrended residuals shouldn't correlate with detrended r(t).
+
+**The pre-registered thresholds are appropriate for detrended
+correlation but not raw correlation.** In detrended space, the
+shared-trend noise floor is removed by construction; thresholds
+calibrate against actual signal.
+
+**Implication for PAP's R² = 0.96.**
+
+PAP's R² is between *raw* time series, not detrended. So PAP's R²
+captures some shared-trend artifact alongside the pure
+CI-mechanism signal. If you detrended r(t) and R_k(t) and
+recomputed R², the value would be lower — possibly substantially.
+
+This means PAP's headline R² number isn't doing as much work as it
+appears. Their argument doesn't depend on R² alone (they
+triangulate with deduction and synthetic networks), but their
+specific R² = 0.96 number is partly artifactual.
+
+For ws2: lesson is to specify detrended correlation in our
+diagnostic, not raw. Update Phase 0.2 batch commitment accordingly.
+
+**Refinement to Phase 0.2 batch commitment.** PAP-style inflation
+diagnostics item, sub-item (c) updated from "raw Pearson
+correlation" to "detrended correlation (first-difference or LOWESS-
+residualized)." Rationale captured: raw correlation would be ≈ 0.9+
+for any smoothly monotonic time series; detrending isolates the
+substantive signal. Captured in
+`docs/phases/phase-0.1-plan.md`.
 
 ### SQ4 — Why CD_5 increases without CI
 
