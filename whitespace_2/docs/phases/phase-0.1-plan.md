@@ -91,9 +91,22 @@ applying the §3 junk-year-metadata filter."
 **Demographic-plurality sub-population (P_demo).**
 "P AND determinable first-authorship country."
 
-- Numerical bound: ~45% of OpenAlex CS+Physics (per Check 1f; 55% of
-  papers have UNKNOWN first-affiliation country in OpenAlex's
-  authorship.institutions data).
+- Numerical bound: **~50% of OpenAlex CS+Physics** after Stage-1
+  raw-affiliation-parsing fix (per §4); **~45% with current
+  `extract_first_country` implementation** (which walks only
+  `authorships[*].institutions[*].country_code`). Per Check 1f, 55%
+  of papers have UNKNOWN first-affiliation country under the current
+  implementation; per the Check 1f follow-up
+  (`experiments/phase-0.1/check1f-country-extraction-followup.md`),
+  ~9-10% of UNKNOWN papers have parseable
+  `authorships[*].raw_affiliation_strings` containing country-derivable
+  text. Recovering these via Stage-1 raw-affiliation parsing shrinks
+  the UNKNOWN bucket from ~55% to ~50%, growing P_demo from ~45% to
+  ~50%.
+- The residual ~50% UNKNOWN is genuinely missing affiliation data
+  in OpenAlex (no institutions, no authorship-level countries, no
+  raw_affiliation_strings) — not a parsing miss. Scope-narrowing on
+  the country axis remains structurally necessary.
 - All demographic-plurality headline claims (Tests I–III on the
   demographic axis, the §4 demographic-feature time series, §9a–§9d
   Lockhart audit chain) operate over P_demo. Field-level claims and
@@ -347,15 +360,53 @@ weight where embedding-cluster (§11) supersedes.
 ### 4. Demographic features
 
 **Analytical-population scope (per §0).** Demographic-plurality
-headline claims operate over **P_demo** — the ~45% sub-population of
-P with determinable first-authorship country (per Check 1f: 55% of
-papers have UNKNOWN first-affiliation country in OpenAlex's
-authorship.institutions data; this subset cannot be propensity-
-corrected via §9e). This is a structural narrowing, not a coverage
-threshold that can be improved with more data. Limitations language
-explicitly names "ws2's demographic-plurality claims describe the
-~45% of OpenAlex CS+Physics 1970–2024 with abstract AND determinable
-first-authorship country."
+headline claims operate over **P_demo** — the **~50%** sub-population
+of P with determinable first-authorship country *after* the Stage-1
+raw-affiliation-parsing fix (see commitment below); **~45% under
+the current `extract_first_country` implementation**. Per Check 1f,
+55% of papers have UNKNOWN first-affiliation country under the
+current implementation; per the Check 1f follow-up sanity check
+(`experiments/phase-0.1/check1f-country-extraction-followup.md`),
+~9-10% of UNKNOWN papers have parseable
+`authorships[*].raw_affiliation_strings`. Recovering these via
+Stage-1 parsing shrinks the UNKNOWN bucket from ~55% to ~50%. The
+residual ~50% UNKNOWN is genuinely missing affiliation data — not
+a parsing miss; not propensity-correctable via §9e. Limitations
+language names "ws2's demographic-plurality claims describe the
+~50% of OpenAlex CS+Physics 1970–2024 with abstract AND determinable
+first-authorship country (after Stage-1 raw-affiliation parsing)."
+
+**Stage-1 commitment — extend `extract_first_country` to fall back
+on `raw_affiliation_strings`.** Surfaced from the Check 1f
+follow-up sanity check. The current
+`whitespace2.openalex.extract_first_country` walks only
+`authorships[*].institutions[*].country_code` and labels papers
+UNKNOWN when that field is empty. The follow-up check found 9.4%
+of UNKNOWN papers have non-empty `raw_affiliation_strings`
+containing country-derivable text (e.g., "Department of Mathematics
+and Statistics, Calgary, Alberta, Canada"; "Silver Spring, USA";
+"Harrow, Middlesex HA1 3UJ"). Two-pass implementation:
+
+- **First pass (Stage 1, locked):** explicit-country-name match
+  on `raw_affiliation_strings` using an ISO-3166 country-name
+  lookup table with common variants (e.g., "United States" / "USA"
+  / "U.S." → US; "United Kingdom" / "UK" / "Great Britain" → GB).
+  Estimated to recover ~half of the 9.4% UNKNOWN-with-raw-affil
+  papers (those with explicit country mentions).
+- **Second pass (Stage 1 stretch / Stage 3 robustness):** city /
+  state / postcode → country gazetteer lookup (e.g., GeoNames
+  cities1000 dataset; UK postcode area lookup). Recovers the
+  remaining half. Heavier engineering; defer unless first-pass
+  falls short of the ~50% P_demo target.
+
+**Severity note (per follow-up sanity check).** Unlike the Check 2e
+score-thresholding episode, the current `extract_first_country`
+function is *correct on the papers it processes* — 0/30 mismatches
+on the KNOWN-sample consistency check. The bug is incompleteness,
+not incorrectness; magnitude correction is 5 pp shrinkage of UNKNOWN
+(not 90 pp like the score-thresholding miss). Methodology stands;
+this is a Stage-1 implementation extension and a numerical-bound
+documentation update.
 
 **Coverage threshold (re-anchored).** "≥80% coverage required per
 year" applies *within P_demo*, not over the OpenAlex CS+Physics
@@ -897,8 +948,9 @@ gains §9e as a parallel layer:
   bounded, not point-identified — sensitivity grid characterizes the
   bound.
 - Country axis: scope narrowing is structural; not correctable. ws2's
-  demographic-plurality claims are restricted to P_demo (~45%) by
-  construction.
+  demographic-plurality claims are restricted to P_demo (~50% after
+  Stage-1 raw-affiliation-parsing fix per §4; ~45% under current
+  implementation) by construction.
 - Citation-tertile bias is the largest single contributor (CS T1 =
   36.7% coverage, T2 = 62.5% — 26 pp gap). Canonical-concentration
   headline numbers are most affected; the §9e correction is most
@@ -906,6 +958,66 @@ gains §9e as a parallel layer:
 - Even within knowns: country IQR is 11 pp (excluding UNKNOWN); the
   weighted aggregate inherits residual within-known bias the
   propensity model cannot fully correct for.
+
+**Blast radius on the central claim** (substantive expansion;
+locked here so Phase 0.2 pre-registration and Methods drafting
+inherit a consistent framing).
+
+ws2's central operationalization of Claim #13 — DemDiv rises while
+SemDiv stagnates or falls (decoupling) vs. DemDiv and SemDiv track
+(null) — is a *trend* claim. Selection-bias blast radius therefore
+depends on whether the bias is **time-stable** or **time-varying**:
+
+- **Time-stable bias** (e.g., the 26 pp citation-tertile coverage
+  gap holds approximately constant across years): shifts metric
+  *levels* uniformly; trends (slopes, divergences) are unaffected.
+  The decoupling claim is robust.
+- **Time-varying bias** (e.g., abstract coverage rises 30%→70% over
+  1970–2024, so selection became *less* canonical-biased over time):
+  could produce spurious decline trends in canonical-concentration
+  even with no true field-level change. §9e absorbs this under MAR
+  via the year covariate; the MNAR-tilt sensitivity grid bounds it
+  under MNAR.
+
+**Per-channel blast radius:**
+
+| Channel | Selection-bias exposure | §9e mitigation | Direction of residual bias on central claim |
+|---|---|---|---|
+| **Canonical concentration** | **Largest direct hit.** Citation-tertile gap (CS 26 pp) directly inflates the metric; time-attenuation could produce spurious decline trends. | Strong under MAR with year + citation_tertile in X. MNAR-tilt grid bounds the residual. | If the trend survives moderate MNAR tilt (±50% selection probability within strata), canonical channel is methodologically robust. If not, headline canonical finding is null under selection-bias uncertainty. |
+| **Semantic plurality** | Moderate. Concept-coverage IQR 13.3% (range 20–89%) — over-represents high-coverage subfields. | Cluster-fit (§11) on temporally-stratified subsample partially insulates (decade-balanced cluster definitions). §9e with concept_cluster in X partially absorbs. | Trend most robust when concept-coverage variation is era-stable. |
+| **Demographic plurality** | Compounded. Selection on `has_abstract` (within P_demo) AND scope-narrowing on `country_known` (~50% restriction itself). | §9e corrects the first under MAR. The second is **not correctable** — pure scope-narrowing. | **Conservatively biased.** If demographic broadening is happening primarily in the UNKNOWN-country bucket (e.g., Global South authors with under-indexed affiliations), DemDiv on P_demo *under-represents* the broadening — making a positive decoupling finding *robust to that bias direction* (true effect ≥ measured effect). A null finding on P_demo could mask a real decoupling in UNKNOWN. |
+
+**Per-test blast radius:**
+
+| Test | Selection-bias exposure | §9e mitigation |
+|---|---|---|
+| **Test I (standardized-gap trend)** | z-scoring within series absorbs level shifts; trend exposed only if bias is time-varying. | Strong under MAR; year covariate absorbs time-variation. |
+| **Test II (confound-controlled gap)** | Subfield composition + team size + field size absorb partial confounds. | Strong under MAR with X plus controls. Vulnerable under MNAR if selection correlates with paper-level outcome attributes not in X. |
+| **Test III (cross-correlation + Granger)** | First-differencing removes time-stable bias; sensitive to year-to-year coverage volatility. | Most robust to time-stable bias; vulnerable to anomalously high/low-coverage years producing spurious lag signals. |
+| **Test IV (within-paper team-diversity × novelty)** | **Most exposed.** Paper-level cross-section; γ₁ biased if conditional (T_p, N_p) distribution within strata differs from marginal. | §9e weights enter the regression directly; different correction pattern from field-aggregate weighting. Worst case: γ₁ direction reverses under MNAR tilt. |
+| **Subfield mechanism test** | Concept bias hits hardest. Over-represented subfields get cleaner estimates. | §9e weighting within subfield. Mostly noise rather than systematic distortion. |
+
+**Best/worst case for the central decoupling finding:**
+
+- **Best case (likely under reasonable MAR+covariates):** propensity
+  model meets CV-AUC threshold; MAR-corrected divergence direction
+  matches uncorrected; MNAR-tilt sensitivity grid shows direction
+  robust to ±50% selection-probability variation within strata.
+  Headline: "decoupling claim survives §9e selection-bias correction
+  under reasonable MNAR assumptions."
+- **Worst case:** MNAR-tilt grid shows direction flips at moderate
+  tilts; data is consistent with both decoupling and tracking under
+  reasonable MNAR. Headline becomes a methodologically honest null
+  on the analytical-population-gap dimension. Publishable as a null
+  per ws2's experimental discipline.
+
+**Most likely outcome** (informed estimate, not pre-registered):
+direction of central decoupling claim survives the §9e correction
+in *direction*; magnitude shifts; CIs widen visibly; the central
+finding (if it exists in the data) survives but its precise
+statistical claim is bounded rather than point-identified. The
+Limitations section already describes this as the operational
+signature of §9e working correctly.
 
 **Operational note.** §9e is computed once per OpenAlex snapshot and
 per analytical-population restriction. The fitted propensity model +
