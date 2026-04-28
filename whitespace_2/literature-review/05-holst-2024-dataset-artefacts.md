@@ -723,6 +723,23 @@ lesson change how we'd interpret a positive replication result?
    with Holst. **Decision: don't add; Holst + PAP 2024 + PAP 2025
    is sufficient for ws2 positioning.**
 
+9. **Holst three-layer pattern generalizes to selection-bias-as-
+   construct-validity-audit (per N1 §9e).** Phase 0.1 Check 1f
+   surfaced abstract-availability missingness as a structural
+   construct-validity threat parallel to (but orthogonal to) the
+   PLF dataset-artefact threat. Holst's three-layer pattern
+   (theoretical / empirical-diagnostic / controlled-analysis)
+   transfers directly: theoretical = MAR/MNAR identification +
+   Holst-style missingness framework; empirical-diagnostic =
+   propensity-model fit + uncorrected-vs-corrected aggregate;
+   controlled-analysis = inverse-probability weighting + reliability-
+   bounded reporting (§9e). The §14 Methods overview is upgraded
+   from three to four parallel construct-validity audits in N1;
+   §9e is the new fourth layer. Selection-bias-correction-as-
+   empirical-diagnostic is the structural analog of the within-
+   between decomposition (§9b) on the demographic side and the
+   inflation-immune metric selection on the canonical side.
+
 ---
 
 ## Discussion Notes
@@ -1094,6 +1111,66 @@ back-pocket commitment.
 ### On C5 — cross-substrate robustness interpretation
 
 (Pending.)
+
+### On selection-bias-correction-as-empirical-diagnostic (N1 re-engagement, 2026-04-27)
+
+Added retroactively per N1 plan revision after Phase 0.1 Check 1f
+landed.
+
+**The structural insight.** Holst's three-layer pattern
+(theoretical critique / empirical-diagnostic / controlled-analysis)
+is itself a transferable construct-validity audit framework, not
+just a CD-index-specific argument. ws2 inherits the framework on
+the canonical side directly (PAP+Holst+PAP-2025 chain → metric
+selection + zero-reference exclusion). N1 extends the framework
+to a *fourth* layer addressing a different construct-validity gap:
+the analytical-population gap.
+
+**Why this is parallel to Holst rather than parallel to Lockhart.**
+Lockhart's framework audits *inferred-attribute correctness* (does
+NamSor's gender label match self-report identity?). Holst's
+framework audits *measurement-validity given a known data state*
+(does CD-index = 1 reliably indicate disruptive innovation, or is
+it driven by zero-reference data artefacts?). The selection-bias
+audit asks the third question: *does our analytical population
+generalize to the inferential target* (does the abstract-having
+subset generalize to OpenAlex CS+Physics; does P_demo generalize
+to P)? This is closer to Holst's frame (data-state + measurement-
+validity) than Lockhart's (attribute-classification accuracy).
+
+**How §9e cashes Holst's framework operationally.**
+- *Theoretical layer:* Check 1f's bias-of-missingness diagnostic
+  surfaced citation, concept, and country biases each aligned
+  with one of ws2's substantive axes — structurally identical to
+  the way Holst's analysis surfaced zero-reference frequency as
+  the load-bearing artefact for CD-index.
+- *Empirical-diagnostic layer:* propensity model fit + CV-AUC
+  reporting + uncorrected-vs-corrected aggregate comparison.
+  Parallel to Holst's CD-index-with-vs-without-zero-reference-
+  papers comparison.
+- *Controlled-analysis layer:* inverse-probability weighting +
+  reliability-bounded reporting + scope narrowing for the
+  unrecoverable axis (country). Parallel to Holst's "exclude
+  degenerate cases prior to analysis" + report robustness with
+  the exclusion vs. without.
+
+**Why selecting Holst as the structural anchor matters for Methods
+framing.** When ws2 cites Holst in the canonical channel and §9e
+in the selection-bias channel, the Methods reader sees the same
+defensive pattern twice. That repetition is itself a methodological
+commitment: ws2 doesn't have a single argumentative pose for
+construct-validity threats — it has a generalizable pattern that
+applies wherever an external (or internally-generated) diagnostic
+surfaces a structural threat to a primary inference.
+
+**Discussion paragraph commitment (Methods drafting phase).**
+~3 sentences in the §14 Methods overview citing Holst as the
+template the §9e selection-bias defense follows, naming the
+structural parallel explicitly, and pre-empting the obvious
+reviewer challenge ("why are these two layers in the same paper?")
+by walking through the three-question construct-validity decomposition
+(attribute-correctness → Lockhart; measurement-validity-given-data →
+Holst; population-validity-given-measurement → §9e).
 
 ---
 

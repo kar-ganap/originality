@@ -756,6 +756,34 @@ analyses")?
    methodologically vindicated** by Lockhart's race-inference error
    findings. The exclusion was the right call.
 
+9. **§9a P5 ORCID validation now nests inside §9e propensity weighting
+   (per N1 plan revision).** Phase 0.1 Check 1f surfaced an
+   abstract-availability missingness mechanism that biases aggregate
+   measurements before the inferred-attribute-correctness question
+   even applies. The §9e selection-bias correction layer (new in N1)
+   re-weights the analytical population P_demo so that aggregates
+   target OpenAlex-full-population means under MAR; §9a P5's
+   bias-uncertainty band then applies on top of those weighted
+   aggregates. Sequence: §9e first, §9a P5 second. Methods walks
+   through both transformations in order so readers can attribute
+   residual uncertainty to the correct layer (selection-bias vs.
+   inferred-attribute-correctness). This does NOT change the §9a P5
+   operational machinery (ORCID disagreement matrix + NamSor per-
+   region accuracy bracketing); it changes the *target* of the
+   bracketing — now bracketing weighted rather than raw aggregates.
+
+10. **Lockhart-style critique pattern is structurally distinct from
+    Holst-style critique pattern.** Lockhart audits inferred-
+    attribute correctness (does NamSor's gender label match
+    self-report identity?). Holst audits measurement validity given
+    a known data state (does CD-index = 1 reliably indicate
+    disruptive innovation?). N1 §9e adds a third: does our
+    analytical population generalize to the inferential target?
+    The three audits are orthogonal and stack — ws2's headline
+    claims pass all three audits before reaching the reader as
+    headline numbers. Methods §14 framing makes the orthogonality
+    explicit (four parallel construct-validity audits per N1).
+
 ---
 
 ## Discussion Notes
@@ -769,7 +797,63 @@ session happens.)
 
 ### On C2 — ORCID subsample bias-quantification limits
 
-(Pending.)
+**Updated for N1 — ORCID validation nests inside §9e propensity
+weighting (2026-04-27).**
+
+The original §9a P5 + §9c framing committed to a bias-uncertainty
+band leaning primarily on ORCID-quantified disagreement matrices,
+with explicit residual-coverage-gap acknowledgment. Phase 0.1
+Check 1f added a structural concern *upstream* of the ORCID
+bracketing: the abstract-having selection mechanism biases ws2's
+analytical population *before* the demographic-inference question
+applies.
+
+**The N1 sequencing.**
+
+1. **§9e weights aggregates first.** Inverse-probability-of-
+   abstract-availability weighting on P_demo recovers OpenAlex-
+   full-population aggregates over the (~45%) abstract-AND-
+   determinable-country subset under MAR conditional on year ×
+   field × type × citation_tertile × concept_cluster ×
+   known_country.
+
+2. **§9a P5 bracketing applies second.** The ORCID-derived
+   disagreement matrix + NamSor per-region accuracy bracketing
+   produces the bias-uncertainty band on the *§9e-weighted*
+   aggregates. Headline numbers carry both stacks; Methods reports
+   each transformation in order.
+
+3. **§9c residual-coverage gap is unchanged at the operational
+   level.** ORCID coverage is structurally weakest in pre-1990,
+   non-Western, women, career-stage-junior. The §9c multi-source
+   bias-quantification scheme (ORCID + NamSor + targeted hand-
+   validation) operates at the same level as before — but now on
+   §9e-weighted aggregates. Cells with weak ORCID coverage AND
+   high §9e weight-leverage (low-coverage strata in the propensity
+   model) get widened bands per §9c commitment 4.
+
+**Why this nests rather than replaces or merges.**
+
+The two audits answer orthogonal construct-validity questions:
+- §9e asks "does our analytical population generalize to OpenAlex
+  CS+Physics?" (selection mechanism / Holst-frame).
+- §9a P5 asks "given the analytical population, do our inferred
+  attributes match self-report?" (inferred-attribute correctness /
+  Lockhart-frame).
+
+Both can fail independently; both must be addressed independently.
+Nesting rather than merging preserves the audit-attribution
+property: a reviewer can ask "is this number robust to MNAR
+deviations?" (§9e sensitivity grid answers) separately from "is
+this number robust to misclassification of Chinese women?" (§9a P5
++ §9c band answers).
+
+**No change to ORCID validation budget or operational machinery.**
+The 5–10K ORCID-author validation subsample, the per-region
+accuracy table, and the bracketing scheme all remain as committed
+in §9a/§9c. Only the *target* of the bracketing changes (weighted
+rather than raw aggregates). This is a framing + sequencing
+update, not a budget update.
 
 ### On C3 — ascription-vs-identity framing for ws2
 
