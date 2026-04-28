@@ -173,9 +173,31 @@ is load-bearing here).
   (10× compute, not worth it unless 0.6B proves limiting), `text-
   embedding-3-large` (API-only, no transparent training data, no
   obvious advantage over Qwen3-0.6B for this task).
-- **Compute budget (500K abstracts, Apple M-series with MPS, fp16):**
-  SPECTER2 ~30–90 min; SciNCL ~30–90 min; Qwen3-0.6B ~3.5–9 hrs.
-  Total ~half a day for a full triple-pass. Storage ~5 GB for arrays.
+- **Compute target — local for now; Stage 2 strategy deferred.**
+  - **Phase 0.1.E (embedding pipeline scaffold), Check 5b (metric
+    convergence), Check 5c (drift pilot), and Stage 1 development:**
+    local Apple M-series with MPS, fp16 (with bfloat16/fp32 fallback
+    if MPS operator gaps surface). All Phase 0.1 + Stage 1 development
+    work is small-scale enough that local is the right default.
+  - **Stage 2 production embedding (500K-2M abstracts × 3 models +
+    robustness sweeps): deferred to Stage 1.** Decision on local vs.
+    cloud (e.g., Modal A10G) made when Check 5b's N_target lands and
+    the Phase 0.1.E benchmark gives realistic per-abstract MPS
+    timing. Both paths are within the plan's $50-500 total budget.
+    See "Open decisions deferred" for the tradeoff analysis.
+  - **Indicative budget at 500K abstracts on local M-series MPS, fp16:**
+    SPECTER2 ~30–90 min; SciNCL ~30–90 min; Qwen3-0.6B ~3.5–9 hrs.
+    Total ~half a day per full triple-pass at 500K. Numbers scale
+    linearly to the upper-bound N (~2M after §0).
+  - Storage ~5–20 GB for arrays depending on N.
+- **Embedding-model landscape verified 2026-04-28** (N1+ session).
+  Qwen3-Embedding-0.6B remains §1's correct cross-family partner.
+  No newer Qwen text-embedding successor; Microsoft Harrier-0.6B
+  (March 2026) fails the transparency criteria §1 invokes (no
+  technical paper, undisclosed backbone, undisclosed training data —
+  same reasons §1 skipped text-embedding-3-large); BGE family hasn't
+  released a successor in the ~600M class. Verification logged in
+  `tasks/lessons.md`.
 - **For cross-field expansion (if philosophy or economics is pursued):**
   Qwen3-0.6B graduates from robustness partner to co-primary alongside
   SPECTER2. SciNCL remains a within-family check on SPECTER2 but would
@@ -1896,6 +1918,26 @@ extended to NamSor gender inference by convention (not strictly covered by
 desiderata §9, but same principle).
 
 ## Open decisions deferred to later phases
+
+- **Stage 2 production-embedding compute target (local M-series MPS
+  vs cloud GPU).** Whether to run Stage 2 embedding compute (~500K-2M
+  abstracts × 3 models × possible robustness sweep) on local
+  M-series MPS or on cloud GPU (e.g., Modal A10G default).
+  - **Tradeoff:** local is free but ~30-50 hrs wallclock per full
+    triple-pass at upper-bound N (~2M); cloud is ~$5-15 per pass
+    with ~5-10× wallclock reduction. Both within the plan's
+    $50-500 total budget.
+  - **Decision deferred to Stage 1**, informed by:
+    - Check 5b N_target result (sets actual Stage 2 N).
+    - Phase 0.1.E benchmark (sets actual MPS per-abstract timing).
+    - User's time-vs-budget preference at decision point.
+  - **Pre-commit estimate per ws2 desideratum §9** required for any
+    cloud run ≥$50.
+  - **Reproducibility under either path:** pin compute environment
+    (macOS / torch / transformers / model revision for local;
+    Docker image / GPU type / CUDA / torch / transformers / model
+    revision for cloud); cross-check small subset between paths to
+    verify fp16-tolerance equivalence.
 
 - **Pre-registration of the primary divergence test.** Metric choice,
   estimator, field, time window, null hypothesis, threshold. Phase 0.2.
