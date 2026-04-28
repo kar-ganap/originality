@@ -12,20 +12,39 @@ claim is disconfirmed — a successful null.
 ## Current State
 
 - **Current Stage:** Stage 0 — Foundation
-- **Current Phase:** Phase 0.1 — sanity checks 1 + 2 complete; N1 plan
-  revision pending
+- **Current Phase:** Phase 0.1 — ~70% complete. N1 + N1+ plan revision
+  done; Phase 0.1.E embedding pipeline scaffold done; Checks 1 (+1c-f,
+  1f-followup), 2 (+2d, 2-correction, 2d-within-window, 2a-redesigned),
+  4, 5a all complete.
 - **Completed:**
   - Repo scaffold
   - Tier 1 literature review (`literature-review/` 01-07)
-  - Phase 0.1 plan with 14 numbered methodology commitments (§1-§14)
-  - Phase 0.1 Check 1 (abstract availability) + extensions 1c (by paper
-    type), 1d (arXiv linkage + access-method verification), 1e (S2AG
-    coverage), 1f (bias-of-missingness across substantive measurement axes)
-  - Phase 0.1 Check 2 a/b/c (concept-classifier drift) + 2d (anachronism
-    audit) + 2e (hand-audit setup) + Check 2 score-thresholding correction
-    + within-window anachronism verification
-- **Next:** Phase 0.1 N1 — wholesale plan revision (see
-  `tasks/todo.md` "Next session — N1 wholesale plan revision")
+  - Phase 0.1 plan written + N1 wholesale revision + N1+ adjustments
+    (new §0 analytical population; new §9e selection-bias correction;
+    edits to §1, §3, §4, §5, §9a, §9b, §12, §13, §14)
+  - Phase 0.1.E embedding pipeline scaffold:
+    `src/whitespace2/embeddings.py` (SPECTER2 + SciNCL + Qwen3-Embedding-0.6B)
+    + 9 slow tests (all green) + smoke artifact at
+    `experiments/phase-0.1/embedding-pipeline-smoke.md`. H1-H6 confirmed;
+    H7 (timing) failed plan §1 by 15-70× — Stage 2 compute prior shifted
+    toward cloud GPU.
+  - Phase 0.1 Check 1 + extensions 1c (by paper type), 1d (arXiv
+    linkage), 1e (S2AG coverage), 1f (bias-of-missingness), 1f-followup
+    (country-extraction sanity check)
+  - Phase 0.1 Check 2 a/b/c (classifier drift) + 2d (anachronism) + 2e
+    (hand-audit setup) + Check 2 score-thresholding correction + 2d
+    within-window verification + 2a redesigned (venue-anchored field-tag
+    drift, clean null)
+  - Phase 0.1 Check 4 (disambiguation spot-check; 3.0% cross-era-merger
+    rate; consistent with plan §10's 5-10% total-error band)
+  - Phase 0.1 Check 5a (pilot pull validated; 467 papers in P at
+    `data/metadata/pilot-query-results.parquet`; Nᵧ distribution at
+    `data/metadata/year-counts.csv`)
+  - Stats primer §18 added (Missing Data: MAR / MNAR / IPW)
+- **Next:** Phase 0.1 Checks 5c (drift pilot) → 5b + 5d (metric
+  convergence + cluster stratification) → 3 (demographic coverage) →
+  retro. Embedding pipeline + pilot parquet are inputs. See
+  `tasks/todo.md` "Next session — entry point" for full handoff.
 
 ## Constraints
 

@@ -26,9 +26,14 @@ with each prior study de-risking the next.
 - **Active whitespace:** `whitespace_2/`
 - **Program-level phase:** Scaffold complete; all downstream work happens
   inside the active whitespace.
-- **Next:** `whitespace_2/` Phase 0.1 N1 — wholesale plan revision based
-  on Phase 0.1 sanity-check 1+2 findings (see `whitespace_2/tasks/todo.md`
-  "Next session — N1 wholesale plan revision").
+- **Next:** `whitespace_2/` Phase 0.1 Check 5c (drift pilot) — see
+  `whitespace_2/tasks/todo.md` "Next session — entry point" for the
+  full handoff package, including required reading, recommended
+  execution order (5c → 5b+5d → 3 → retro), open deferred decisions
+  (Stage 2 compute target, Genderize API setup, junk-year token list
+  expansion), and suggested entry prompt. Phase 0.1 is ~70% complete:
+  N1 plan revision, N1+ adjustments, Phase 0.1.E embedding pipeline
+  scaffold, and Checks 1+2 (with extensions), 4, 5a are all done.
 
 ## Navigating This Repo
 
