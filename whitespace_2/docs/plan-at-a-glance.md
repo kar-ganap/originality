@@ -288,69 +288,99 @@ Flavor A is committed as a Stage 3 escalation (see diagram 3 above).
 
 ---
 
-## 9. Methodology defense — parallel three-layer structure
+## 9. Methodology defense — parallel four-layer structure
 
-Two of ws2's three metric channels (canonical-concentration and
-demographic-plurality) face external critique chains in the literature.
-For each, ws2's defense follows a Holst-style three-layer pattern
-(theoretical + empirical-diagnostic + controlled-analysis). The
-patterns are structurally identical; the diagram makes the parallel
-explicit.
+**N1 update — three-layer → four-layer.** Phase 0.1 Check 1f surfaced
+an additional construct-validity gap orthogonal to the
+inferred-attribute-correctness gap the original three-layer pattern
+addresses: the *analytical-population* gap. The §9e selection-bias
+correction layer addresses this gap and slots into the structural
+pattern as a fourth audit layer parallel to the existing three.
 
-The third channel (semantic) doesn't have an analogous external
-critique chain; its defense is the drift-mitigation ladder of
-diagram 3.
+Three of ws2's metric channels (canonical-concentration,
+demographic-plurality, and now the analytical-population definition
+itself) face external critique chains. For each, ws2's defense follows
+a Holst-style three-layer pattern (theoretical + empirical-diagnostic
++ controlled-analysis); the §9e layer cross-cuts all three channels
+because abstract-availability missingness affects every aggregate.
 
-All three channels are unified at the framing level by §14
-(Methods-overview construct-validity audit framing): each channel is a
+The semantic channel doesn't have an analogous external critique chain
+beyond the drift-mitigation ladder (diagram 3); the §9e layer applies
+to it as well — selection-bias-corrected semantic-plurality
+aggregates use §9e propensity weights.
+
+All channels are unified at the framing level by §14
+(Methods-overview construct-validity audit framing): each is a
 construct-validity exercise (Cronbach & Meehl 1955) with a structured
 proxy-vs-thing-of-interest gap and an external audit framework.
 
 ```mermaid
 flowchart TB
     subgraph Canonical["<b>Canonical-concentration side</b>"]
-        CT["<b>Theoretical layer</b><br/>PAP 2024 three-conditions framework<br/>+ Holst 2024 dataset-artefact critique<br/>+ PAP 2025 controlled re-analysis"]
-        CD["<b>Diagnostic layer</b><br/>Inflation-immune metric selection<br/>(Spearman top-N primary,<br/>Gini secondary with caveats)"]
-        CC["<b>Controlled-analysis layer</b><br/>(c-prime) framing<br/>+ per-metric condition-3 audit"]
+        CT["<b>Theoretical</b><br/>PAP 2024 three-conditions<br/>+ Holst 2024 dataset-artefact critique<br/>+ PAP 2025 controlled re-analysis"]
+        CD["<b>Diagnostic</b><br/>Inflation-immune metric selection<br/>(Spearman top-N primary,<br/>Gini secondary with caveats)"]
+        CC["<b>Controlled-analysis</b><br/>(c-prime) framing<br/>+ per-metric condition-3 audit"]
         CT --> CD --> CC
     end
 
     subgraph Demographic["<b>Demographic-plurality side</b>"]
-        DT["<b>Theoretical layer</b><br/>Lockhart 2023 principle-by-principle audit<br/>(§9a P1–P5: refusal, mechanism,<br/>defer, accuracy, bias-quantification)"]
-        DD["<b>Diagnostic layer</b><br/>Within-between decomposition (§9b)<br/>Theil-additive primary,<br/>DFL counterfactual secondary"]
-        DC["<b>Controlled-analysis layer</b><br/>Conditional 3-way validation<br/>(§9b trigger: |Δ_between|/|Δ_total| > 0.33)<br/>+ ORCID coverage transparency (§9c)<br/>+ spillover enumeration (§9d)"]
+        DT["<b>Theoretical</b><br/>Lockhart 2023 P1–P5 audit<br/>(refusal, mechanism, defer,<br/>accuracy, bias-quantification)"]
+        DD["<b>Diagnostic</b><br/>Within-between decomposition (§9b)<br/>Theil-additive primary,<br/>DFL counterfactual secondary"]
+        DC["<b>Controlled-analysis</b><br/>Conditional 3-way validation<br/>(§9b trigger)<br/>+ ORCID transparency (§9c)<br/>+ spillover enumeration (§9d)"]
         DT --> DD --> DC
     end
 
-    Framing["<b>§14 framing layer</b><br/>Three parallel construct-validity audits<br/>(Cronbach & Meehl 1955)"]
+    subgraph Selection["<b>Selection-bias side (§9e, NEW per N1)</b>"]
+        ST["<b>Theoretical</b><br/>Holst-style missingness framework<br/>+ MAR/MNAR identification theory<br/>+ Check 1f bias-of-missingness diagnostic"]
+        SD["<b>Diagnostic</b><br/>Propensity model fit + CV-AUC<br/>+ uncorrected-vs-corrected aggregate<br/>+ MNAR-tilt sensitivity grid"]
+        SC["<b>Controlled-analysis</b><br/>Inverse-probability weighting<br/>+ reliability-bounded reporting<br/>+ scope narrowing for unrecoverable axis (country)"]
+        ST --> SD --> SC
+    end
+
+    Framing["<b>§14 framing layer</b><br/>Four parallel construct-validity audits<br/>(Cronbach & Meehl 1955)"]
     Framing -.-> Canonical
     Framing -.-> Demographic
+    Framing -.-> Selection
     Framing -.->|"semantic side: drift-mitigation<br/>ladder per diagram 3"| Semantic[Semantic side<br/>see diagram 3]
+    Selection -.->|"selection-bias correction<br/>cross-cuts all channels"| Canonical
+    Selection -.-> Demographic
+    Selection -.-> Semantic
 ```
 
 **The structural parallel as a methodological commitment:** the
 canonical-side chain (PAP+Holst+PAP-2025) shows how a contested
-literature defense crystallizes into a three-layer pattern. Our
+literature defense crystallizes into a three-layer pattern. The
 demographic-side chain replicates that pattern with Lockhart 2023 as
-the load-bearing critique anchor. Reviewers familiar with the canonical
-chain will recognize the structure immediately.
+critique anchor. The selection-bias side (§9e, new per N1) replicates
+the same pattern with Check 1f's own diagnostic as the critique anchor
+— ws2 internally generated the load-bearing diagnostic rather than
+inheriting it from the literature, but the structural defense is
+identical.
 
 **Where the layers cash out operationally** (cross-references to plan):
 
-| Layer | Canonical | Demographic |
-|---|---|---|
-| Theoretical | Plan §1 (metric stack), §2 (drift), §13 (pre-1990 retention) | Plan §9a (P1–P5 audit) |
-| Diagnostic | Inflation-immunity argument per metric | Plan §9b (within-between decomposition) |
-| Controlled-analysis | (c-prime) inflation-immune evidence framing | Plan §9b (conditional 3-way), §9c (multi-source), §9d (spillover) |
-| Residual concern | Acknowledged in Methods + Limitations | Plan §9c residual coverage gap, §9d pattern (vi) Limitations-only |
+| Layer | Canonical | Demographic | Selection-bias |
+|---|---|---|---|
+| Theoretical | Plan §1, §2, §13 | Plan §9a (P1–P5) | Plan §9e theory; Check 1f §0 |
+| Diagnostic | Inflation-immunity per metric | Plan §9b within-between | Plan §9e propensity model fit |
+| Controlled-analysis | (c-prime) framing | Plan §9b/§9c/§9d | Plan §9e weighting + bounds |
+| Residual | Methods + Limitations | §9c gap, §9d (vi) | MNAR identifiability, country scope-narrow |
 
-**Asymmetry note:** the demographic-side chain has more
-operationalization detail (§9a–§9d are four subsections) than the
-canonical-side chain because the Lockhart critique generates more
-distinct operational moves (subgroup-stratified validation, ORCID
-coverage transparency, spillover enumeration) than the PAP critique
-(which is mainly a metric-selection commitment). This is content-
-driven asymmetry, not commitment-quality asymmetry.
+**Sequencing note (per N1).** Headline aggregates carry both the
+inference-uncertainty band (§9a–§9d for demographic; embedding-drift
+checks for semantic; metric robustness for canonical) AND the
+selection-bias correction band (§9e). Sequence: §9e weighting first,
+inference-uncertainty band second. Methods walks through both
+transformations in order so readers can attribute residual uncertainty
+to the correct layer.
+
+**Asymmetry note:** the demographic-side chain has the most
+operationalization detail (§9a–§9d are four subsections) because the
+Lockhart critique generates the most distinct operational moves. The
+selection-bias chain (§9e) is a single subsection because the
+operational machinery is more uniform (one propensity model, one
+weighting scheme, one sensitivity grid). Content-driven asymmetry,
+not commitment-quality asymmetry.
 
 ---
 

@@ -66,6 +66,75 @@ This phase is NOT:
 
 ## Methodology commitments (locked in this phase)
 
+### 0. Analytical population definition (locked)
+
+The ws2 analytical population is formally defined here. All downstream
+phases inherit this definition; the §1 embedding pipeline, §3 subfield
+classifier, §4 demographic features, §9a–§9e bias-correction stack, and
+§13 pre-1990 retention all operate over it. Pinning the definition at
+§0 prevents repeating the same scoping qualifications in every section.
+
+**Primary analytical population (P).**
+"OpenAlex CS (`C41008148`) + Physics (`C121332964`) papers, publication
+year 1970–2024, with non-empty `abstract_inverted_index`, after
+applying the §3 junk-year-metadata filter."
+
+- Numerical bound: ~50% of OpenAlex CS+Physics 1970–2024 (per Check 1;
+  coverage rises gradually from ~30% in 1970 to ~70% in 2024 in CS,
+  ~48% to ~75% in Physics — see `experiments/phase-0.1/abstract-coverage.md`).
+- Field-tagging is era-stable on canonical CS/Physics venues per
+  redesigned Check 2a (slope < 0.002 /yr in both fields; see
+  `experiments/phase-0.1/check2a-field-tag-drift.md`). The
+  field-restriction step is not an era-bias channel; abstract
+  missingness is the binding selection mechanism.
+
+**Demographic-plurality sub-population (P_demo).**
+"P AND determinable first-authorship country."
+
+- Numerical bound: ~45% of OpenAlex CS+Physics (per Check 1f; 55% of
+  papers have UNKNOWN first-affiliation country in OpenAlex's
+  authorship.institutions data).
+- All demographic-plurality headline claims (Tests I–III on the
+  demographic axis, the §4 demographic-feature time series, §9a–§9d
+  Lockhart audit chain) operate over P_demo. Field-level claims and
+  semantic-plurality claims operate over P.
+
+**Pre-1990 sub-population (P_pre1990).**
+"P ∩ {publication_year < 1990}, after junk-year-metadata filter."
+
+- Numerical bound: ~33% of OpenAlex pre-1990 CS, ~48% of OpenAlex
+  pre-1990 Physics. Further narrowed by the §3 junk-year-metadata
+  filter (papers with `publication_year < 1990` whose abstract/title
+  contains tokens indicating post-2000 origin — "R-CNN", "IoT",
+  "blockchain", etc.).
+- §13 retention rationale (13-B/D/F load-bearing) survives the
+  narrowing — retention is on substantive grounds; analytical
+  population thinning tightens Limitations language but does not
+  remove the substantive justification.
+
+**Selection-bias correction (forward reference to §9e).**
+P is structurally narrower than the OpenAlex CS+Physics field, with
+selection biased on observable axes (citation count → canonical
+concentration; concept distribution → semantic plurality; country
+extraction → demographic plurality, per Check 1f). Aggregate metrics
+on P are reported under inverse-probability-of-abstract-availability
+weighting per §9e, with bias-correction bounds determined by
+propensity-model reliability.
+
+**Limitations language (pre-baked).** ws2's results generalize to "the
+OpenAlex-abstract-having CS+Physics 1970–2024 subset," not "all
+CS+Physics papers from this era." This is a structurally narrower
+analytical population than Hofstra et al. 2020 or Wu-Wang-Evans 2019
+worked over. §9e's propensity weighting recovers OpenAlex
+full-population means under MAR (missing at random conditional on the
+propensity covariates); under MNAR the recovered means are bounded,
+not point-identified — Limitations names this residual.
+
+**What is NOT changed by §0.** Year range remains 1970–2024. Field
+restriction remains CS + Physics (level-0 concept IDs C41008148 /
+C121332964). The 14 numbered commitments below operate over P (or
+P_demo / P_pre1990 where flagged). §0 is upstream of all of them.
+
 ### 1. Embeddings
 
 Three-model stack, with deliberate within-family and cross-family
@@ -99,6 +168,17 @@ is load-bearing here).
   SPECTER2. SciNCL remains a within-family check on SPECTER2 but would
   need an analogous within-family partner for Qwen3, deferred to that
   phase plan.
+
+**Analytical-population scope (per §0).** The embedding pipeline operates
+on P — the abstract-having ~50% subset, not the full OpenAlex CS+Physics
+field. This is binding throughout 1970–2024 (Check 1: ~30% coverage in
+1970, ~70% in 2024 in CS), not a pre-1990-only edge case as the original
+plan assumed. The 500K-abstract compute budget above is sized to P, not
+to the full ~1M+ field count. Selection bias on the abstract-having
+subset is corrected via §9e (inverse-probability-of-availability
+weighting on aggregate metrics); paper-level embeddings themselves are
+not corrected — they are computed for every paper in P that has the text
+to embed.
 
 ### 2. Embedding drift mitigation ladder
 
@@ -163,35 +243,137 @@ validated template.
 
 ### 3. Subfield classifier drift mitigation ladder
 
-Per ws2 desiderata §10 (new in this phase).
+Per ws2 desiderata §10. Substantially revised in N1 to absorb Phase 0.1
+Check 2 findings (`experiments/phase-0.1/classifier-drift.md`,
+`anachronism-audit.md`, `check2-correction-score-thresholds.md`,
+`within-window-anachronism.md`, `check2a-field-tag-drift.md`).
+
+**Headline N1 commitments (load-bearing):**
+
+1. **Primary subfield mechanism: embedding-cluster (§11).** Status:
+   *preferred*, not "necessary." OpenAlex concept tags are reliable as
+   subfield labels when score-thresholded (per Check 2 correction);
+   embedding-cluster remains preferred because it avoids the keyword-
+   matching anachronism mechanism for hard-category concepts (per
+   Check 2d within-window — "Big data" tags 1974 fish-pharmacokinetics
+   paper at score=0.75; "Cloud computing" tags 1976 atmospheric-physics
+   paper at score=0.76).
+
+2. **Score-thresholding policy (default).** Any pipeline filter on
+   `concepts.id:X` MUST score-threshold client-side. Defaults:
+   - **Loose threshold:** score ≥ 0.3 (inclusive — for population
+     restriction and broad subfield membership).
+   - **Strict threshold:** score ≥ 0.5 (exclusive — for tight subfield
+     identity, e.g., subfield mechanism test).
+   - Pre-register specific thresholds per use case in Phase 0.2.
+   - **Lesson logged:** OpenAlex's `concepts.id` filter ignores score;
+     the concepts array includes 0-score "considered but rejected"
+     concepts (`tasks/lessons.md`).
+
+3. **Concept-tag safety classification (per Check 2d within-window).**
+   Maintained as a Methods-section table. Determines whether a given
+   OpenAlex concept can be used as an auxiliary feature for pre-1990
+   subfield identification:
+
+   | Category | Examples | Pre-1990 safe at score≥0.3 |
+   |---|---|---|
+   | **Soft (term older than 1990)** | Neural network, Machine learning, Artificial intelligence, Recurrent neural network, Reinforcement learning, Quantum computing | **Yes** — genuine 1970s-80s precursor papers correctly tagged. |
+   | **Medium (term ~1990-2000)** | Deep learning, Convolutional neural network, World Wide Web, Internet | **Conditional** — score≥0.5 strict threshold, supplemented by junk-year filter. |
+   | **Hard (term post-2000)** | Big data, Cloud computing, Internet of things, GAN, BERT, CRISPR, Augmented reality, Smartphone, Bitcoin, Transformer | **No** — keyword-match false positives + junk-year metadata produce systematic anachronism. Use embedding-cluster (§11) instead. |
+
+   The full table is committed in `data/metadata/concept-tag-safety.csv`
+   (Stage 0 deliverable) and updated as new concepts are added to ws2's
+   subfield ontology.
+
+4. **Junk-year-metadata filter (new Stage-1 commitment).** Some
+   OpenAlex papers carry sentinel `publication_year` values (commonly
+   1970) that are clearly wrong — verified examples include "Brave new
+   world: Mobile phones, museums and Augmented Reality" with year=1970
+   (score=0.89 on Augmented Reality concept) and "R-CNN brain tumor
+   detection" with year=1970. Stage-1 commitment: papers with
+   `publication_year < 1990` whose abstract or title contains tokens
+   indicating post-2000 origin (curated list: "R-CNN", "IoT", "mobile
+   phone", "blockchain", "transformer", "deep learning", etc., locked
+   in Phase 0.2) receive a `suspect_year` flag. Flagged papers are
+   excluded from era-stratified analyses unless year is independently
+   verified (e.g., via DOI registration date or citation graph).
+
+5. **Field-level tagging is era-stable (Check 2a redesigned).** Level-0
+   field-tag rates on canonical CS/Physics venues are flat across
+   1970–2024 (CS slope: -0.0007 /yr; Physics: -0.0013 /yr; both within
+   the pre-registered |slope|<0.002 flat band). The §0 analytical
+   population is era-clean at the field-tagging step.
+
+**Existing mitigation ladder (reframed):**
+
+The Mitigation A/B/C/D/E ladder predates the Check 2 correction. It is
+retained for the cases where concept tags are still load-bearing
+(auxiliary features for soft-category concepts; the within-field
+subfield mechanism test if cluster-fit is insufficient), with reduced
+weight where embedding-cluster (§11) supersedes.
 
 **Stage 2 default (always run):**
-- Mitigation A — subfield mechanism test restricted to post-1990 window.
-  Field-level analyses (demographic, semantic, canonical) still span 1970–2024;
-  only the within-field subfield mechanism test is year-bounded.
-- Mitigation B — arXiv categories are the primary subfield partition where
-  available (CS post-1993ish, Physics post-1991ish). OpenAlex concepts are the
-  fallback for non-arXiv papers and older papers.
+- **Mitigation A — post-1990 default for hard-category concept-tag
+  use only.** The within-field subfield mechanism test, when consuming
+  hard-category concept tags as features, is restricted to post-1990.
+  Embedding-cluster (§11) consumption of pre-1990 papers does NOT need
+  this restriction. Field-level analyses (demographic, semantic,
+  canonical) span 1970–2024 over P (the §0 analytical population).
+- **Mitigation B — arXiv categories as a robustness partner**, NOT
+  primary subfield partition. Embedding-cluster (§11) is primary;
+  arXiv categories (CS post-1993ish, Physics post-1991ish) are a
+  classifier-independent comparison layer.
 
 **Stage 3 progressive escalation (invoke if triggered):**
-- Mitigation C — citation-network community detection as an alternative
-  subfield partition (SciSciNet has precomputed communities, or compute
-  fresh). Classifier-free, vocabulary-drift-proof, but community labels are
-  data-defined not sociologically-named.
+- Mitigation C — citation-network community detection as an
+  alternative subfield partition (SciSciNet has precomputed
+  communities, or compute fresh). Classifier-free, vocabulary-drift-
+  proof; community labels are data-defined, not sociologically-named.
 
 **Reserve (do not invoke unless necessary):**
 - Mitigation D — per-era reclassification.
 - Mitigation E — manual audit of a subsample.
 
-**Escalation triggers:**
-- Phase 0.1 sanity checks reveal pre-1990 concept tags are so sparse that
-  Mitigation A alone is insufficient → invoke B aggressively + consider C.
-- Stage 2 results differ substantively between arXiv-category and OpenAlex-
-  concept partitions → invoke C as robustness check.
+**Escalation triggers (revised):**
+- Embedding-cluster (§11) coherence-fit metrics fail on pilot data
+  (Check 5b cluster-stratification check) → escalate to Mitigation B
+  (arXiv categories as primary) and Mitigation C (citation-network).
+- Stage 2 results differ substantively between embedding-cluster and
+  arXiv-category subfield partitions → invoke C as robustness.
+- Hard-category concept tags appear in pre-1990 results despite the
+  junk-year filter → tighten the filter token list AND restrict
+  hard-category usage to post-1990.
 
 ### 4. Demographic features
 
-**Primary set (≥80% coverage required per year):**
+**Analytical-population scope (per §0).** Demographic-plurality
+headline claims operate over **P_demo** — the ~45% sub-population of
+P with determinable first-authorship country (per Check 1f: 55% of
+papers have UNKNOWN first-affiliation country in OpenAlex's
+authorship.institutions data; this subset cannot be propensity-
+corrected via §9e). This is a structural narrowing, not a coverage
+threshold that can be improved with more data. Limitations language
+explicitly names "ws2's demographic-plurality claims describe the
+~45% of OpenAlex CS+Physics 1970–2024 with abstract AND determinable
+first-authorship country."
+
+**Coverage threshold (re-anchored).** "≥80% coverage required per
+year" applies *within P_demo*, not over the OpenAlex CS+Physics
+field. Within P_demo, the threshold is the gate that promotes a
+dimension from "secondary" (reported but not headline) to "primary"
+(headline-eligible).
+
+**Uncertainty stack (cross-reference §9a–§9e).** Headline demographic
+numbers carry two independent uncertainty bands:
+- **§9a–§9d:** demographic-inference uncertainty (NamSor / Genderize /
+  ORCID accuracy heterogeneity by region × era).
+- **§9e:** selection-bias correction (inverse-probability-of-
+  abstract-availability weighting) for the abstract-having
+  selection mechanism.
+Methods co-reports both stacks; Discussion interprets the joint
+uncertainty.
+
+**Primary set (≥80% coverage required per year, within P_demo):**
 1. **Gender** — inferred via Genderize.io primary + NamSor on low-confidence /
    non-Western subset. Country-conditional where affiliation is known. Reported
    with per-region accuracy (Anglo/East-Asian/South-Asian/Arabic-speaking/
@@ -245,14 +427,30 @@ visible in the error bars.
 
 ### 5. Subfield partition
 
-- **Primary:** hybrid — arXiv category where paper is on arXiv; OpenAlex
-  concept (dominant / highest-confidence tag) as fallback.
-- **Granularity:** target ~10–50 subfields per field. Specific OpenAlex concept
-  level chosen to hit this range; specific arXiv category granularity
-  (`cs.AI` vs. `cs.AI.ML`) chosen for consistency.
-- **Multi-label handling:** each paper gets one primary subfield assignment
-  (highest-confidence concept tag, or primary arXiv category). Multi-subfield
-  robustness check in Stage 3.
+Aligned with §3 N1 commitments and §11 cluster-fit non-negotiable.
+
+- **Primary:** embedding-cluster (per §11 cluster-fit on temporally-
+  stratified pooled subsample, K=50 default). Each paper is assigned
+  to its nearest cluster centroid; cluster identity serves as
+  subfield label for analyses requiring a partition.
+- **Robustness partners:**
+  - **arXiv category** where paper is on arXiv (CS post-1993ish,
+    Physics post-1991ish). Classifier-independent, but coverage-limited.
+  - **Score-thresholded OpenAlex concept tags** (per §3 N1; soft-
+    category at score≥0.3, hard-category at score≥0.5 with junk-year
+    filter applied). Reliable when score-thresholded per Check 2
+    correction.
+- **Granularity:** target ~10–50 subfields per field. K ∈ {30, 50,
+  100} robustness from §11.
+- **Multi-label handling:** primary embedding-cluster assignment is
+  by nearest centroid (single-label by construction). Multi-subfield
+  robustness in Stage 3 reports concept-tag co-occurrence above
+  score threshold ≥0.3.
+- **Robustness criterion (Stage 2):** divergence trend should agree
+  in direction across embedding-cluster, arXiv-category (where
+  available), and score-thresholded concept-tag partitions. Where
+  partitions disagree on direction, that disagreement is itself the
+  finding — flag and investigate rather than hide.
 
 ### 6. Unit of analysis
 
@@ -388,6 +586,16 @@ and the resulting operational refinements:
   bias-uncertainty bracket"), not as point estimates. Methods explicitly
   cites Lockhart 2023 Principle 5 as the operational basis.
 
+  **N1 update — P5 nests inside §9e.** The bias-uncertainty band is
+  now computed *over the §9e-propensity-weighted analytical
+  population* (P_demo, the ~45% of OpenAlex CS+Physics with abstract
+  AND determinable country). The two layers compose: §9e weighting
+  recovers OpenAlex full-population aggregates over P_demo under MAR;
+  §9a P5 then applies the demographic-inference disagreement-matrix
+  band on top. Headline numbers carry both stacks. Methods walks
+  through both transformations in order (§9e first, §9a P5 second)
+  so readers can attribute residual uncertainty to the correct layer.
+
 These refinements are framing + budget-light operational changes; the
 core pipeline (NamSor + Genderize + ORCID validation) is unchanged.
 
@@ -457,14 +665,18 @@ would require either custom region-population-specific training models
 (Lockhart Principle 3, deferred per §9a) or substantially expanded
 hand-validation budget at sub-regional resolution.
 
-**Three-layer defense — demographic side (parallel to canonical
-side's PAP+Holst+PAP-2025 chain):**
+**Three-layer defense → four-layer (per N1).** Originally three; N1
+adds the §9e selection-bias-correction layer:
 - **Theoretical layer:** Lockhart 2023 principle-by-principle audit
   (§9a).
 - **Empirical-diagnostic layer:** within-between decomposition (§9b,
   this section).
 - **Controlled-analysis layer:** conditional three-way validation when
   diagnostic triggers (§9b trigger).
+- **Selection-bias-correction layer (§9e, new):** propensity-weighted
+  decomposition over P_demo. The within-between decomposition is now
+  computed over the §9e-corrected analytical population, not over
+  raw P. Sequence: §9e weight first, then within-between split.
 
 #### 9c. ORCID coverage transparency + multi-source bias-quantification
 
@@ -599,6 +811,109 @@ Patterns (i) and (ii) are addressed within Phase 0.2 / §9a / §9c
 framework; (iii), (iv), (v) are committed as Stage 3 robustness sweep
 deliverables; (vi) is Limitations-only.
 
+#### 9e. Selection-bias correction layer (abstract-availability missingness)
+
+Surfaced from Check 1f (`experiments/phase-0.1/missingness-bias.md`).
+Three structurally important biases align with ws2's three substantive
+measurement axes: citation count → canonical concentration (CS tertile
+gap = 26 pp), concept → semantic plurality (IQR 13.3% across 93
+concepts; range 20-89%), country → demographic plurality (55% UNKNOWN
+first-affiliation; 11 pp IQR among knowns). The propensity to have an
+abstract is non-random conditional on these axes; uncorrected
+aggregates over P (the §0 analytical population) are biased estimators
+of OpenAlex full-population aggregates.
+
+§9e is conceptually distinct from §9a–§9d. §9a–§9d handle
+*demographic-inference* uncertainty (NamSor / Genderize / ORCID accuracy);
+§9e handles *paper-selection* missingness (which papers enter P at all).
+Naming as §9e signals shared bias-correction infrastructure (both produce
+uncertainty bands on headline numbers) while flagging that inputs and
+statistical machinery differ. Methods sentence makes this distinction
+explicit.
+
+**Commitments:**
+
+1. **Propensity model.** Fit P(has_abstract = 1 | X) where
+   X = year × field × type × citation_tertile × concept_cluster × known_country.
+   Logistic regression as baseline; gradient-boosted trees (e.g.,
+   lightgbm) as flexibility check. Held-out cross-validation AUC and
+   calibration plot reported in `experiments/phase-1.1/propensity-fit.md`
+   (Stage 1 deliverable).
+
+2. **Inverse-probability-of-availability weighting.** For each paper
+   p ∈ P, weight w_p = 1 / P̂(has_abstract=1 | X_p). Aggregate metrics
+   computed as weighted means:
+   M_corrected = Σ_{p ∈ P} w_p · m_p / Σ_{p ∈ P} w_p.
+   Stabilized weights (w_p / mean(w)) reported alongside raw to flag
+   high-leverage observations.
+
+3. **Reliability-bounded reporting.** Where the propensity model meets
+   a pre-registered CV-AUC threshold (locked in Phase 0.2; tentative
+   ≥0.75), report the corrected aggregate as headline. Where it
+   doesn't, report the uncorrected aggregate AND the bound on the
+   correction's plausible range (computed via sensitivity analysis
+   under varying MNAR assumptions; pre-registered MNAR-tilt grid in
+   Phase 0.2).
+
+4. **Country axis: scope narrowing only.** The 55% UNKNOWN first-
+   authorship country bucket cannot be propensity-corrected (no
+   observable strata to fit on, since the bucket itself indexes the
+   missingness). Demographic-plurality claims restricted to P_demo
+   per §0. Limitations explicitly names this scope narrowing.
+
+5. **Construct-validity audit on the propensity model itself.** §14
+   gains a fourth construct-validity layer for §9e. Functional form,
+   covariate selection, and CV-AUC threshold are themselves
+   construct-validity choices; reported transparently with sensitivity
+   to alternative specifications (logistic vs. boosted trees;
+   covariate-set ablations; threshold variants).
+
+6. **Synthesis with §9a–§9d.** Headline demographic-plurality numbers
+   carry two uncertainty stacks: §9a–§9d (demographic-inference
+   uncertainty band) and §9e (selection-bias correction band). Methods
+   co-reports both; Discussion interprets the joint uncertainty.
+   Bias-uncertainty band per §9a P5 widens in cells where the §9e
+   correction is most leveraged (low-coverage strata).
+
+**Three-layer defense → four-layer.** §14's Methods overview pattern
+gains §9e as a parallel layer:
+- Theoretical (§9a): Lockhart 2023 P1–P5 for demographic; PAP 2024
+  three-conditions for canonical; embedding-drift checks (§2) for
+  semantic.
+- Empirical-diagnostic (§9b): within-between decomposition; PAP 2024
+  reference-count diagnostic; Mitigation-4 anchor-projected diversity.
+- Controlled-analysis (§9b trigger): conditional three-way
+  validation; PAP 2024 zero-reference exclusion; cluster-fit
+  stratification (§11).
+- **Selection-bias-correction (§9e, new):** propensity-weighted
+  aggregates on the abstract-having subset. Addresses "which papers
+  are in our analytical population" — orthogonal to the
+  inferred-attribute-correctness question the other layers address.
+
+**Limitations residual (pre-baked).**
+- MAR assumption: §9e recovers OpenAlex full-population means only
+  under MAR conditional on (year × field × type × citation_tertile ×
+  concept_cluster × known_country). Under MNAR, recovered means are
+  bounded, not point-identified — sensitivity grid characterizes the
+  bound.
+- Country axis: scope narrowing is structural; not correctable. ws2's
+  demographic-plurality claims are restricted to P_demo (~45%) by
+  construction.
+- Citation-tertile bias is the largest single contributor (CS T1 =
+  36.7% coverage, T2 = 62.5% — 26 pp gap). Canonical-concentration
+  headline numbers are most affected; the §9e correction is most
+  load-bearing for the canonical channel.
+- Even within knowns: country IQR is 11 pp (excluding UNKNOWN); the
+  weighted aggregate inherits residual within-known bias the
+  propensity model cannot fully correct for.
+
+**Operational note.** §9e is computed once per OpenAlex snapshot and
+per analytical-population restriction. The fitted propensity model +
+per-paper weights are committed under
+`data/metadata/propensity-weights-{snapshot_date}.parquet` for
+reproducibility. Re-fit on a newer snapshot is a separate experiment
+per ws2 desideratum §1.
+
 ### 10. Disambiguation error floor
 
 - **Acknowledgment:** OpenAlex author-disambiguation accuracy ≈ 90–95% per
@@ -661,12 +976,47 @@ explicitly; verified in any independent reproduction.
 analyses (semantic diversity, Test IV novelty metrics, anchor-dimension
 projection) use title + abstract only. Matches SPECTER2's training
 distribution, matches convention in scientometric embedding work
-(Chu-Evans 2021, Hofstra et al. 2020, etc.), and provides high coverage
-across the 1970–2024 window.
+(Chu-Evans 2021, Hofstra et al. 2020, etc.).
+
+**Coverage caveat (per Check 1; updated in N1).** "Provides high
+coverage" was the Phase 0.1 expectation; Check 1 falsified it.
+Abstract coverage is ~50% throughout the 1970–2024 window, not >95%
+post-1990 as originally assumed. The §0 analytical population is the
+abstract-having ~50% subset; §9e's selection-bias correction layer
+addresses the resulting bias on aggregate metrics. Title-only is NOT
+an alternative — embedding quality on title-only inputs is too poor
+to trust for semantic-plurality measurement.
 
 **Full-text is not required** for any primary analysis. Pre-1990
 full-text coverage is prohibitively uneven; requiring full-text would
 collapse the pre-1990 sample and defeat the paper's 50-year arc.
+
+**Closed alternative paths (per Phase 0.1 Checks 1c, 1d, 1e).**
+Several alternative data-source paths were tested and ruled out
+during Phase 0.1; documented here so they don't get re-litigated:
+
+- **Type-restriction (Check 1c) — closed.** Articles (~80% of sample)
+  have ~45% (CS) / ~60% (Physics) coverage — ~the overall rate.
+  Restricting to articles or excluding low-coverage types yields only
+  ~3 pp improvement. Coverage gap is uniformly distributed across
+  analytically-relevant paper types.
+- **OpenAlex-locations arXiv linkage (Check 1d) — closed.** Only
+  1.4% (CS post-1991) / 4.8% (Physics post-1991) of papers have an
+  arXiv linkage flagged in OpenAlex's `locations` field. The
+  hypothesis "use OpenAlex `locations` to identify arXiv-supplemented
+  papers" does not work at scale. Direct ID lookup verification
+  (100/100 spot-check) confirmed the abstract bottleneck is not an
+  anonymous-access or `?sample` artifact — it is real OpenAlex data
+  state.
+- **S2AG (Semantic Scholar) as primary abstract source (Check 1e) —
+  closed.** S2AG fill rate on the OpenAlex no-abstract subset
+  post-1990 is 2.2% (CS) / 5.2% (Physics), far below the 50%
+  pre-registered viability threshold. S2AG actually has *less*
+  abstract coverage than OpenAlex on this sample. Mental model
+  "SPECTER2 trained on S2AG → S2AG has best CS/Physics coverage" is
+  backwards: SPECTER2 was trained on the S2AG corpus that exists,
+  which is dramatically smaller than OpenAlex's CS+Physics
+  population.
 
 **Reference-list metadata for novelty computation.** Test IV primary
 novelty (N_p = cosine distance from paper to cited-papers centroid)
@@ -675,16 +1025,27 @@ tertiary (Uzzi-Mukherjee-Stringer recombinant novelty, Stage 3) also
 uses references. So reference-based analyses are cleanly doable
 without full-text.
 
-**Stage 3 arXiv full-text robustness (optional).** For the subset of
-papers with arXiv full-text (CS post-1993ish, Physics post-1991ish),
-re-run primary semantic-diversity metrics using long-context Qwen3
-embeddings of the full text. Compare trend direction to the abstract-
-based result. Purpose: test whether abstract summaries miss
-substantive content that would change the divergence finding. Cost:
-2–3 extra days of compute on the arXiv subset; arXiv is free and
-legal. Limitation: covers only post-1991/93 window, so doesn't help
-with 1970s drift concern — complements rather than replaces the
-drift-mitigation ladder.
+**Stage 3 arXiv full-text robustness (optional, NOT primary).** For
+the subset of papers with arXiv full-text (post-2010 CS where arXiv
+coverage is highest, expanding to Physics post-1991ish where
+tractable), re-run primary semantic-diversity metrics using long-
+context Qwen3 embeddings of the full text. Compare trend direction
+to the abstract-based result. Purpose: test whether abstract
+summaries miss substantive content that would change the divergence
+finding. Cost: 2–3 extra days of compute on the arXiv subset; arXiv
+is free and legal. Limitations: covers only post-1991/93 window
+(less for tractable CS); doesn't help with 1970s drift concern —
+complements rather than replaces the drift-mitigation ladder.
+
+**Why arXiv full-text stays in Stage 3, NOT primary (per Check 1d).**
+arXiv linkage is not addressable via OpenAlex's `locations` field
+(see closed alternatives above). Direct arXiv API integration via
+DOI/title matching is feasible but slow (1 req/3s rate limit;
+multi-day batch job at 5–10M-paper scale) and matching is fragile
+(arXiv preprints often have different DOIs than published versions;
+title-based matching is fuzzy at scale). Operationally tractable
+only on a smaller subset (e.g., post-2010 CS) where arXiv coverage
+is high and the matching budget is bounded.
 
 **Limitations acknowledgment (pre-baked for Methods section):**
 abstracts are high-level summaries; they can mask methodological
@@ -719,10 +1080,28 @@ shared platforms vs. shared training institutions) is not identifiable
 from our data. That is the domain of interventional/simulation work —
 explicitly whitespace 1.
 
-**Pre-1990 data retention policy (non-negotiable).** Pre-1990 data is
-retained in all primary analyses despite known measurement weaknesses
-(classifier drift §10, embedding drift §3, sparser abstracts, weaker
-demographic inference). Rationale:
+**Pre-1990 data retention policy (non-negotiable; analytical
+population narrows per N1).** Pre-1990 data is retained in all
+primary analyses despite known measurement weaknesses (classifier
+drift §10, embedding drift §3, sparser abstracts, weaker demographic
+inference). The retention rationale below is *substantive* and
+unaffected by Phase 0.1 findings; what tightens is the analytical
+population the rationale operates over:
+
+- **P_pre1990** (per §0): ~33% of OpenAlex pre-1990 CS, ~48% of
+  OpenAlex pre-1990 Physics (per Check 1; abstract-having subset
+  only). Further narrowed by the §3 junk-year-metadata filter.
+- **§9e selection-bias correction** is most leveraged in the
+  pre-1990 era because the abstract-having subset is smallest there
+  (and the citation-tertile bias is most pronounced for low-cited
+  early papers). The §9e propensity model includes year as a
+  covariate to absorb era-conditional variation.
+- **Limitations language tightens.** Pre-1990 headline claims read:
+  "in the abstract-having subset of OpenAlex pre-1990 CS+Physics,
+  ~33-48% of the era's full corpus, after junk-year filtering and
+  §9e propensity weighting."
+
+**Substantive retention rationale (unchanged):**
 
 1. **13-B requires a pre-diversification baseline.** The substantive
    claim ("demographic diversity rose while intellectual diversity
@@ -749,13 +1128,21 @@ the plan applies different restrictions to different analyses:
 
 - **Primary divergence tests (I–III):** span 1970–2024. Drift mitigation
   handles measurement concerns.
-- **Subfield mechanism test:** restricted to post-1990 (desiderata §10 —
-  classifier drift on pre-1990 subfield tags is untenable). This is a
-  measurement-reliability restriction on *one* analysis, not a project-
-  wide clip.
-- **Full-text robustness:** post-1991/93 subset (arXiv coverage).
-- **Demographic inference:** weight-by-confidence with per-era accuracy
-  reporting; no clipping.
+- **Subfield mechanism test (per §3 N1):** restricted to post-1990
+  *only when consuming hard-category concept tags as features*.
+  Embedding-cluster (§11) consumption of pre-1990 papers does NOT
+  need this restriction. Soft-category concept tags at score≥0.3 are
+  pre-1990-safe. This is a measurement-reliability restriction on a
+  specific feature subset, not a project-wide clip.
+- **Junk-year-metadata filter (per §3 N1):** pre-1990 papers with
+  abstract/title tokens indicating post-2000 origin (R-CNN, IoT,
+  blockchain, etc.) get a `suspect_year` flag and are excluded from
+  era-stratified analyses unless year is independently verified.
+- **Full-text robustness:** post-2010 CS subset primarily; arXiv
+  Physics post-1991ish where tractable.
+- **Demographic inference:** weight-by-confidence with per-era
+  accuracy reporting (§9a P5 nests inside §9e propensity weighting);
+  no clipping.
 
 **Concrete pre-1990 break-point candidates** (added to the break-point
 analysis pre-registration):
@@ -772,19 +1159,65 @@ These join the existing candidate set (CS: 1991–93, 1998–2000, 2008–09,
 2012, 2018–20; Physics: 1991, 1995–2000, 2012) with Bonferroni
 correction within each field's expanded candidate list.
 
-### 14. Methods overview framing — three parallel construct-validity audits
+### 14. Methods overview framing — four parallel construct-validity audits
 
-The Methods overview paragraph frames ws2's three metric channels
-(demographic, semantic, canonical) as parallel construct-validity audits,
-each with a structured proxy-vs-thing-of-interest gap and a corresponding
-external audit framework: Lockhart 2023 principles 1–5 for demographic;
-embedding-drift checks (desiderata §3) + within-family robustness for
-semantic; PAP 2024 three-conditions framework for canonical. Headline
-claims on each channel are bounded by the respective audit's documented
-residual uncertainty. Framing-only commitment (no new operational change);
-locked here so the Methods drafting phase does not re-open it.
+**N1 update — three-layer pattern → four-layer pattern.** The Methods
+overview originally framed ws2's three metric channels (demographic,
+semantic, canonical) as parallel construct-validity audits with a
+structured proxy-vs-thing-of-interest gap and an external audit
+framework. N1 adds a fourth audit layer for **§9e selection-bias
+correction** — the analytical-population definition itself is a
+construct-validity choice, separate from how attributes within that
+population are inferred.
+
+**The four parallel audits:**
+
+1. **Demographic channel.** Lockhart 2023 principles 1–5 (§9a). Audits
+   the inferred-attribute-correctness gap (do NamSor / Genderize
+   classifications match self-report identity?).
+2. **Semantic channel.** Embedding-drift checks (desiderata §3, §11
+   cluster-fit-on-stratified-subsample) + within-family robustness
+   (§1 three-model stack: SPECTER2 + SciNCL + Qwen3-0.6B). Audits the
+   embedding-validity gap (do modern embeddings represent old text
+   correctly?).
+3. **Canonical channel.** PAP 2024 three-conditions framework + Holst
+   2024 zero-reference exclusion (Petersen-Holst-Macher critique
+   chain). Audits the metric-construct gap (do CD-index, Spearman
+   rank, Gini measure what we want them to?).
+4. **Selection-bias correction (§9e, NEW).** Inverse-probability-of-
+   abstract-availability weighting + propensity-model construct-
+   validity. Audits the analytical-population gap (does P generalize
+   to OpenAlex CS+Physics? does P_demo generalize to P? under what
+   missingness assumptions?).
+
+**The four-layer Methods structure (referenced from §9a, §9b, §9e).**
+Each construct-validity audit has the same internal structure:
+- **Theoretical layer:** the external framework (Lockhart P1-P5; PAP
+  three-conditions; embedding-drift literature; MAR/MNAR theory).
+- **Empirical-diagnostic layer:** ws2-specific diagnostic computed
+  on the data (within-between decomposition; reference-count
+  diagnostic; Mitigation-4 anchor-projected diversity; propensity-
+  weighted aggregate vs. uncorrected aggregate).
+- **Controlled-analysis layer:** restriction or correction applied
+  when the diagnostic triggers (three-way validation; zero-reference
+  exclusion; cluster-fit stratification; reliability-bounded
+  reporting).
+- **Residual:** what each layer cannot resolve (Lockhart P3 deferred;
+  PAP CD-index contestation; embedding drift on 1970s; MNAR
+  identifiability gap).
+
+Framing-only commitment (no new operational change beyond what §9e
+introduces); locked here so the Methods drafting phase does not
+re-open it.
 
 ## Sanity checks (this phase's empirical work)
+
+**Note (per N1 §0).** Phase 0.1 sanity checks 3, 4, 5a–5d operate over
+P (or P_demo for demographic-coverage subchecks) — the §0 analytical
+population. Sanity Checks 1 and 2 measured P's selection mechanism
+itself (abstract availability and field-tagging coverage); their
+results define what P is. Subsequent checks (3, 4, 5) measure
+properties *of* P.
 
 Deliverables in rough order:
 
@@ -928,12 +1361,39 @@ Per ws2 desiderata §10. Five sub-checks:
 
 - **Status (Check 2 a/b/c, run 2026-04-27):** 2a undefined as sampled (every
   paper has the field concept by sampling design — needs a different sampling
-  strategy; deferred to plan revision). 2b: modest temporal trend in concepts-
-  per-paper (CS 8.05→9.29 +15%, Physics 13.18→14.42 +10%) — not a red flag.
-  2c: confidence scores era-stable (CS max-score 0.58→0.60; Physics 0.75→0.76)
-  — no drift. Within papers the classifier tags, tag confidence is reliable
-  across eras. The **deeper question is tagging *correctness***, addressed by
-  2d + 2e. See `experiments/phase-0.1/classifier-drift.md`.
+  strategy; redesigned and re-run as part of N1, see "Check 2a (redesigned)"
+  status below). 2b: modest temporal trend in concepts-per-paper (CS
+  8.05→9.29 +15%, Physics 13.18→14.42 +10%) — not a red flag. 2c: confidence
+  scores era-stable (CS max-score 0.58→0.60; Physics 0.75→0.76) — no drift.
+  Within papers the classifier tags, tag confidence is reliable across eras.
+  The **deeper question is tagging *correctness***, addressed by 2d + 2e.
+  See `experiments/phase-0.1/classifier-drift.md`.
+
+- **Status (Check 2a redesigned, run 2026-04-27, N1):** **clean null —
+  field-tag rate is era-stable on canonical CS/Physics venues.**
+  Redesigned to sample via venue (`primary_location.source.id`) on 12
+  CS + 12 Physics canonical venues × 55 years × 50 papers = 54,864
+  papers, then measure level-0 field-tag rate at score≥0.3.
+  - **CS:** pre-1990 = 86.5%, post-1990 = 84.3%, 2010+ = 83.8%; linear
+    slope = -0.0007 /yr.
+  - **Physics:** pre-1990 = 95.9%, post-1990 = 91.9%, 2010+ = 91.5%;
+    linear slope = -0.0013 /yr.
+  - Both slopes within the pre-registered |slope|<0.002 /yr flat band.
+    Sign is *slightly negative* — opposite the original under-tagging
+    concern direction.
+  - **Verdict:** no era-drift in field-level tagging. ws2's analytical
+    population is era-clean at the field-tagging step beyond the
+    abstract-having selection bias §9e addresses. §0 analytical-
+    population definition does NOT need an era-conditional caveat for
+    field-tag drift; §9e propensity model does NOT need a field-tag-
+    rate-by-year covariate.
+  - Two secondary observations: Physics field-tag rate is consistently
+    5–12 pp higher than CS at all eras (Physics venues are more
+    "purely physics" than CS venues are "purely CS"); strict (≥0.5)
+    field-tag rate for CS is 55–65% (default loose ≥0.3 / strict ≥0.5
+    score-thresholding policy per §3 N1 handles this).
+  - See `experiments/phase-0.1/check2a-field-tag-drift.md`,
+    `check2a-field-tag-drift.csv`, `check2a-venues.csv`.
 - **Status (Check 2d, run 2026-04-27):** **decisive red flag — 14 of 20
   modern concepts (70%) show multi-decade anachronistic tagging.** Examples:
   Deep learning earliest=1907 (gap 99 yr); CRISPR earliest=1905 (gap 107 yr);
@@ -1238,13 +1698,30 @@ Each gate must be met before advancing to Phase 1.1 (full data pull):
 1. **Pilot query returns a non-empty, expected-shape dataset.** Year
    distribution matches target; concept filter works as expected; no
    silent API-pagination errors.
-2. **Abstract coverage is workable.** ≥90% of papers post-1985 have abstracts.
-   Pre-1985 coverage is characterized and a bounded mitigation committed (e.g.,
-   "treat pre-1985 semantic-diversity measurements as preliminary pending
-   title-only vs. title+abstract sensitivity").
-3. **Classifier drift is characterized.** Coverage by year, concepts per paper,
-   confidence distribution, and anachronism audit all reported. Default post-
-   1990 Mitigation A is confirmed or explicitly loosened.
+2. **Abstract coverage is characterized AND the analytical population is
+   defined (revised in N1).** The pre-N1 gate ("≥90% post-1985 with
+   abstracts") was falsified by Check 1 (~50% throughout 1970–2024).
+   Replaced by: (a) §0 analytical-population definition committed
+   (P, P_demo, P_pre1990 named with numerical bounds); (b) §9e
+   selection-bias correction layer operationalized (propensity model
+   covariates pre-registered, reliability threshold pre-registered);
+   (c) Limitations language for the structurally narrower analytical
+   population pre-baked in §0 and §13. Closed alternative paths
+   (type-restriction, OpenAlex-locations arXiv linkage, S2AG primary)
+   documented in §12 so they don't get re-litigated.
+3. **Classifier drift is characterized AND score-thresholding policy
+   is locked (revised in N1).** Coverage by year, concepts per paper,
+   confidence distribution, and anachronism audit all reported (Check
+   2 a/b/c, 2d, 2d-within-window, Check 2 correction). N1 commitments:
+   (a) score-thresholding default ≥0.3 loose / ≥0.5 strict for any
+   `concepts.id` filter use; (b) concept-tag safety classification
+   table committed in `data/metadata/concept-tag-safety.csv`;
+   (c) junk-year-metadata filter token list locked in Phase 0.2;
+   (d) field-tag rate confirmed era-stable on canonical venues
+   (Check 2a redesigned, slope <0.002 /yr both fields). The original
+   "post-1990 default Mitigation A" is reframed in §3 N1 — applies
+   only when consuming hard-category concept tags as features, not
+   project-wide.
 4. **Demographic inference coverage is characterized.** Gender coverage by
    name region reported. Decision made on Genderize-only vs. Genderize +
    NamSor, with cost implications committed to `tasks/spend.md`.
