@@ -78,27 +78,122 @@ against a planned "half a day" estimate. At N=2M the triple-pass is
    kernels for every transformer operator; missing ones silently fall
    back to CPU. SentenceTransformer's per-batch Python overhead amplifies
    this.
-2. **Batch_size=8 leaves performance on the table.** Production runs
-   should sweep batch_size ∈ {32, 64, 128} to amortize Python overhead.
-   Unlikely to explain a 30× gap, but worth checking.
+2. **Batch_size=8 leaves performance on the table** for SPECTER2/SciNCL.
+   Production runs should sweep batch_size ∈ {32, 64, 128} to amortize
+   Python overhead. Unlikely to explain a 15-30× gap on these models,
+   but worth checking.
 3. **Plan §1 estimates may have been overly optimistic for M-series.**
    They were drafted from prior Phase 0 research; this is the first
    actual measurement on the dev hardware. Plan revision may be warranted.
+4. **Qwen3 batching anomaly — see next subsection.**
 
-### Implication for Stage 2 compute decision
+### Pass-1 vs pass-2 decomposition (load time visibility)
 
-The deferred local-vs-cloud decision (per plan §1 "Open decisions
-deferred") now strongly leans **cloud GPU** for Stage 2:
+| Model | Pass 1 total (cold, bs=1, 10 abs) | Pass 1 s/abs | Pass 2 total (warm, bs=8, 50 abs) | Pass 2 s/abs | Load time upper bound |
+|-------|----------------------------------:|-------------:|----------------------------------:|-------------:|----------------------:|
+| SciNCL | 11.31s | 1.131 | 8.21s | 0.164 | ~9.7s |
+| SPECTER2 | 6.61s | 0.661 | 11.85s | 0.237 | ~4.2s |
+| Qwen3-0.6B | 22.86s | 2.286 | 211.38s | 4.228 | (see anomaly) |
 
-- **Local (this hardware):** ~643 hrs at N=500K; untenable at N=2M.
-- **Cloud A10G GPU** (rough estimate 5-10× MPS): ~64-128 hrs at 500K;
-  256-515 hrs at 2M. Tolerable for one-time runs; expensive for
-  robustness sweeps.
-- **Cloud A100 GPU** (rough estimate 30-50× MPS): ~12-22 hrs at 500K;
-  50-90 hrs at 2M. Tolerable. Cost ~$15-50 per pass.
+Load-time upper bound = `pass1_total − pass1_n × pass2_rate`. This
+assumes bs=1 inference is no slower than bs=8 inference, which is true
+for SPECTER2/SciNCL but NOT for Qwen3 (next subsection). The bounds are
+reasonable: SPECTER2 (~110M params, BERT-base) loads fastest; SciNCL
+(similar size, more elaborate sentence-transformers config path) takes
+longer.
 
-Stage 1 will lock the decision against Check 5b's actual N_target. But
-Phase 0.1.E's H7 result moves the prior strongly toward cloud.
+### Qwen3 batching anomaly — bs=1 is FASTER per-abstract than bs=8
+
+This was unexpected and worth flagging because it materially changes
+the H7 projection for Qwen3.
+
+| Qwen3-0.6B configuration | Per-abstract timing |
+|---|---:|
+| bs=1, cold (with load): pass 1 | 2.286 s/abs |
+| bs=8, warm: pass 2 | **4.228 s/abs** |
+| bs=1, warm (estimated, after subtracting ~10-15s load) | **~1.1 s/abs** |
+
+**Qwen3 bs=8 is ~4× slower per-abstract than bs=1.** The pass-2 number
+is the headline H7 finding, but it represents a worst-case batching
+configuration, not a typical operating point.
+
+**Why this happens.** Qwen3 is a decoder-LM with last-token EOS pooling
+and 32K-token context. When sentence-transformers batches 8 abstracts
+of variable length, it pads all sequences to the longest in the batch.
+A scientific abstract distribution with mean ~250 tokens but a long
+tail (≥500 tokens for review-style abstracts) means a typical bs=8
+batch processes 8 × max_length ≈ 8 × 500 = 4000 tokens of compute,
+versus bs=1 sequentially processing the actual lengths (sum ≈ 1500
+tokens). **Padding waste = ~3×**, which fully explains the ~4× slowdown.
+
+SPECTER2/SciNCL don't show this because they truncate at 512 (BERT max),
+bounding the padding range; Qwen3's much larger context window leaves
+the padding range unbounded by default.
+
+This is a known sentence-transformers behavior with decoder-LM-derived
+embedding models. Standard mitigations:
+
+1. **Length-sorted batching** (group abstracts by tokenized length
+   before batching). Reduces padding waste 5-10×; expected Qwen3
+   timing ~0.5-1.0 s/abs.
+2. **Fixed truncation_max_length** (cap all abstracts at e.g. 512
+   tokens). Simpler but loses Qwen3's long-context advantage.
+3. **Smaller batches (bs=2 or bs=4).** Less padding amplification
+   but less amortization. Probably ~1-1.5 s/abs.
+4. **bs=1.** ~1.1 s/abs as estimated. No batching efficiency, but
+   Qwen3's per-call Python overhead is small enough that this is
+   already faster than naive bs=8.
+
+### Revised H7 projection (Qwen3 with mitigation)
+
+Realistic upper bounds for Qwen3 with smarter batching:
+
+| Strategy | Qwen3 s/abs | 500K hrs | 2M hrs |
+|---|---:|---:|---:|
+| Naive bs=8 (smoke test default) | 4.228 | 587 | 2349 |
+| Length-sorted bs=8-32 (estimated) | ~0.7 | **97** | **389** |
+| bs=1 (worst-case fallback) | ~1.1 | 153 | 611 |
+
+The "untenable at N=2M" framing in the H7 finding above is a
+**worst-case** read; with sorted batching, Qwen3 production is "still
+slow but not impossible" on local M-series.
+
+### Implication for Stage 2 compute decision (revised)
+
+The deferred local-vs-cloud decision still leans cloud, but the
+Qwen3 batching headroom changes the arithmetic:
+
+- **Local with naive batching (smoke-test config):** ~643 hrs at
+  N=500K; ~2572 hrs at N=2M. Untenable.
+- **Local with length-sorted batching (Qwen3 only; SPECTER2/SciNCL
+  unchanged):** ~153 hrs at N=500K (~6 days); ~611 hrs at N=2M (~25
+  days). Tolerable for a one-time run; still painful for robustness
+  sweeps.
+- **Cloud A10G GPU (5-10× MPS):** ~30-65 hrs at N=500K with sorted
+  batching; ~120-260 hrs at N=2M. Tolerable.
+- **Cloud A100 GPU (30-50× MPS):** ~6-11 hrs at N=500K; ~24-44 hrs
+  at N=2M. Comfortable. Cost ~$15-50 per pass.
+
+### Stage 1 commitment — test sorted-by-length batching before committing to cloud
+
+Before Stage 1 locks the cloud-vs-local decision, run a small
+batching-strategy benchmark on the local hardware (~30 min):
+
+1. Implement length-sorted batching in `embed_qwen3` (sort abstracts
+   by tokenized length before assembling batches; rejoin in original
+   order on output).
+2. Re-run the smoke test with the same 50 abstracts under three
+   strategies: naive bs=8 (current), sorted bs=8, sorted bs=32.
+3. Record per-abstract timing for each.
+4. Use the best-strategy timing as the H7 input to the Stage 1
+   compute decision.
+
+This is bounded engineering (~half a day including the rerun) and may
+move the prior on cloud-vs-local meaningfully. Worth doing before
+spending cloud budget. Logged as a Stage 1 task in `tasks/todo.md`.
+
+Stage 1 will lock the decision against Check 5b's actual N_target +
+the post-mitigation Qwen3 timing.
 
 ## Decision
 
