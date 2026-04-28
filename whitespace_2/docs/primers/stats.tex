@@ -897,6 +897,118 @@ than dropping variables mechanically, ws2 commits to a
 report $\beta_t$ across specifications. Qualitative stability of
 $\beta_t$ is the robustness claim.
 
+\section{Missing Data: MAR, MNAR, and Inverse-Probability Weighting}
+\label{sec:mar-mnar}
+
+\textbf{Problem.} Whitespace 2's analytical population $P$ — papers
+with non-empty \texttt{abstract\_inverted\_index} in OpenAlex — is
+$\sim$50\% of the OpenAlex CS+Physics field. Aggregate metrics computed
+on $P$ are biased estimates of the field-level aggregates if the
+selection mechanism (whether a paper has an abstract or not) correlates
+with the metric being measured. Phase 0.1 Check 1f confirmed this is the
+case along three axes: citation count, concept distribution, and
+country of first authorship — all aligned with ws2's three substantive
+measurement axes.
+
+\textbf{Rubin's missing-data taxonomy} (Rubin 1976; standard in
+econometrics, biostatistics, and survey statistics). Let $D$ be the
+indicator that a paper has an abstract (1 if observed, 0 if missing),
+let $X$ be the observed covariates (year, field, type, citation tertile,
+concept cluster, known country), and let $Y$ be the outcome of interest
+(e.g., paper-level semantic novelty, demographic attribute, citation
+rank).
+
+\begin{itemize}[nosep]
+  \item \textbf{MCAR (Missing Completely At Random):}
+        $\Pr(D = 1 \mid X, Y) = \Pr(D = 1)$. Missingness is independent
+        of everything observable and unobservable. Aggregate means are
+        unbiased without correction. \textit{ws2 does not assume MCAR};
+        Check 1f rules it out empirically.
+  \item \textbf{MAR (Missing At Random):}
+        $\Pr(D = 1 \mid X, Y) = \Pr(D = 1 \mid X)$. Missingness depends
+        on \emph{observed} covariates but not on the missing value
+        itself, conditional on those covariates. Two papers with
+        identical $X$ have the same probability of being observed
+        regardless of what their outcome $Y$ would have been.
+        \textbf{Inverse-probability-of-availability weighting recovers
+        full-population aggregates exactly under MAR.}
+  \item \textbf{MNAR (Missing Not At Random):}
+        $\Pr(D = 1 \mid X, Y) \neq \Pr(D = 1 \mid X)$. Missingness
+        depends on the unobserved $Y$ itself, even after conditioning
+        on $X$. Recovered aggregates are biased; we can only
+        \emph{bound} the population aggregate, not point-identify it.
+\end{itemize}
+
+\textbf{Inverse-probability weighting under MAR.} For each paper
+$p \in P$, fit a propensity model
+$\hat\pi(X_p) = \Pr(D = 1 \mid X = X_p)$ and define the weight
+$w_p = 1 / \hat\pi(X_p)$. The weighted aggregate
+\[
+  \hat M_{\text{corrected}}
+  = \frac{\sum_{p \in P} w_p \, m_p}{\sum_{p \in P} w_p}
+\]
+is an unbiased estimate of the OpenAlex full-population aggregate
+$M$ under MAR. Intuition: papers with low $\hat\pi(X_p)$ are
+underrepresented in $P$ (papers like them are rarely observed); their
+weights are correspondingly large to compensate. Under MAR, the
+conditional distribution of $Y$ given $X$ is the same in $P$ as in the
+full population, so re-weighting by $1/\hat\pi$ recovers the population
+distribution.
+
+\textbf{Sensitivity to MNAR.} The MAR assumption is testable in
+principle but never directly verifiable (we cannot observe $Y$ for
+$D = 0$ papers). The standard approach is a \emph{sensitivity grid}:
+parametrize a tilt $\gamma \in [-\Gamma, \Gamma]$ representing how much
+the missingness mechanism deviates from MAR, recompute the bound
+$\hat M(\gamma)$ for a range of $\gamma$, and report the bound
+$[\hat M(-\Gamma), \hat M(+\Gamma)]$. ws2 commits to a pre-registered
+$\Gamma$-grid in Phase 0.2; tentative $\Gamma$ corresponds to $\pm 50\%$
+selection-probability variation within $X$-strata.
+
+\textbf{Reliability bound on the propensity model.} The
+inverse-probability-weighted estimate is only as good as the
+propensity model. Pre-registered diagnostics:
+\begin{itemize}[nosep]
+  \item \textbf{Held-out CV-AUC} of the fitted propensity model.
+        ws2 commits to a pre-registered threshold (tentative $\geq 0.75$
+        in Phase 0.2). Below threshold, the corrected aggregate is not
+        the headline; uncorrected + MNAR-tilt bound is reported.
+  \item \textbf{Calibration plot} of predicted vs.\ observed $\hat\pi$
+        across deciles. Severe miscalibration indicates the propensity
+        model is misspecified; correction may be unreliable even at
+        adequate AUC.
+  \item \textbf{Stabilized weights} $w_p / \bar w$ to flag
+        high-leverage observations (papers with extreme weights drive
+        the aggregate; their over-influence inflates variance).
+  \item \textbf{Functional-form sensitivity}: report aggregates under
+        logistic regression (baseline) and gradient-boosted trees
+        (flexibility check). Substantial disagreement is itself a
+        diagnostic of nonlinear interactions the baseline misses.
+\end{itemize}
+
+\textbf{Whitespace 2 treatment.} \S9e in the Phase 0.1 plan
+operationalizes inverse-probability weighting on
+$X = \text{year} \times \text{field} \times \text{type} \times
+\text{citation\_tertile} \times \text{concept\_cluster} \times
+\text{known\_country}$. Headline aggregates are reported with both
+the MAR-corrected estimate (when CV-AUC clears the threshold) and
+the MNAR-tilt bound (always). The country axis is not propensity-
+correctable (the UNKNOWN bucket has no observable strata to fit on);
+demographic-plurality claims are scope-narrowed to $P_{\text{demo}}$
+($\sim$50\% with determinable country) by construction. See plan
+\S9e for the full operational specification and \S0 for the
+analytical-population definitions.
+
+\textbf{Why MAR/MNAR is the right framework here.} Selection bias
+caused by missing data is structurally distinct from
+attribute-classification error (e.g., NamSor misgendering authors)
+and from metric-construct invalidity (e.g., CD-index zero-reference
+artifacts). The three are orthogonal construct-validity threats;
+ws2's Methods overview (\S14) frames them as four parallel audits.
+The MAR/MNAR taxonomy is the principled toolkit for the
+analytical-population audit; without it, ``selection bias'' is too
+fuzzy to bound and too tempting to wave away.
+
 \clearpage
 \part*{Appendix}
 
