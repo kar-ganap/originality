@@ -1,0 +1,11 @@
+field,year,n_authors,n_unique_authors,n_papers,gg_coverage,gz_cache_coverage,gz_coverage_within_cache,gender_coverage,paper_country_coverage,author_country_coverage,orcid_coverage,h5_pass,h6_pass
+cs,1975,5,5,23,0.6,0.6,1.0,0.6,0.08695652173913043,0.4,0.4,False,False
+cs,1990,5,5,19,0.6,0.8,0.75,0.6,0.0,0.0,0.0,False,False
+cs,2005,5,5,63,0.4,1.0,1.0,0.4,0.047619047619047616,0.6,0.2,False,False
+cs,2015,5,5,62,0.0,0.8,0.25,0.0,0.03225806451612903,0.4,0.6,False,False
+cs,2024,5,5,92,0.4,0.8,0.75,0.4,0.010869565217391304,0.2,0.4,False,False
+physics,1975,5,5,30,0.6,0.6,1.0,0.6,0.06666666666666667,0.4,0.2,False,False
+physics,1990,5,5,32,0.2,0.4,0.5,0.2,0.15625,1.0,0.2,False,False
+physics,2005,5,5,43,0.8,0.8,1.0,0.8,0.046511627906976744,0.4,0.2,True,False
+physics,2015,5,5,63,0.2,0.6,1.0,0.2,0.06349206349206349,0.8,0.8,False,False
+physics,2024,5,5,40,0.2,1.0,0.6,0.2,0.05,0.4,0.8,False,False
