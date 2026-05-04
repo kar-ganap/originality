@@ -48,6 +48,9 @@ uv.lock
 # Tasks (internal project management — per sibling house style)
 tasks/
 
+# Claude Code session state (scheduled tasks, plan files, etc.)
+.claude/
+
 # Literature review PDFs (copyrighted)
 literature-review/*.pdf
 

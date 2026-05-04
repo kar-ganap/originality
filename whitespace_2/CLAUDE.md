@@ -12,10 +12,10 @@ claim is disconfirmed — a successful null.
 ## Current State
 
 - **Current Stage:** Stage 0 — Foundation
-- **Current Phase:** Phase 0.1 — ~70% complete. N1 + N1+ plan revision
+- **Current Phase:** Phase 0.1 — ~95% complete. N1 + N1+ plan revision
   done; Phase 0.1.E embedding pipeline scaffold done; Checks 1 (+1c-f,
   1f-followup), 2 (+2d, 2-correction, 2d-within-window, 2a-redesigned),
-  4, 5a all complete.
+  3, 4, 5a, 5b, 5c, 5d all complete.
 - **Completed:**
   - Repo scaffold
   - Tier 1 literature review (`literature-review/` 01-07)
@@ -40,11 +40,27 @@ claim is disconfirmed — a successful null.
   - Phase 0.1 Check 5a (pilot pull validated; 467 papers in P at
     `data/metadata/pilot-query-results.parquet`; Nᵧ distribution at
     `data/metadata/year-counts.csv`)
+  - Phase 0.1 Check 5c (drift pilot; SPECTER2 era-match 62.8%
+    [CI 57.0%, 68.6%]; commit Flavor A as cheap insurance per plan §2;
+    H7 hand-audit failed at 66.7% reinforcing the commit; three
+    Phase-0.2 follow-ups surfaced)
+  - Phase 0.1 Checks 5b + 5d (metric convergence + §11 cluster-fit
+    stratification): 5b clean win — per-metric N_target locked for
+    Phase 0.2 (cluster_entropy=200, effective_dim=1000,
+    mean_pairwise_cosine=200, demographic_shannon=500). 5d
+    inconclusive at pilot scale due to pull underrun + small-N
+    cluster instability; §11 commitment retained pending
+    production-scale re-validation in Phase 0.2.
+  - Phase 0.1 Check 3 (demographic inference coverage): 1511 author
+    records exploded from pilot. H5 fails 0/10 cells under both
+    gender_guesser (offline) and Genderize p≥0.8; methods agree 99.7%
+    on jointly-assigned names. NamSor escalation locked for Phase 0.2.
+    H6 fails (51.6% avg country, confirms 1f). H7 ABOVE-band 9/10
+    cells (ORCID back-propagation methodology bonus).
   - Stats primer §18 added (Missing Data: MAR / MNAR / IPW)
-- **Next:** Phase 0.1 Checks 5c (drift pilot) → 5b + 5d (metric
-  convergence + cluster stratification) → 3 (demographic coverage) →
-  retro. Embedding pipeline + pilot parquet are inputs. See
-  `tasks/todo.md` "Next session — entry point" for full handoff.
+- **Next:** Phase 0.1 retro + Phase 0.2 pre-registration
+  consolidation. See `tasks/todo.md` "Next session — entry point"
+  for full handoff.
 
 ## Constraints
 

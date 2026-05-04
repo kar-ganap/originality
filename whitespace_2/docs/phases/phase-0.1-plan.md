@@ -276,6 +276,23 @@ validated template.
   space (Mitigation 4) → add Flavor B.
 - Any pre-1990-data-dependent headline claim requires at least Flavor A.
 
+**Phase 0.1 Check 5c outcome (2026-04-28; LOCKED).** SPECTER2 era-match
+rate = **62.8% [95% CI 57.0%, 68.6%]** on 100 1970-1980 CS query papers
+against an era-balanced 1000-paper pool (500 pre-1990 + 500 post-2000).
+Decision-rule outcome: **commit Flavor A as cheap insurance** (CI fully
+inside the [50%, 70%] gray zone). SciNCL 75.4% [71.5%, 79.1%] would
+individually argue "skip" but the rule keys on SPECTER2 (the
+load-bearing default-stack model). H7 hand-audit (30 query-neighbor
+pairs) **failed** the ≥80% topical-agreement threshold at 66.7% —
+Type A errors (47% of "era-match" pairs are topically unrelated)
+dominate Type B (20%), so the date-based metric likely understates
+drift severity, reinforcing the Flavor A commitment. See
+`experiments/phase-0.1/drift-pilot-results.md` for the full
+artifact, error-mode decomposition, and three Phase-0.2 follow-ups
+(strict ≥0.5 score threshold for analytical population, expanded
+junk-year-token list for chip-name and non-English-content leaks,
+empty/near-empty abstract filter to remove boilerplate matches).
+
 ### 3. Subfield classifier drift mitigation ladder
 
 Per ws2 desiderata §10. Substantially revised in N1 to absorb Phase 0.1
@@ -445,6 +462,24 @@ numbers carry two independent uncertainty bands:
   selection mechanism.
 Methods co-reports both stacks; Discussion interprets the joint
 uncertainty.
+
+**Phase 0.1 Check 3 outcome (2026-04-28; LOCKED).** Demographic-inference
+coverage on the pilot:
+- **3a Gender (H5):** **FAIL in all 10 (year × field) cells** under both
+  Genderize p≥0.8 (plan §4 primary; max cell 75.9%, min 29.2%) and
+  gender_guesser (max 69.0%, min 22.9%). Methods agree at 99.7% on
+  jointly-assigned names. Phase 0.2 commits **NamSor on the
+  low-confidence subset** per plan §1693; budget locked.
+- **3b Country (H6):** **FAIL** — paper country coverage averages 51.6%
+  across cells, confirming Check 1f's "country undeterminable for ~55%"
+  finding. **§9e selection-bias correction commitment confirmed.**
+- **3c ORCID (H7):** **ABOVE pre-registered band in 9 of 10 cells**,
+  including pre-1990 (got 13-34% vs <5% predicted). OpenAlex back-
+  propagates ORCID from author-profile data; the §9a Principle 5
+  ORCID-validation subsample is much larger than feared — methodology
+  bonus for the gender-inference accuracy quantification.
+- See `experiments/phase-0.1/demographic-coverage.md` for full per-cell
+  table, gg-vs-Genderize cross-validation, and methodology insights.
 
 **Primary set (≥80% coverage required per year, within P_demo):**
 1. **Gender** — inferred via Genderize.io primary + NamSor on low-confidence /
@@ -1103,6 +1138,23 @@ pre-registration footnote.
 
 **If this is violated, the finding is invalid.** Acknowledged in Methods
 explicitly; verified in any independent reproduction.
+
+**Phase 0.1 Check 5d outcome (2026-04-28; pilot scale, INCONCLUSIVE).**
+At pilot scale (|S|=316 due to early-decade pull underrun; target was ≥480),
+H7 §11 validation is **methodologically inconclusive**. At K=50 (primary)
+and K=100 (robustness), the negative control fails (cs 2020 effN ratio
+29-40% > 20% threshold), indicating cluster-fit instability dominates the
+signal at small N (~6 papers per cluster average at K=50). At K=30 — the
+only K where the negative control passes (2.9% < 20%) — H_1975 effN ratio
+is 1.36 (S > U, **directionally consistent with §11**), just below the
+pre-registered ≥1.43 threshold. **§11 stratification commitment STAYS**
+(literature support + K=30 directional signal); Phase 0.2 must re-validate
+at production scale (|S| ≥ 1500, ~10× per cluster at K=50). Phase-0.2
+follow-up: supplemental-seed pulls per decade for the stratified pool,
+matching the unstratified pool's seed-loop pattern. See
+`experiments/phase-0.1/cluster-stratification-check.md` for the full
+artifact, K-robustness sweep, and the methodology refinement required for
+Stage 1's full §11 validation.
 
 ### 12. Text representation and full-text policy
 
@@ -1918,6 +1970,85 @@ extended to NamSor gender inference by convention (not strictly covered by
 desiderata §9, but same principle).
 
 ## Open decisions deferred to later phases
+
+- **Phase-0.2 NamSor escalation commitment (locked from Check 3,
+  2026-04-28).** Genderize p≥0.8 cleared 81% per-unique-name overall but
+  only 29-76% per (year × field) cell — H5 fails ≥80% threshold in all
+  10 cells due to non-Western name representation (Physics 1975 = 29%,
+  Physics 2024 = 39%; East-Asian sub-cells consistently <15%
+  Genderize-resolvable). gender_guesser cross-validation agrees at
+  99.7% on assigned names but is 30pp more conservative on the tail.
+  - **Decision:** commit NamSor on the low-confidence subset per plan
+    §1693. Apply NamSor to (a) gender_guesser-`mostly_*/andy/unknown`
+    AND Genderize-`probability<0.8`, (b) all non-Latin / transliterated
+    display names, and (c) any cell where modern-cells coverage gap
+    exceeds 20pp.
+  - **Budget:** $0-$500 per §9 cost compass; depends on size of
+    low-confidence subset at Stage-1 production scale (~100-200K names
+    of ~500K total authors, Phase 0.2 estimate).
+  - **Reproducibility:** NamSor responses cached by name; same pattern
+    as `data/metadata/genderize-cache.json`.
+  - **Source:** `experiments/phase-0.1/demographic-coverage.md`.
+
+- **Phase-0.2 metric N_target commitments (locked from Check 5b, 2026-04-28).**
+  Per-metric bootstrap-sample-size constants for Phase 0.2 pre-registration:
+  - **Cluster entropy (K=50):** N_target = **200**.
+  - **Effective dimensionality:** N_target = **1000** (n=200/500 degenerate
+    by construction since d=768; convergence test ran from n=1000+).
+  - **Mean pairwise cosine distance:** N_target = **200** (faster than
+    pre-registered band; SPECTER2's normalized vectors stabilize quickly).
+  - **Demographic Shannon (per categorical feature):** N_target = **500**.
+  Per-year bootstrap n locked at min(Nᵧ, N_target). All four metrics
+  converged within the sweep range; no fallback caveat required.
+  Source: `experiments/phase-0.1/metric-convergence.md`.
+
+- **Phase-0.2 §11 production-scale validation (Check 5d follow-up,
+  2026-04-28).** Pilot-scale 5d run was methodologically inconclusive
+  due to (a) stratified pool pull underrun (|S|=316 vs target 480 from
+  early-decade low retention), (b) small-N cluster-fit instability at
+  K=50 with N=316 (~6 papers per cluster). Re-validate §11 at production
+  scale: |S| ≥ 1500 (≥10× per cluster at K=50, with buffer); supplemental
+  per-decade seed loops matching the unstratified pool's pattern. The K=30
+  pilot result (S/U ratio 1.36, directionally consistent with §11, with
+  passing negative control) provides a provisional magnitude estimate that
+  Phase 0.2 should re-pin. **§11 stratification commitment STAYS** —
+  literature + directional signal support — but the magnitude statement for
+  Methods needs production-scale numbers. Source:
+  `experiments/phase-0.1/cluster-stratification-check.md`.
+
+- **Phase-0.2 pull-spec tightenings surfaced by Check 5c.** Three
+  concrete follow-ups for the Phase-0.2 pre-registration of the
+  production pull spec, surfaced by the drift-pilot hand-audit
+  (`experiments/phase-0.1/drift-pilot-results.md` "Surprises and
+  limitations"):
+  1. **Strict score≥0.5 threshold for the §0 analytical population**
+     (currently locked at ≥0.3 loose per §3 score-thresholding policy).
+     Many Check-5c queries at score≥0.3 were peripherally-CS-tagged
+     papers with no substantive CS content (language-teaching
+     workbooks, mineral indices, news scripts). Decide in Phase 0.2
+     whether the analytical population uses ≥0.3 (loose, broader
+     coverage, more noise) or ≥0.5 (strict, tighter, lower N) — and
+     whether Stage 1 Re-pulls are required.
+  2. **Expanded junk-year-token list.** Two Check-5c queries at
+     `publication_year=1970` had unmistakably post-1990 content
+     (TI TMS320C3X DSP released 1988+, Indonesian e-government
+     paper) — the minimal 5-token pilot list (`R-CNN`, `IoT`,
+     `blockchain`, `transformer`, `smartphone`) doesn't catch chip
+     names or non-English content patterns. Phase 0.2 token list
+     should expand to chip-family names (TMS320, TMS9900, MOS6502,
+     Z80, etc.), modern protocol/format names, and possibly
+     non-English-content character-set heuristics.
+  3. **Empty/near-empty abstract filter.** Check 5c found
+     boilerplate similarity matches (e.g., sim=1.000 between two
+     "abstract not available" filler papers) inflating the metric.
+     Add a minimum-N-token threshold on decoded abstracts to the
+     pull spec (e.g., reject if `len(reconstructed_abstract.split())
+     < 30`).
+  - **Decision target:** Phase 0.2 pre-registration. Stage 1 Re-pulls
+    if (1) is locked at ≥0.5.
+  - **Audit trail:** `tasks/lessons.md` (2026-04-28 Check 5c
+    follow-ups entry); `experiments/phase-0.1/drift-pilot-results.md`
+    "Surprises and limitations"; `tasks/todo.md` retro section gate-10.
 
 - **Stage 2 production-embedding compute target (local M-series MPS
   vs cloud GPU).** Whether to run Stage 2 embedding compute (~500K-2M
