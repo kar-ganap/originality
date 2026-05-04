@@ -1,0 +1,30 @@
+Phase 0.2 Wave 2A followup — Path B (bigger held-outs)
+
+Loading existing S/U/H pools (for disjoint enforcement)...
+  excluding 3076 ids from existing pools
+
+Pulling H_1975 followup (target 200)...
+heldout cs/1975:   0%|          | 0/30 [00:00<?, ?it/s]heldout cs/1975:   0%|          | 0/30 [00:01<?, ?it/s, |H_1975|=31]heldout cs/1975:   3%|▎         | 1/30 [00:01<00:42,  1.47s/it, |H_1975|=31]heldout cs/1975:   3%|▎         | 1/30 [00:02<00:42,  1.47s/it, |H_1975|=66]heldout cs/1975:   7%|▋         | 2/30 [00:02<00:34,  1.24s/it, |H_1975|=66]heldout cs/1975:   7%|▋         | 2/30 [00:03<00:34,  1.24s/it, |H_1975|=98]heldout cs/1975:  10%|█         | 3/30 [00:03<00:32,  1.21s/it, |H_1975|=98]heldout cs/1975:  10%|█         | 3/30 [00:04<00:32,  1.21s/it, |H_1975|=128]heldout cs/1975:  13%|█▎        | 4/30 [00:04<00:31,  1.23s/it, |H_1975|=128]heldout cs/1975:  13%|█▎        | 4/30 [00:05<00:31,  1.23s/it, |H_1975|=158]heldout cs/1975:  17%|█▋        | 5/30 [00:06<00:29,  1.18s/it, |H_1975|=158]heldout cs/1975:  17%|█▋        | 5/30 [00:06<00:29,  1.18s/it, |H_1975|=182]heldout cs/1975:  20%|██        | 6/30 [00:07<00:27,  1.14s/it, |H_1975|=182]heldout cs/1975:  20%|██        | 6/30 [00:07<00:27,  1.14s/it, |H_1975|=204]heldout cs/1975:  23%|██▎       | 7/30 [00:08<00:26,  1.14s/it, |H_1975|=204]heldout cs/1975:  23%|██▎       | 7/30 [00:08<00:27,  1.18s/it, |H_1975|=204]
+  |H_1975_followup| = 200
+Pulling H_2020 followup (target 200)...
+heldout cs/2020:   0%|          | 0/10 [00:00<?, ?it/s]heldout cs/2020:   0%|          | 0/10 [00:01<?, ?it/s, |H_2020|=59]heldout cs/2020:  10%|█         | 1/10 [00:01<00:14,  1.58s/it, |H_2020|=59]heldout cs/2020:  10%|█         | 1/10 [00:02<00:14,  1.58s/it, |H_2020|=125]heldout cs/2020:  20%|██        | 2/10 [00:02<00:11,  1.45s/it, |H_2020|=125]heldout cs/2020:  20%|██        | 2/10 [00:03<00:11,  1.45s/it, |H_2020|=203]heldout cs/2020:  30%|███       | 3/10 [00:04<00:09,  1.35s/it, |H_2020|=203]heldout cs/2020:  30%|███       | 3/10 [00:04<00:09,  1.39s/it, |H_2020|=203]
+`torch_dtype` is deprecated! Use `dtype` instead!
+  |H_2020_followup| = 200
+
+Embedding new held-outs (SPECTER2)...
+Fetching 4 files:   0%|          | 0/4 [00:00<?, ?it/s]Fetching 4 files: 100%|██████████| 4/4 [00:00<00:00, 10180.35it/s]
+There are adapters available but none are activated for the forward pass.
+  embedding total: 91s (0.228 s/abs)
+
+Loading cluster fits + projecting...
+  K=30: ratio_H75=0.89, ratio_H20=0.51, NC_rd=0.490, sign_flip=NO, NC=FAIL
+  K=50: ratio_H75=1.17, ratio_H20=1.15, NC_rd=0.134, sign_flip=NO, NC=PASS
+  K=100: ratio_H75=0.67, ratio_H20=0.44, NC_rd=0.558, sign_flip=NO, NC=FAIL
+
+=== Verdict: PATH_C_RECOMMENDED ===
+No sign-flip pattern at any K. §11 mechanism not detectable at this scale. Recommend Path C (drop commitment) or Path D (full-corpus U pool).
+
+wrote /Users/kartikganapathi/Documents/Personal/random_projects/originality/whitespace_2/experiments/phase-0.2/section11-followup-bigger-heldouts.md
+wrote /Users/kartikganapathi/Documents/Personal/random_projects/originality/whitespace_2/experiments/phase-0.2/section11-followup-summary.json
+
+Wave 2A followup complete. Verdict: PATH_C_RECOMMENDED
