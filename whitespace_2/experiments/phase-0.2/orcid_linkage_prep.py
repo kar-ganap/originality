@@ -227,6 +227,33 @@ def _fetch_orcid_profile(orcid_id: str) -> dict[str, Any] | None:
         return {"_request_error": str(err)}
 
 
+def _normalize_doi(doi: str) -> str:
+    """Strip URL prefixes from a DOI string for consistent comparison.
+
+    ORCID's `external-id-value` for DOIs is user-registered and may be
+    bare ("10.1234/abc") or prefixed ("https://doi.org/10.1234/abc"
+    or other variants). OpenAlex's `extract_doi` strips
+    `https://doi.org/` but not other prefixes. Normalize both sides
+    to bare form before comparison.
+    """
+    if not doi:
+        return ""
+    cleaned = doi.lower().strip()
+    for prefix in (
+        "https://doi.org/",
+        "http://doi.org/",
+        "https://dx.doi.org/",
+        "http://dx.doi.org/",
+        "doi.org/",
+        "dx.doi.org/",
+        "doi:",
+    ):
+        if cleaned.startswith(prefix):
+            cleaned = cleaned[len(prefix):]
+            break
+    return cleaned
+
+
 def _extract_orcid_signals(profile: dict[str, Any]) -> dict[str, Any]:
     """Pull the fields needed for hand-audit comparison."""
     if not profile:
@@ -276,8 +303,9 @@ def _extract_orcid_signals(profile: dict[str, Any]) -> dict[str, Any]:
             for ext_id in ext_ids:
                 if ext_id.get("external-id-type") == "doi":
                     val = ext_id.get("external-id-value") or ""
-                    if val:
-                        work_dois.append(val.lower().strip())
+                    normalized = _normalize_doi(val)
+                    if normalized:
+                        work_dois.append(normalized)
             t = summary_item.get("title") or {}
             title_val = (t.get("title") or {}).get("value") or ""
             if title_val:
@@ -333,11 +361,17 @@ def _institution_overlap(
 
 
 def _publication_doi_match(paper_doi: str, orcid_dois: list[str]) -> bool:
+    """Match OA paper DOI against ORCID's works list of DOIs.
+
+    Both sides are normalized via `_normalize_doi` to handle
+    inconsistent URL-prefix forms (ORCID returns user-registered
+    strings; OA returns prefix-stripped). Without normalization,
+    "10.1234/abc" vs "https://doi.org/10.1234/abc" would silently
+    miss.
+    """
     if not paper_doi or not orcid_dois:
         return False
-    paper_doi_clean = paper_doi.lower().strip()
-    if paper_doi_clean.startswith("https://doi.org/"):
-        paper_doi_clean = paper_doi_clean[len("https://doi.org/"):]
+    paper_doi_clean = _normalize_doi(paper_doi)
     return paper_doi_clean in orcid_dois
 
 

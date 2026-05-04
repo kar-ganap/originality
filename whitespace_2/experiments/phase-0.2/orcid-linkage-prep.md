@@ -1,9 +1,11 @@
 # Phase 0.2 Wave 3A — ORCID-linkage hand-audit prep
 
 **Run date:** 2026-05-04
-**Snapshot:** 2026-05-04T21:49:39+00:00
+**Snapshot:** 2026-05-04T22:49:36+00:00
 **Pool:** Check 5a pilot parquet — 632 unique ORCID-having authors
-**Sample:** 100 records (random, seed=17; heuristic region annotation only — too sparse to stratify on, see prep script docstring)
+**Sample:** 100 records (random, seed=17;
+heuristic region annotation only — too sparse to stratify on,
+see prep script docstring)
 
 ## Pre-audit signals (auto-computed)
 
