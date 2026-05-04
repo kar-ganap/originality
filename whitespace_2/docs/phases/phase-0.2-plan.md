@@ -205,25 +205,36 @@ satisfying ALL of:
 3. **`has_abstract`**: non-empty `abstract_inverted_index`.
 4. **Junk-year-token filter** (pre-1990 only): exclude papers with
    `publication_year < 1990` whose abstract or title contain tokens
-   indicating post-2000 origin. Production list expanded from
-   pilot's 5 tokens to include:
-   - Original 5: `r-cnn`, `iot`, `blockchain`, `transformer`,
+   indicating post-2000 origin. **Production list curated for
+   post-2000-coined terms only** (per consolidation-pass §A — pre-1990
+   chip names, generic "cnn"/"rnn", and pre-2000 protocols REMOVED to
+   avoid false-positive exclusion of legitimate early-era papers):
+   - Original pilot 5: `r-cnn`, `iot`, `blockchain`, `transformer`,
      `smartphone`.
-   - **Chip families and post-1985 hardware**: `tms320`, `tms9900`,
-     `mos6502`, `z80`, `arm cortex`, `risc-v`.
-   - **Post-2000 ML / deep learning**: `cnn`, `rnn`, `lstm`, `gan`,
-     `bert`, `gpt`, `chatgpt`, `attention is all you need`,
-     `word embedding`, `word2vec`, `glove`.
-   - **Modern protocols / formats**: `https`, `tls 1`, `webrtc`,
-     `mqtt`, `restful api`, `openid connect`.
-   - **Modern devices / contexts**: `wearable`, `vr headset`,
+   - **Post-2000 ML / deep learning** (model-specific, post-2000-coined):
+     `lstm`, `gan`, `bert`, `gpt`, `chatgpt`, `attention is all you
+     need`, `word2vec`, `glove`, `risc-v`.
+   - **Post-2000 protocols / formats**: `tls 1`, `webrtc`, `mqtt`,
+     `openid connect`.
+   - **Post-2000 devices / contexts**: `wearable`, `vr headset`,
      `cloud computing`, `big data`, `internet of things`,
-     `digital twin`.
-5. **Empty / near-empty abstract filter**: minimum 30 tokens after
-   inverted-index reconstruction. Excludes filler "abstract not
-   available" + "preview only" boilerplate that Check 5c hand-audit
-   surfaced (rows 8, 14, 17, 19 with sim≈1.000 on boilerplate
-   strings).
+     `digital twin`, `arm cortex`.
+
+   **Excluded (would over-filter pre-1990 papers per consolidation §A):**
+   - Pre-1990 chip names: `tms320`, `tms9900`, `mos6502`, `z80`
+     (TMS9900=1976, Z80=1976, MOS6502=1975).
+   - Generic terms with pre-1990 lineage: `cnn` (Fukushima
+     neocognitron 1980), `rnn` (Hopfield/Elman/Jordan late-1980s),
+     `word embedding` (some 1980s connectionist papers).
+   - Pre-2000-standardized protocols: `https`.
+
+5. **Empty / near-empty abstract filter**: minimum **15 tokens** after
+   inverted-index reconstruction (per consolidation §B — relaxed from
+   initial 30; 15 catches boilerplate fillers like "abstract not
+   available" / "preview only" without over-filtering legitimate
+   short pre-1990 conference abstracts). Excludes the ~empty filler
+   strings that Check 5c hand-audit surfaced (rows 8, 14, 17, 19
+   with sim≈1.000 on boilerplate).
 
 The **strict variant** P_strict applies score≥0.5 instead of ≥0.3.
 Used for tight subfield-mechanism analyses (e.g., §11 cluster fit
@@ -682,7 +693,18 @@ through §9e.
 
 ## Robustness scope (LOCKED for Stage 3)
 
+Per consolidation pass §C: items previously listed as #6 (Test II
+three-spec team-size) and #7 (Test IV quadratic + interaction) have
+been removed because they are part of the Test II + Test IV
+**pre-registered specifications** (above), not robustness items.
+
+Per consolidation pass §H1: items #5 (subfield mechanism) is
+upfront-committed; items #6 (Petersen 2024 inflation) and #7 (Holst
+zero-ref) are conditional on reviewer push.
+
 The Stage 3 robustness suite, in priority order:
+
+### Upfront commitments
 
 1. **Embedding-model swap**: re-run Test I + Test IV with SciNCL +
    Qwen3 alongside SPECTER2. Direction agreement = robust;
@@ -699,16 +721,21 @@ The Stage 3 robustness suite, in priority order:
 5. **Subfield mechanism test**: canonical-concentration → divergence
    linkage. Tests whether the headline divergence is mediated by
    subfield-level canonical concentration (the Park-Leahey-Funk
-   2023 / Funk 2026 disruption-decline mechanism).
-6. **Test II three-spec team-size**: report W-W-E within-author +
-   Petersen 2025 + stratified specifications. Disagreement = finding.
-7. **Test IV quadratic + interaction**: per W-W-E saturation+reversal
-   pattern.
-8. **Petersen 2024 citation-inflation correction**: re-run Test III
-   with + without correction. Disagreement = finding.
-9. **Holst 2024 zero-reference filter**: re-run Test III excluding
-   zero-reference papers. Direction agreement = headline robust to
-   the dataset-artifact critique.
+   2023 / Funk 2026 disruption-decline mechanism). **Intrinsic to
+   claim #13's mechanism story; upfront commitment per consolidation
+   §H1.**
+
+### Conditional on reviewer push (per consolidation §H1)
+
+6. **Petersen 2024 citation-inflation correction** [conditional]:
+   re-run Test III with + without correction. Disagreement =
+   finding. Run only if reviewers push on inflation-bias grounds.
+7. **Holst 2024 zero-reference filter** [conditional]: re-run
+   Test III excluding zero-reference papers. Direction agreement =
+   headline robust to the dataset-artifact critique. Run only if
+   reviewers push on data-artifact grounds.
+
+### Stage-3-frontier (out of scope for Phase 0.2)
 
 **Cross-substrate robustness (WoS / Scopus)**: NOT Phase 0.2
 commitment; flagged as Stage 3 robustness frontier conditional on

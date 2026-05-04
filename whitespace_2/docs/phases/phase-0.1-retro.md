@@ -366,22 +366,32 @@ the following commitments surfaced during Phase 0.1:
 
 ## Validation gates
 
-Per `phase-0.1-plan.md` "Validation gates (go/no-go for Stage 1)":
+Per `phase-0.1-plan.md` "Validation gates (go/no-go for Stage 1)"
+(lines 1880-1942). The gate numbering in this section was incorrect
+in the initial retro draft (a consolidation-pass finding); corrected
+table below maps to the actual plan-document numbering.
 
-| # | Gate | Status | Evidence |
+| # | Gate (verbatim from plan) | Status | Evidence |
 |---|---|---|---|
-| 1 | All sanity checks 1–5 complete with documented outcomes | ✅ | 8 checks (1, 2, 3, 4, 5a, 5b, 5c, 5d) + extensions, all in `experiments/phase-0.1/` |
-| 2 | Methodology commitments §0-§14 finalized in plan | ✅ | N1 wholesale revision + N1+ + inline post-check updates; `phase-0.1-plan.md` ~2000 lines |
-| 3 | Phase 0.1.E embedding pipeline scaffold implemented + tested | ✅ | `src/whitespace2/embeddings.py` + 9 slow tests + smoke artifact |
-| 4 | Phase 0.2 pre-registration draft underway | ✅ | `docs/phases/phase-0.2-plan.md` is the companion to this retro |
-| 5 | Tier 1 lit review complete | ✅ | 7 papers in `literature-review/` |
-| 6 | Tier 2A close reads + structured review files complete | ✅ | 4 papers (08, 14, 15, 16) with .md files; collaborative review pending (not gating Phase 0.2) |
-| 7 | All `tasks/lessons.md` entries logged | ✅ | 9 lessons spanning 2026-04-27 → 2026-04-30 |
-| 8 | Spend tracked at $0 incurred | ✅ | `tasks/spend.md` records OpenAlex anonymous + Genderize keyed-free at $0 each |
-| 9 | All key references and pull artifacts pinned to snapshot date | ✅ | `data/metadata/embedding-model-pins.csv` + per-artifact snapshot date |
-| 10 | Retro written (this document) | ✅ | This document |
+| 1 | Pilot query returns a non-empty, expected-shape dataset | ✅ | Check 5a: 467 papers in §0 P at `data/metadata/pilot-query-results.parquet`; pull spec locked |
+| 2 | Abstract coverage characterized AND analytical population defined (revised in N1) | ✅ | Check 1 falsified pre-N1 ≥95% prior; §0 P/P_demo defined with ~50%/~45% bounds; §9e correction layer operationalized; closed paths (Check 1c/1d/1e) documented |
+| 3 | Classifier drift characterized AND score-thresholding policy locked (revised in N1) | ✅ | Check 2 (a-c) + 2-correction + 2a-redesigned + 2d/2d-within-window + 2e; ≥0.3 loose / ≥0.5 strict policy; junk-year token list (locked at consolidation §A); concept-tag safety classification |
+| 4 | Demographic inference coverage characterized | ✅ | Check 3: gender 0/10 cells pass under both methods (NamSor escalation locked); country 0/10 (§9e confirmed); ORCID ABOVE-band on 9/10 (with Culbert-driven noise-floor caveat) |
+| 5 | Disambiguation error rate spot-checked | ✅ | Check 4: 3.0% cross-era-merger as lower bound; Culbert non-Western over-merge mechanism added in plan §10 (Tier 2A close-read finding) |
+| 6 | `field_definitions.csv` committed and pinned | ✅ | `data/metadata/field_definitions.csv` (committed earlier in phase) |
+| 7 | Retro written — what surprised, what to adjust before Phase 0.2 | ✅ | This document |
+| 8 | Literature review closed (Tier 1 + Tier 2 review files) | ✅ | Tier 1: 7 papers (01-07) committed. Tier 2A: 4 papers (08, 14, 15, 16) committed with full template per consolidation §I. Tier 2B (papers 09, 10, 11, 12, 13): scoped as "methodology notes only" per `literature-review/README.md` post-N1; full close read deferred to Stage-3-if-triggered. `synthesis.md` harvest deferred to Stage 3 paper-drafting per consolidation §I. |
+| 9 | Drift-pilot decision committed | ✅ | Check 5c: SPECTER2 era-match 62.8% [CI 57.0%, 68.6%]; Flavor A committed as cheap insurance per §2 gray-zone rule (decision in `experiments/phase-0.1/drift-pilot-results.md` + this retro) |
+| 10 | Consolidation pass | ✅ | `experiments/phase-0.1/consolidation-notes.md` (post-retro corrective pass; surfaces autonomous prunes A-D + user-judgment decisions E-H + amendments to this retro and Phase 0.2 plan) |
 
 **All Phase 0.1 validation gates met. Phase 0.2 unblocked.**
+
+**Consolidation-pass finding** (added 2026-05-04). Initial retro
+draft missed gate 10 entirely and renumbered gates 1-9 incorrectly
+as a consequence of treating the retro as the closing artifact.
+Lesson logged: consolidation pass is its own work item with its
+own deliverable (`consolidation-notes.md`); writing the retro does
+not satisfy gate 10.
 
 ---
 
@@ -477,6 +487,20 @@ survived and what's pending.
    wide pass criteria, which made the "passed" bookkeeping less
    informative. Phase 0.2 hypotheses should include explicit
    falsification conditions.
+
+6. **Schedule the consolidation pass as its own work item, not as
+   a sub-bullet of writing the retro.** Phase 0.1 plan §"Validation
+   gates" gate 10 commits to a deliberate end-of-phase pruning pass
+   (with `consolidation-notes.md` as its deliverable). The initial
+   retro draft conflated this with gate 7 (retro written), missed
+   the prune pass entirely, and ended up accumulating rather than
+   compressing. The consolidation pass surfaced specific
+   over-engineering (junk-year token list including pre-1990 chip
+   names; empty-abstract threshold too aggressive; robustness items
+   confusing pre-registered specs with Stage 3 work) that would
+   have propagated forward. For Phase 0.2 + future phases:
+   consolidation pass is its own todo item, sequenced *between*
+   accumulation and retro-writing — not after retro-writing.
 
 ---
 
