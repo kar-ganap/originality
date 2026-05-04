@@ -236,6 +236,16 @@ satisfying ALL of:
    strings that Check 5c hand-audit surfaced (rows 8, 14, 17, 19
    with sim≈1.000 on boilerplate).
 
+**Junk-year-token matching implementation (locked).** Tokens matched
+via case-insensitive **word-boundary regex** (`\bTOKEN\b`), NOT
+substring matching. Required because short production tokens (`gan`,
+`bert`, `iot`, `gpt`) substring-match common English ("organism",
+"Albert", "patriot", etc.). Validated by Wave 1C dry run 2026-05-04
+which surfaced the substring-bug (3/4 cs-1975-baseline drops were
+caused by `gan` matching "organism"/"organization"/"organic"); fix
+applied; over-filter rate dropped from 17.39% to 4.35% raw / 0.00%
+false-positive. See `experiments/phase-0.2/pull-spec-dry-run.md`.
+
 The **strict variant** P_strict applies score≥0.5 instead of ≥0.3.
 Used for tight subfield-mechanism analyses (e.g., §11 cluster fit
 on tight CS-only papers). Choice between P and P_strict pre-

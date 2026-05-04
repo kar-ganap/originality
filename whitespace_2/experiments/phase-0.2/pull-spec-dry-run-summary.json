@@ -1,0 +1,84 @@
+{
+  "snapshot": "2026-05-04T21:10:55+00:00",
+  "over_filter": {
+    "n_raw": 200,
+    "baseline_kept": 23,
+    "production_kept": 22,
+    "over_filter_count": 1,
+    "over_filter_rate": 0.043478260869565216,
+    "junk_year_delta": 0,
+    "empty_abstract_delta": 1,
+    "baseline_breakdown": {
+      "n_raw": 200,
+      "n_after_score": 111,
+      "n_after_abstract": 23,
+      "n_after_junk_year": 23,
+      "n_kept": 23
+    },
+    "production_breakdown": {
+      "n_raw": 200,
+      "n_after_score": 111,
+      "n_after_abstract": 23,
+      "n_after_junk_year": 23,
+      "n_kept": 22
+    }
+  },
+  "retention_2024": {
+    "label": "cs/2024",
+    "n_raw": 4997,
+    "n_after_score": 3589,
+    "n_after_abstract": 2534,
+    "n_after_junk_year": 2534,
+    "n_kept": 2463,
+    "retention_score": 0.7182309385631379,
+    "retention_abstract": 0.5071042625575345,
+    "retention_junk_year": 0.5071042625575345,
+    "retention_full": 0.49289573744246545
+  },
+  "retention_1980": {
+    "label": "cs/1980",
+    "n_raw": 4975,
+    "n_after_score": 2681,
+    "n_after_abstract": 821,
+    "n_after_junk_year": 820,
+    "n_kept": 758,
+    "retention_score": 0.5388944723618091,
+    "retention_abstract": 0.1650251256281407,
+    "retention_junk_year": 0.16482412060301507,
+    "retention_full": 0.15236180904522614
+  },
+  "hand_audit": {
+    "n_sampled": 50,
+    "n_flagged": 0,
+    "flagged_rows": []
+  },
+  "production_junk_year_tokens": [
+    "r-cnn",
+    "iot",
+    "blockchain",
+    "transformer",
+    "smartphone",
+    "lstm",
+    "gan",
+    "bert",
+    "gpt",
+    "chatgpt",
+    "attention is all you need",
+    "word2vec",
+    "glove",
+    "risc-v",
+    "tls 1",
+    "webrtc",
+    "mqtt",
+    "openid connect",
+    "wearable",
+    "vr headset",
+    "cloud computing",
+    "big data",
+    "internet of things",
+    "digital twin",
+    "arm cortex"
+  ],
+  "empty_abstract_min_tokens": 15,
+  "score_threshold": 0.3
+}
