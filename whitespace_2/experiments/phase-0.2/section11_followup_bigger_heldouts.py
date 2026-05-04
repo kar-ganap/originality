@@ -205,8 +205,17 @@ def _l2_normalize(vectors: np.ndarray[Any, Any]) -> np.ndarray[Any, Any]:
 def _project(
     vectors: np.ndarray[Any, Any], centroids: np.ndarray[Any, Any],
 ) -> np.ndarray[Any, Any]:
-    sims = vectors @ centroids.T
-    return np.argmax(sims, axis=1)
+    """Hard-assign via Euclidean distance (KMeans-consistent).
+
+    For unit-norm v and non-unit-norm c (KMeans centroids of unit
+    vectors typically have norms 0.92-0.94), argmax(v·c) is NOT
+    KMeans-consistent. Use argmin(‖v-c‖²) = argmax(2·v·c - ‖c‖²).
+    Bug history: pre-fix used argmax(v·c) and produced reversed
+    results. See `section11_reproject_fix.py`.
+    """
+    centroid_norms_sq = np.sum(centroids ** 2, axis=1)
+    scores = 2 * (vectors @ centroids.T) - centroid_norms_sq[None, :]
+    return np.argmax(scores, axis=1)
 
 
 def _eff_n(assignments: np.ndarray[Any, Any], k: int) -> float:

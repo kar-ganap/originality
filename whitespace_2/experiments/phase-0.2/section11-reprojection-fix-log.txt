@@ -1,0 +1,50 @@
+§11 projection-bug fix + re-projection
+
+Loading existing vectors + centroids...
+  H_1975 orig: (49, 768); followup: (200, 768)
+  H_2020 orig: (45, 768); followup: (200, 768)
+
+Centroid L2 norm stats (centroids are means of unit vectors;
+if all close to 1.0 the bug barely matters; if spread, it matters):
+  K=30: S-centroid norms p50=0.924 [min=0.914, max=0.996]; U p50=0.927 [0.919, 0.996]
+  K=50: S-centroid norms p50=0.930 [min=0.916, max=0.996]; U p50=0.932 [0.920, 0.996]
+  K=100: S-centroid norms p50=0.939 [min=0.919, max=1.000]; U p50=0.940 [0.926, 1.000]
+
+Comparing buggy vs FIXED projections...
+K=30:
+  orig (|H_1975|=49):
+    buggy: r_H75=0.80, r_H20=0.53, NC_rd=0.469, NC=FAIL, sign_flip=NO
+    FIXED: r_H75=1.26, r_H20=1.02, NC_rd=0.023, NC=PASS, sign_flip=NO
+  followup (|H_1975|=200):
+    buggy: r_H75=0.89, r_H20=0.51, NC_rd=0.490, NC=FAIL, sign_flip=NO
+    FIXED: r_H75=1.31, r_H20=0.95, NC_rd=0.048, NC=PASS, sign_flip=NO
+
+K=50:
+  orig (|H_1975|=49):
+    buggy: r_H75=0.84, r_H20=1.16, NC_rd=0.138, NC=PASS, sign_flip=YES
+    FIXED: r_H75=1.17, r_H20=1.09, NC_rd=0.079, NC=PASS, sign_flip=NO
+  followup (|H_1975|=200):
+    buggy: r_H75=1.17, r_H20=1.15, NC_rd=0.134, NC=PASS, sign_flip=NO
+    FIXED: r_H75=1.25, r_H20=1.03, NC_rd=0.030, NC=PASS, sign_flip=NO
+
+K=100:
+  orig (|H_1975|=49):
+    buggy: r_H75=1.05, r_H20=0.62, NC_rd=0.382, NC=FAIL, sign_flip=NO
+    FIXED: r_H75=1.33, r_H20=1.03, NC_rd=0.030, NC=PASS, sign_flip=NO
+  followup (|H_1975|=200):
+    buggy: r_H75=0.67, r_H20=0.44, NC_rd=0.558, NC=FAIL, sign_flip=NO
+    FIXED: r_H75=1.17, r_H20=0.87, NC_rd=0.135, NC=PASS, sign_flip=NO
+
+=== Verdict (using FIXED Euclidean projection) ===
+
+Original (49/45 held-outs):
+  Path-A sign-flip across K: 0/3 (need ≥2)
+  NC passes: 3/3
+  Original H7' (S>U direction) passes: 0/3
+
+Followup (200/200 held-outs):
+  Path-A sign-flip across K: 0/3 (need ≥2)
+  NC passes: 3/3
+  Original H7' (S>U direction) passes: 0/3
+
+wrote /Users/kartikganapathi/Documents/Personal/random_projects/originality/whitespace_2/experiments/phase-0.2/section11-reprojection-fix-summary.json

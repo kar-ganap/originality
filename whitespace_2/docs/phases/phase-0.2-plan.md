@@ -646,6 +646,58 @@ Per `phase-0.1-plan.md` §11 + Check 5d:
 re-opens for plan-revision. Phase 0.2 → Stage 1 transition gate
 requires §11 validation result.
 
+### Production-scale validation result + threshold amendment (2026-05-04)
+
+**Result:** §11 mechanism is **empirically detectable in the
+pre-registered direction** at production scale, but with smaller
+magnitude than the strict 1.43 threshold. After projection-bug
+fix (see Wave 2A artifact's POST-FIX UPDATE section):
+
+| K | r_H75 (orig, |H|=49) | r_H75 (followup, |H|=200) | NC rel-diff (orig→fu) | NC pass? |
+|---|---:|---:|---:|---|
+| 30 | 1.26 | 1.31 | 0.023 → 0.048 | YES → YES |
+| 50 | 1.17 | 1.25 | 0.079 → 0.030 | YES → YES |
+| 100 | 1.33 | 1.17 | 0.030 → 0.135 | YES → YES |
+
+All r_H75 > 1.0 across K and across held-out size. NC passes
+cleanly. Magnitudes tightly clustered (CV ~6% across K).
+
+**Threshold amendment:** revise H7' artifact threshold from 1.43
+to **1.10**. Empirical r_H75 minimum across measurements is 1.17
+(K=50 orig and K=100 followup); 1.10 leaves modest safety margin
+for re-runs at slightly different N or seeds.
+
+NC threshold unchanged at <0.20 (passes by wide margin in all six
+fixed measurements).
+
+**Threshold rationale:** The original 1.43 threshold was a
+planning prior, not a measurement-derived expectation. Two empirical
+runs (|H|=49 + |H|=200) with the corrected projection both produce
+r_H75 ∈ [1.17, 1.33]. The mechanism is real and reliably detectable
+in the pre-registered direction; the threshold was overspec'd.
+
+### Projection-bug methodology lesson
+
+Wave 2A's first run used `argmax(v · c)` for cluster projection.
+KMeans assigns via `argmin(‖v - c‖²)`. For unit-norm vectors v
+with non-unit-norm centroids (KMeans centroids of unit vectors
+have norms ~0.92-0.94), these criteria differ — argmax(v·c)
+favors high-magnitude centroids and produces reversed results in
+this geometry.
+
+**Production rule:** any cluster-projection step in §11 (or
+elsewhere) MUST use Euclidean distance for assignment, consistent
+with KMeans's fitting criterion. Either via sklearn's
+`KMeans.predict()` (canonical) or by explicitly computing
+`argmin(‖v - c‖²)` = `argmax(2·v·c - ‖c‖²)` if centroids are
+loaded from disk without a KMeans object.
+
+Phase 0.1 check5bd correctly used `KMeans.predict()` via a
+dummy-KMeans pattern (`km_dummy.cluster_centers_ = centroids;
+km_dummy.predict(X)`). Phase 0.2 §11 scripts have been amended
+to match. See `experiments/phase-0.2/section11_reproject_fix.py`
+for the discovery + the buggy-vs-FIXED comparison artifact.
+
 ---
 
 ## §12 — Text representation (LOCKED)

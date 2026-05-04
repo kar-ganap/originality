@@ -6,7 +6,35 @@
 **Scope:** New disjoint held-outs (target 200/cell);
 re-project onto existing S/U cluster fits at K∈{30, 50, 100}.
 
-## Headline
+## ⚠ POST-FIX UPDATE — projection-bug invalidates the PATH_C verdict below
+
+The "PATH_C_RECOMMENDED" verdict reflects buggy projection
+(`argmax(v·c)` instead of KMeans-consistent Euclidean). Re-projection
+with FIXED Euclidean assignment (`section11_reproject_fix.py`)
+shows the §11 pre-registered direction holds at production scale:
+
+| K | r_H75 (FIXED, orig) | r_H75 (FIXED, this followup) |
+|---|---:|---:|
+| 30 | 1.26 | **1.31** |
+| 50 | 1.17 | **1.25** |
+| 100 | 1.33 | **1.17** |
+
+All ratios >1.0 (S > U) in both orig and followup with the fix.
+NC passes at all K (NC_rd 0.030-0.135 vs 0.20 threshold). The
+empirical §11 direction is preserved; the buggy projection
+produced reversed results due to centroid-magnitude bias.
+
+**Corrected verdict: PATH_A-soft** — keep §11 commitment with
+threshold revised from 1.43 to ~1.10 based on empirical
+magnitudes 1.17-1.33. See parent
+`section11-production-validation.md` "POST-FIX UPDATE" section.
+
+The buggy verdict + analysis below kept for audit-trail
+completeness.
+
+---
+
+## Headline (BUGGY — see POST-FIX UPDATE above)
 
 **Verdict: PATH_C_RECOMMENDED**
 

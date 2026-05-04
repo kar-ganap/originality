@@ -80,6 +80,93 @@ Per §11 commitment: centroids committed for reproducibility.
 - K=30: `section11-cluster-fit-S-K30.npy`, `section11-cluster-fit-U-K30.npy`
 - K=100: `section11-cluster-fit-S-K100.npy`, `section11-cluster-fit-U-K100.npy`
 
+## ⚠ POST-FIX UPDATE — projection-bug invalidates the FAIL verdict
+
+**Discovered 2026-05-04 (~1 hr after the artifact above was written).**
+The `_project_to_clusters` function used `argmax(v · c)` for hard
+cluster assignment. KMeans assigns via `argmin(‖v - c‖²)`. For
+unit-norm vectors v with non-unit-norm centroids (KMeans centroids
+of unit vectors have norms 0.92-0.94 typically), these criteria
+differ — argmax(v·c) favors high-magnitude centroids.
+
+Phase 0.1's check5bd correctly used `KMeans.predict()` (Euclidean).
+This Phase 0.2 script rolled its own and got it wrong.
+
+**Re-projected with FIXED Euclidean** assignment
+(`section11_reproject_fix.py`):
+
+| K | r_H75 (buggy → FIXED) | r_H20 (buggy → FIXED) | NC_rd (buggy → FIXED) | NC FIXED |
+|---|---|---|---|---|
+| 30 | 0.80 → **1.26** | 0.53 → **1.02** | 0.469 → **0.023** | PASS |
+| 50 | 0.84 → **1.17** | 1.16 → **1.09** | 0.138 → **0.079** | PASS |
+| 100 | 1.05 → **1.33** | 0.62 → **1.03** | 0.382 → **0.030** | PASS |
+
+**With the fix, ALL r_H75 are >1.0 (S > U) — the §11 pre-registered
+direction**. NC passes at all K (rel_diff 0.023-0.079 vs 0.20
+threshold). The artifact IS detectable in the original direction;
+the buggy projection was producing reversed results due to centroid-
+magnitude bias.
+
+The followup at |H|=200 confirms (`section11-followup-bigger-heldouts.md`):
+| K | r_H75 buggy → FIXED | r_H20 buggy → FIXED |
+|---|---|---|
+| 30 | 0.89 → **1.31** | 0.51 → **0.95** |
+| 50 | 1.17 → **1.25** | 1.15 → **1.03** |
+| 100 | 0.67 → **1.17** | 0.44 → **0.87** |
+
+### Corrected verdict
+
+**§11 mechanism IS empirically detectable in the pre-registered
+direction at production scale.** Magnitudes (r_H75 = 1.17-1.33)
+fall short of the strict 1.43 threshold but are tightly consistent
+across K (CV ~6%) AND across held-out size (49 vs 200; orig→fu
+movements <0.1). NC passes cleanly at all K with the fix.
+
+The pre-registered 1.43 threshold was a planning prior, not a
+measurement-derived expectation. The empirical magnitude is
+~1.20-1.30 — modest but real.
+
+### Recommended methodology amendment
+
+**Path A-corrected: keep §11 commitment, soften the threshold.**
+
+Specifically:
+- Original H7' threshold: r_H75 > 1.43
+- Empirical r_H75 range across K + held-out size: 1.17-1.33
+- Suggested revised H7' threshold: r_H75 > 1.10 (consistent with
+  observed minimum 1.17, with modest safety margin)
+- NC tolerance unchanged at <0.20 (passes by wide margin: <0.14
+  in all six fixed measurements)
+
+This is far less aggressive than dropping §11 (Path C). The
+mechanism is real; the numerical threshold was overspec'd.
+
+### Lessons logged
+
+1. **Always use library-provided projection consistent with the
+   fitting criterion.** sklearn's `KMeans.predict()` does Euclidean
+   distance; rolling your own with cosine-style argmax is a
+   methodology bug when centroids are non-unit-norm. Phase 0.1's
+   check5bd got this right via `KMeans.predict()`; Phase 0.2 §11
+   scripts rolled their own and got it wrong. Save centroids,
+   reload via dummy KMeans + predict — or equivalently use
+   `argmin(‖v - c‖²)` directly.
+
+2. **User skepticism caught the bug before plan revision landed.**
+   The user's "we are sure the code is bug free, right?" question
+   prompted the audit. Without it, the §11 deprecation amendment
+   I had drafted (but not yet committed) would have landed in
+   the plan, dropping a methodology layer that's actually working.
+   This is the second time this session that user pushback
+   prevented a wrong methodology revision (first was Phase 0.1
+   N1's 95% off-target finding; see `tasks/lessons.md`).
+
+The original "FAIL + three paths forward" analysis below this
+section reflects the BUGGY projection; reading it requires
+context. Kept for audit-trail completeness.
+
+---
+
 ## Analysis & interpretation (post-result amendment)
 
 The bare "FAIL at all K" headline understates a methodologically

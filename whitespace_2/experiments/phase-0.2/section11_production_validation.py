@@ -398,12 +398,23 @@ def _kmeans_fit(
 def _project_to_clusters(
     vectors: np.ndarray[Any, Any], centroids: np.ndarray[Any, Any],
 ) -> np.ndarray[Any, Any]:
-    """Hard-assign each vector to nearest centroid (cosine; vectors L2-normed,
-    centroids not necessarily L2-normed but close enough on similar cluster
-    geometry).
+    """Hard-assign each vector to nearest centroid via Euclidean distance,
+    consistent with KMeans's internal assignment criterion.
+
+    For unit-norm vectors with non-unit-norm centroids (KMeans centroids
+    are means of unit vectors and have norms ~0.92-0.94 in practice),
+    `argmax(v · c)` is NOT consistent with KMeans's `argmin(‖v - c‖²)`.
+    The naive cosine-style argmax favors high-magnitude centroids and
+    materially mis-assigns; this implementation is corrected per
+    `experiments/phase-0.2/section11_reproject_fix.py` discovery.
+
+    Equivalent to `argmin(‖v - c‖²)` since for fixed v,
+    `‖v - c‖² = ‖v‖² + ‖c‖² - 2·v·c`, and `‖v‖²` is constant per row →
+    `argmin(‖c‖² - 2·v·c)` = `argmax(2·v·c - ‖c‖²)`.
     """
-    sims = vectors @ centroids.T
-    return np.argmax(sims, axis=1)
+    centroid_norms_sq = np.sum(centroids ** 2, axis=1)
+    scores = 2 * (vectors @ centroids.T) - centroid_norms_sq[None, :]
+    return np.argmax(scores, axis=1)
 
 
 def _eff_n(assignments: np.ndarray[Any, Any], k: int) -> float:
