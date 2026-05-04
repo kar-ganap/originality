@@ -1,0 +1,59 @@
+{
+  "snapshot": "2026-05-04T21:40:38+00:00",
+  "smoke": false,
+  "n_S": 1500,
+  "n_U": 1482,
+  "n_H_1975": 49,
+  "n_H_2020": 45,
+  "h1_pass": true,
+  "h2_pass": true,
+  "h7_results": {
+    "50": {
+      "eff_n_s_h75": 3.429445075404794,
+      "eff_n_u_h75": 4.086226671095507,
+      "eff_n_s_h20": 7.930088675473642,
+      "eff_n_u_h20": 6.832775873870378,
+      "artifact_ratio": 0.8392694168591897,
+      "artifact_threshold": 1.43,
+      "artifact_pass": false,
+      "nc_rel_diff": 0.13837333307470548,
+      "nc_threshold": 0.2,
+      "nc_pass": true,
+      "overall_pass": false
+    },
+    "30": {
+      "eff_n_s_h75": 3.129725772930512,
+      "eff_n_u_h75": 3.9085971999204663,
+      "eff_n_s_h20": 4.869688126837718,
+      "eff_n_u_h20": 9.168262644486312,
+      "artifact_ratio": 0.8007286534908732,
+      "artifact_threshold": 1.43,
+      "artifact_pass": false,
+      "nc_rel_diff": 0.46885377135587486,
+      "nc_threshold": 0.2,
+      "nc_pass": false,
+      "overall_pass": false
+    },
+    "100": {
+      "eff_n_s_h75": 5.47192052663479,
+      "eff_n_u_h75": 5.223317976712933,
+      "eff_n_s_h20": 8.178189218857904,
+      "eff_n_u_h20": 13.222922859475839,
+      "artifact_ratio": 1.0475947570165551,
+      "artifact_threshold": 1.43,
+      "artifact_pass": false,
+      "nc_rel_diff": 0.3815142608203879,
+      "nc_threshold": 0.2,
+      "nc_pass": false,
+      "overall_pass": false
+    }
+  },
+  "gate": "FAIL",
+  "gate_msg": "H7' FAILED at all K\u2208[50, 30, 100]. BLOCK Stage 1 transition; trigger plan revision.",
+  "wall_clock": {
+    "pulls_sec": 95.59592604637146,
+    "embedding_sec": 1296.2882828712463,
+    "cluster_sec": 40.91475200653076,
+    "total_sec": 1432.7989609241486
+  }
+}
