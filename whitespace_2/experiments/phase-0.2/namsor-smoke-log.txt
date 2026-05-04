@@ -1,0 +1,20 @@
+Phase 0.2 Wave 1B — NamSor 50-name × 6-region smoke
+
+Calling NamSor /genderBatch on 48 names...
+  done in 1.0s
+
+Cached response: /Users/kartikganapathi/Documents/Personal/random_projects/originality/whitespace_2/experiments/phase-0.2/namsor-smoke-response.json
+
+Per-region accuracy summary:
+region          n  resolved  match   rate  p_cal_mean
+-----------------------------------------------------
+anglo           8         8      8  1.000       0.985
+arabic          8         8      8  1.000       0.987
+east_asian      8         8      6  0.750       0.805
+other           8         8      8  1.000       0.970
+slavic          8         8      8  1.000       0.996
+south_asian     8         8      8  1.000       0.984
+
+Wrote /Users/kartikganapathi/Documents/Personal/random_projects/originality/whitespace_2/experiments/phase-0.2/namsor-smoke.md
+
+Wave 1B smoke complete.

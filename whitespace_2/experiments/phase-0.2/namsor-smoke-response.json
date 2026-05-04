@@ -1,0 +1,825 @@
+{
+  "snapshot": "2026-05-04T21:39:00+00:00",
+  "names": [
+    {
+      "id": "anglo_01",
+      "firstName": "John",
+      "lastName": "Smith",
+      "expected_gender": "male",
+      "region": "anglo"
+    },
+    {
+      "id": "anglo_02",
+      "firstName": "Mary",
+      "lastName": "Johnson",
+      "expected_gender": "female",
+      "region": "anglo"
+    },
+    {
+      "id": "anglo_03",
+      "firstName": "James",
+      "lastName": "Williams",
+      "expected_gender": "male",
+      "region": "anglo"
+    },
+    {
+      "id": "anglo_04",
+      "firstName": "Patricia",
+      "lastName": "Brown",
+      "expected_gender": "female",
+      "region": "anglo"
+    },
+    {
+      "id": "anglo_05",
+      "firstName": "Robert",
+      "lastName": "Jones",
+      "expected_gender": "male",
+      "region": "anglo"
+    },
+    {
+      "id": "anglo_06",
+      "firstName": "Jennifer",
+      "lastName": "Davis",
+      "expected_gender": "female",
+      "region": "anglo"
+    },
+    {
+      "id": "anglo_07",
+      "firstName": "Michael",
+      "lastName": "Miller",
+      "expected_gender": "male",
+      "region": "anglo"
+    },
+    {
+      "id": "anglo_08",
+      "firstName": "Linda",
+      "lastName": "Wilson",
+      "expected_gender": "female",
+      "region": "anglo"
+    },
+    {
+      "id": "easian_01",
+      "firstName": "Wei",
+      "lastName": "Zhang",
+      "expected_gender": "male",
+      "region": "east_asian"
+    },
+    {
+      "id": "easian_02",
+      "firstName": "Mei",
+      "lastName": "Chen",
+      "expected_gender": "female",
+      "region": "east_asian"
+    },
+    {
+      "id": "easian_03",
+      "firstName": "Hiroshi",
+      "lastName": "Tanaka",
+      "expected_gender": "male",
+      "region": "east_asian"
+    },
+    {
+      "id": "easian_04",
+      "firstName": "Yuki",
+      "lastName": "Sato",
+      "expected_gender": "female",
+      "region": "east_asian"
+    },
+    {
+      "id": "easian_05",
+      "firstName": "Min-jun",
+      "lastName": "Kim",
+      "expected_gender": "male",
+      "region": "east_asian"
+    },
+    {
+      "id": "easian_06",
+      "firstName": "Ji-hye",
+      "lastName": "Park",
+      "expected_gender": "female",
+      "region": "east_asian"
+    },
+    {
+      "id": "easian_07",
+      "firstName": "Jun",
+      "lastName": "Wang",
+      "expected_gender": "male",
+      "region": "east_asian"
+    },
+    {
+      "id": "easian_08",
+      "firstName": "Xiu",
+      "lastName": "Liu",
+      "expected_gender": "female",
+      "region": "east_asian"
+    },
+    {
+      "id": "sasian_01",
+      "firstName": "Raj",
+      "lastName": "Patel",
+      "expected_gender": "male",
+      "region": "south_asian"
+    },
+    {
+      "id": "sasian_02",
+      "firstName": "Priya",
+      "lastName": "Sharma",
+      "expected_gender": "female",
+      "region": "south_asian"
+    },
+    {
+      "id": "sasian_03",
+      "firstName": "Arjun",
+      "lastName": "Kumar",
+      "expected_gender": "male",
+      "region": "south_asian"
+    },
+    {
+      "id": "sasian_04",
+      "firstName": "Aisha",
+      "lastName": "Singh",
+      "expected_gender": "female",
+      "region": "south_asian"
+    },
+    {
+      "id": "sasian_05",
+      "firstName": "Vikram",
+      "lastName": "Reddy",
+      "expected_gender": "male",
+      "region": "south_asian"
+    },
+    {
+      "id": "sasian_06",
+      "firstName": "Anjali",
+      "lastName": "Gupta",
+      "expected_gender": "female",
+      "region": "south_asian"
+    },
+    {
+      "id": "sasian_07",
+      "firstName": "Imran",
+      "lastName": "Khan",
+      "expected_gender": "male",
+      "region": "south_asian"
+    },
+    {
+      "id": "sasian_08",
+      "firstName": "Fatima",
+      "lastName": "Rahman",
+      "expected_gender": "female",
+      "region": "south_asian"
+    },
+    {
+      "id": "arab_01",
+      "firstName": "Mohammed",
+      "lastName": "Al-Rashid",
+      "expected_gender": "male",
+      "region": "arabic"
+    },
+    {
+      "id": "arab_02",
+      "firstName": "Fatima",
+      "lastName": "Hassan",
+      "expected_gender": "female",
+      "region": "arabic"
+    },
+    {
+      "id": "arab_03",
+      "firstName": "Ahmed",
+      "lastName": "Ibrahim",
+      "expected_gender": "male",
+      "region": "arabic"
+    },
+    {
+      "id": "arab_04",
+      "firstName": "Layla",
+      "lastName": "Mansour",
+      "expected_gender": "female",
+      "region": "arabic"
+    },
+    {
+      "id": "arab_05",
+      "firstName": "Yusuf",
+      "lastName": "Nasser",
+      "expected_gender": "male",
+      "region": "arabic"
+    },
+    {
+      "id": "arab_06",
+      "firstName": "Aaliyah",
+      "lastName": "Khalil",
+      "expected_gender": "female",
+      "region": "arabic"
+    },
+    {
+      "id": "arab_07",
+      "firstName": "Omar",
+      "lastName": "Saleh",
+      "expected_gender": "male",
+      "region": "arabic"
+    },
+    {
+      "id": "arab_08",
+      "firstName": "Noor",
+      "lastName": "Hamdan",
+      "expected_gender": "female",
+      "region": "arabic"
+    },
+    {
+      "id": "slavic_01",
+      "firstName": "Ivan",
+      "lastName": "Petrov",
+      "expected_gender": "male",
+      "region": "slavic"
+    },
+    {
+      "id": "slavic_02",
+      "firstName": "Anna",
+      "lastName": "Sokolova",
+      "expected_gender": "female",
+      "region": "slavic"
+    },
+    {
+      "id": "slavic_03",
+      "firstName": "Pavel",
+      "lastName": "Novak",
+      "expected_gender": "male",
+      "region": "slavic"
+    },
+    {
+      "id": "slavic_04",
+      "firstName": "Olga",
+      "lastName": "Volkova",
+      "expected_gender": "female",
+      "region": "slavic"
+    },
+    {
+      "id": "slavic_05",
+      "firstName": "Andrzej",
+      "lastName": "Kowalski",
+      "expected_gender": "male",
+      "region": "slavic"
+    },
+    {
+      "id": "slavic_06",
+      "firstName": "Katarzyna",
+      "lastName": "Nowak",
+      "expected_gender": "female",
+      "region": "slavic"
+    },
+    {
+      "id": "slavic_07",
+      "firstName": "Dmitri",
+      "lastName": "Ivanov",
+      "expected_gender": "male",
+      "region": "slavic"
+    },
+    {
+      "id": "slavic_08",
+      "firstName": "Svetlana",
+      "lastName": "Kuznetsova",
+      "expected_gender": "female",
+      "region": "slavic"
+    },
+    {
+      "id": "other_01",
+      "firstName": "Carlos",
+      "lastName": "Rodriguez",
+      "expected_gender": "male",
+      "region": "other"
+    },
+    {
+      "id": "other_02",
+      "firstName": "Maria",
+      "lastName": "Garcia",
+      "expected_gender": "female",
+      "region": "other"
+    },
+    {
+      "id": "other_03",
+      "firstName": "Adesola",
+      "lastName": "Okonkwo",
+      "expected_gender": "female",
+      "region": "other"
+    },
+    {
+      "id": "other_04",
+      "firstName": "Kwame",
+      "lastName": "Asante",
+      "expected_gender": "male",
+      "region": "other"
+    },
+    {
+      "id": "other_05",
+      "firstName": "Reza",
+      "lastName": "Hosseini",
+      "expected_gender": "male",
+      "region": "other"
+    },
+    {
+      "id": "other_06",
+      "firstName": "Soraya",
+      "lastName": "Karimi",
+      "expected_gender": "female",
+      "region": "other"
+    },
+    {
+      "id": "other_07",
+      "firstName": "Nguyen",
+      "lastName": "Tran",
+      "expected_gender": "male",
+      "region": "other"
+    },
+    {
+      "id": "other_08",
+      "firstName": "Aroon",
+      "lastName": "Suksawat",
+      "expected_gender": "male",
+      "region": "other"
+    }
+  ],
+  "response": {
+    "personalNames": [
+      {
+        "script": "LATIN",
+        "id": "anglo_01",
+        "firstName": "John",
+        "lastName": "Smith",
+        "likelyGender": "male",
+        "genderScale": -0.9875103980597006,
+        "score": 12.978197195089422,
+        "probabilityCalibrated": 0.9937551990298503
+      },
+      {
+        "script": "LATIN",
+        "id": "anglo_02",
+        "firstName": "Mary",
+        "lastName": "Johnson",
+        "likelyGender": "female",
+        "genderScale": 0.9715948461260369,
+        "score": 10.791460407291964,
+        "probabilityCalibrated": 0.9857974230630184
+      },
+      {
+        "script": "LATIN",
+        "id": "anglo_03",
+        "firstName": "James",
+        "lastName": "Williams",
+        "likelyGender": "male",
+        "genderScale": -0.9718481139318875,
+        "score": 10.890364631663331,
+        "probabilityCalibrated": 0.9859240569659438
+      },
+      {
+        "script": "LATIN",
+        "id": "anglo_04",
+        "firstName": "Patricia",
+        "lastName": "Brown",
+        "likelyGender": "female",
+        "genderScale": 0.9887995648354833,
+        "score": 13.252244872138846,
+        "probabilityCalibrated": 0.9943997824177416
+      },
+      {
+        "script": "LATIN",
+        "id": "anglo_05",
+        "firstName": "Robert",
+        "lastName": "Jones",
+        "likelyGender": "male",
+        "genderScale": -0.9588697604790419,
+        "score": 8.027110401254745,
+        "probabilityCalibrated": 0.979434880239521
+      },
+      {
+        "script": "LATIN",
+        "id": "anglo_06",
+        "firstName": "Jennifer",
+        "lastName": "Davis",
+        "likelyGender": "female",
+        "genderScale": 0.9605046094129064,
+        "score": 4.838792595218628,
+        "probabilityCalibrated": 0.9802523047064532
+      },
+      {
+        "script": "LATIN",
+        "id": "anglo_07",
+        "firstName": "Michael",
+        "lastName": "Miller",
+        "likelyGender": "male",
+        "genderScale": -0.9549920771865466,
+        "score": 8.52929848611496,
+        "probabilityCalibrated": 0.9774960385932733
+      },
+      {
+        "script": "LATIN",
+        "id": "anglo_08",
+        "firstName": "Linda",
+        "lastName": "Wilson",
+        "likelyGender": "female",
+        "genderScale": 0.9707114333093807,
+        "score": 10.507428612773289,
+        "probabilityCalibrated": 0.9853557166546904
+      },
+      {
+        "script": "LATIN",
+        "id": "easian_01",
+        "firstName": "Wei",
+        "lastName": "Zhang",
+        "likelyGender": "female",
+        "genderScale": 0.054760423148724424,
+        "score": 1.198851279589725,
+        "probabilityCalibrated": 0.5273802115743622
+      },
+      {
+        "script": "LATIN",
+        "id": "easian_02",
+        "firstName": "Mei",
+        "lastName": "Chen",
+        "likelyGender": "female",
+        "genderScale": 0.8310301507537687,
+        "score": 3.228579089405706,
+        "probabilityCalibrated": 0.9155150753768844
+      },
+      {
+        "script": "LATIN",
+        "id": "easian_03",
+        "firstName": "Hiroshi",
+        "lastName": "Tanaka",
+        "likelyGender": "male",
+        "genderScale": -0.979381443298969,
+        "score": 9.618757634997571,
+        "probabilityCalibrated": 0.9896907216494846
+      },
+      {
+        "script": "LATIN",
+        "id": "easian_04",
+        "firstName": "Yuki",
+        "lastName": "Sato",
+        "likelyGender": "male",
+        "genderScale": -0.4736842105263158,
+        "score": 0.10952232821216525,
+        "probabilityCalibrated": 0.736842105263158
+      },
+      {
+        "script": "LATIN",
+        "id": "easian_05",
+        "firstName": "Min-jun",
+        "lastName": "Kim",
+        "likelyGender": "male",
+        "genderScale": -0.45695257352733076,
+        "score": 3.0968600973627645,
+        "probabilityCalibrated": 0.7284762867636654
+      },
+      {
+        "script": "LATIN",
+        "id": "easian_06",
+        "firstName": "Ji-hye",
+        "lastName": "Park",
+        "likelyGender": "female",
+        "genderScale": 0.8692509687806216,
+        "score": 7.097505485096562,
+        "probabilityCalibrated": 0.9346254843903108
+      },
+      {
+        "script": "LATIN",
+        "id": "easian_07",
+        "firstName": "Jun",
+        "lastName": "Wang",
+        "likelyGender": "male",
+        "genderScale": -0.5193426908592947,
+        "score": 2.224671765153552,
+        "probabilityCalibrated": 0.7596713454296473
+      },
+      {
+        "script": "LATIN",
+        "id": "easian_08",
+        "firstName": "Xiu",
+        "lastName": "Liu",
+        "likelyGender": "female",
+        "genderScale": 0.6901408450704225,
+        "score": 3.5202288773113324,
+        "probabilityCalibrated": 0.8450704225352113
+      },
+      {
+        "script": "LATIN",
+        "id": "sasian_01",
+        "firstName": "Raj",
+        "lastName": "Patel",
+        "likelyGender": "male",
+        "genderScale": -0.9119541875447388,
+        "score": 7.3487047689446925,
+        "probabilityCalibrated": 0.9559770937723694
+      },
+      {
+        "script": "LATIN",
+        "id": "sasian_02",
+        "firstName": "Priya",
+        "lastName": "Sharma",
+        "likelyGender": "female",
+        "genderScale": 0.9828022908418379,
+        "score": 12.137928604276915,
+        "probabilityCalibrated": 0.991401145420919
+      },
+      {
+        "script": "LATIN",
+        "id": "sasian_03",
+        "firstName": "Arjun",
+        "lastName": "Kumar",
+        "likelyGender": "male",
+        "genderScale": -0.9886258927656104,
+        "score": 13.21064902939797,
+        "probabilityCalibrated": 0.9943129463828052
+      },
+      {
+        "script": "LATIN",
+        "id": "sasian_04",
+        "firstName": "Aisha",
+        "lastName": "Singh",
+        "likelyGender": "female",
+        "genderScale": 0.983333756537645,
+        "score": 12.269444186486538,
+        "probabilityCalibrated": 0.9916668782688225
+      },
+      {
+        "script": "LATIN",
+        "id": "sasian_05",
+        "firstName": "Vikram",
+        "lastName": "Reddy",
+        "likelyGender": "male",
+        "genderScale": -0.9837210424813687,
+        "score": 12.377502370617236,
+        "probabilityCalibrated": 0.9918605212406844
+      },
+      {
+        "script": "LATIN",
+        "id": "sasian_06",
+        "firstName": "Anjali",
+        "lastName": "Gupta",
+        "likelyGender": "female",
+        "genderScale": 0.9698826407126706,
+        "score": 10.298811871796488,
+        "probabilityCalibrated": 0.9849413203563353
+      },
+      {
+        "script": "LATIN",
+        "id": "sasian_07",
+        "firstName": "Imran",
+        "lastName": "Khan",
+        "likelyGender": "male",
+        "genderScale": -0.9434050346536431,
+        "score": 7.370687104020497,
+        "probabilityCalibrated": 0.9717025173268216
+      },
+      {
+        "script": "LATIN",
+        "id": "sasian_08",
+        "firstName": "Fatima",
+        "lastName": "Rahman",
+        "likelyGender": "female",
+        "genderScale": 0.9825396412043037,
+        "score": 12.078808803960634,
+        "probabilityCalibrated": 0.9912698206021519
+      },
+      {
+        "script": "LATIN",
+        "id": "arab_01",
+        "firstName": "Mohammed",
+        "lastName": "Al-Rashid",
+        "likelyGender": "male",
+        "genderScale": -0.9706862162811383,
+        "score": 10.50039539295176,
+        "probabilityCalibrated": 0.9853431081405691
+      },
+      {
+        "script": "LATIN",
+        "id": "arab_02",
+        "firstName": "Fatima",
+        "lastName": "Hassan",
+        "likelyGender": "female",
+        "genderScale": 0.9977924944812362,
+        "score": 13.041332626096803,
+        "probabilityCalibrated": 0.9988962472406181
+      },
+      {
+        "script": "LATIN",
+        "id": "arab_03",
+        "firstName": "Ahmed",
+        "lastName": "Ibrahim",
+        "likelyGender": "male",
+        "genderScale": -0.9756549753057304,
+        "score": 11.300260413824546,
+        "probabilityCalibrated": 0.9878274876528652
+      },
+      {
+        "script": "LATIN",
+        "id": "arab_04",
+        "firstName": "Layla",
+        "lastName": "Mansour",
+        "likelyGender": "female",
+        "genderScale": 0.9888137024687056,
+        "score": 13.255708348560617,
+        "probabilityCalibrated": 0.9944068512343528
+      },
+      {
+        "script": "LATIN",
+        "id": "arab_05",
+        "firstName": "Yusuf",
+        "lastName": "Nasser",
+        "likelyGender": "male",
+        "genderScale": -0.97212889078764,
+        "score": 11.012816959586345,
+        "probabilityCalibrated": 0.98606444539382
+      },
+      {
+        "script": "LATIN",
+        "id": "arab_06",
+        "firstName": "Aaliyah",
+        "lastName": "Khalil",
+        "likelyGender": "female",
+        "genderScale": 0.9718708855506892,
+        "score": 10.899755792696375,
+        "probabilityCalibrated": 0.9859354427753446
+      },
+      {
+        "script": "LATIN",
+        "id": "arab_07",
+        "firstName": "Omar",
+        "lastName": "Saleh",
+        "likelyGender": "male",
+        "genderScale": -0.9810082641278395,
+        "score": 11.744143694341503,
+        "probabilityCalibrated": 0.9905041320639197
+      },
+      {
+        "script": "LATIN",
+        "id": "arab_08",
+        "firstName": "Noor",
+        "lastName": "Hamdan",
+        "likelyGender": "female",
+        "genderScale": 0.9333333333333333,
+        "score": 1.348788933238822,
+        "probabilityCalibrated": 0.9666666666666667
+      },
+      {
+        "script": "LATIN",
+        "id": "slavic_01",
+        "firstName": "Ivan",
+        "lastName": "Petrov",
+        "likelyGender": "male",
+        "genderScale": -0.9965351329224104,
+        "score": 14.551906329886677,
+        "probabilityCalibrated": 0.9982675664612052
+      },
+      {
+        "script": "LATIN",
+        "id": "slavic_02",
+        "firstName": "Anna",
+        "lastName": "Sokolova",
+        "likelyGender": "female",
+        "genderScale": 0.9995495176014491,
+        "score": 16.592017289383058,
+        "probabilityCalibrated": 0.9997747588007245
+      },
+      {
+        "script": "LATIN",
+        "id": "slavic_03",
+        "firstName": "Pavel",
+        "lastName": "Novak",
+        "likelyGender": "male",
+        "genderScale": -0.9891021372585784,
+        "score": 13.329122459646797,
+        "probabilityCalibrated": 0.9945510686292892
+      },
+      {
+        "script": "LATIN",
+        "id": "slavic_04",
+        "firstName": "Olga",
+        "lastName": "Volkova",
+        "likelyGender": "female",
+        "genderScale": 0.9940578513208496,
+        "score": 14.012509459485592,
+        "probabilityCalibrated": 0.9970289256604248
+      },
+      {
+        "script": "LATIN",
+        "id": "slavic_05",
+        "firstName": "Andrzej",
+        "lastName": "Kowalski",
+        "likelyGender": "male",
+        "genderScale": -0.9886363636363636,
+        "score": 12.211627859817895,
+        "probabilityCalibrated": 0.9943181818181818
+      },
+      {
+        "script": "LATIN",
+        "id": "slavic_06",
+        "firstName": "Katarzyna",
+        "lastName": "Nowak",
+        "likelyGender": "female",
+        "genderScale": 0.9943795676032203,
+        "score": 14.068171702558232,
+        "probabilityCalibrated": 0.9971897838016102
+      },
+      {
+        "script": "LATIN",
+        "id": "slavic_07",
+        "firstName": "Dmitri",
+        "lastName": "Ivanov",
+        "likelyGender": "male",
+        "genderScale": -0.98211058799125,
+        "score": 11.985205167441322,
+        "probabilityCalibrated": 0.991055293995625
+      },
+      {
+        "script": "LATIN",
+        "id": "slavic_08",
+        "firstName": "Svetlana",
+        "lastName": "Kuznetsova",
+        "likelyGender": "female",
+        "genderScale": 0.9994262212711682,
+        "score": 16.350092446189564,
+        "probabilityCalibrated": 0.9997131106355841
+      },
+      {
+        "script": "LATIN",
+        "id": "other_01",
+        "firstName": "Carlos",
+        "lastName": "Rodriguez",
+        "likelyGender": "male",
+        "genderScale": -0.9717264025770453,
+        "score": 10.84161290741909,
+        "probabilityCalibrated": 0.9858632012885227
+      },
+      {
+        "script": "LATIN",
+        "id": "other_02",
+        "firstName": "Maria",
+        "lastName": "Garcia",
+        "likelyGender": "female",
+        "genderScale": 0.9891752860815086,
+        "score": 13.34863022606779,
+        "probabilityCalibrated": 0.9945876430407543
+      },
+      {
+        "script": "LATIN",
+        "id": "other_03",
+        "firstName": "Adesola",
+        "lastName": "Okonkwo",
+        "likelyGender": "female",
+        "genderScale": 0.9444146338227557,
+        "score": 8.134282461922567,
+        "probabilityCalibrated": 0.9722073169113779
+      },
+      {
+        "script": "LATIN",
+        "id": "other_04",
+        "firstName": "Kwame",
+        "lastName": "Asante",
+        "likelyGender": "male",
+        "genderScale": -0.9838709677419355,
+        "score": 6.589705214943933,
+        "probabilityCalibrated": 0.9919354838709677
+      },
+      {
+        "script": "LATIN",
+        "id": "other_05",
+        "firstName": "Reza",
+        "lastName": "Hosseini",
+        "likelyGender": "male",
+        "genderScale": -0.987012987012987,
+        "score": 5.706110663249234,
+        "probabilityCalibrated": 0.9935064935064936
+      },
+      {
+        "script": "LATIN",
+        "id": "other_06",
+        "firstName": "Soraya",
+        "lastName": "Karimi",
+        "likelyGender": "female",
+        "genderScale": 0.9836214175365487,
+        "score": 12.348570792676888,
+        "probabilityCalibrated": 0.9918107087682744
+      },
+      {
+        "script": "LATIN",
+        "id": "other_07",
+        "firstName": "Nguyen",
+        "lastName": "Tran",
+        "likelyGender": "male",
+        "genderScale": -0.6935704514363885,
+        "score": 3.4738194103573647,
+        "probabilityCalibrated": 0.8467852257181943
+      },
+      {
+        "script": "LATIN",
+        "id": "other_08",
+        "firstName": "Aroon",
+        "lastName": "Suksawat",
+        "likelyGender": "male",
+        "genderScale": -0.9650955022236019,
+        "score": 9.418419060889548,
+        "probabilityCalibrated": 0.9825477511118009
+      }
+    ]
+  }
+}
