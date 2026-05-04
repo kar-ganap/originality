@@ -789,23 +789,560 @@ Challenge Corner together.)
 
 ### On C1 — outsider vantage vs. alternatives
 
-(Pending.)
+Working session with user, 2026-04-24.
 
-### On C2 — distal novelty mediator: real or information-theoretic?
+**User's first-pass observation.** *"I don't know if data would've
+had sufficient power to test these alternate hypotheses given the
+size (likely they would) but the framing seems a bit agenda-driven.
+In any case, what are the lessons for us? Should we consider
+different ways to define demographic diversity?"*
 
-(Pending.)
+The intuition is correct on both counts: the data does have power to
+test most of the alternatives, and the outsider-vantage framing is
+agenda-driven by the authors' theoretical priors rather than
+data-privileged.
+
+**Which alternatives are actually testable in Hofstra's data.**
+
+Sample size (~800K observations in inferential analyses) is not the
+constraint. The constraint is willingness to run the tests.
+
+- **Topic selection within discipline:** testable. Hofstra has
+  concept tags per thesis. Within-topic novelty comparisons would
+  isolate topic-selection from demographic-novelty. Not done in
+  main text.
+- **Advisor differences:** testable. Advisor IDs are in ProQuest;
+  advisor fixed effects would absorb time-invariant advisor-specific
+  effects. If the minority-novelty finding disappears when adding
+  advisor FE, advisor is the driver. Not done in main text.
+- **Supervisor risk tolerance:** proxy-able via advisor-prior-
+  novelty. Risk-tolerant advisors may attract novelty-inclined
+  students and themselves produce novel work. Not done.
+- **Cross-disciplinary training pipelines:** harder — needs
+  undergraduate-major data not in ProQuest. Testable only with
+  external data merge.
+- **Self-selection into academia:** not testable from post-hoc
+  academic data; requires counterfactual.
+
+Three of five alternatives are directly testable; Hofstra runs none
+of them.
+
+**Outsider-vantage privileged by priors, not data.** The data shows:
+*conditional on institution × discipline × year, minorities produce
+more novelty.* This conditional pattern is compatible with outsider
+vantage AND advisor mediation AND within-discipline topic selection
+AND risk-tolerance differentials AND career-risk calculations
+AND self-selection effects. Any of these alone or in combination
+could produce the observed pattern.
+
+Choosing outsider vantage as THE interpretation reflects:
+
+- Hofstra's theoretical framing (citing Page's diversity-innovation
+  literature heavily)
+- The paper's rhetorical structure (lead with paradox; treat
+  discounting as primary contribution)
+- The pre-existing diversity-science literature the paper contributes
+  to
+
+Sympathetic reading: outsider vantage is the most parsimonious
+theoretical frame. Hostile reading: it's the frame they wanted to
+find. Either way, the alternatives aren't substantively engaged.
+
+**The structural issue C1 surfaces.** The agenda-driven framing
+points at a deeper problem: **the mapping from measurable
+demographic categories to substantive claims about "different
+perspectives" requires an interpretive leap the data cannot support.**
+
+Hofstra's chain is:
+
+> categorical inference (name-based) → demographic category
+> assignment → assumed correspondence with lived experience →
+> assumed correspondence with cognitive diversity → assumed effect
+> on novelty production
+
+Each arrow is an interpretive commitment, not a measurement. The
+paper treats the chain as self-evident; close reading surfaces each
+step as an assumption.
+
+This is the third parallel measurement-construct gap we've
+identified, alongside novelty-vs-innovation (SQ7, SQ11) and
+citation-vs-influence (Synthesis Pointer 12). All three operate on
+the same structural pattern: surface marker, intermediate construct,
+substantive target, with each arrow requiring an interpretive
+commitment the data alone cannot adjudicate.
+
+**Lessons for ws2 — three structural commitments derived from C1.**
+
+User asks: "Should we consider different ways to define demographic
+diversity?" Yes. Three specific moves:
+
+**(a) Multi-operationalization of demographic diversity.** Our
+current Rao's Q metric operates on observed categorical demographics
+(gender, country, institution, prestige, career stage, training
+institution). To reduce reliance on any single proxy chain, run ws2's
+divergence test under multiple operationalizations:
+
+- **Categorical** (current primary): Rao's Q over 7 features.
+- **Lineage-based** (Proxy A, already committed): Gini over training-
+  institution concentration.
+- **Advisor-lineage-based** (Proxy B, Stage 3): inferred-advisor
+  diversity from Math Genealogy + ORCID validated subset.
+- **Network-position-based** (potential Stage 3 addition): variance
+  in coauthor-network centrality measures.
+
+If all show similar divergence trends, multi-operational robustness.
+If they differ, the substantive divergence claim is operationalization-
+specific. **Add to pending batch as a new sub-item under item 11
+(or new item) — Stage 3 Test I/II/III robustness with alternative
+demographic-diversity operationalizations.**
+
+**(b) Explicit Methods-section acknowledgment of the categorical-to-
+substantive proxy chain.** Add to item 9 (Methods framing paragraph)
+a third measurement-construct gap acknowledgment:
+
+> *"Our demographic-diversity metric operates on observed demographic
+> categories (gender, country, institution, etc.) inferred from name
+> and affiliation data. We treat these as proxies for the substantive
+> concept of 'different perspectives' that diversity-innovation
+> theory invokes (lived experience, cognitive priors, intellectual
+> pipelines). The categorical-to-substantive mapping requires
+> interpretive assumptions that our measurements cannot directly
+> validate. Where feasible (Proxy A training-institution
+> concentration, Stage 3 Proxy B advisor lineage), we supplement
+> categorical demographics with lineage-based operationalizations to
+> reduce reliance on any single proxy chain."*
+
+Three-sentence framing commitment; no new analysis.
+
+**(c) Subfield-concentration-of-divergence as robustness against
+alternatives.** Already in our subfield mechanism test, but worth
+framing in Discussion: if divergence is concentrated in canonical-
+concentrated subfields, consistent with actuator-mediated mechanisms;
+if uniform across subfields, more consistent with outsider-vantage-
+like dynamics. The subfield mechanism test already bears on this
+distinction.
+
+**Not adopting.**
+
+- Advisor fixed effects at our scale — too computationally expensive,
+  and our subfield FE absorbs much of the relevant variance.
+- Explicit topic-selection test beyond what subfield mechanism test
+  provides.
+- Undergraduate-major integration — out of scope.
+
+**One-sentence summary.** Three of five alternative explanations
+(topic selection, advisor differences, supervisor risk tolerance)
+are directly testable in Hofstra's data but not tested; the outsider-
+vantage interpretation is privileged by authors' priors rather than
+data. The deeper lesson — categorical demographic measurements proxy
+for substantive diversity in ways that require interpretive leaps —
+is the third parallel measurement-construct gap we've identified
+(alongside novelty-vs-innovation and citation-vs-influence). For
+ws2: multi-operationalization of demographic diversity (item 11
+sub-item / new item), explicit Methods-section acknowledgment (item 9
+extension), and subfield-concentration framing in Discussion.
+
+### On C2 — distal-novelty mediator: discrimination or information-theoretic?
+
+Working session with user, 2026-04-24.
+
+**User's first-pass observation.** *"I don't have anything to add
+beyond our SQ14 discussion. Can you think of anything else?"* The
+intuition that C2 largely overlaps SQ14 is correct, but a useful
+sharpening surfaced through the back-and-forth that's worth capturing
+because it directly clarifies what Test IV's β_3 measures.
+
+**The discrimination/information-theoretic distinction sharpened.**
+
+C2's framing presents a binary: is the distal-novelty mediator
+"discrimination" or "information-theoretic"? Hofstra's analysis
+structure resolves this in a specific way that requires precision —
+and an initial overstatement on my part required correction by the
+user.
+
+**What Hofstra actually does.** Controls for distal novelty as a
+**main-effect covariate** in regressions of career outcomes on
+demographic status. The 3.5% → 9.5% gender discount (and 4.3% → 15%
+impactful-novelty version) include distal novelty as a control. Main
+text claims: *"These results hold over and above of the distance
+between newly linked concepts"* (p. 9287).
+
+**What Hofstra does NOT do (or at least doesn't headline).** Test
+the **(demographic × distal-novelty) interaction** at the link
+level. They don't formally verify that the distal-novelty → uptake
+relationship has the same slope for majority-introduced and
+minority-introduced links.
+
+**Why this distinction matters.** A main-effect control adjusts for
+the *average* distal-novelty effect on outcomes. It treats distal
+novelty as if its effect were uniform across creators. After
+main-effect adjustment, the residual demographic effect could be:
+
+- **Pure "around-distal" residual** if interaction = 0: distal
+  novelty operates equally for everyone, demographic discrimination
+  works through OTHER channels.
+- **Underestimated "through-distal" effect plus around-distal
+  residual** if interaction < 0: demographic discrimination operates
+  PARTLY through differential treatment of distal contributions,
+  which the main-effect control absorbs imperfectly.
+
+These two readings are observationally indistinguishable from
+Hofstra's main-text analysis. The main-effect control is a partial
+information-theoretic correction; the differential-discrimination
+question requires the interaction test, which isn't formally
+reported.
+
+**The earlier overstatement and its correction.**
+
+I initially said: *"The mediator is information-theoretic, NOT a
+discrimination claim... it operates the same for majority-introduced
+and minority-introduced links."* User pushed back: *"so are you
+saying that Hofstra had already controlled for the information-
+theoretic confound?"*
+
+The corrected framing: Hofstra controls for the distal-novelty *main
+effect* (partial information-theoretic control); they don't formally
+verify uniformity-of-effect-across-groups (the interaction). My
+earlier framing collapsed this distinction. The correction matters
+because it directly determines what Test IV's β_3 measures
+methodologically.
+
+**ws2 lesson — Test IV's β_3 IS the missing interaction test.**
+
+Test IV's persistence regression specification:
+
+> log(1 + C_15) = α + β_1·N_p + β_2·T_p + β_3·(N_p × T_p) + controls + ε
+
+- **β_1 (N_p main effect)** corresponds to Hofstra's information-
+  theoretic mediator — the average effect of paper-level novelty on
+  long-term-citation accumulation, regardless of team composition.
+- **β_2 (T_p main effect)** corresponds to Hofstra's residual
+  demographic effect after main-effect distal control — the
+  "around-novelty-channel" team-diversity effect.
+- **β_3 (T_p × N_p interaction)** is the test Hofstra doesn't run —
+  whether team-diversity differentially modulates the novelty →
+  long-term-citation relationship.
+
+Substantive readings of β_3:
+
+- **β_3 = 0**: novelty's long-term-uptake effect is uniform across
+  team-diversity levels. Information-theoretic mediation operates the
+  same for everyone; team-diversity effects (if any) operate through
+  other channels. Hofstra's "main-effect control" assumption holds.
+- **β_3 < 0**: diverse teams' novel papers get less long-term uptake
+  than non-diverse teams' equally-novel papers. Differential
+  discrimination operates *through* the novelty channel. The
+  main-effect-control approach (Hofstra's) would underestimate the
+  full demographic effect.
+- **β_3 > 0**: diverse teams' novel papers get more long-term uptake
+  than non-diverse teams'. Inverse-discrimination through the novelty
+  channel; less commonly hypothesized.
+
+**Test IV's design directly addresses C2's discrimination-vs-
+information-theoretic question** — not because we anticipated C2
+specifically, but because the interaction-term specification is
+methodologically more rigorous than main-effect-only adjustment for
+mediator effects. We're built to distinguish what Hofstra leaves
+implicit.
+
+**Pending batch addition (item 9 extension — Methods framing
+paragraph):**
+
+> *"Hofstra et al. 2020 control for distal novelty as a main-effect
+> covariate when estimating demographic discounts in career outcomes;
+> their main-text analysis treats the distal-novelty → uptake
+> relationship as uniform across demographic groups (without
+> explicitly verifying the assumption). Our Test IV persistence
+> regression includes the (T_p × N_p) interaction term β_3
+> explicitly, which directly tests the uniformity assumption
+> Hofstra leaves implicit. β_3 ≠ 0 indicates that the novelty →
+> long-term-citation relationship varies by team diversity — the
+> discrimination-through-novelty-channel hypothesis the main-effect
+> specification cannot distinguish from pure information-theoretic
+> mediation."*
+
+Three-sentence framing addition. No new analysis (the regression
+specification is already committed). Sharpens what β_3 measures
+substantively and ties it to the broader literature.
+
+**One-sentence summary.** Hofstra's "control for distal novelty" is a
+main-effect adjustment that doesn't test the (demographic × distal-
+novelty) interaction; the discrimination-through-distal-channel
+question is observationally indistinguishable from pure information-
+theoretic mediation in their main analysis. Test IV's β_3 is the
+interaction Hofstra doesn't run — methodologically more rigorous on
+this dimension. Methods framing should make this explicit.
 
 ### On C3 — individual findings aggregated to team level
 
-(Pending.)
+Working session with user, 2026-04-24.
+
+**User's first-pass.** *"Not sure how to answer."* The three
+aggregation patterns make different predictions and the data hasn't
+spoken yet. Walkthrough lays out predictions, evidence, honest
+expectation, and what each observed outcome would update us on.
+
+**Three aggregation patterns, three predictions for Test IV's γ_1:**
+
+| Pattern | Mechanism | Test IV γ_1 prediction |
+|---|---|---|
+| Pure additive | Individual contributions sum mechanically | γ_1 > 0, scaling with minority fraction in team |
+| Actuator-override | Shared inputs (advisor, canon, training) average individuals to consensus | γ_1 ≈ 0 even though Hofstra's individual effect is real |
+| Selection | Team formation correlates with topic, advisor, institution | γ_1 attenuates substantially under FE |
+
+**Evidence for each:**
+
+- **Pure additive**: Hofstra's individual finding survives multiple
+  robustness checks; Page-Hong literature predicts compositional
+  effects at team level; some scientometric work finds positive
+  team-composition effects.
+- **Actuator-override**: ws2's whole thesis is built around shared
+  actuators producing homogenization; CS especially has dense
+  actuators (deep learning canon, GitHub, conferences, advisor
+  lineage chains); field-level homogenization is observable, teams
+  are smaller-scale instances of same dynamic.
+- **Selection**: team formation in academic science is highly non-
+  random; demographic patterns correlate with subfield, advisor,
+  institution; Hofstra's individual-level analysis controls for
+  these but team-level analysis exposes within-team selection
+  patterns.
+
+**Honest answer: probably some mixture, with field-specific
+variation.**
+
+For CS specifically, actuator-override is plausible at moderate-to-
+strong magnitude. The actuators are dense (transformer-architecture
+canon post-2017, conference monoculture, lineage chains). γ_1 could
+be substantially attenuated relative to Hofstra's individual
+coefficient, possibly approaching zero in some specifications.
+
+For Physics, actuators are weaker on average (more diverse subfields,
+less hot-trend dominance). γ_1 could be larger than in CS, closer
+to pure additive.
+
+For both, selection effects will absorb some signal under FE — both
+fields have non-random team formation correlated with subfield,
+advisor, institution.
+
+Most likely empirical outcome: **γ_1 ≠ 0 but substantially smaller
+than pure-additive aggregation of Hofstra's individual coefficient
+would predict, with magnitude varying by field (CS smaller than
+Physics) and by control specification (smaller with FE than
+without).**
+
+**What each observed outcome would update us on:**
+
+| Observation | Update |
+|---|---|
+| γ_1 > 0, stable across specifications, both fields | Pure additive holds; outsider vantage extends from individual to team level; ws2's actuator-override hypothesis weakened |
+| γ_1 ≈ 0, both fields, all specifications | Actuator-override dominant; team dynamics flatten individual vantage; strongest support for ws2's central claim |
+| γ_1 > 0 in Physics, ≈ 0 in CS | Field-specific actuator-override; CS's tight actuator network suppresses team-level signal; Physics's looser structure preserves it. Most informative for ws1 — actuator density is parametrically variable |
+| γ_1 substantially attenuated by FE | Selection-driven; individual-level effect was confounded with team-formation patterns; outsider-vantage requires nuancing |
+| γ_1 < 0 (diverse teams less novel) | Surprising, doesn't fit any pattern cleanly; suggests differential editorial filtering or systematic publishing disadvantage; would prompt re-examination of measurement chain |
+
+**Connection to ws2 commitments.**
+
+We're already set up to test all three patterns through Test IV's
+regression structure. What would help discriminate:
+
+**(1) Report γ_1 across multiple control specifications.** Same
+sensitivity-analysis pattern as the SQ14-derived mediation-control
+sensitivity (β_3 across specs). For γ_1:
+
+- No controls (pure correlation)
+- Year FE only
+- Year + subfield FE
+- Full control set (year + subfield + team size + reference count + team-level covariates)
+
+**Diagnostic readings:**
+- Stable γ_1 across specs → not selection-driven
+- Collapsing γ_1 with FE → selection effects matter
+- Persistent γ_1 ≈ 0 across all specs → actuator-override regardless of selection
+
+**(2) Field-stratified reporting.** Already committed via cross-
+field replication (CS + Physics). γ_1 difference between fields is
+the actuator-density-comparison test. Already in plan.
+
+**(3) Pre-registered interpretive readings.** Phase 0.2 pre-
+registration should explicitly state what each γ_1 pattern is
+interpreted as. Prevents post-hoc framing of unexpected results.
+
+**Pending batch addition (item 7 / Test IV extension):** report γ_1
+across the four control specifications listed above, alongside the
+existing β_3 mediation-sensitivity reporting. Sensitivity-analysis
+table column, not new analysis. Discriminates the three aggregation
+patterns empirically.
+
+**One-sentence summary.** Three aggregation patterns make different
+predictions for Test IV's γ_1: pure additive (γ_1 > 0 scaling with
+minority fraction), actuator-override (γ_1 ≈ 0 despite real
+individual effect), selection (γ_1 attenuates under FE). Most likely
+outcome is a mixture with field-specific variation (CS smaller γ_1
+than Physics, attenuation under controls). Already-committed cross-
+field replication tests actuator-density variation; new pending-
+batch addition reports γ_1 across multiple control specifications
+to discriminate the patterns. The four-quadrant interpretive grid
+(γ_1 sign × persistence pattern from SQ7) extends naturally to
+this discrimination.
 
 ### On C4 — demographic inference accuracy and URM validity
 
-(Pending.)
+Working session with user, 2026-04-23.
+
+**Distinctive from SQ13.** SQ13 was about the structural problem of URM
+as a compositional aggregate. C4 is more pointedly methodological: does
+the URM-vs-white discount finding actually survive given the
+catastrophic AA/NA accuracy, and (importantly for ws2) does our
+weight-by-confidence approach solve the problem or just make uncertainty
+visible?
+
+**Sensitivity analyses that would clear Hofstra's URM-vs-white contrast.**
+
+Hofstra mentions one of these in passing (SI p. 14–15): "our main
+substantive conclusions and inferences are robust if we only consider
+those students whose names overwhelmingly occur within one rather than
+multiple races." This is a high-confidence-cases-only restriction. The
+fact that they report it as a footnote rather than headlining suggests
+the substantive conclusions hold, but the analysis isn't given the same
+prominence as the main findings.
+
+Three sensitivity analyses that would clear the contrast more
+rigorously:
+
+1. **Stratified by per-group accuracy.** Run the URM-vs-white discount
+   separately for high-confidence URM cases (probability > 0.9) vs. low-
+   confidence URM cases. If the discount holds in both, robust. If it
+   holds only in low-confidence, measurement error is plausibly driving
+   the result.
+2. **Bounded under assumed misclassification patterns.** Compute the
+   discount under different assumed misclassification rates for each
+   subgroup. If the discount remains for all reasonable misclassification
+   scenarios, it's robust.
+3. **Decompose URM into Hispanic-only and AA-only contrasts where
+   inference allows.** With ~83% Hispanic accuracy, a Hispanic-only-vs-
+   white contrast is more defensible than the pooled URM contrast.
+
+Hofstra's "overwhelmingly one race" restriction is approximately #1 in
+compressed form. They claim the substantive conclusion is robust to
+this restriction. Without seeing the actual numbers, this is a vague
+reassurance.
+
+**Does ws2's weight-by-confidence solve the problem, or just make
+uncertainty visible?**
+
+Honest answer: mostly the latter. Weight-by-confidence is a structural
+improvement over Hofstra's "treat all classifications as equally
+certain" approach because it propagates inference uncertainty into our
+downstream estimates (wider CIs for low-confidence inferences). But it
+doesn't fix the underlying problem in two specific ways:
+
+- A 74% AA inference is still 74% accurate, regardless of how we weight
+  it. Weight-by-confidence makes the lower confidence visible but
+  doesn't generate a more accurate inference.
+- Aggregate findings still mix high- and low-confidence cases under our
+  reporting. Even with weighted CIs, the aggregate point estimate is
+  contaminated by misclassification at rates we can't fully bound.
+
+**What would actually solve the problem:**
+
+1. **Better inference at the source.** NamSor's per-region accuracy is
+   mostly higher than Census-based methods, but still imperfect. ORCID
+   self-reported demographic data has higher accuracy but limited
+   adoption (~30–40% of recent researchers). We're committed to NamSor
+   + Genderize, which is better than Hofstra's stack but not a complete
+   solution.
+2. **Restrict analyses to high-confidence cases only** (lose statistical
+   power; introduce sample selection if confidence varies by
+   demographic).
+3. **Bayesian models propagating inference uncertainty into all
+   downstream estimates** — methodologically elegant but computationally
+   heavy at our scale.
+
+**Sharpening for the C4 walkthrough:** weight-by-confidence is better
+than treating inferences as certain (Hofstra's approach), but it's not
+a solution. It's an honest accounting of uncertainty that doesn't
+pretend to fix the underlying inference quality. The Methods section
+should acknowledge this distinction — we're not claiming our
+demographic inference is reliable; we're claiming we report uncertainty
+more transparently than Hofstra does.
+
+**Pending batch addition:** small Methods-paragraph extension —
+explicitly state that weight-by-confidence is an uncertainty-
+propagation policy, not an inference-quality fix. Three sentences. Low-
+cost.
 
 ### On C5 — diachronic embedding robustness
 
-(Pending.)
+Working session with user, 2026-04-23.
+
+**Distinctive from SQ10.** SQ10 unpacked Hofstra's r=0.931 single-year
+validation as best-case-by-construction. C5 is the hypothetical: which
+of Hofstra's specific findings would change under proper diachronic
+embeddings, and which would be stable? This is genuinely useful to
+think through because it tells us where the embedding choice is
+actually load-bearing for Hofstra's substantive claims.
+
+**What would change under proper diachronic embedding.**
+
+- **The distal-novelty operationalization itself.** Distal novelty is
+  an embedding-distance metric. Per-era embeddings would change which
+  concept-pairs are classified as "distal" — particularly in earlier
+  decades where vocabulary differs from the global average.
+- **The gender-distal-novelty pattern (Figure 3C).** If women's distal
+  novelty is concentrated in specific eras (e.g., post-2000 cross-
+  disciplinary work), per-era embeddings might recalibrate which
+  decades show the gender distal-novelty gap most strongly. The
+  aggregate finding might survive but the temporal distribution would
+  shift.
+- **The partial-mediation argument (Figure 4 / SQ14).** Partly affected
+  via redefinition of distal novelty. If "distal" gets re-classified,
+  the mediator coefficient changes, and the residual demographic
+  discount changes correspondingly.
+- **Boundary-year findings specifically.** Pre-1990 distal-novelty
+  estimates are most affected. The pre-1990 portion of the gender-
+  distal-novelty finding is on shakier ground than the post-1990
+  portion.
+
+**What would stay stable.**
+
+- **Per-individual novelty count (# new links).** Doesn't depend on
+  embedding distance at all. Just first-pairwise-co-occurrences in the
+  abstract. Stable.
+- **Per-individual uptake count (impactful novelty).** Doesn't depend
+  on embedding distance. Stable.
+- **The headline diversity-innovation finding** ("minorities introduce
+  more novel concept-pairs"). Stable, because it's based on novelty
+  count not distance.
+- **The career discount, controlling for distal novelty.** Mostly
+  stable — the residual demographic effect after distal-novelty
+  mediation isn't directly embedding-dependent (only the mediator is).
+
+**What this tells us.**
+
+The diachronic embedding choice is most load-bearing for the distal-
+novelty mediator and least load-bearing for the headline finding. If
+Hofstra's embedding methodology is flawed, the mediator argument is
+suspect; the rest is more robust than the embedding criticism would
+suggest.
+
+This is actually generous to Hofstra — their core finding survives
+even under aggressive criticism of their embedding methodology. The
+criticism applies to a specific component (Figure 3 distal-novelty
+argument) more than the headline.
+
+**For ws2 specifically.**
+
+Our drift-mitigation ladder is built precisely to handle the analog
+problem. Test IV primary N_p uses one global SPECTER2 (similar to
+Hofstra), but Mitigation 4 (anchor-projection) creates a drift-robust
+subspace, and Stage 3 Flavor A creates per-era alternatives if the
+drift-pilot result indicates need.
+
+**Methodological vindication, not new commitment.** SQ10 already
+covered this. C5's marginal contribution: clarifies that the embedding-
+drift concern primarily affects mediator analyses, not core production-
+and-uptake findings. Useful for thinking about which of our own
+analyses are more vs. less drift-vulnerable.
 
 ### On C6 — combinatorial vs. geometric novelty
 
@@ -950,15 +1487,450 @@ for three whitespaces rather than one).
 
 ### On C8 — ProQuest-WoS matching error compounding
 
-(Pending.)
+Working session with user, 2026-04-25.
+
+**Disentangling the question.** The 97% precision figure (Hofstra SI
+pp. 19–20) is *precision*, not *recall*. Of records where ProQuest →
+WoS matching succeeded, 3% are mismatches. The thing the precision
+number does not capture is the recall rate — what fraction of real
+ProQuest→WoS pairings the algorithm successfully found. Recall errors
+manifest as missing data: students coded as "no academic publications"
+because matching failed. Both matter for C8.
+
+**Four-pathway decomposition (in decreasing order of substantive
+concern for Hofstra specifically).**
+
+- **Pathway A — Recall asymmetry → mechanical discount.** Non-Western-
+  named students more likely to have failed WoS matches → coded as
+  low career outcomes mechanically. Direction: inflates URM career
+  discount. Hofstra partially defuses via "research faculty"
+  restriction (academic-employment indicator from sources beyond WoS),
+  but recall-within-faculty remains: faculty members' WoS records can
+  still be incomplete. Smaller magnitude than the unrestricted version,
+  but nonzero. Probably explains some fraction of the published
+  discount, not the dominant explanation.
+- **Pathway B — Precision errors → variance, not bias.** Wrong matches
+  attribute the wrong WoS author's career to a ProQuest student. On
+  expectation, the "wrong person" is intermediate-productivity. So
+  per-individual estimates are noisier for non-Western names but the
+  per-group mean isn't necessarily biased. Second-order asymmetry:
+  matching errors may bias toward matching to high-signal (more
+  WoS-findable) authors, which would inflate measured productivity for
+  non-Western mismatches — a counter-bias to Pathway A. Net direction
+  unknown.
+- **Pathway C — Joint-error correlation → analytical-sample
+  composition bias.** Hofstra's analytical sample is the intersection
+  of (i) demographic inference assigned a category and (ii) WoS match
+  succeeded. Both filters select on similar signal-strength criteria.
+  The URM students who appear in the analytical sample are
+  systematically the high-signal subset of URM students — enriched for
+  second-generation, anglicized, US-standard naming patterns. The
+  contrast is computed on samples that aren't truly comparable.
+  Direction: attenuates URM-vs-white differences (analytical URM
+  sample is more assimilated than the true URM population, so its
+  career trajectories are closer to the white norm). **Pathway A and
+  Pathway C pull in opposite directions; net direction of bias on the
+  published estimate is theoretically ambiguous.**
+- **Pathway D — Innovation outcome unaffected.** Innovation is
+  measured from dissertation abstracts (ProQuest), not WoS matches.
+  So the "URM students produce more novelty" half of the paradox is
+  not contaminated by matching errors. Only the "less reward" half is.
+  This means matching errors affect the paradox's magnitude but not
+  its sign, unless Pathway A is large.
+
+**ws2 inheritance — what's different, what's similar.**
+
+- **What's different.** No separate ProQuest→WoS matching step. We
+  work entirely within OpenAlex's namespace. No dissertation-as-unit-
+  of-analysis. Demographic inference operates on author names
+  directly, not on a separate dissertation database that's then
+  matched. Pathway A in Hofstra's specific form does not apply.
+- **What's similar.** OpenAlex author-disambiguation has its own
+  signal-correlated error structure (≈90–95% per pair, plan §10).
+  Disambiguation errors correlate with name-signal strength — same
+  pattern as Hofstra's matching errors. NamSor demographic inference
+  has signal-correlated confidence. Joint confidence (demographic ×
+  identity) varies across our author population, with non-Western
+  authors disproportionately in the low-joint-confidence tail.
+  Pathway C analog applies cleanly.
+- **Pathway A analog at OpenAlex level.** Era-dependent under-
+  disambiguation: pre-1995 OpenAlex coverage thinner for non-US
+  institutions; non-Latin script transliteration less reliable in
+  older records. Manifests as missing *authors* rather than missing
+  *career outcomes* — different mechanism than Hofstra's, but same
+  signal-correlation pattern.
+
+**The Pathway-C spurious-trend threat (the most important threat for
+ws2 specifically).** ws2's measurement apparatus *improved
+differentially over time*. OpenAlex disambiguation of non-Western
+authorship became more reliable in later eras; non-Latin script
+handling improved; institutional ROR coverage filled out. So observed
+demographic-diversity *rises* in Tests I-III could partly reflect
+measurement-coverage improvements rather than true demographic-
+pluralization. Hofstra doesn't have this problem (single-cohort
+sample); ws2 inherits it at amplified magnitude (50-year time series
+across an era of changing measurement coverage). This threatens the
+central ws2 finding in a way that's invisible at the per-paper or
+per-author level but visible in the per-era coverage trend.
+
+**What we commit to (Phase 0.2 batch additions).**
+
+1. **Per-era identity-confidence diagnostic (sample-composition
+   transparency artifact).** Per-decade identity-confidence-pass rate
+   broken out by region-of-origin, plotted over time. Reported
+   alongside Tests I–III. Tells the reader where the analytical
+   sample is most biased.
+2. **Pooled measurement-robustness appendix.** Single section
+   reporting each headline number under each measurement-uncertainty
+   restriction (demographic-confidence-only, identity-confidence-
+   only, joint-confidence, pre-1990 exclusion, heavy-tail trim,
+   mediation control). One row per restriction per headline. Earns
+   C8's place in the design without analytical-grid bloat (~6 rows
+   added per headline, not full grids).
+3. **Staged decomposition trigger on Test IV.** Joint-confidence-
+   restricted Test IV γ₁ reported in measurement-robustness appendix;
+   if movement >0.02 SD vs. headline, decompose into demographic-
+   confidence-only and identity-confidence-only restrictions and
+   report which dominates. Pre-registered threshold prevents post-hoc
+   decomposition fishing.
+4. **Methods-framing extension on identity uncertainty.** Extend the
+   C4 weight-by-confidence paragraph: identity uncertainty introduces
+   a parallel signal-correlated error structure that requires its own
+   diagnostic (item 1) and its own restriction-row in the robustness
+   appendix (items 2–3). Headline numbers carry both uncertainty
+   dimensions visibly.
+5. **Pathway-C spurious-trend acknowledgment in Methods/Discussion.**
+   Explicitly frame: observed demographic-diversity rises in Tests
+   I–III could partly reflect measurement-coverage improvements
+   rather than true demographic-pluralization. If the per-era
+   diagnostic (item 1) shows pass-rate rising faster for non-Western
+   regions than Western, document the magnitude of measurement-trend
+   contamination in the headline divergence claim. Most important of
+   the five — addresses a threat specific to ws2's 50-year design.
+
+**What we considered and rejected.**
+
+- *Full-grid joint-confidence stratification on every headline.* Would
+  push results tables from ~50 cells to ~250 cells. Pooled-appendix
+  approach earns C8's place at much lower analytical-grid cost.
+- *Pathway B specific commitment.* Variance issue, not bias. Standard
+  errors already absorb it. No specific commitment needed.
+- *Hofstra-style "research faculty" restriction analog.* ws2 doesn't
+  have the matching-pipeline architecture that motivates Hofstra's
+  research-faculty filter. The per-era diagnostic + measurement-
+  robustness appendix do equivalent work without the filter.
+
+**Connection to ws2 commitments.**
+
+- Builds on the C4 weight-by-confidence framework: extends from
+  demographic-inference-uncertainty alone to compound (identity ×
+  demographic) uncertainty.
+- Parallel design move to C9 / C10: when uncertainty has a
+  signal-correlated structure that varies by regime (era × region),
+  surface the heterogeneity in the design rather than collapse into
+  a single number.
+- Provides the substantive answer to the natural reviewer question
+  "did your finding survive joint measurement-confidence
+  restrictions?" — without committing to a full-grid stratification
+  that would dilute the headline.
+
+**Left open for future discussion.**
+
+- How to operationalize the identity-confidence threshold. OpenAlex
+  doesn't expose a per-author confidence score directly; we'd need to
+  derive a proxy (e.g., name-frequency × institutional-ROR-completeness
+  × publication-density). Decide in early Stage 1 once the OpenAlex
+  sample is in hand.
+- Whether the per-era diagnostic should also break out by name-script
+  (Latin vs. non-Latin) in addition to region-of-origin. Probably
+  useful for the spurious-trend story; defer to Stage 1 once
+  diagnostic data is visible.
+- Whether to extend item 5 from Methods/Discussion framing to a
+  formal correction (e.g., reweighting the headline divergence by
+  inverse identity-confidence-pass rate). Reweighting introduces its
+  own assumptions; default to documenting magnitude of contamination
+  rather than correcting it. Revisit if Stage 2 results show
+  measurement-coverage improvement is large enough to plausibly
+  account for the headline divergence.
 
 ### On C9 — dissertations vs. papers
 
-(Pending.)
+Working session with user, 2026-04-23.
+
+**Framing question.** Hofstra studies dissertations — the thing a single
+person writes at the start of a research career. ws2 studies papers — the
+thing a team writes across a career-spanning corpus. C9 asks whether the
+"outsider vantage" mechanism — the substantive engine of Hofstra's
+diversity-innovation finding — transfers cleanly to teams.
+
+**My initial framing was wrong, and the user pushed back.** I had
+characterized within-team dynamics as "averaging individual vantages
+toward consensus" — i.e., advisor effects, communication norms, decision-
+making protocols, and peer-review preferences would dilute an outsider
+contributor's distinctive vantage when integrated into a team product.
+The user's pushback: *that picture is not accurate for CS or physics.*
+In hierarchical-authorship technical fields, first authors and last/PI
+authors carry disproportionate weight in shaping the paper's intellectual
+content; the rest of the author list contributes more narrowly (specific
+analyses, code, data, infrastructure). A "team-averaged" characterization
+is closer to the egalitarian-norm fields (some areas of theory, some
+math) than to the modal CS/physics paper.
+
+**Reframed mechanism.** This means the outsider-vantage transfer from
+dissertation to paper is *more direct than I'd suggested*, with two
+caveats:
+
+1. **Position of the demographically-distinct author matters.** An
+   outsider in the first-author or last/PI seat carries their vantage
+   into the paper's conceptual framing with high fidelity. An outsider
+   in a middle-author seat contributes to a team product whose framing
+   is set elsewhere — the vantage is more attenuated.
+2. **Authorship-norm regime varies by subfield.** High-energy physics
+   (alphabetical authorship, mega-collaborations) is structurally
+   different from condensed-matter physics or experimental CS subfields
+   where first/last author positions are intellectually load-bearing.
+   Pooling all team papers under a single T_p operationalization
+   collapses across these regimes and likely loses signal.
+
+**Three authorship patterns in CS/physics.** The literature treats this
+as a known taxonomy:
+
+- **Hierarchical (first-author-prominent):** modal in CS, much of
+  experimental physics, condensed-matter, biology-adjacent areas.
+  First author = lead intellectual contributor; last author = senior
+  supervisor / PI. Middle authors contribute specific analyses or
+  infrastructure. **Implication for T_p:** weight first and last authors
+  more heavily; middle authors less.
+- **Alphabetical:** dominant in high-energy physics (especially
+  experimental, ATLAS / CMS-style), some areas of math, theoretical CS
+  partially. Author order conveys little about contribution. **Implication
+  for T_p:** uniform weighting is appropriate but information per author
+  is diluted in the limit of mega-author papers (1000+ authors); T_p
+  approaches the field-level T as team size grows, which is a different
+  estimand.
+- **Egalitarian:** some theory subfields, some math, occasional CS
+  collaborative work. Small teams, equal intellectual contribution.
+  **Implication for T_p:** uniform weighting maps directly to the
+  team-product diversity claim.
+
+**Decision: multi-operationalization of T_p as co-primary, not
+sensitivity-only.** Because the authorship-norm regime is itself an
+empirical question per subfield, the right move is to compute T_p
+multiple ways and report co-equally rather than declaring one canonical
+operationalization and treating others as robustness:
+
+- **T_p_full:** Rao's Q over the full author team with uniform weights.
+  This is the "team-as-collective" operationalization; matches the
+  alphabetical-norm regime cleanly and serves as the pooled-corpus
+  primary. Approximates the field-level composite at small team sizes.
+- **T_p_first:** demographic feature vector of the first author only.
+  This is the "lead-intellectual-contributor" operationalization; matches
+  the hierarchical-norm regime cleanly and gives the most direct
+  dissertation-to-paper transfer of Hofstra's finding (single individual
+  → team product is intellectually attributed to a single individual).
+- **T_p_last:** demographic feature vector of the last author only.
+  Reported as sensitivity, not co-primary. Last-author position is more
+  about supervision/funding than about novelty-generating intellectual
+  vantage; expected to behave differently from T_p_first.
+- **T_p_weighted:** Rao's Q with first/last weighted higher than middle
+  authors (e.g., 0.4 first, 0.4 last, 0.2 split among middles, with
+  weight scheme pre-registered). Reported as sensitivity. Captures the
+  hierarchical-norm intuition without a binary first-vs-rest cut.
+
+**Subfield-stratified analysis.** Test IV regressions are fit:
+(a) pooled within field (CS, Physics) with T_p_full, T_p_first, T_p_last,
+T_p_weighted as four separate co-reported estimates;
+(b) stratified by subfield where authorship-norm regime is identifiable
+(high-energy physics vs. condensed-matter vs. experimental CS vs.
+theoretical CS), so that within-stratum T_p is interpretable. Report
+the four operationalizations × stratification grid; let the agreement
+or disagreement across cells be informative.
+
+**Pre-registered interpretive readings of γ₁ patterns.** Because
+multi-operationalization risks "harvest the most interesting story"
+post-hoc, pre-register specific interpretations:
+
+- **γ₁ > 0 across all four operationalizations + all subfield strata:**
+  strongest pro-diversity finding; team diversity translates to novelty
+  regardless of authorship-norm regime. Hofstra at team level, replicated.
+- **γ₁ > 0 for T_p_first but ≈ 0 for T_p_full:** outsider-vantage transfer
+  works specifically at the lead-author level; diluted by team integration.
+  Consistent with a weakened version of the consensus-averaging story
+  that I'd initially overgeneralized — restricted to integration effects,
+  not assumed pervasive.
+- **γ₁ > 0 in egalitarian/hierarchical strata but ≈ 0 in alphabetical
+  (HEP):** team-product novelty mechanism operates only when team
+  composition is intellectually load-bearing; mega-collaborations are
+  structurally different.
+- **γ₁ ≈ 0 across the board:** diversity-novelty link is weak at the
+  team-product level regardless of operationalization; the
+  dissertation-finding does not transfer. Substantively interesting null;
+  publishable as such.
+- **γ₁ < 0 for T_p_full but γ₁ > 0 for T_p_first:** diverse teams
+  *integrate* away novelty even when an individual outsider in the lead
+  seat would produce it. This is the version of the actuator-homogenization
+  story that survives the framing correction — not "consensus averaging"
+  in general, but specifically: integration mechanisms operating on
+  middle-author input dilute the lead-author's distinctive vantage.
+  Worth distinguishing from the simpler "no transfer" null.
+
+**What this commits us to.** Test IV ships with multi-operationalization
+co-reporting and subfield stratification as primary, not as Stage 3
+robustness extensions. This raises Test IV's specification complexity
+but is the right call: the alternative (single operationalization,
+collapsed across authorship-norm regimes) bakes in an assumption that
+the user identified as wrong for our fields. Better to surface the
+ambiguity in the design than to launder it into a single number.
+
+**Connection to ws2 commitments.**
+
+- **Test IV regression** now reports four co-equal estimates of γ₁ per
+  field × per subfield stratum.
+- **Phase 0.2 pre-registration batch:** add T_p multi-operationalization
+  spec, subfield stratification scheme, and the interpretive grid above.
+- **Methods framing (Discussion):** explicitly acknowledge that "team
+  diversity" is a multi-headed construct in fields with heterogeneous
+  authorship norms; the four operationalizations are not redundant
+  measures of the same thing — they answer subtly different substantive
+  questions.
+
+**Action items from this session:**
+
+1. Add T_p multi-operationalization (T_p_full + T_p_first co-primary;
+   T_p_last + T_p_weighted as sensitivity) to Phase 0.2 pre-registration
+   batch.
+2. Add subfield-norm stratification scheme to Phase 0.2 batch.
+3. Add the five-cell pre-registered interpretive grid to Phase 0.2
+   batch.
+4. Update Methods framing: "team diversity" is multi-operationalized;
+   no single canonical T_p.
+
+**Left open for future discussion:**
+
+- How to operationalize subfield authorship-norm regime empirically
+  (mean Spearman correlation between author-list position and
+  contribution-statement keywords? Self-reported convention from the
+  field's flagship journals? Manual subfield-by-subfield assignment?).
+  Decide in early Stage 2 once the OpenAlex sample is in hand and we
+  can inspect author-list distributions per subfield.
+- Whether T_p_weighted's specific weight scheme should be 0.4/0.4/0.2
+  or empirically tuned (e.g., calibrated against contribution statements
+  on the subset where they exist). Empirical tuning is appealing but
+  introduces a researcher-degree-of-freedom; default to pre-registered
+  fixed weights unless calibration meaningfully outperforms.
+- Whether to add a fifth operationalization based on contribution
+  statements where available (post-2010 papers in journals that require
+  them). Likely too narrow a coverage to support a primary Test IV
+  estimate; possibly useful as a diagnostic on the smaller subset.
 
 ### On C10 — boundary conditions for time-series restrictions
 
-(Pending.)
+Working session with user, 2026-04-25.
+
+**Reframing the question.** Hofstra's "1982–2010 with 5/5 buffer" choice
+bundles two distinct boundary issues that should be disentangled before
+asking whether ws2 should adopt an analogous restriction:
+
+1. **Data-quality lower bounds** (pre-X year cutoffs): when does the
+   corpus become reliable enough to compute the metric at all? Driven
+   by abstract coverage, classifier drift, reference-list completeness.
+2. **Process buffers** (uptake / accumulation windows): how long does
+   a paper need on either side of its publication date for the metric
+   to stabilize? Driven by the diffusion process of ideas.
+
+These have different right answers and are independent. Most ws2 tests
+need (1) but not (2); only the persistence-class tests and the Stage 3
+U-M-S tertiary need (2).
+
+**The substantive case for "let the data tell the story" on buffers.**
+Uptake rates vary across regimes by orders of magnitude:
+
+- **Field-level:** physics has rapid theory propagation; sociology has
+  slower uptake; some areas of math have decade-scale rediscovery.
+- **Subfield-level within physics:** high-energy physics is fast (large
+  collaborations, rapid preprint diffusion); condensed-matter is
+  moderate; pure-math subfields are slow.
+- **Era-level:** pre-internet, uptake was slow; post-arXiv (~1991 in
+  physics, late 1990s in CS), uptake accelerated; in ML post-2012,
+  uptake is now subannual for breakthroughs.
+
+A single 5-year (or 10-year) buffer is wrong-by-construction across
+these regimes. It either truncates fast-uptake data unnecessarily or
+undermeasures persistence in slow-uptake regimes. This is the same
+multi-headed-construct issue we faced for Test IV T_p (C9): when the
+underlying construct varies by regime, surface the multi-headedness in
+the design rather than collapse it into one number.
+
+**Countervailing pressures for committing to a primary.**
+
+- *Cross-paper comparability.* Reviewers want a headline number to
+  compare against Hofstra and the existing literature. A
+  pre-registered C_10 primary lets us say "Hofstra-style replication:
+  γ₁ = X" while showing the multi-window grid alongside.
+- *Researcher-degree-of-freedom risk.* "Let the data tell the story
+  via empirical uptake-half-life per stratum" can devolve into
+  post-hoc tuning. Pre-registering a primary forces commitment.
+
+**Per-test resolution.**
+
+| Test | Boundary type | Action |
+|---|---|---|
+| Tests I–III (aggregate divergence) | Data quality only — no buffer needed | Already locked: span 1970–2024 with pre-1990 retained per Phase 0.1 §13 non-negotiable (13-B baseline + 13-D variation + 13-F null-rebuttal); drift-mitigation ladder handles measurement concerns; pre-1990 exclusion appears as one row in the pooled measurement-robustness appendix (Hofstra C8 commitment). No change. |
+| Test IV primary (centroid distance) | Data quality only | <5-references flag for robustness-only subset already locked. No change. |
+| Test IV Persistence Extension | Buffer applies (uptake) | C_10 pre-registered primary; C_5 and C_15 co-equal in the same table; empirical uptake-half-life diagnostic per field × subfield × era. |
+| Item 11 (Production-capture) | Buffer applies (uptake) | C_10 primary (truncates 2014); C_5 (truncates 2019) and C_15 (truncates 2009) reported alongside. |
+| Stage 3 U-M-S tertiary novelty | Buffer applies (accumulation) | Pre-register 5-year accumulation buffer: 1975+ for U-M-S computation; 1970–1974 papers excluded from this operationalization. |
+
+**Pre-registered interpretive grid for window-disagreement patterns
+(parallel to Test IV T_p γ₁ grid from C9).**
+
+- γ₁ stable across C_5/C_10/C_15 → finding is robust to operationalization
+  of "uptake."
+- γ₁ > 0 at C_5 but ≈ 0 at C_15 → diverse-team novelty has a "fast
+  spike" pattern; doesn't durably persist. The "surface novelty"
+  reading from C11.
+- γ₁ ≈ 0 at C_5 but > 0 at C_15 → diverse-team novelty is slow to be
+  picked up but durable. The "discrimination → eventual rediscovery"
+  reading from C11.
+- γ₁ stable in fast-uptake strata (HEP, ML-post-2012) but unstable in
+  slow-uptake strata → finding generalizes only where uptake is fast.
+- γ₁ unstable across windows in *all* strata → multi-headed construct;
+  the persistence-class question is itself ill-posed at this resolution.
+  Substantively interesting; publishable as an honest null on
+  measurement.
+
+**Methods-framing commitment.** Add a Methods paragraph stating that
+**windows are part of the estimand, not nuisance parameters**.
+Different windows define different substantive questions ("early hot
+finding" vs. "durable contribution"). The multi-window grid is a
+deliberate move away from collapsing these into one number, parallel
+to the T_p multi-operationalization for team diversity. The empirical
+uptake-half-life diagnostic transparently anchors which window is apt
+for which stratum without giving the analyst post-hoc freedom to tune
+the primary.
+
+**What this commits us to (action items for Phase 0.2 batch).**
+
+1. Test IV Persistence: keep C_10 primary; report C_5/C_10/C_15 as
+   co-equal columns, not sensitivity-only. Add empirical uptake-
+   half-life diagnostic per stratum.
+2. Item 11 (Production-capture): same multi-window co-reporting as
+   Test IV Persistence.
+3. Pre-registered interpretive grid for window-disagreement patterns,
+   per the table above.
+4. Stage 3 U-M-S tertiary: pre-register 1975+ accumulation buffer.
+5. Methods-framing paragraph: windows-as-estimand.
+
+**Left open for future discussion.**
+
+- How to operationalize the empirical uptake-half-life diagnostic.
+  Candidate: per (field × subfield × decade) cell, fit a citation-
+  curve and report the year by which 50% of eventual C_15 has
+  accumulated. Pre-register the operationalization in Phase 0.2.
+- Whether to add an even longer window (C_20, C_25) for slow-uptake
+  strata. Possibly useful but truncates the analysis window further
+  (C_25 → papers ≤1999 only, losing 25 years of recent data). Decide
+  after pilot uptake-half-life results land in Stage 1.
 
 ### On C11 — test-of-time / persistence
 
@@ -1837,25 +2809,594 @@ methodological lesson — filter choices have demographic-by-method
 interactions — directly motivates ws2's deliberate no-filter primary
 + Hofstra-style ≥K filter on secondary policy.
 
-### SQ10 — Global embeddings justification (r=0.931 at year 2000)
+### SQ10 — Global-embedding justification (r=0.931 at year 2000) — under what conditions does it fail?
 
-*(Pending.)*
+Working session with user, 2026-04-24.
 
-### SQ11 — Innovation-discount null hypothesis
+User engaged with the walkthrough but had no first-pass answer to
+sharpen. Reference walkthrough.
 
-*(Pending.)*
+**Setup.** Hofstra trains one global Word2Vec embedding on the full
+1977–2015 corpus and uses it to compute distal novelty for theses
+from any year. Validation: at year 2000 only, they trained an
+alternative time-specific embedding and correlated distal-novelty
+scores from global vs. time-specific. Correlation r = 0.931. They
+take this as evidence that the metric is robust to time-dependence,
+extrapolating to all years in the corpus.
 
-### SQ12 — "Research faculty" definition and selection
+**Why year 2000 is best-case by construction.** Year 2000 sits near
+the temporal centroid of the 1977–2015 corpus. A global embedding's
+representations are an average over all years' co-occurrence
+patterns, weighted by data volume — so the global embedding is
+**closest by construction** to a time-specific embedding from a
+year near the data-weighted center. Validating at the center year
+means choosing the year where global and time-specific should agree
+the most. r = 0.931 there is essentially "in the year these two
+methods should agree most by design, they do." Weak claim.
 
-*(Pending.)*
+**Four reasons boundary years (1982, 2010) would diverge more:**
+
+**(1) Vocabulary evolution.** Concepts emerge, fade, and shift
+meaning. `neural_network` meant different things in 1982
+(physiological/early-connectionist) and 2010 (post-PDP/post-LeNet
+computational). Global embedding learns a weighted average between
+the senses; doesn't represent either accurately.
+
+**(2) Co-occurrence pattern shift.** Even for stable-meaning
+concepts, what they co-occur with changes. `genomics` co-occurred
+with `restriction_enzyme` in 1982 and `single_nucleotide_polymorphism`
+in 2010. Distance calculations between concept pairs differ
+substantially across eras.
+
+**(3) Asymmetric data volume.** 1977–1985 has many fewer
+dissertations than later decades (CS as a field was small;
+indexing was incomplete). A hypothetical 1982-only embedding would
+have noisier estimates from limited data; the global embedding has
+post-2000 data dominating its representation. The boundary-year
+sample-size effect compounds the temporal-distance effect.
+
+**(4) Rapidly evolving fields hit hardest.** CS, which is heavily
+represented in Hofstra's corpus and in our own focus, exhibits
+substantial vocabulary turnover between 1982 and 2010. Stable fields
+(classical mechanics) show little drift; fast-changing fields
+(CS, genomics, ML) show a lot. Hofstra's distal-novelty findings
+inherit the most error in exactly the fields whose vocabulary
+shifts most.
+
+**The structural critique of the validation logic.** From a single-
+year, single-correlation result Hofstra extrapolates "the metric is
+robust to time-dependence everywhere." Three reasons this
+extrapolation is invalid:
+
+1. **It's a best-case measurement.** Year 2000 is where the two
+   methods should agree most by construction. Center-year agreement
+   tells you nothing about boundary-year agreement.
+2. **No bound on far-year disagreement.** A correlation of 0.931 at
+   one year provides no theoretical basis for predicting the
+   correlation at a different year. Could be 0.95 at 1995, 0.65 at
+   1982, 0.75 at 2010 — we don't know.
+3. **Aggregate scores can hide concept-level disagreement.** Even if
+   distal-novelty *averages* correlate, individual concept-pair
+   distances might differ wildly. Hofstra's substantive findings
+   (women → more distal novelty; distal → less uptake) depend on
+   per-pair distance estimates, not aggregate scores.
+
+**What a proper validation would look like.** Train time-specific
+embeddings at multiple years (1985, 1995, 2005, 2015), report the
+full correlation curve. If the curve is uniformly high, the global-
+embedding choice is justified. If it drops at boundary years, the
+choice systematically distorts boundary-year measurements and the
+pre-1990 / post-2010 distal-novelty claims are unreliable. Hofstra
+didn't do this — they did the cheapest possible validation and
+accepted the center-year result as license for the full corpus.
+
+**Implication for the substantive claims.** The boundary-year
+distortion isn't uniform; it concentrates in:
+
+- Fields with rapid vocabulary change (CS specifically — Hofstra's
+  primary corpus and our primary field)
+- Eras with sparser data (pre-1990)
+- The distal-novelty mediator specifically (which depends on
+  per-pair concept distances, not aggregate scores)
+
+So the partial-mediation argument (women → more distal → less uptake)
+that Hofstra builds is on shakier ground than the validation
+acknowledges, *especially* for the boundary-year portion of their
+analysis window.
+
+**Connection to ws2 — this is exactly what our drift-mitigation
+ladder addresses.**
+
+- **Mitigation 4 (anchor-dimension projection)** — runs in default
+  Stage 2. Doesn't rely on the embedding model itself being time-
+  invariant; projects onto stable-concept anchors that are
+  drift-robust by construction.
+- **Phase 0.1 Check 5c (drift-pilot)** — empirically tests era-match
+  rates on 1970s abstracts specifically. Probes the boundary-year
+  question Hofstra didn't probe.
+- **Stage 3 Flavor A (conditional)** — explicitly trains per-era
+  Word2Vec + Procrustes-aligns. This IS the multi-year validation
+  curve Hofstra didn't do.
+- **Stage 3 Flavor B (conditional)** — fine-tunes SPECTER2 per era.
+  Document-embedding-level escalation if Flavor A surfaces drift.
+
+This is one of the few places where ws2's methodology is genuinely
+better-rigored than Hofstra's, not just different. The default
+methodology assumes boundary-year drift is a real concern and
+provides explicit escalation paths to test for it; Hofstra's
+methodology assumes drift is not a concern, validated by a single
+best-case correlation that doesn't actually probe the failure mode.
+
+**One-sentence summary.** Hofstra's r=0.931 validation is a center-
+year correlation that's best-case by construction; vocabulary
+evolution, co-occurrence pattern shift, asymmetric data volume, and
+field-specific rapid change all push global vs. time-specific
+embeddings further apart at boundary years (1982, 2010); their
+extrapolation from one center-year correlation to corpus-wide
+robustness is structurally invalid, and ws2's drift-mitigation
+ladder (Mitigation 4 default + drift-pilot + conditional Flavor
+A/B) is built precisely to test the failure mode they didn't probe.
+
+### SQ11 — Innovation-discount null hypothesis + causal identification
+
+Working session with user, 2026-04-24.
+
+User caught an imprecision in my original question wording — I had
+conflated "minorities" (general) with the specific 3.5% → 9.5%
+number (gender-specific). Cleaned-up version: "the 2SD-above-median
+novelty increases the gender-minority-vs-majority faculty-
+probability gap from 3.5% to 9.5%; what's the null and what would
+make this causal?"
+
+**Gender vs. race clarification.** Hofstra reports findings on both
+demographic axes. The 3.5% → 9.5% (and 4.3% → 15% for impactful
+novelty) numbers are gender-specific. The racial-discount finding
+exists (25%-lower-baseline-odds for racial minorities; paper claims
+the discount also extends to slope-with-novelty for racial axis) but
+isn't put in the same headline-numerical form in the main text.
+
+**Null hypothesis tested.** The relationship between novelty and
+faculty-becoming-probability has the *same slope* across gender
+groups (parallel-slopes / constant-gap null). Under this null, the
+gap at low novelty equals the gap at high novelty.
+
+**Alternative tested (and supported).** Slope differs — minorities
+have shallower novelty-on-faculty slope. The 3.5% → 9.5% widening is
+the operational signature. Formal test: (novelty × gender)
+interaction term in logistic regression of faculty status. Hofstra
+cites P<0.01 for this interaction.
+
+**User's observation on causal identification.** "Their underlying
+causal pathway is innovation → career outcomes AND gender → career
+outcomes (among others), so all the issues with causal inference
+will haunt them."
+
+This captures the multi-arrow problem precisely: there are multiple
+potentially-causal pathways, none individually identified from
+observational data, and the slope-difference finding combines them.
+The causal pathways at play:
+
+1. **Demographic → innovation.** Minorities produce more novelty
+   (Figure 2 main effect).
+2. **Innovation → career.** Novelty predicts faculty outcome
+   (Figure 4 main effect).
+3. **Demographic → career, independent of innovation.** Baseline
+   demographic gap at low novelty levels.
+4. **Demographic × innovation → career.** The slope-difference /
+   interaction term — the headline discount finding.
+
+Pathway 3 alone (demographic → career through non-innovation
+channels: hiring biases, dual-career constraints, network-access
+asymmetries, advisor-support differentials) could partially produce
+the observed pattern. Unmeasured confounders correlated with both
+demographics and innovation quality could also produce it. The
+conditional association is well-identified; the causal interpretation
+requires assumptions Hofstra's design can't sustain.
+
+**Identifying strategies that would establish causality, none
+available to Hofstra:**
+
+1. **Randomization.** Random demographic-identity assignment is
+   impossible. Audit-study designs (same paper labeled with
+   different inferred-gender names) exist at small scale but not
+   population-level scientometric.
+2. **Natural experiments.** Exogenous shock that changes novelty for
+   one group but not the other. Hard to find at scientometric scale.
+3. **Instrumental variables.** Instrument affecting novelty but not
+   faculty-outcome through any non-novelty channel. Very hard for
+   innovation in science.
+4. **Panel data with individual fixed effects.** Repeated within-
+   individual observations to absorb individual-level fixed effects.
+   Hofstra has only first-thesis-per-individual, not panel data.
+
+None of these strategies is operationally available given their
+design. The result remains a **conditional association**, not a
+causal discount. The paper's careful language (talking about
+"discounting" patterns rather than "discrimination causing")
+implicitly acknowledges this; a sympathetic reader infers
+causality, a hostile reader argues the unmeasured-variable concern
+is decisive.
+
+**Connection to ws2.**
+
+For our **Test IV** (within-paper team-diversity × novelty
+regression), we face the same multi-arrow structure:
+
+- Team diversity → novelty (the immediate question)
+- Team diversity → citations / career outcomes (separate)
+- Novelty → citations / career outcomes (separate)
+- Team diversity × novelty → outcomes (interaction in persistence
+  extension)
+
+Same confounding structure, same identification limits. Our Methods
+section already commits to reporting this as descriptive association,
+not causal effect (the framing-commitment paragraphs in pending
+Phase 0.2 batch). The user's observation reinforces a structural
+point: the multi-arrow causal-inference problem isn't unique to
+Hofstra; it's structural to *all* observational scientometrics.
+
+For **aggregate Tests I–III**, the situation is even more
+aggregated — within-paper causal arrows aren't identifiable from
+aggregate data at all. The population-level pattern (divergence
+between aggregate dimensions) can be documented without claiming
+causal arrows. The Epistemic Scope section in `conceptual.md`
+addresses this explicitly.
+
+This is also why the three-whitespace program structure exists:
+ws2 documents observable patterns; ws3 specifies plausible
+structural stories formally; ws1 attempts counterfactual
+identification through interventional simulation. The multi-arrow
+causal-inference problem can't be resolved by ws2 alone, and
+acknowledging that is a methodological commitment, not a
+weakness.
+
+**One-sentence summary.** Null = parallel-slope; alternative tested
+= shallower-slope-for-minorities (slope-difference test, P<0.01 for
+the interaction). For the discount to be *causal* rather than
+*conditional*, Hofstra would need randomization, natural
+experiments, instrumental variables, or panel data — none
+available. With multiple causal pathways simultaneously in play
+(demographic → innovation, innovation → career, demographic →
+career, demographic × innovation → career), observational data can
+document the conditional pattern but cannot isolate which arrows
+produce it. Same identification limits apply to ws2's Test IV and
+to all observational scientometric work; this is precisely what
+motivates the three-whitespace program structure where ws1
+simulation does the counterfactual that ws2 cannot.
+
+### SQ12 — "Research faculty" definition and selection mechanisms
+
+Working session with user, 2026-04-24.
+
+**User's first pass.** The narrow "research faculty" definition
+depends on "what career trajectory looks like in each field," citing
+three filtered paths: (1) research lab after PhD, (2) non-research
+position after PhD, (3) non-tenure research-track position in
+academia. Plus a temporal skew observation: "some others like worked
+for some time in 1)-3) above before obtaining tenure track will also
+add some temporal skew." Plus the sharp framing: *"It's like saying
+I will care for certain edges only if the creator of the edge
+remains in the pool. This might only have like career progression as
+the primary outcome of interest at the study design time."*
+
+**Sharpening (1) — person-level vs edge-level filter.** The user's
+"edges only if the creator remains in the pool" intuition captures
+a specific methodological commitment: the "research faculty" outcome
+operates on a survivors sub-sample of edge-creators, not on the full
+population of edge-creators. Two-step filter:
+
+- **Edge-creation (novelty) is measured at thesis stage, population-
+  wide.** Every 1982–2010 PhD thesis in ProQuest contributes edges
+  regardless of author's subsequent career.
+- **Career outcome is measured years later, on a filtered sub-sample.**
+  Whether the edge-creator becomes "research faculty" depends on US
+  PhD-granting-institution employment + taking on a PhD student +
+  that student appearing in the corpus.
+
+So the discount comparison is technically: *"Among edge-creators who
+ended up in PhD-granting-institution advisor roles, minorities need
+higher novelty than majorities for similar advisor-pool membership."*
+This is narrower than "minorities need higher novelty for similar
+career outcomes." The narrowness matters for interpretation.
+
+**Sharpening (2) — what Hofstra is actually studying.** The user's
+intent-inference observation is correct. By using "research faculty"
+as the narrow outcome, Hofstra is effectively asking a specific
+question about the **reproduction of the academic class**: "do you
+become someone who trains the next generation of PhDs?" This is
+pipeline-continuity, not career-success-in-general.
+
+A minority researcher who becomes a highly-cited industry researcher,
+or a teaching-focused professor at a liberal arts college, or a
+research scientist at a national lab — none count as "research
+faculty." These are substantial career successes; they're just not
+*academic-reproduction* successes.
+
+The broader "does innovation pay off for minorities?" question
+requires the broader "continued researcher" definition (Hofstra's
+secondary outcome). That the discount holds on both is Hofstra's
+evidence that the result isn't an artifact of the narrow definition —
+but the magnitudes differ, and the broader-definition numbers aren't
+in the same headline form in the main text.
+
+**Selection mechanisms, demographically non-neutral.** Each of the
+three filtered career paths the user identified has demographic
+correlations:
+
+- **Industry research.** Asian researchers (especially in CS/ML) may
+  be over-represented at Google Research, Microsoft Research, Meta AI,
+  etc. Excluding industry systematically excludes this subpopulation
+  from the "research faculty" measurement even if they're doing
+  high-impact research.
+- **Non-research positions & teaching-focused academia.** Women are
+  historically over-represented at teaching-focused and non-research-
+  primary positions. The institution-type filter is thus not gender-
+  neutral.
+- **Non-tenure research-track.** Research scientists, staff
+  scientists, soft-money researchers. Filtered out despite doing
+  research. Demographic patterns here depend on field.
+- **Temporal skew from non-linear careers** (user's observation). A
+  person who goes industry → academia → eventually TT advisor is
+  systematically later than linear-path peers. Women often have
+  non-linear paths due to caregiving; some groups for economic or
+  visa/geographic reasons.
+
+**Alternative definitions and gap-change implications:**
+
+| Definition | Expected gap change | Why |
+|---|---|---|
+| TT position at any institution (incl. liberal arts, foreign) | Smaller gap | Broader denominator; includes teaching-focused positions |
+| h-index ≥ 10 by year 10 post-PhD | Smallest of common alternatives | Institution-neutral; productivity-based |
+| Industry R&D employment | Possible inversion for some groups | Different selection dynamics by industry sector |
+| Total 10-year citation count | Gap present but smaller | Impact-based, excludes no publishers |
+| "Continued researcher" (Hofstra's broad) | Gap present, smaller than research-faculty | Includes WoS publishing; captures non-academic trajectories |
+
+General principle: narrower definitions (higher institutional filter,
+stricter career-path linearity) show larger gaps; broader definitions
+show smaller gaps. Discount has both an *institutional-exclusion
+component* and a *residual among-survivors component*.
+
+**The edge–edge vs creator–creator asymmetry.** Hofstra's data
+structure allows measuring every new edge regardless of the creator's
+later career. But the discount finding conditions on the creator
+surviving in the academic-reproduction pool. Hidden imbalance:
+
+- Novelty time series: complete measurement (all edges).
+- Career-discount time series: survivor-biased measurement (only
+  academic-reproduction survivors).
+
+If demographic groups have different academic-pipeline survival
+rates *independent of novelty*, the career-discount gap is
+contaminated by differential pipeline survival. Some of the
+"discount" could be "some demographic groups leave academia for
+non-academic-but-successful careers at higher rates, so we don't see
+their late-career outcomes." This is not the same as Hofstra's
+interpretation ("minorities get less credit for their novelty") but
+it's consistent with the observed data.
+
+**Connection to ws2 — three structural commitments derived from this
+SQ.**
+
+User asked: "anything we could do differently beyond explicit ack
+given our core hypothesis?" The SQ surfaces three design
+commitments that address survivor-bias structurally, not just via
+acknowledgment.
+
+**(a) Multi-window lookahead reporting** for Test IV persistence
+extension (modifies pending batch item 7). Instead of anchoring on
+C_15 alone, report regression at C_5, C_10, C_15 in a single table.
+Stability across windows = robustness claim; divergence = substantive
+finding about observation-window dependence. Each paper enters each
+measurement at the appropriate post-publication stage. Cost: 2×
+additional regression runs (trivial), 3 columns in main table.
+Benefit: sharpens interpretability; aligns with metric-plurality
+desideratum §8.
+
+**(b) Per-active-year normalization** for item 11 production-capture
+aggregate decomposition (modifies pending batch item 11). Instead of
+$N(G, Y)$ = total new links by group G in year Y, use $N(G, Y)$ =
+*mean new links per active group-G author in year Y* (active =
+published ≥1 paper in Y). This isolates per-capita production from
+pipeline-survival effects. A minority author who leaves the corpus
+in 1995 contributes to the mean through 1994, then drops from the
+denominator — they don't count as "zero production" in later years;
+they just aren't counted. Cost: moderate; requires author-level
+active-years tracking (low incremental given we're already doing
+author-level demographic attribution). Benefit: substantially cleaner
+substantive interpretation of item 11 results.
+
+**(c) Explicit pipeline-survival sub-analysis** (new sub-item under
+item 11). Define "pipeline survival" = publishing ≥1 paper in any
+5-year window spanning ≥10 years post-first-publication. Report
+pipeline-survival rates per demographic group. If minorities show
+lower pipeline-survival independent of novelty, item 11's analysis
+is contaminated by pipeline attrition. Worth documenting separately
+so readers can see whether it drives the main result.
+
+All three commitments documented in SQ12 → pending Phase 0.2 batch
+updates (see running batch summary).
+
+**What ws2 doesn't adopt from this SQ.** Two things considered and
+rejected:
+
+- **IPCW / survival-aware estimators.** Methodologically rigorous
+  but substantially more complex. Cost-benefit doesn't favor for
+  ws2's scope. Available if reviewers push on censoring bias.
+- **Multiple imputation for missing post-corpus data.** Requires an
+  imputation model (what would a minority author who left in 1995
+  have produced in 2005?). The imputation model is itself a
+  substantive commitment that could shift results. Without strong
+  theoretical grounding, adds complexity without interpretive gain.
+
+**One-sentence summary.** "Research faculty" is a narrow academic-
+reproduction outcome that filters out industry research, teaching-
+focused academia, non-tenure research-track, and non-linear career
+paths — each demographically non-neutral. The discount holds on both
+narrow and broad definitions (Hofstra reports both), but the
+survivor-bias concern is real and structurally matches the kind of
+concern that applies to ws2's Test IV persistence and item 11
+production-capture decomposition. Three structural commitments
+derived from this SQ: (a) multi-window lookahead reporting for
+persistence; (b) per-active-year normalization for item 11; (c)
+explicit pipeline-survival sub-analysis for item 11. These move
+beyond explicit acknowledgment to design-level survivor-bias
+handling.
 
 ### SQ13 — URM per-group inference accuracy heterogeneity
 
-*(Pending.)*
+Working session with user, 2026-04-24.
+
+**User's first-pass intuition.** *"Other than team-level tests I don't
+see this question helping us much."* The intuition is largely correct
+— we've already absorbed most of the methodological lesson into ws2's
+commitments (Lockhart-2023-grounded weight-by-confidence policy,
+region-of-origin stratification in plan subsection 9). Walkthrough
+confirms this intuition and surfaces three marginal extras.
+
+**Per-group accuracy heterogeneity (SI p. 14).** After all methods
+including auxiliary:
+
+- White: 97.2%
+- Asian: 93.4%
+- Hispanic: 70.4% raw → ~83% after Sood-Laohaprapanon auxiliary
+- AA: 9.9% raw → ~74% after auxiliary
+- NA: worst of all; auxiliary doesn't fully fix
+
+**Three specific consequences of URM pooling.**
+
+**(1) URM is a compositional average over subpopulations with
+heterogeneous inference accuracy.** URM classifications have roughly
+20–25 percentage points more misclassification than white
+classifications. The URM-vs-white contrast is structurally
+"(83%-accurate Hispanic + 74%-accurate AA + small NA) vs. 97%-
+accurate white."
+
+**(2) Subgroup-specific dynamics are invisible.** "URM introduces
+more novelty" could be driven primarily by Hispanic, primarily by
+AA, equally by both, or by opposite effects that partially cancel.
+Hofstra's pooled analysis can't tell us which. The same ambiguity
+propagates to the distal-novelty mediator.
+
+**(3) Intersectional analyses limited to 2×2 cells.** Gender × race
+in Hofstra is 2 × 2 (white women, white men, nonwhite women, nonwhite
+men). With better inference, intersectional analysis at 2 × 3 level
+(separate Hispanic, AA cells) becomes possible — revealing whether
+gender gaps operate uniformly across racial subgroups or differently.
+
+**How you'd decompose with better inference.** Given perfect
+demographic inference:
+
+- **Separate per-subgroup regressions:** Hispanic-vs-white, AA-vs-
+  white, NA-vs-white analyses in parallel. Compare effect sizes. If
+  URM aggregate finding holds for each subgroup, aggregate is
+  meaningful. If subgroups differ substantially, URM is a statistical
+  artifact hiding real heterogeneity.
+- **Formal test of aggregation validity:** test whether per-subgroup
+  coefficients are statistically indistinguishable. If yes, URM
+  makes sense; if no, URM aggregates distinct populations.
+- **Finer intersectional analyses:** 2 × 3 or finer cells with
+  meaningful sample sizes.
+- **Pipeline decomposition by subgroup:** differential career
+  outcomes within URM.
+
+Hofstra is explicit in SI that the URM pooling is *forced* by
+inference accuracy, not preferred. With their 10% AA accuracy (pre-
+auxiliary) and 74% (post-auxiliary), per-subgroup analysis would have
+too much misclassification noise to be reliable. The aggregate is
+defensive, not substantive.
+
+**ws2 relevance — user's intuition validated with three marginal
+extras.**
+
+The main lesson is already absorbed into ws2 via the Lockhart-
+grounded weight-by-confidence policy and the region-of-origin
+stratification commitment (plan subsection 9). Our stratification is
+finer (Anglo / East Asian / South Asian / Arabic-speaking / Slavic /
+Latin / other) than Hofstra's white / Asian / URM, and our NamSor +
+Genderize approach provides better per-region accuracy than
+Hofstra's Census-and-Sood approach.
+
+**SQ13 validates these existing commitments rather than motivating
+new ones.** Three marginal extras surface from the SQ but are
+low-priority:
+
+**(a) Rao's Q distance-metric granularity.** Our Rao's Q uses uniform
+Hamming distance between demographic states. SQ13's logic suggests
+non-uniform weights (e.g., some demographic boundaries are more
+culturally meaningful than others). For ws2 primary analysis, uniform
+Hamming is defensible (transparent, convention-matching). Non-uniform
+could be a Stage 3 robustness check — low priority.
+
+**(b) Item 11 stratification level — worth noting in pre-
+registration.** We're committed to per-demographic-group decomposition.
+Question of granularity: at 7-region level (finer) vs. pooled bins
+(coarser). Trade-off: finer = cleaner interpretation, smaller per-
+group samples; coarser = bigger samples, URM-style pooling concern.
+**Small modification to item 11 pre-registration**: report primary at
+finer granularity (7+ regions), collapse to coarser groups only for
+robustness or secondary analysis.
+
+**(c) Intersectional analyses in Stage 3.** Gender × region-of-origin
+× career-stage is a 2 × 7 × 3 = 42-cell structure. Most cells will
+have thin samples. Document as a structural possibility we explored;
+report selectively where cell sizes permit. Stage 3 secondary, not
+primary.
+
+None of (a)–(c) are load-bearing commitments. The main "what we can
+do differently" answer is that we've already done it: finer-granularity
+demographic stratification is built into ws2 by design from the start.
+
+**Net framing.** Hofstra's URM pooling is a forced choice from
+inference limits, not a methodological preference. It creates real
+measurement and interpretability costs (subgroup heterogeneity
+invisible; compositional-average findings; intersectional analyses
+limited). Ws2's region-of-origin stratification and weight-by-
+confidence policy are already better-rigored than Hofstra's approach
+on this dimension. SQ13 validates these choices rather than motivating
+new ones; the three marginal extras are nice-to-haves for Stage 3
+robustness rather than load-bearing commitments.
+
+**One-sentence summary.** URM = Hispanic + AA + NA pooled with
+heterogeneous per-subgroup inference accuracy (83% / 74% / worse);
+aggregate findings are compositional averages that mask subgroup
+differences, forced by inference limits not preferred methodology.
+With better inference, per-subgroup decomposition + finer
+intersectional analyses become possible. Ws2's region-of-origin
+stratification + weight-by-confidence policy are already better-
+rigored than Hofstra's on this dimension; SQ13 validates existing
+commitments rather than motivating new ones.
+
+**Small modification to pending batch.** Item 11 primary
+operationalization: report demographic decomposition at region-of-
+origin granularity (≥7 groups) rather than pooled coarser bins. This
+is consistent with our existing commitments but makes the granularity
+choice explicit in pre-registration.
 
 ### SQ14 — Career discount after controlling for distal novelty
 
-*(Pending.)*
+Covered implicitly via SQ8 (distal-novelty methodology) and SQ11
+(multi-arrow causal-identification limits). Factual answer: Hofstra
+reports *partial mediation* — the career discount persists when
+controlling for distal novelty (the reported 3.5% → 9.5% / 4.3% →
+15% numbers include distal as a control), but shrinks relative to
+the no-control version. The paper states explicitly (p. 9287):
+*"These results hold over and above of the distance between newly
+linked concepts."* Residual discount beyond distal suggests other
+mechanisms (direct discrimination, network access, pipeline
+constraints) contribute. Consistent with the multi-arrow causal
+structure in SQ11 — distal novelty is one mediator among several
+unidentified pathways.
+
+**Small modification to Test IV persistence extension (pending batch
+item 7):** report β_3 (the T_p × N_p interaction coefficient) under
+multiple control specifications — without novelty-structure controls,
+controlling for distance-from-canonical-centroid (our secondary
+novelty metric), controlling for subfield fixed effects, full control
+set. Coefficient stability across specs is robustness; substantial
+shrinkage under specific controls suggests those controls mediate
+part of the relationship. Nice-to-have sensitivity reporting, not a
+new pre-registration item; aligns with the partial-mediation framing
+SQ14 introduces.
 
 ---
 

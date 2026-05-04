@@ -15,27 +15,43 @@ unless needed.
 
 | # | Paper | Role for ws2 | Status |
 |---|---|---|---|
-| 01 | **Chu & Evans 2021**, *PNAS* 118(41), "Slowed canonical progress in large fields of science" | Canonical-concentration methodology (Chu-Evans Spearman top-N). Our primary canonical metric inherits their operationalization. | pending |
-| 02 | **Park, Leahey & Funk 2023**, *Nature* 613, "Papers and patents are becoming less disruptive over time" | The contested headline we're positioning against. We decline to use CD-index as primary; we must engage this paper. | pending |
-| 03 | **Petersen, Arroyave & Pammolli 2024**, *QSS* 5(4), "The disruption index is biased by citation inflation" | Broader citation-inflation critique. **Positioning read (~2 hrs)** justifying CD-index exclusion. | pending |
-| 04 | **Petersen, Arroyave & Pammolli 2025**, *J. of Informetrics* 19(1), team-size / CD re-analysis | **Close methodological read (~4 hrs).** Directly challenges Wu-Wang-Evans team-size interpretation — load-bearing for our Test II team-size control and Test IV team-diversity × novelty setup. | pending |
-| 05 | **Holst, Algaba, Tori, Wenmackers & Ginis 2024**, arXiv:2402.14583, "Dataset Artefacts are the Hidden Drivers of the Declining Disruptiveness in Science" | Dataset-artifact critique of Park-Leahey-Funk. Load-bearing for 13-F measurement-artifact null. | pending |
-| 06 | **Hofstra, Kulkarni, Munoz-Najar Galvez, He, Jurafsky & McFarland 2020**, *PNAS* 117(17), "The Diversity-Innovation Paradox in Science" | Direct precedent for Test IV (team-diversity × novelty). Must engage their novelty-detection pipeline and minority-group operationalization. | draft (Discussion Notes pending) |
-| 07 | **Lockhart, King & Munsch 2023**, *Nature Human Behaviour* 7(7), "Name-based demographic inference and the unequal distribution of misrecognition" | Structural critique of name-based gender/race inference — directly load-bearing for our Genderize+NamSor pipeline. Grounds the "weight-by-confidence" choice in plan subsection 9. | pending |
+| 01 | **Chu & Evans 2021**, *PNAS* 118(41), "Slowed canonical progress in large fields of science" | Canonical-concentration methodology (Chu-Evans Spearman top-N). Our primary canonical metric inherits their operationalization. | complete |
+| 02 | **Park, Leahey & Funk 2023**, *Nature* 613, "Papers and patents are becoming less disruptive over time" | The contested headline we're positioning against. We decline to use CD-index as primary; we must engage this paper. | complete |
+| 03 | **Petersen, Arroyave & Pammolli 2024**, *QSS* 5(4), "The disruption index is biased by citation inflation" | Broader citation-inflation critique. **Positioning read (~2 hrs)** justifying CD-index exclusion. | complete |
+| 04 | **Petersen, Arroyave & Pammolli 2025**, *J. of Informetrics* 19(1), team-size / CD re-analysis | **Close methodological read (~4 hrs).** Directly challenges Wu-Wang-Evans team-size interpretation — load-bearing for our Test II team-size control and Test IV team-diversity × novelty setup. | complete |
+| 05 | **Holst, Algaba, Tori, Wenmackers & Ginis 2024**, arXiv:2402.14583, "Dataset Artefacts are the Hidden Drivers of the Declining Disruptiveness in Science" | Dataset-artifact critique of Park-Leahey-Funk. Load-bearing for 13-F measurement-artifact null. | complete |
+| 06 | **Hofstra, Kulkarni, Munoz-Najar Galvez, He, Jurafsky & McFarland 2020**, *PNAS* 117(17), "The Diversity-Innovation Paradox in Science" | Direct precedent for Test IV (team-diversity × novelty). Must engage their novelty-detection pipeline and minority-group operationalization. | complete |
+| 07 | **Lockhart, King & Munsch 2023**, *Nature Human Behaviour* 7(7), "Name-based demographic inference and the unequal distribution of misrecognition" | Structural critique of name-based gender/race inference — directly load-bearing for our Genderize+NamSor pipeline. Grounds the "weight-by-confidence" choice in plan subsection 9. | complete |
 
 ### Tier 2 — Methodological underpinnings (read for method, not every claim)
 
-| # | Paper | Role for ws2 | Status |
-|---|---|---|---|
-| 08 | **Wu, Wang & Evans 2019**, *Nature* 566, "Large teams develop and small teams disrupt science and technology" | Team-size confound control in Test II. Note Petersen 2025 JOI disputes the team-size interpretation. | pending |
-| 09 | **Cohan, Feldman, Beltagy, Downey & Weld 2020**, *ACL*, SPECTER | Original SPECTER paper; background for SPECTER2. | pending |
-| 10 | **Singh, D'Arcy, Cohan, Downey & Feldman 2023**, *EMNLP*, SciRepEval (arXiv:2211.13308) | SPECTER2 training, evaluation, documented limitations. | pending |
-| 11 | **Ostendorff, Rethmeier, Augenstein, Gipp & Rehm 2022**, *EMNLP*, SciNCL (arXiv:2202.06671) | Our within-family embedding robustness partner. | pending |
-| 12 | **Hamilton, Leskovec & Jurafsky 2016**, *ACL*, "Diachronic Word Embeddings Reveal Statistical Laws of Semantic Change" | Methodology template for Stage 3 Flavor A (conditional) drift mitigation. | pending |
-| 13 | **Uzzi, Mukherjee, Stringer & Jones 2013**, *Science* 342, "Atypical Combinations and Scientific Impact" | Methodology for Test IV tertiary novelty metric (recombinant / reference-pair atypicality). Note: fourth author is Stringer, not Stone. | pending |
-| 14 | **Kozlowski, Larivière, Sugimoto & Monroe-White 2022**, *PNAS* 119(2), "Intersectional inequalities in science" | Intersectional demographic-topic methodology at scale. Standard for demographic reporting in scientometrics. | pending |
-| 15 | **Funk et al. 2026**, arXiv:2602.05140, "Is Innovation Becoming Less Disruptive? An Inventory of the Literature" | Canonical literature review of declining disruption. Reviewers will expect us to engage. | pending |
-| 16 | **Culbert et al. 2024/2025**, *Scientometrics*, "Reference coverage analysis of OpenAlex compared to Web of Science and Scopus" | OpenAlex vs. WoS/Scopus. Required for our data-source positioning. | pending |
+**Post-N1 priority + depth (locked 2026-04-28).** N1 plan revision
+substantially shifted Tier 2 priorities relative to the pre-empirical
+ranking. Two depth tiers within Tier 2:
+
+- **Tier 2A (close read with structured review file, ~3 hrs each):**
+  16, 14, 08, 15. These are the papers whose methodology is
+  load-bearing for ws2's pre-registered tests OR whose framing N1
+  elevated.
+- **Tier 2B (methodology notes only, ~1 hr each; full close read
+  deferred to Stage-3-if-triggered):** 12, 13, 09, 10, 11. Stage-3-
+  conditional or background; no need for full template up front.
+
+Total budget: ~18 hrs (11 hrs Tier 2A + 5 hrs Tier 2B + 2-3 hrs
+synthesis.md harvest). Slightly above the original 15 hr budget;
+justified by N1's reshuffling of priorities.
+
+| # | Paper | Role for ws2 | Tier | Status |
+|---|---|---|---|---|
+| 08 | **Wu, Wang & Evans 2019**, *Nature* 566, "Large teams develop and small teams disrupt science and technology" | Team-size confound for Test II AND Test IV. Paired with Petersen 2025 (Tier 1) — read together to resolve the team-size interpretation tension for Phase 0.2 pre-registration. | **2A** | pending |
+| 09 | **Cohan, Feldman, Beltagy, Downey & Weld 2020**, *ACL*, SPECTER | Background for SPECTER2; methodology not load-bearing. Single combined session with 10+11. | 2B | pending |
+| 10 | **Singh, D'Arcy, Cohan, Downey & Feldman 2023**, *EMNLP*, SciRepEval (arXiv:2211.13308) | SPECTER2 training/evaluation; methodology not load-bearing. Combined with 09+11. | 2B | pending |
+| 11 | **Ostendorff, Rethmeier, Augenstein, Gipp & Rehm 2022**, *EMNLP*, SciNCL (arXiv:2202.06671) | Within-family robustness partner; we use it but methodology details aren't load-bearing. Combined with 09+10. | 2B | pending |
+| 12 | **Hamilton, Leskovec & Jurafsky 2016**, *ACL*, "Diachronic Word Embeddings Reveal Statistical Laws of Semantic Change" | Methodology template for Stage 3 Flavor A drift mitigation — *conditional* on Check 5c drift-pilot triggering Flavor A. Defer full close read until then. | 2B | pending |
+| 13 | **Uzzi, Mukherjee, Stringer & Jones 2013**, *Science* 342, "Atypical Combinations and Scientific Impact" | Test IV tertiary novelty (Stage 3 only, contingent on Stage 3 bandwidth). Note: fourth author is Stringer, not Stone. | 2B | pending |
+| 14 | **Kozlowski, Larivière, Sugimoto & Monroe-White 2022**, *PNAS* 119(2), "Intersectional inequalities in science" | Intersectional demographic-topic methodology. **Elevated post-N1** because intersectional reporting under §9e propensity weighting is structurally complex; Kozlowski's framework likely informs Methods-level decisions about how to report intersectional cells. | **2A** | pending |
+| 15 | **Funk et al. 2026**, arXiv:2602.05140, "Is Innovation Becoming Less Disruptive? An Inventory of the Literature" | Canonical literature inventory. Reviewer-engagement piece. Lighter close read (~2 hrs) since it's mostly inventory. | **2A** | pending |
+| 16 | **Culbert et al. 2024/2025**, *Scientometrics*, "Reference coverage analysis of OpenAlex compared to Web of Science and Scopus" | **Highest post-N1 priority shift.** §0/§9e are OpenAlex-specific commitments; this paper informs whether the ~50% abstract bottleneck and 55% UNKNOWN-affiliation rate are OpenAlex-specific or universal. Could also surface a WoS/Scopus cross-substrate robustness check for Stage 3. | **2A** | pending |
 
 ### Tier 3 — Secondary (positioning / reviewer engagement, no review file required)
 

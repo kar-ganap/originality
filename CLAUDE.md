@@ -26,7 +26,16 @@ with each prior study de-risking the next.
 - **Active whitespace:** `whitespace_2/`
 - **Program-level phase:** Scaffold complete; all downstream work happens
   inside the active whitespace.
-- **Next:** `whitespace_2/` Phase 0.1 — OpenAlex scoping + field definitions.
+- **Next:** `whitespace_2/` Phase 0.1 retro + Phase 0.2 pre-registration
+  consolidation. See `whitespace_2/tasks/todo.md` "Next session — entry
+  point" for the full handoff package. Phase 0.1 is ~95% complete: all
+  empirical checks (1+2, 3, 4, 5a, 5b, 5c, 5d) and the embedding-
+  pipeline scaffold are done. Check 5b locked per-metric N_target for
+  Phase 0.2; Check 5c committed Flavor A and surfaced three pull-spec
+  follow-ups; Check 5d retained §11 pending production-scale
+  re-validation; Check 3 locked NamSor escalation. The retro should
+  consolidate all Phase-0.2 commitments into a single
+  pre-registration document.
 
 ## Navigating This Repo
 

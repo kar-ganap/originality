@@ -1,0 +1,16 @@
+field,year,name_region,n_unique_authors,gender_coverage
+cs,1975,anglo_other,5,0.6
+cs,1990,anglo_other,5,0.6
+cs,2005,anglo_other,5,0.4
+cs,2015,anglo_other,3,0.0
+cs,2015,east_asian,2,0.0
+cs,2024,anglo_other,4,0.5
+cs,2024,slavic,1,0.0
+physics,1975,anglo_other,5,0.6
+physics,1990,anglo_other,3,0.3333333333333333
+physics,1990,east_asian,1,0.0
+physics,1990,slavic,1,0.0
+physics,2005,anglo_other,5,0.8
+physics,2015,anglo_other,5,0.2
+physics,2024,anglo_other,4,0.25
+physics,2024,east_asian,1,0.0

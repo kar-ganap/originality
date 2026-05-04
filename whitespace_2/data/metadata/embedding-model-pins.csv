@@ -1,0 +1,5 @@
+model_id,hf_revision_sha,commit_date,commit_title,sha_short,private,recorded_at
+allenai/specter2_base,3447645e1def9117997203454fa4495937bfbd83,2024-12-04,Update README.md,3447645e1d,False,2026-04-28T02:07:45+00:00
+allenai/specter2,2081559630a80fc5851d8f798a05ba81e9468089,2024-12-04,Update README.md,2081559630,False,2026-04-28T02:07:45+00:00
+malteos/scincl,ebc5348d184ba2fc9beee69b4e394263fce57b2e,2024-06-04,Add Sentence Transformers integration (#2),ebc5348d18,False,2026-04-28T02:07:46+00:00
+Qwen/Qwen3-Embedding-0.6B,97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3,2026-04-20,Update README.md (#55),97b0c614be,False,2026-04-28T02:07:46+00:00

@@ -27,9 +27,26 @@ dev = [
     "types-tqdm",
 ]
 embed = [
-    "sentence-transformers>=2.7",
-    "transformers>=4.40",
-    "torch>=2.2",
+    # torch pinned to 2.2.x because higher versions lack macOS arm64 wheels
+    # in the resolver's default index (2.4+ wheels exist but require
+    # explicit PyTorch index or prerelease flag). Phase 0.1.E smoke-tests
+    # on torch 2.2.x; revisit at Stage 1 if MPS perf is the binding
+    # constraint.
+    "torch>=2.2,<2.3",
+    # transformers >=4.51 needed for Qwen3 model-type support (added 2025-03).
+    # 4.50+ also enforces the CVE-2025-32434 check that blocks loading .bin
+    # checkpoints via torch.load on torch<2.6. SPECTER2 ships only .bin
+    # weights — we work around this by converting to safetensors at first
+    # load (see _ensure_specter2_safetensors in embeddings.py). The
+    # conversion is bit-exact and is one-time per machine; ws2 trusts AI2
+    # provenance for the underlying weights.
+    "transformers>=4.51,<5",
+    "sentence-transformers>=2.7,<4",
+    # adapters: AI2 SPECTER2 proximity-adapter loader. Maintained successor
+    # to adapter-transformers; required for plan §1's pinned SPECTER2 setup.
+    "adapters>=0.2,<2",
+    # safetensors: needed for the SPECTER2 .bin → safetensors conversion.
+    "safetensors>=0.4",
 ]
 demo = [
     "gender-guesser>=0.4",
@@ -59,7 +76,14 @@ warn_return_any = true
 warn_unused_configs = true
 
 [[tool.mypy.overrides]]
-module = ["sentence_transformers.*", "transformers.*", "torch.*"]
+module = [
+    "sentence_transformers.*",
+    "transformers.*",
+    "torch.*",
+    "adapters.*",
+    "safetensors.*",
+    "huggingface_hub.*",
+]
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]

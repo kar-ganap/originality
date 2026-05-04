@@ -1,0 +1,21 @@
+query,known_year,matched_concept,matched_concept_id,earliest_paper_year,earliest_paper_id,earliest_paper_title,gap_years,flag_anachronism
+Deep learning,2006,Deep learning,https://openalex.org/C108583219,1907.0,https://openalex.org/W2044255493,An Address ON THE SPA TREATMENT OF NEURASTHENIA: Delivered at the Annual Meeting of the Bath and Bristol Branch,99.0,True
+Transformer (machine learning model),2017,,,,,,,
+Attention mechanism,2014,,,,,,,
+Generative adversarial network,2014,Generative adversarial network,https://openalex.org/C2988773926,1978.0,https://openalex.org/W2067920790,Continuous infusion of frusemide in refractory oedema.,36.0,True
+BERT,2018,,,,,,,
+Convolutional neural network,1989,Convolutional neural network,https://openalex.org/C81363708,1913.0,https://openalex.org/W4231630234,Salvarsan in the Treatment of Surra in Horses,76.0,True
+Reinforcement learning,1989,Reinforcement learning,https://openalex.org/C97541855,1941.0,https://openalex.org/W2033771348,Discrimination learning and pre-delay reinforcement in 'delayed response.',48.0,True
+Word embedding,2013,Word embedding,https://openalex.org/C2777462759,1975.0,https://openalex.org/W1831118846,Embedding Algebras with Solvable Word Problems in Simple Algebras - Some Boone-Higman Type Theorems,38.0,True
+Recurrent neural network,1986,Recurrent neural network,https://openalex.org/C147168706,1901.0,https://openalex.org/W1917538571,A Rectifier for Transforming Alternating Currents into Direct Ones,85.0,True
+CRISPR,2012,CRISPR,https://openalex.org/C98108389,1905.0,https://openalex.org/W4234021796,THE STUMP IN APPENDICECTOMY,107.0,True
+Cloud computing,2006,Cloud computing,https://openalex.org/C79974875,1901.0,https://openalex.org/W1547293849,The Purple Cloud,105.0,True
+Internet of things,1999,Internet of Things,https://openalex.org/C81860439,1922.0,https://openalex.org/W2593578879,Here it is! : the Ontario red raspberry : other new fruits also listed,77.0,True
+Big data,2005,Big data,https://openalex.org/C75684735,1903.0,https://openalex.org/W3120272790,Big Things of the West,102.0,True
+Bitcoin,2009,,,,,,,
+Smartphone,2007,Smartphone application,https://openalex.org/C3020250448,1977.0,https://openalex.org/W2324120047,Handbook of enzymatic methods of analysis,30.0,True
+Augmented reality,1992,Augmented reality,https://openalex.org/C153715457,1925.0,https://openalex.org/W2327291479,The Paris Exposition: A Glimpse into the Future,67.0,True
+Internet,1990,The Internet,https://openalex.org/C110875604,1901.0,https://openalex.org/W3085138856,"Map of Prince William County, Virginia : compiled from U.S. Geological Survey and other data and corrected with the assistance of reliable residents of the county /",89.0,True
+World Wide Web,1991,World Wide Web,https://openalex.org/C136764020,1901.0,https://openalex.org/W4243702585,Masthead,90.0,True
+MapReduce,2004,,,,,,,
+Quantum supremacy,2019,,,,,,,

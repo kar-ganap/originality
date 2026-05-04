@@ -1,0 +1,25 @@
+field,name,issn_input,source_id,openalex_display_name,works_count
+cs,Communications of the ACM,0001-0782,S103482838,Communications of the ACM,16065
+cs,Journal of the ACM,0004-5411,S118992489,Journal of the ACM,3290
+cs,ACM Transactions on Programming Languages and Systems,0164-0925,S41449414,ACM Transactions on Programming Languages and Systems,1293
+cs,IEEE Transactions on Computers,0018-9340,S157670870,IEEE Transactions on Computers,14453
+cs,IEEE Transactions on Information Theory,0018-9448,S4502562,IEEE Transactions on Information Theory,20227
+cs,IEEE Transactions on Pattern Analysis and Machine Intelligence,0162-8828,S199944782,IEEE Transactions on Pattern Analysis and Machine Intelligence,12151
+cs,Information and Computation,0890-5401,S59933527,Information and Computation,5861
+cs,Theoretical Computer Science,0304-3975,S90727058,Theoretical Computer Science,17611
+cs,Artificial Intelligence,0004-3702,S196139623,Artificial Intelligence,4806
+cs,SIAM Journal on Computing,0097-5397,S153560523,SIAM Journal on Computing,3863
+cs,Journal of Computer and System Sciences,0022-0000,S141020589,Journal of Computer and System Sciences,3986
+cs,IEEE Transactions on Software Engineering,0098-5589,S8351582,IEEE Transactions on Software Engineering,6110
+physics,Physical Review Letters,0031-9007,S24807848,Physical Review Letters,145458
+physics,Physical Review A,1050-2947,S164566984,Physical Review A,55093
+physics,Physical Review B,0163-1829,S4210174675,"Physical review. B, Condensed matter",93139
+physics,Physical Review C,0556-2813,S4210168441,Physical Review C,36673
+physics,Physical Review D,0556-2821,S4210190737,"Physical review. D. Particles, fields, gravitation, and cosmology/Physical review. D. Particles and fields",41343
+physics,Physical Review E,1063-651X,S4210224030,"Physical review. E, Statistical physics, plasmas, fluids, and related interdisciplinary topics",21420
+physics,Reviews of Modern Physics,0034-6861,S73260565,Reviews of Modern Physics,3648
+physics,Physics Letters A,0375-9601,S104875562,Physics Letters A,53364
+physics,Physics Letters B,0370-2693,S173952182,Physics Letters B,67435
+physics,Annals of Physics,0003-4916,S173877794,Annals of Physics,13240
+physics,Nuclear Physics B,0550-3213,S4210194812,Nuclear Physics B,31481
+physics,Astrophysical Journal,0004-637X,S1980519,The Astrophysical Journal,133149
