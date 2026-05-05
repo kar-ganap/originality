@@ -1,0 +1,29 @@
+`torch_dtype` is deprecated! Use `dtype` instead!
+Phase 0.2 Wave 1A follow-up — bs ∈ {1, 2, 4} on warm Qwen3
+  device: mps; dtype: fp16
+
+Loaded 48 abstracts
+
+Warming up Qwen3 (1-abstract call)...
+  warm-up done.
+
+Benchmarking bs=1...
+  bs=1: 93.8s (1.953 s/abs); norm=1.000
+Benchmarking bs=2...
+  bs=2: 197.1s (4.106 s/abs); norm=1.000
+Benchmarking bs=4...
+  bs=4: 217.9s (4.540 s/abs); norm=1.000
+
+appended to /Users/kartikganapathi/Documents/Personal/random_projects/originality/whitespace_2/experiments/phase-0.2/qwen3-batching-benchmark.csv
+
+Summary (incl. Wave 1A primary bs=8):
+  bs=8 (primary): 5.748 s/abs
+  bs=1: 1.953 s/abs (2.94× of bs=8; FASTER than bs=8)
+  bs=2: 4.106 s/abs (1.40× of bs=8; FASTER than bs=8)
+  bs=4: 4.540 s/abs (1.27× of bs=8; FASTER than bs=8)
+
+Optimal: bs=1 at 1.953 s/abs
+
+wrote /Users/kartikganapathi/Documents/Personal/random_projects/originality/whitespace_2/experiments/phase-0.2/qwen3-batching-followup-summary.json (for artifact append)
+
+Follow-up complete.

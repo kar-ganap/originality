@@ -1,0 +1,75 @@
+{
+  "snapshot": "2026-05-04T22:20:18+00:00",
+  "n_h75_followup": 200,
+  "n_h20_followup": 200,
+  "embed_sec": 91.34586906433105,
+  "results": {
+    "30": {
+      "eff_n_s_h75": 3.9059693694358226,
+      "eff_n_u_h75": 4.405918093359153,
+      "eff_n_s_h20": 5.183805161052738,
+      "eff_n_u_h20": 10.166777153272932,
+      "artifact_ratio": 0.8865279123829194,
+      "ratio_h20": 0.5098769337522014,
+      "artifact_pass_orig": false,
+      "artifact_pass_inverted": false,
+      "nc_rel_diff": 0.49012306624779856,
+      "nc_pass": false,
+      "sign_flip_present": false,
+      "n_h75": 200,
+      "n_h20": 200
+    },
+    "50": {
+      "eff_n_s_h75": 5.795632225246801,
+      "eff_n_u_h75": 4.94054667492034,
+      "eff_n_s_h20": 10.66335468292727,
+      "eff_n_u_h20": 9.236700562704298,
+      "artifact_ratio": 1.1730750879588134,
+      "ratio_h20": 1.1544549496368302,
+      "artifact_pass_orig": false,
+      "artifact_pass_inverted": false,
+      "nc_rel_diff": 0.1337903654754295,
+      "nc_pass": true,
+      "sign_flip_present": false,
+      "n_h75": 200,
+      "n_h20": 200
+    },
+    "100": {
+      "eff_n_s_h75": 6.162054751317551,
+      "eff_n_u_h75": 9.2095869428259,
+      "eff_n_s_h20": 9.683456521503658,
+      "eff_n_u_h20": 21.89028678261607,
+      "artifact_ratio": 0.6690913272845183,
+      "ratio_h20": 0.44236316397616443,
+      "artifact_pass_orig": false,
+      "artifact_pass_inverted": true,
+      "nc_rel_diff": 0.5576368360238355,
+      "nc_pass": false,
+      "sign_flip_present": false,
+      "n_h75": 200,
+      "n_h20": 200
+    }
+  },
+  "orig": {
+    "30": {
+      "ratio_h75": 0.8,
+      "ratio_h20": 0.531,
+      "nc_rd": 0.469,
+      "nc_pass": false
+    },
+    "50": {
+      "ratio_h75": 0.84,
+      "ratio_h20": 1.16,
+      "nc_rd": 0.138,
+      "nc_pass": true
+    },
+    "100": {
+      "ratio_h75": 1.05,
+      "ratio_h20": 0.618,
+      "nc_rd": 0.382,
+      "nc_pass": false
+    }
+  },
+  "verdict": "PATH_C_RECOMMENDED",
+  "verdict_msg": "No sign-flip pattern at any K. \u00a711 mechanism not detectable at this scale. Recommend Path C (drop commitment) or Path D (full-corpus U pool)."
+}

@@ -11,56 +11,35 @@ claim is disconfirmed — a successful null.
 
 ## Current State
 
-- **Current Stage:** Stage 0 — Foundation
-- **Current Phase:** Phase 0.1 — ~95% complete. N1 + N1+ plan revision
-  done; Phase 0.1.E embedding pipeline scaffold done; Checks 1 (+1c-f,
-  1f-followup), 2 (+2d, 2-correction, 2d-within-window, 2a-redesigned),
-  3, 4, 5a, 5b, 5c, 5d all complete.
-- **Completed:**
-  - Repo scaffold
-  - Tier 1 literature review (`literature-review/` 01-07)
-  - Phase 0.1 plan written + N1 wholesale revision + N1+ adjustments
-    (new §0 analytical population; new §9e selection-bias correction;
-    edits to §1, §3, §4, §5, §9a, §9b, §12, §13, §14)
-  - Phase 0.1.E embedding pipeline scaffold:
-    `src/whitespace2/embeddings.py` (SPECTER2 + SciNCL + Qwen3-Embedding-0.6B)
-    + 9 slow tests (all green) + smoke artifact at
-    `experiments/phase-0.1/embedding-pipeline-smoke.md`. H1-H6 confirmed;
-    H7 (timing) failed plan §1 by 15-70× — Stage 2 compute prior shifted
-    toward cloud GPU.
-  - Phase 0.1 Check 1 + extensions 1c (by paper type), 1d (arXiv
-    linkage), 1e (S2AG coverage), 1f (bias-of-missingness), 1f-followup
-    (country-extraction sanity check)
-  - Phase 0.1 Check 2 a/b/c (classifier drift) + 2d (anachronism) + 2e
-    (hand-audit setup) + Check 2 score-thresholding correction + 2d
-    within-window verification + 2a redesigned (venue-anchored field-tag
-    drift, clean null)
-  - Phase 0.1 Check 4 (disambiguation spot-check; 3.0% cross-era-merger
-    rate; consistent with plan §10's 5-10% total-error band)
-  - Phase 0.1 Check 5a (pilot pull validated; 467 papers in P at
-    `data/metadata/pilot-query-results.parquet`; Nᵧ distribution at
-    `data/metadata/year-counts.csv`)
-  - Phase 0.1 Check 5c (drift pilot; SPECTER2 era-match 62.8%
-    [CI 57.0%, 68.6%]; commit Flavor A as cheap insurance per plan §2;
-    H7 hand-audit failed at 66.7% reinforcing the commit; three
-    Phase-0.2 follow-ups surfaced)
-  - Phase 0.1 Checks 5b + 5d (metric convergence + §11 cluster-fit
-    stratification): 5b clean win — per-metric N_target locked for
-    Phase 0.2 (cluster_entropy=200, effective_dim=1000,
-    mean_pairwise_cosine=200, demographic_shannon=500). 5d
-    inconclusive at pilot scale due to pull underrun + small-N
-    cluster instability; §11 commitment retained pending
-    production-scale re-validation in Phase 0.2.
-  - Phase 0.1 Check 3 (demographic inference coverage): 1511 author
-    records exploded from pilot. H5 fails 0/10 cells under both
-    gender_guesser (offline) and Genderize p≥0.8; methods agree 99.7%
-    on jointly-assigned names. NamSor escalation locked for Phase 0.2.
-    H6 fails (51.6% avg country, confirms 1f). H7 ABOVE-band 9/10
-    cells (ORCID back-propagation methodology bonus).
-  - Stats primer §18 added (Missing Data: MAR / MNAR / IPW)
-- **Next:** Phase 0.1 retro + Phase 0.2 pre-registration
-  consolidation. See `tasks/todo.md` "Next session — entry point"
-  for full handoff.
+- **Current Stage:** Stage 1 — Crawl (begins 2026-05-05)
+- **Phase 0.1 (Foundation scoping):** COMPLETE. See
+  `docs/phases/phase-0.1-retro.md`.
+- **Phase 0.2 (Pre-registration + Stage-1 prereqs):** COMPLETE
+  2026-05-05. See `docs/phases/phase-0.2-retro.md`. All 7 prereq
+  waves closed (1A Qwen3 batching, 1B NamSor smoke, 1C pull-spec
+  dry run, 2A §11 production validation, 3A ORCID-linkage
+  audit, 4A Stage 2 compute decision, 4B Genderize procurement
+  resolved no-op). All 10 Phase 0.2 → Stage 1 validation gates met.
+- **Methodology locks** (per `docs/phases/phase-0.2-plan.md` +
+  Phase 0.2 retro):
+  - **§0 analytical population**: score≥0.3 + has_abstract +
+    25-token post-2000 junk-year filter (word-boundary regex) +
+    15-token empty-abstract minimum
+  - **§1 model stack**: SciNCL primary + Qwen3 cross-family;
+    SPECTER2 retained for Stage 3 robustness swap + SciNCL
+    fallback (per
+    `docs/phases/phase-0.2-scincl-primary-contingency.md`)
+  - **§4 ORCID-linkage validation**: PASS at 98.6% overall (per
+    Wave 3A); §9a P5 ground-truth subsample fully usable across
+    all regions
+  - **§11 cluster-fit stratification**: H7' threshold revised
+    1.43 → 1.10 (post-projection-bug-fix); SciNCL primary lock
+    empirically validated (r_H75 ∈ [1.17, 1.44] across K)
+  - **Stage 2 compute target**: Modal A100 preemptible at N=1M
+    headline + N=500K robustness; budget $250-550 within §9 cap
+- **Next:** Stage 1 (Crawl) — production-scale data work begins.
+  First task: Stage 1 plan authored + 50K-sample A100 preemptible
+  dry-run + resumable-runner implementation.
 
 ## Constraints
 

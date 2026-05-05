@@ -1,0 +1,72 @@
+Phase 0.2 Wave 2A — §11 production-scale validation (SMOKE)
+  device: mps; dtype: fp16
+
+=== Pulls (target |S|=150, |U|=150, |H_*|=15) ===
+strat 1970s:   0%|          | 0/6 [00:00<?, ?it/s]strat 1970s:   0%|          | 0/6 [00:01<?, ?it/s, |S_d|=32]strat 1970s:  17%|█▋        | 1/6 [00:01<00:06,  1.36s/it, |S_d|=32]strat 1970s:  17%|█▋        | 1/6 [00:01<00:06,  1.36s/it, |S_d|=32]
+strat 1980s:   0%|          | 0/6 [00:00<?, ?it/s]strat 1980s:   0%|          | 0/6 [00:00<?, ?it/s, |S_d|=32]strat 1980s:  17%|█▋        | 1/6 [00:01<00:05,  1.19s/it, |S_d|=32]strat 1980s:  17%|█▋        | 1/6 [00:01<00:05,  1.19s/it, |S_d|=32]
+strat 1990s:   0%|          | 0/4 [00:00<?, ?it/s]strat 1990s:   0%|          | 0/4 [00:01<?, ?it/s, |S_d|=39]strat 1990s:  25%|██▌       | 1/4 [00:01<00:03,  1.33s/it, |S_d|=39]strat 1990s:  25%|██▌       | 1/4 [00:01<00:03,  1.33s/it, |S_d|=39]
+strat 2000s:   0%|          | 0/4 [00:00<?, ?it/s]strat 2000s:   0%|          | 0/4 [00:01<?, ?it/s, |S_d|=57]strat 2000s:  25%|██▌       | 1/4 [00:02<00:06,  2.25s/it, |S_d|=57]strat 2000s:  25%|██▌       | 1/4 [00:02<00:06,  2.25s/it, |S_d|=57]
+strat 2010s:   0%|          | 0/4 [00:00<?, ?it/s]strat 2010s:   0%|          | 0/4 [00:01<?, ?it/s, |S_d|=58]strat 2010s:  25%|██▌       | 1/4 [00:01<00:04,  1.35s/it, |S_d|=58]strat 2010s:  25%|██▌       | 1/4 [00:01<00:04,  1.35s/it, |S_d|=58]
+strat 2020s:   0%|          | 0/4 [00:00<?, ?it/s]strat 2020s:   0%|          | 0/4 [00:01<?, ?it/s, |S_d|=89]strat 2020s:  25%|██▌       | 1/4 [00:01<00:04,  1.66s/it, |S_d|=89]strat 2020s:  25%|██▌       | 1/4 [00:01<00:04,  1.66s/it, |S_d|=89]
+|S| (post-decade-pull): 150
+unstrat:   0%|          | 0/8 [00:00<?, ?it/s]unstrat:   0%|          | 0/8 [00:01<?, ?it/s, |U|=57]unstrat:  12%|█▎        | 1/8 [00:01<00:09,  1.37s/it, |U|=57]unstrat:  12%|█▎        | 1/8 [00:02<00:09,  1.37s/it, |U|=113]unstrat:  25%|██▌       | 2/8 [00:02<00:08,  1.34s/it, |U|=113]unstrat:  25%|██▌       | 2/8 [00:03<00:08,  1.34s/it, |U|=184]unstrat:  38%|███▊      | 3/8 [00:04<00:06,  1.38s/it, |U|=184]unstrat:  38%|███▊      | 3/8 [00:04<00:06,  1.37s/it, |U|=184]
+|U|: 150
+heldout cs/1975:   0%|          | 0/3 [00:00<?, ?it/s]heldout cs/1975:   0%|          | 0/3 [00:00<?, ?it/s, |H_1975|=29]heldout cs/1975:  33%|███▎      | 1/3 [00:01<00:02,  1.15s/it, |H_1975|=29]heldout cs/1975:  33%|███▎      | 1/3 [00:01<00:02,  1.15s/it, |H_1975|=29]
+|H_1975|: 15
+heldout cs/2020:   0%|          | 0/2 [00:00<?, ?it/s]heldout cs/2020:   0%|          | 0/2 [00:01<?, ?it/s, |H_2020|=63]heldout cs/2020:  50%|█████     | 1/2 [00:01<00:01,  1.41s/it, |H_2020|=63]heldout cs/2020:  50%|█████     | 1/2 [00:01<00:01,  1.41s/it, |H_2020|=63]
+`torch_dtype` is deprecated! Use `dtype` instead!
+|H_2020|: 15
+After disjoint: |S|=150, |U|=150, |H_1975|=15, |H_2020|=15
+  pull total: 16s
+
+H1 pull correctness: PASS (|S|=150≥100, |U|=150≥105, |H_*|≥10)
+
+=== SPECTER2 embedding ===
+Embedding |S|=150...
+Fetching 4 files:   0%|          | 0/4 [00:00<?, ?it/s]Fetching 4 files: 100%|██████████| 4/4 [00:00<00:00, 9968.64it/s]
+There are adapters available but none are activated for the forward pass.
+/Users/kartikganapathi/Documents/Personal/random_projects/originality/whitespace_2/.venv/lib/python3.11/site-packages/threadpoolctl.py:1226: RuntimeWarning: 
+Found Intel OpenMP ('libiomp') and LLVM OpenMP ('libomp') loaded at
+the same time. Both libraries are known to be incompatible and this
+can cause random crashes or deadlocks on Linux when loaded in the
+same Python program.
+Using threadpoolctl may cause crashes or deadlocks. For more
+information and possible workarounds, please see
+    https://github.com/joblib/threadpoolctl/blob/master/multiple_openmp.md
+
+  warnings.warn(msg, RuntimeWarning)
+Embedding |U|=150...
+Embedding |H_1975|=15...
+Embedding |H_2020|=15...
+  embedding total: 99s (0.301 s/abs)
+  H2 [S]: shape=(150, 768), finite=True, norm=21.92 in-band
+  H2 [U]: shape=(150, 768), finite=True, norm=21.97 in-band
+  H2 [H_1975]: shape=(15, 768), finite=True, norm=21.93 in-band
+  H2 [H_2020]: shape=(15, 768), finite=True, norm=21.99 in-band
+H2 embedding correctness: PASS
+
+=== Cluster fit + H7' evaluation ===
+  K=25: fitting on |S|=150 and |U|=150...
+    eff_n: S/H75=5.53, U/H75=8.00, ratio=0.69 (>1.43? NO)
+    NC: S/H20=8.00, U/H20=9.67, rel_diff=0.173 (<0.2? YES)
+    overall: FAIL
+  K=15: fitting on |S|=150 and |U|=150...
+    eff_n: S/H75=5.53, U/H75=6.09, ratio=0.91 (>1.43? NO)
+    NC: S/H20=6.09, U/H20=5.95, rel_diff=0.022 (<0.2? YES)
+    overall: FAIL
+  K=35: fitting on |S|=150 and |U|=150...
+    eff_n: S/H75=8.62, U/H75=6.42, ratio=1.34 (>1.43? NO)
+    NC: S/H20=8.62, U/H20=10.98, rel_diff=0.215 (<0.2? NO)
+    overall: FAIL
+  cluster fit total: 2s
+
+=== Wave 2A gate: FAIL ===
+H7' FAILED at all K∈[25, 15, 35]. BLOCK Stage 1 transition; trigger plan revision.
+
+=== Persist artifacts ===
+  wrote 4 parquets to /Users/kartikganapathi/Documents/Personal/random_projects/originality/whitespace_2/data/metadata/section11-prod-*-smoke.parquet
+  wrote /Users/kartikganapathi/Documents/Personal/random_projects/originality/whitespace_2/experiments/phase-0.2/section11-production-validation-smoke.md
+
+  wrote /Users/kartikganapathi/Documents/Personal/random_projects/originality/whitespace_2/experiments/phase-0.2/section11-production-validation-smoke-summary.json
+
+Wave 2A complete. Gate: FAIL

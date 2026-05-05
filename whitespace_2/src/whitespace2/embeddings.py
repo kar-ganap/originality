@@ -332,6 +332,7 @@ def embed_qwen3(
     batch_size: int = 8,
     dtype: str = "fp16",
     dim: int = 768,
+    length_sort: bool = False,
 ) -> np.ndarray[Any, Any]:
     """Embed abstracts via Qwen3-Embedding-0.6B with Matryoshka truncation.
 
@@ -341,6 +342,28 @@ def embed_qwen3(
 
     Pooling: last-token EOS, handled by sentence-transformers via the
     model's modules.json config.
+
+    ``length_sort`` is ``False`` by default — sentence-transformers'
+    ``SentenceTransformer.encode`` already does internal length-sorted
+    batching (see SentenceTransformer source: ``length_sorted_idx =
+    np.argsort([-self._text_length(sen) for sen in sentences])``).
+    Setting ``length_sort=True`` does an external pre-sort, which is
+    redundant with the internal sort and adds Python overhead (Wave 1A
+    benchmark surfaced ~17% slowdown vs bs=8 default). Kept as a
+    parameter for documentation + benchmarking diagnostic use only.
+    Phase 0.1.E's "padding waste from unsorted batching" diagnosis was
+    incorrect — sentence-transformers was sorting all along.
+
+    **Production batch-size recommendation: ``batch_size=1``.** Wave 1A
+    follow-up on warm Qwen3 + M-series MPS fp16 measured per-abstract
+    time as monotonically increasing with batch size: bs=1 = 1.953 s/abs,
+    bs=2 = 4.106, bs=4 = 4.540, bs=8 = 5.748 (2.94× of bs=1). This is
+    the opposite of typical encoder-only embedding-model behavior;
+    likely due to decoder-LM KV-cache memory pressure or MPS batch
+    operator overhead. Default kept at 8 for Phase 0.1.E backward
+    compatibility, but Stage 2 production callers should explicitly
+    pass ``batch_size=1``.
+
     Output: ``(len(abstracts), dim)`` numpy array, fp32 dtype.
     """
     if not abstracts:
@@ -351,13 +374,31 @@ def embed_qwen3(
         )
 
     model = _load_qwen3_model(device=device, dtype=dtype)
-    embeddings = model.encode(
-        abstracts,
-        batch_size=batch_size,
-        convert_to_numpy=True,
-        show_progress_bar=False,
-    )
-    embeddings = np.asarray(embeddings, dtype=np.float32)
+
+    if length_sort:
+        # Sort indices by descending char length (proxy for token length)
+        perm = sorted(range(len(abstracts)), key=lambda i: -len(abstracts[i]))
+        sorted_abs = [abstracts[i] for i in perm]
+        embeddings_sorted = model.encode(
+            sorted_abs,
+            batch_size=batch_size,
+            convert_to_numpy=True,
+            show_progress_bar=False,
+        )
+        embeddings_sorted = np.asarray(embeddings_sorted, dtype=np.float32)
+        # Re-order to input order: out[perm[i]] = embeddings_sorted[i]
+        embeddings = np.empty_like(embeddings_sorted)
+        for i, j in enumerate(perm):
+            embeddings[j] = embeddings_sorted[i]
+    else:
+        embeddings = model.encode(
+            abstracts,
+            batch_size=batch_size,
+            convert_to_numpy=True,
+            show_progress_bar=False,
+        )
+        embeddings = np.asarray(embeddings, dtype=np.float32)
+
     assert embeddings.shape == (len(abstracts), _QWEN3_NATIVE_DIM), (
         f"Qwen3 native shape mismatch: got {embeddings.shape}, "
         f"expected {(len(abstracts), _QWEN3_NATIVE_DIM)}"

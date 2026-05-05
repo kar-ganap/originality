@@ -1,0 +1,81 @@
+{
+  "snapshot": "2026-05-05T08:10:59+00:00",
+  "methodology": "Reading B: unclear excluded from numerator and denominator",
+  "n_total": 100,
+  "n_decisive": 72,
+  "n_audited_inclusive": 100,
+  "n_unaudited": 0,
+  "n_unknown": 0,
+  "overall_rate": 0.9861111111111112,
+  "overall_pass": true,
+  "threshold_overall": 0.7,
+  "threshold_per_region": 0.5,
+  "per_region": [
+    {
+      "group": "anglo",
+      "n_total": 2,
+      "n_correct": 2,
+      "n_incorrect": 0,
+      "n_unclear": 0,
+      "n_decisive": 2,
+      "n_audited": 2,
+      "n_unaudited": 0,
+      "n_unknown": 0,
+      "rate": 1.0,
+      "status": "PASS"
+    },
+    {
+      "group": "east_asian",
+      "n_total": 14,
+      "n_correct": 8,
+      "n_incorrect": 1,
+      "n_unclear": 5,
+      "n_decisive": 9,
+      "n_audited": 14,
+      "n_unaudited": 0,
+      "n_unknown": 0,
+      "rate": 0.8888888888888888,
+      "status": "PASS"
+    },
+    {
+      "group": "other",
+      "n_total": 77,
+      "n_correct": 56,
+      "n_incorrect": 0,
+      "n_unclear": 21,
+      "n_decisive": 56,
+      "n_audited": 77,
+      "n_unaudited": 0,
+      "n_unknown": 0,
+      "rate": 1.0,
+      "status": "PASS"
+    },
+    {
+      "group": "slavic",
+      "n_total": 5,
+      "n_correct": 4,
+      "n_incorrect": 0,
+      "n_unclear": 1,
+      "n_decisive": 4,
+      "n_audited": 5,
+      "n_unaudited": 0,
+      "n_unknown": 0,
+      "rate": 1.0,
+      "status": "PASS"
+    },
+    {
+      "group": "south_asian",
+      "n_total": 2,
+      "n_correct": 1,
+      "n_incorrect": 0,
+      "n_unclear": 1,
+      "n_decisive": 1,
+      "n_audited": 2,
+      "n_unaudited": 0,
+      "n_unknown": 0,
+      "rate": 1.0,
+      "status": "PASS"
+    }
+  ],
+  "excluded_regions": []
+}

@@ -180,21 +180,33 @@ way.
 User-judgment moment: I'll surface the tradeoff numbers; user
 decides.
 
-**4B. Genderize.io paid-tier procurement** [conditional]
+**4B. Genderize.io paid-tier procurement** [RESOLVED 2026-05-04 — Option A locked, no procurement needed]
 
-Only needed if production-scale Stage 1 exceeds 2500/mo (the
-keyed-free tier).
+Reframe of the original "paid tier needed" assumption: Genderize's
+production-scale role is **cross-validation only**, not
+ambiguous-case filling. Reasoning:
 
-- Production-scale unique-name count estimate: ~500K papers × ~3
-  authors/paper × ~30% unique = ~450K unique names. Far exceeds
-  2500/mo.
-- Therefore: paid-tier procurement IS needed. Genderize plans:
-  100K names → $9/mo; 1M names → $50/mo.
-- Procurement: sign up; store key in env; pre-commit estimate in
-  spend.md.
+- gender_guesser (offline, free) is the locked PRIMARY for ~450K
+  unique production names — full coverage, ~70% commit rate.
+- NamSor (Wave 1B-validated, $0-500 budget locked) is the locked
+  SECONDARY for the ~30% gender_guesser doesn't commit on, with
+  per-region accuracy claims especially relevant for East-Asian /
+  Slavic / Arabic.
+- Phase 0.1 Check 3 already established gender_guesser + Genderize
+  agree at 99.7% on jointly-assigned names. Running Genderize on
+  cases gender_guesser already handles wouldn't add information;
+  running Genderize on cases gender_guesser doesn't commit on is
+  better served by NamSor's regional models.
+- Genderize's actual production role: per-region cross-validation
+  sample (~6K names: ~1K/region × 6 regions). Comfortably within
+  the **keyed-free 2500/mo** tier when amortized across 2-3 months.
 
-User decision needed: which Genderize plan tier (anything >$50
-triggers ws2 desideratum §9 cost-gate pre-commit).
+**Resolution: stay on existing keyed-free Genderize key (already
+in `.env`). No paid-tier procurement.** User can upgrade later if
+production needs surface a Genderize-specific volume requirement.
+
+What this saves: $9-50/mo recurring spend; one less account to
+manage; one less methodology layer to defend in Methods section.
 
 ### Wave 5 — Phase 0.2 close-out
 
