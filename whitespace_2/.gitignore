@@ -45,6 +45,11 @@ literature-review/*.pdf
 # Run logs
 *.log
 
+# Phase 1.1+ chunked embedding outputs (binary; large; reproducible
+# from cached pull parquet + Modal functions)
+experiments/phase-*/scincl-vectors/
+experiments/phase-*/qwen3-vectors/
+
 # Experiment checkpoints
 *_ckpt/
 
