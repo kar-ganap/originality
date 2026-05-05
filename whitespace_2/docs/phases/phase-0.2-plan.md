@@ -874,17 +874,20 @@ Each prereq is a single Stage 1 task; total estimate ~1-2 weeks at
 
 ## Validation gates (Phase 0.2 → Stage 1 go/no-go)
 
-| # | Gate | Status |
+| # | Gate | Status (2026-05-05) |
 |---|---|---|
-| 1 | This document is finalized and user-signed-off | Pending user signoff |
-| 2 | Stage 1 prereq #1 (Qwen3 sorted-batching benchmark) complete | Pending |
-| 3 | Stage 1 prereq #2 (Stage 2 compute target) decided + recorded | Pending |
-| 4 | Stage 1 prereq #5 (§11 production-scale re-validation) result documented | Pending |
-| 5 | Stage 1 prereq #6 (100-record ORCID-linkage validation) result documented | Pending |
-| 6 | All Phase 0.2 commitments cross-link to source artifact (Phase 0.1 check, Tier 2A close-read, or `phase-0.1-retro.md` lesson) | Done in this document |
-| 7 | Spend pre-commit estimate logged for any expected Stage 1 spend ≥$50 | Pending |
-| 8 | `tasks/todo.md` updated to reflect Phase 0.2 → Stage 1 transition | Will happen at signoff |
-| 9 | `whitespace_2/CLAUDE.md` "Current State" updated to Stage 1 | Will happen at signoff |
+| 1 | This document is finalized and user-signed-off | ✅ Phase 0.2 retro signs off |
+| 2 | Stage 1 prereq #1 (Qwen3 sorted-batching benchmark) complete | ✅ Wave 1A |
+| 3 | Stage 1 prereq #2 (Stage 2 compute target) decided + recorded | ✅ Wave 4A locked + SciNCL revalidated |
+| 4 | Stage 1 prereq #5 (§11 production-scale re-validation) result documented | ✅ Wave 2A + post-bug-fix + SciNCL revalidation |
+| 5 | Stage 1 prereq #6 (100-record ORCID-linkage validation) result documented | ✅ Wave 3A — 98.6% overall |
+| 6 | All Phase 0.2 commitments cross-link to source artifact | ✅ |
+| 7 | Spend pre-commit estimate logged for any expected Stage 1 spend ≥$50 | ✅ `tasks/spend.md` |
+| 8 | `tasks/todo.md` updated to reflect Phase 0.2 → Stage 1 transition | ✅ Wave 5C |
+| 9 | `whitespace_2/CLAUDE.md` "Current State" updated to Stage 1 | ✅ Wave 5C |
+| 10 | Consolidation pass complete | ✅ `experiments/phase-0.2/consolidation-notes.md` |
+
+All 10 gates met. Phase 0.2 closed; Stage 1 (Crawl) begins.
 
 ---
 

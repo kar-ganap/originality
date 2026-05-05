@@ -179,7 +179,7 @@ as one normal Stage 2 pass.
 
 ---
 
-## Status update: Wave 4A LOCKED (2026-05-04)
+## Status update: Wave 4A LOCKED + EMPIRICALLY VALIDATED (2026-05-05)
 
 This contingency was authored as a what-if. **Wave 4A locked
 Reading B (SciNCL primary + Qwen3 cross-family, drop SPECTER2 from
@@ -187,6 +187,15 @@ headline) on 2026-05-04 — purely on the Phase 0.1 Check 5c drift
 data, not budget pressure.** SPECTER2 retained in pipeline as
 fallback + Stage 3 robustness swap. The work-items section above
 becomes the actual Stage 1 first-day plan rather than contingency.
+
+**SciNCL revalidation 2026-05-04 (commit `c074446`) PASSED at all
+3 K** with relaxed threshold (r_H75 ∈ [1.17, 1.33]) AND at K=30
+with strict threshold (r_H75 = 1.44 ≥ 1.43). NC passes cleanly at
+all K. SciNCL is empirically at least as strong as SPECTER2 on §11.
+
+**As of Phase 0.2 close, SciNCL→SPECTER2 fallback contingency
+status: NEVER TRIGGERED.** Trigger conditions remain in place for
+Stage 1 dry-run (and are bounded-cost reversible if any fire).
 
 The fallback direction (SciNCL → SPECTER2) is now the contingency.
 Trigger conditions for the FALLBACK direction below.
