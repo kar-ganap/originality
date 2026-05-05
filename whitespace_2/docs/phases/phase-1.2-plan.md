@@ -13,7 +13,7 @@
 | Phase | One-line scope | Status |
 |---|---|---|
 | 1.1 | Compute substrate + 50K dry-run | ✅ COMPLETE (`phase-1.1-plan.md`, retro at `experiments/phase-1.1/dry-run-results.md`) |
-| **1.2** | **Production pull via bulk dump + N=2M sample** | **CURRENT — this plan** |
+| **1.2** | **Production pull via bulk dump + N=1M sample (with 2M as future option)** | **CURRENT — this plan** |
 | 1.3 | Author disambiguation + demographic inference | Stub |
 | 1.4 | Pre-Stage-2 quality gates + transition signoff | Stub |
 
@@ -23,11 +23,19 @@
 
 **Stream the OpenAlex works bulk dump through Modal in parallel,
 apply the locked §0 filter inline, persist the full filtered
-corpus (~5-10M papers expected), and sample N=2M for Stage 2.**
+corpus (~5-15M papers expected), and sample N=1M for Stage 2.**
 
 This phase produces the canonical §0 analytical population P that
 Stage 2 + Stage 3 will sample from. It is THE data-substrate
 deliverable of Stage 1.
+
+**N=1M decision** (revised from initial N=2M draft): the persisted
+§0 population supports any future sample size up to its full ~5-15M
+extent. Locking 1M now keeps Stage 2 spend conservative; if Stage 2
+robustness surfaces subfield or Test IV interaction power issues,
+re-sampling at 2M is a cheap re-run (the §0 population is the
+expensive artifact, already persisted). Stage discipline +
+preserve-option-value pattern.
 
 ---
 
@@ -49,23 +57,39 @@ This is impractical for production. Three real alternatives:
 |---|---:|---:|---|
 | Sequential API pull | 3-15 days | $0 | Standard but slow |
 | Parallel API pull | 18-36 hr | $0 | Risk: OpenAlex politeness |
-| **Bulk dump + Modal `.map()`** | **~10 min** | **~$3** | **Recommended** |
+| **Bulk dump + Modal `.map()`** | **~30-60 min** | **~$50-80** | **Recommended** |
 
 **Bulk dump rationale (also satisfies ws2 desideratum §1):**
 
 1. ws2 desideratum §1 mandates snapshot pinning. Bulk dump IS the
    snapshot — pinning is implicit.
-2. The dump (~30 GB compressed JSONL split across ~100 shard
-   files) parallelizes naturally via Modal `.map()`.
+2. The dump (~639 GB compressed JSONL across **2,127 shard files**
+   covering 381 distinct `updated_date` partitions from 2016-06 to
+   2026-03) parallelizes naturally via Modal `.map()`.
 3. Reusable infrastructure for Stage 3 robustness sweeps and
    future snapshot refreshes.
 4. Filtering happens locally on the full corpus, not via API
    calls — no rate-limit considerations.
 
+**Cross-shard deduplication required:** OpenAlex's bulk dump uses an
+incremental snapshot model — each `updated_date=YYYY-MM-DD/`
+partition contains records *updated* that week. To get the full
+current corpus we process ALL shards then dedup by paper-id,
+keeping the max-`updated_date` record per paper. The orchestrator
+handles this in a single concat-and-dedup step over the per-shard
+parquets.
+
 Phase 1.1 retro lesson: pull retention at production scale is
 ~11.5%, not the ~30% extrapolated from Phase 0.1's single-cell
 measurement. Bulk dump avoids this concern entirely (we filter
 the full corpus, not sample-and-filter).
+
+**Note on plan numbers vs initial draft:** initial draft estimated
+~100 shards / ~30 GB / ~$3. Actual manifest enumeration (Step 1)
+revealed 2,127 shards / 639 GB / ~$50-80 — driven by the
+incremental-snapshot structure (10 years of weekly-ish update
+partitions, not a single bulk file). Architecture unchanged;
+numbers updated below.
 
 ---
 
@@ -108,12 +132,15 @@ a fixed seed.
 
 ### Layer C — operational
 
-**H6 (cost).** Total Modal spend for Phase 1.2 ≤ $20.
-Bulk-dump parse + filter ≤ $10; sampling ≤ $1; held-out
-generation ≤ $5; reserve ≤ $4.
+**H6 (cost).** Total Modal spend for Phase 1.2 ≤ $100 (revised
+from initial $20 estimate; 2,127-shard reality dominates over the
+~100-shard plan-time guess). Bulk-dump parse + filter ~$50-80;
+sampling + held-out generation <$5; reserve ~$15-20.
 
-**H7 (wall-clock).** End-to-end Phase 1.2 wall-clock ≤ 1 hour
-on Modal with 100-way `.map()` parallelism.
+**H7 (wall-clock).** End-to-end Phase 1.2 wall-clock ≤ 1.5 hours
+on Modal with 100-way `.map()` parallelism (revised from 1 hour
+estimate; 2,127 shards / 100-way ≈ 21 batches × ~3 min per shard
+batch ≈ 30-60 min for parse, plus dedup/concat overhead).
 
 ---
 
@@ -169,14 +196,25 @@ modal_parse_5_shards_parallel:
 
 ## IMPLEMENT plan
 
-### Step 1 — Bulk-dump file enumeration (~30 min)
+### Step 1 — Bulk-dump file enumeration (✅ COMPLETE)
 
-Identify the canonical OpenAlex bulk dump URL pattern and list
-of shard files for the chosen snapshot. Likely entry point:
-`https://openalex.org/data` or `s3://openalex/data/works/`.
+Manifest fetched from `s3://openalex/data/works/manifest`
+(public; no auth needed). Persisted at
+`experiments/phase-1.2/openalex-works-manifest.json`.
 
-Output: `experiments/phase-1.2/openalex-works-shards.json` with
-{snapshot_date, shard_urls[], shard_sizes[]}.
+Manifest summary:
+- **2,127 shards** across **381 distinct `updated_date` partitions**
+- Date range: 2016-06-24 → 2026-03-30
+- Total compressed size: **639 GB**
+- Total records: **492.4M** (full OpenAlex corpus)
+- Largest shard: 1.14 GB (400K records); smallest <10 KB
+- Recent partitions (2026-01-13, 2026-03-07, 2026-03-30) contain
+  large bulk-update files of ~915 MB each — these are likely the
+  most-recent OpenAlex bulk re-snapshots
+
+Snapshot pinning approach: this manifest IS the snapshot. We
+record the timestamp of fetch + the manifest's md5 in the Phase 1.2
+artifact metadata.
 
 ### Step 2 — Section 0 filter module (~1.5 hours)
 
@@ -242,17 +280,25 @@ Run `.map()` across 5 shards. Verify:
 - Wall-clock ~3-5 min (parallelism works)
 - Per-shard yield counts in expected range
 
-### Step 7 — Full 100-shard parse (~10-15 min, ~$3)
+### Step 7 — Full 2,127-shard parse (~30-60 min, ~$50-80)
 
 Run `.map()` across all shards. Verify H1, H4 in real time.
 
-### Step 8 — Sample N=2M (~5 min, $0)
+Cross-shard dedup: after all shards complete, run a single Modal
+function (CPU-only, large memory) that concats all per-shard
+parquets, deduplicates by paper-id (keep max-updated_date version),
+and writes the final `section0-population.parquet`.
 
-`experiments/phase-1.2/sample_2m.py`:
+### Step 8 — Sample N=1M (~5 min, $0)
+
+`experiments/phase-1.2/sample_1m.py`:
 - Load `section0-population.parquet`
-- Random sample N=2M (seed-pinned)
-- Write `data/metadata/section0-sample-2m.parquet`
-- Optionally: also persist a 1M sample (for sensitivity analysis at Stage 2)
+- Random sample N=1M (seed-pinned)
+- Write `data/metadata/section0-sample-1m.parquet`
+
+The full §0 population stays persisted; sampling at higher N
+(2M, 3M, etc.) later is a cheap re-run if Stage 2 robustness
+surfaces power issues.
 
 ### Step 9 — Generate held-out sets (~5 min, $0)
 
@@ -356,12 +402,34 @@ ANY gate failure → STOP, surface to user, replan before Phase 1.3.
 |---|---:|
 | Single-shard smoke | ~$0.10 |
 | 5-shard parallel smoke | ~$0.50 |
-| Full 100-shard parse + filter | ~$3-5 |
+| Full 2,127-shard parse + filter | ~$50-80 |
+| Cross-shard dedup (CPU-only) | ~$2 |
 | Sample + held-out generation (CPU only) | <$1 |
-| Reserve | ~$3 |
-| **Phase 1.2 total** | **~$10** |
+| Reserve | ~$15-20 |
+| **Phase 1.2 total** | **~$80-100** |
 
-Within §9 cap; logged in `tasks/spend.md` per actual.
+Within §9 cap and your Modal credit ($280). Pre-committed in
+`tasks/spend.md`. Per ws2 desideratum §9, this exceeds the $50
+"requires written estimate before running" threshold; the §9
+gate fires and the pre-commit is logged.
+
+**Net §9 budget impact** (factoring in Stage 2 N=1M revision vs
+the initial 2M draft):
+
+| Line | Pre-Phase-1.2 | Post-amendment |
+|---|---:|---:|
+| Phase 1.1 (actual) | $0.50 | $0.50 |
+| Phase 1.2 | $0 (omitted) | $80-100 |
+| Stage 2 headline (3 × 1M) | $150-300 | ~$57 |
+| Stage 3 robustness (2 × 500K) | $50-100 | ~$19 |
+| Reserve | $50-150 | $50 |
+| **Total estimated** | $250-550 | **~$210-230** |
+| §9 cap | $500 | $500 |
+| Modal credit | $280 | $280 |
+
+The 17× over-estimate on Phase 1.2 is balanced by Stage 2 coming
+in 5× under estimate (Phase 1.1 measurement); net total spend is
+well within both the §9 cap and your Modal credit.
 
 ---
 
@@ -436,12 +504,16 @@ Carryover from Phase 0.2 + Phase 1.1; do not re-litigate:
 ## Methodology amendment (vs Phase 1.1 plan)
 
 Phase 1.1 plan's Phase 1.2 stub said "target 1M post-§0-filter."
-This plan revises to **N=2M** based on Phase 1.1's cost finding
-($0.00002/abs makes 2M trivially affordable) and the methodology
-gain on subfield + interaction analyses.
+This plan **stays at N=1M** for the Stage 2 sample. Earlier draft
+considered 2M (because Phase 1.1's cost finding made it trivially
+affordable) but Phase 1.2's actual ~17× over-estimated spend
+(Step 1 manifest revealed 2,127 shards rather than ~100) shifted
+the prudent call back to 1M.
 
-Locked at 2M unless Phase 1.4 quality gates surface a reason to
-adjust.
+Locked at 1M unless Stage 2 robustness surfaces subfield or Test
+IV interaction power issues — at which point sampling 2M from the
+already-persisted §0 population is a ~5-min, ~$0 re-run. Option
+value preserved.
 
 ---
 
