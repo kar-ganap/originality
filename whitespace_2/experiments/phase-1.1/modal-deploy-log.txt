@@ -1,0 +1,24 @@
+Building image im-eFMuAdN7MxoUUhnDM3ZuZr
+
+Using legacy Image Builder version. We suggest upgrading at https://modal.com/settings/image-config.
+
+=> Step 0: FROM base
+
+=> Step 1: ENV HF_HOME=/cache
+Saving image...
+Image saved, took 965.31ms
+
+Built image im-eFMuAdN7MxoUUhnDM3ZuZr in 2.79s
+
+
+✓ Created objects.
+├── 🔨 Created mount 
+│   /Users/kartikganapathi/Documents/Personal/random_projects/originality/whites
+│   pace_2/experiments/phase-1.1/embed_modal.py
+├── 🔨 Created mount PythonPackage:whitespace2
+├── 🔨 Created function embed_chunk_scincl.
+└── 🔨 Created function embed_chunk_qwen3.
+✓ App deployed in 5.877s! 🎉
+
+View Deployment: 
+https://modal.com/apps/gkartik-extraneous/main/deployed/ws2-embed

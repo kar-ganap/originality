@@ -66,8 +66,11 @@ embed_image = (
         "huggingface_hub>=0.20",
         "numpy>=1.24,<2",
     )
-    .add_local_python_source("whitespace2")
     .env({"HF_HOME": "/cache"})
+    # add_local_* must come LAST so local-file changes don't
+    # trigger image rebuilds (Modal copies them at container
+    # startup instead).
+    .add_local_python_source("whitespace2")
 )
 
 # ---------- Volumes ----------
@@ -85,7 +88,7 @@ chunk_volume = modal.Volume.from_name("ws2-chunks", create_if_missing=True)
     volumes={"/cache": hf_cache, "/chunks": chunk_volume},
     timeout=3600,  # 1 hour per chunk — generous; typical chunk <1 min on A100
     retries=modal.Retries(
-        max_retries=3, initial_delay=10.0, max_delay=300.0,
+        max_retries=3, initial_delay=10.0, max_delay=60.0,
     ),
 )
 def embed_chunk_scincl(abstracts: list[str]) -> np.ndarray[Any, Any]:
@@ -109,7 +112,7 @@ def embed_chunk_scincl(abstracts: list[str]) -> np.ndarray[Any, Any]:
     volumes={"/cache": hf_cache, "/chunks": chunk_volume},
     timeout=3600,
     retries=modal.Retries(
-        max_retries=3, initial_delay=10.0, max_delay=300.0,
+        max_retries=3, initial_delay=10.0, max_delay=60.0,
     ),
 )
 def embed_chunk_qwen3(abstracts: list[str]) -> np.ndarray[Any, Any]:

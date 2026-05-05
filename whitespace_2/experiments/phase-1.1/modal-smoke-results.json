@@ -1,0 +1,35 @@
+{
+  "n_abstracts": 98,
+  "scincl": {
+    "shape": [
+      98,
+      768
+    ],
+    "finite": true,
+    "mean_norm": 23.637252807617188,
+    "min_norm": 22.71759796142578,
+    "max_norm": 24.24104118347168,
+    "elapsed_sec": 31.431830167770386,
+    "per_abs_sec": 0.3207329608956162,
+    "norm_in_band": true
+  },
+  "qwen3": {
+    "shape": [
+      98,
+      768
+    ],
+    "finite": true,
+    "mean_norm": 1.0,
+    "min_norm": 0.9999999403953552,
+    "max_norm": 1.0000001192092896,
+    "elapsed_sec": 25.352726936340332,
+    "per_abs_sec": 0.2587012952687789,
+    "norm_in_band": true
+  },
+  "extrapolation": {
+    "combined_per_abs_sec": 0.579434256164395,
+    "cost_per_abs_at_1.70_per_hr": 0.000273621732077631,
+    "cost_at_1m": 273.62173207763095,
+    "h3_gate_pass": true
+  }
+}

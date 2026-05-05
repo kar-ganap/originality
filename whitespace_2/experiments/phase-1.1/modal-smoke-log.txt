@@ -1,0 +1,38 @@
+✓ Initialized. View run at 
+https://modal.com/apps/gkartik-extraneous/main/ap-iCQmiMXeCucrQfRp6Z29MA
+✓ Created objects.
+├── 🔨 Created mount 
+│   /Users/kartikganapathi/Documents/Personal/random_projects/originality/whites
+│   pace_2/experiments/phase-1.1/embed_modal.py
+├── 🔨 Created mount PythonPackage:whitespace2
+├── 🔨 Created function embed_chunk_scincl.
+└── 🔨 Created function embed_chunk_qwen3.
+Phase 1.1 Step 4 — Modal smoke test
+
+Loaded 98 smoke abstracts from cs/1990 pilot
+
+Calling embed_chunk_scincl.remote() — first call may include image build
+  SciNCL: shape=(98, 768), finite=True, mean_norm=23.637, elapsed=31.4s
+  PASS: SciNCL norm in band [22.5, 24.5]
+
+Calling embed_chunk_qwen3.remote() — slower (bs=1)
+`torch_dtype` is deprecated! Use `dtype` instead!
+  Qwen3: shape=(98, 768), finite=True, mean_norm=1.000, elapsed=25.4s
+  PASS: Qwen3 norm ~ 1.0
+
+Per-abstract A100 timing (note: includes cold-start on first call):
+  SciNCL: 0.321 s/abs
+  Qwen3:  0.259 s/abs
+  Combined: 0.579 s/abs
+
+Extrapolation (at $1.70/hr A100 preempt):
+  Per-abstract cost: $0.0003
+  At 1M abstracts:   $274
+  Wave 4A H3 gate (≤$0.075/abs): PASS
+
+Wrote /Users/kartikganapathi/Documents/Personal/random_projects/originality/whitespace_2/experiments/phase-1.1/modal-smoke-results.json
+
+Smoke verdict: PASS
+Stopping app - local entrypoint completed.
+✓ App completed. View run at 
+https://modal.com/apps/gkartik-extraneous/main/ap-iCQmiMXeCucrQfRp6Z29MA
