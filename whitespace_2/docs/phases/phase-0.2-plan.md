@@ -291,29 +291,40 @@ Culbert's shared-corpus DOI-match recipe; not Phase 0.2 commitment.
 
 ## §1 — Embedding pipeline (LOCKED — three models)
 
-Per Phase 0.1.E:
+Per Phase 0.1.E + Wave 4A (2026-05-04 lock):
 
-- **SPECTER2** (allenai/specter2_base + allenai/specter2 proximity
-  adapter): primary semantic model.
-- **SciNCL** (malteos/scincl): SBERT-style contrastive scientific
-  embedding; transformer-encoder-family robustness partner.
+- **SciNCL** (malteos/scincl): **PRIMARY** semantic model. SBERT-style
+  contrastive scientific embedding; chosen as primary based on Phase
+  0.1 Check 5c drift-pilot data (era-match rate 75.4% vs SPECTER2's
+  62.8% on 1970-1980 query papers — materially more drift-robust on
+  our specific 1970-2024 corpus).
 - **Qwen3-Embedding-0.6B** (Qwen/Qwen3-Embedding-0.6B at 768-dim via
   Matryoshka): decoder-LM-derived family for cross-architecture
-  robustness.
+  robustness. Encoder-vs-decoder cross-family check.
+- **SPECTER2** (allenai/specter2_base + allenai/specter2 proximity
+  adapter): **DROPPED from headline stack** (Wave 4A Reading B).
+  Available in pipeline + tests for fallback if SciNCL turns out to
+  have its own production-scale issues; see
+  `docs/phases/phase-0.2-scincl-primary-contingency.md` for the
+  trigger conditions and SciNCL→SPECTER2 fallback plan.
 
 HF revisions pinned in `data/metadata/embedding-model-pins.csv`.
 
-**Stage 2 default stack**: all three models, with anchor-projection
-(Mitigation 4).
+**Stage 2 default stack** (Reading B): SciNCL (primary) + Qwen3
+(cross-family). Two-model headline; SPECTER2 reserved as fallback.
+Anchor-projection (Mitigation 4) applied to both.
 
 **Stage 3 conditional**: Flavor A (Word2Vec-per-decade + orthogonal
 Procrustes alignment + TF-IDF-weighted document aggregation) per
 Check 5c gray-zone outcome. Locked as committed for Stage 3.
 
-**Stage 2 compute target** (cloud vs local) deferred to Stage 1 —
-gated by Qwen3 sorted-batching benchmark + cloud cost estimate +
-user time-vs-budget preference. Pre-Stage-2 compute task list in
-"Stage 1 prereqs" below.
+**Stage 2 compute target** (LOCKED via Wave 4A 2026-05-04):
+**Modal A100 preemptible at N=1M for headline; N=500K for robustness
+sweeps.** See `experiments/phase-0.2/stage2-compute-decision.md`
+for full rationale. Pre-commit estimate $250-550 in
+`tasks/spend.md`. Stage 1 first task is a 50K-sample dry-run on
+A100 preemptible to verify per-abstract timing before committing
+the full 1M.
 
 ---
 
@@ -322,8 +333,8 @@ user time-vs-budget preference. Pre-Stage-2 compute task list in
 Per `phase-0.1-plan.md` §2 + Check 5c outcome:
 
 **Stage 2 default (always run):**
-- Mitigation 2: Cross-model replication (SPECTER2 + SciNCL +
-  Qwen3-0.6B).
+- Mitigation 2: Cross-family replication (SciNCL primary + Qwen3
+  cross-family). Two-model stack per Wave 4A Reading B.
 - Mitigation 4: Anchor-dimension projection. ~100 curated era-stable
   field-specific anchor concepts (e.g., "Fourier analysis,"
   "Turing machines," "graph theory"). Anchor list locked in this
@@ -457,8 +468,11 @@ classifications as equally certain" approach.
 
 Per Phase 0.1.E + §11 commitment:
 
-- **Primary**: embedding-cluster per §11 (K=50 SPECTER2-stratified
-  cluster fit). Each paper assigned to nearest centroid.
+- **Primary**: embedding-cluster per §11 (K=50 SciNCL cluster fit
+  per Wave 4A Reading B). Each paper assigned to nearest centroid.
+  Note: §11 cluster-fit centroids in `data/metadata/` are currently
+  SPECTER2-derived (Wave 2A artifact); Stage 1 first re-fits with
+  SciNCL primary per the contingency plan transition.
 - **Robustness partners**:
   - arXiv category where paper is on arXiv (CS post-1993ish, Physics
     post-1991ish). Coverage-limited.
@@ -768,9 +782,11 @@ The Stage 3 robustness suite, in priority order:
 
 ### Upfront commitments
 
-1. **Embedding-model swap**: re-run Test I + Test IV with SciNCL +
-   Qwen3 alongside SPECTER2. Direction agreement = robust;
-   disagreement = methodology question.
+1. **Embedding-model swap**: re-run Test I + Test IV with SPECTER2
+   alongside the headline SciNCL primary + Qwen3 cross-family stack.
+   Direction agreement = robust; disagreement = methodology question.
+   SPECTER2 retained in pipeline specifically for this Stage 3 swap
+   (per Wave 4A Reading B + SciNCL contingency).
 2. **Anchor-projection (Mitigation 4)**: re-run all metrics in the
    ~100-anchor-concept projected space. Reported as robustness
    column on every headline.

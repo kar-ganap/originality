@@ -1,156 +1,137 @@
-# Phase 0.2 Wave 4A — Stage 2 compute target decision matrix
+# Phase 0.2 Wave 4A — Stage 2 compute target decision (LOCKED 2026-05-04)
 
-**Compiled:** 2026-05-04 (post-Wave 2A)
-**Inputs:** Wave 1A Qwen3 timing + Wave 2A SPECTER2 production timing
-+ Phase 0.1.E SciNCL smoke timing (extrapolated to production).
+**Compiled:** 2026-05-04 (post-Wave 2A + post-bug-fix + budget review)
+**Locked decisions:** Reading B model stack + N=1M headline + N=500K
+robustness + Modal A100 preemptible + cross-field deferred to
+Stage 3 conditional + reserve budget for partial re-runs.
 
-## Locked per-model timings (M-series MPS, fp16, warm)
+## Locked decisions
 
-| Model | s/abs (warm) | Source | Confidence |
-|---|---:|---|---|
-| SPECTER2 | 0.421 | Wave 2A 3K-paper run (this commit) | High — direct measurement at 3K |
-| SciNCL | ~0.40 | Phase 0.1.E smoke 0.164 s/abs × 2.5× thermal-throttle factor | Medium — extrapolated |
-| Qwen3 (bs=1) | 1.953 | Wave 1A 48-paper warm benchmark | High — direct |
-| **Triple-pass total** | **~2.77 s/abs** | sum | — |
+| # | Decision | Lock |
+|---|---|---|
+| 1 | Production N (headline) | **1M** |
+| 2 | Production N (robustness sweeps) | **500K** |
+| 3 | Model stack | **SciNCL (primary) + Qwen3 (cross-family)** — Reading B |
+| 4 | GPU class | **A100** |
+| 5 | Provider | **Modal** |
+| 6 | Pricing tier | **Preemptible** (verify current Modal naming at Stage 1) |
+| 7 | Cross-field Physics | **Deferred to Stage 3 conditional on CS headline** |
+| 8 | Reserve budget | **$50-150 for partial high-N re-runs** |
 
-Note: SciNCL number is extrapolated from a 50-paper smoke. Check 5b's
-SPECTER2 result (0.423 s/abs at 11K) suggests sustained-load timing
-is ~1.8-2.5× the smoke timing for BERT-class models. Apply same
-factor to SciNCL: 0.164 × 2.5 ≈ 0.41 s/abs. Verify in Stage 2 first
-benchmark batch.
+## Rationale (per the conversation chain)
 
-## Production-scale N projections — local M-series
+### N target — 1M
 
-| N | SPECTER2 hrs | SciNCL hrs | Qwen3 hrs | **Total hrs** | Days @ 12hr/day |
-|---:|---:|---:|---:|---:|---:|
-| 500K | 58 | 56 | 271 | **385** | 32 |
-| 1M | 117 | 111 | 543 | **771** | 64 |
-| 2M | 234 | 222 | 1085 | **1541** | 128 |
+- **Meets ws2 desideratum §6** (≥1M papers across 1970-2024)
+- **Power analysis: meaningful for ws3 inputs** at all five
+  load-bearing patterns (Test I slope, Test IV curve, Test IV
+  interaction, subfield decomposition, era contrast)
+- **2M ruled out by §9 budget cap.** 2M-everywhere triple-pass
+  ($600-1000+) violates the cap; 1M fits with reserve
+- **500K considered**: violates desideratum §6; saves only
+  $80-160; not enough margin to justify the methodology
+  weakening
 
-Local feasibility at 500K = ~32 days continuous (12 hr/day). Practically
-unworkable for any iteration sweep.
+### Model stack — SciNCL primary + Qwen3 cross-family (Reading B)
 
-## Production-scale N projections — cloud (rough estimates)
+- **SciNCL is drift-optimal on our specific 1970-2024 corpus.**
+  Phase 0.1 Check 5c era-match rate: SciNCL 75.4% > Qwen3 70.7%
+  > SPECTER2 62.8%. For a temporal-trend study with significant
+  pre-1990 content, drift-robustness is the load-bearing
+  embedding property.
+- **Drop SPECTER2 from headline.** SPECTER2 + SciNCL are within-
+  family (both BERT-base, both citation-contrastive on S2ORC);
+  agreement carries little robustness information. Saves
+  ~$75-150 across 3 headline runs.
+- **Qwen3 retained** for cross-family (decoder-LM vs encoder)
+  cross-check.
+- **SPECTER2 retained in pipeline** for Stage 3 robustness item
+  #1 ("embedding-model swap") and as fallback if SciNCL has
+  unexpected production-scale issues — see
+  `docs/phases/phase-0.2-scincl-primary-contingency.md`.
 
-A10G on Modal: ~7× faster than M-series MPS for SPECTER2/SciNCL,
-~7× for Qwen3 (decoder-LM scaling on A10G is empirically similar
-to encoder-only for inference).
+### GPU class — A100
 
-A100 on Modal: ~30× faster than M-series for SPECTER2/SciNCL,
-~30-40× for Qwen3.
+- Cheaper-per-pass than A10G at our N (lower hours × higher rate
+  beats A10G's longer-but-cheaper).
+- Faster turnaround for iteration.
 
-| N | A10G total hrs | A100 total hrs | A10G $ | A100 $ |
-|---:|---:|---:|---:|---:|
-| 500K | ~55 | ~13 | $50-100 | $40-80 |
-| 1M | ~110 | ~26 | $100-200 | $80-160 |
-| 2M | ~220 | ~52 | $200-400 | $160-320 |
+### Provider — Modal
 
-A10G Modal: ~$1.30/hr per GPU × ~55 hrs = ~$70 at 500K.
-A100 Modal: ~$3.40/hr × ~13 hrs = ~$45 at 500K.
+- Python-native; no container ops overhead.
+- Preemptible tier available for ~40% discount.
 
-Both well within the §9 budget cap ($50-500). A100 is faster AND
-cheaper at 500K because lower hours × higher rate beats A10G's
-longer-but-cheaper. At 2M scale, A10G crosses A100's per-pass
-cost (~$200 each).
+### Pricing — preemptible
 
-## Robustness sweep multiplier
+- Embedding pass is embarrassingly parallel + tolerant to
+  preemption with chunked-resumable runner pattern.
+- Saves ~$100-200 across the headline 3-run pass.
+- Trade-off: ~50-100 lines of resumable-runner code; ~20-30%
+  wall-clock variance.
+- Stage 1 dry-run uses preemptible to verify the runner works
+  before committing the full 1M.
 
-Phase 0.2 plan §1 commits to ≥2 embedding families (cross-family
-robustness) + Flavor A drift correction (Check 5c commit). That's
-**3 production runs minimum** for the headline:
-1. Default stack (SPECTER2 + SciNCL + Qwen3)
-2. Drift-corrected stack (Flavor A)
-3. Robustness with 1+ embedding swap
+### Cross-field Physics — Stage 3 conditional
 
-Optional:
-4. Subfield mechanism analysis (§11 #5 — kept upfront per consolidation H1)
-5. Cross-field replication (Physics)
+- If CS headline yields clear divergence: Physics replication is
+  the strong test, fund it then.
+- If CS headline is null: Physics doesn't save the program.
+- Saves a full pass (~$100-200) from Stage 2 budget.
 
-Cost stack at 500K:
-- Headline (3 runs): A100 = ~$135; A10G = ~$210
-- Headline + 2 robustness (5 runs): A100 = ~$225; A10G = ~$350
+### Reserve — $50-150
 
-At 2M scale (5 runs): A100 = ~$800; A10G = ~$1000 — bumps up
-against §9 cap.
+- For partial re-runs of specific failing cells (e.g., re-embed
+  only the 1970s slice at higher N if pre-1990 dispersion is
+  suspect). Bounded escalation rather than full-N redo.
 
-## Production-scale N target derivation
+## Locked budget
 
-Per Check 5b, N_target per metric:
-- cluster_entropy: 200
-- effective_dim: 1000 (degenerate <768; use ≥1000 floor)
-- mean_pairwise_cosine: 200
-- demographic_shannon: 500
+| Component | Cost |
+|---|---:|
+| Headline: 3 runs × 1M (SciNCL + Qwen3 on A100 preemptible) | $150-300 |
+| Robustness: 2 runs × 500K | $50-100 |
+| Reserve | $50-150 |
+| **Total Stage 2** | **$250-550** |
+| Cross-field Physics (Stage 3 conditional) | +$80-160 if triggered |
 
-Per-year bootstrap n = min(Nᵧ, N_target). For Test I (headline
-divergence) on annual time series 1970-2024:
+Within §9 cap ($500) at the lower end; tight at the upper end.
+Cross-field is Stage 3 spend, not Stage 2.
 
-| Metric | N_target/year | × 55 years |
-|---|---:|---:|
-| effective_dim | 1000 | 55K |
-| demographic_shannon | 500 | 27.5K |
-| cluster_entropy | 200 | 11K |
-| mean_pairwise_cosine | 200 | 11K |
+## Stage 1 first-task binding
 
-So per-year-bootstrap minimum = ~55K papers spanning 1970-2024.
-Plus held-out for §11 cluster fits (currently being re-considered;
-500-1500 papers).
+**The Stage 1 plan's first task is a 50K-sample dry-run on Modal
+A100 preemptible** to verify:
 
-**Headline Test I N**: ~55K with year-balanced sampling (per-year
-n=1000 with surplus for early-decade sparsity). Full §0 corpus at
-~5-10M from OpenAlex CS+Physics → sample 55K.
+- Per-abstract A100 timing (estimated ~$0.05/abs at 1M scale;
+  real number from dry-run may differ)
+- Preemption rate in our region/time-of-day (variable; check
+  during dry-run)
+- Resumable-runner correctness end-to-end on real preemptions
 
-But ws2 desideratum §6 commits to "≥1M papers across the full
-1970-2024 range" for the headline, so we want N ≥ 1M for visibility
-on the headline + sufficient resolution for subfield-mechanism
-analyses (Test II/III/IV's per-subfield slices).
+**Replan trigger:** if dry-run shows >50% delta on per-abstract
+cost vs estimate, escalate to user before committing the full
+1M run. Possible replans: drop to 500K headline (within budget
+if cost x2), drop preemptible (if rate too high), drop one
+robustness run (if cost forces).
 
-**Recommended target: N = 1M.**
+## Open after Wave 4A commit
 
-## Recommendation
+- Real per-abstract A100 cost (resolved at dry-run)
+- Preemption rate in our Modal region (resolved at dry-run)
+- Stage 1 plan as a whole (separate document; this Wave 4A only
+  locks the compute target, not the Stage 1 work order)
+- SciNCL contingency status: stays "what-if" unless trigger fires
+  during Stage 1 dry-run or Stage 2 production
 
-**Cloud A100 at N=1M for the headline triple-pass.**
+## Cross-references
 
-| Aspect | Number |
-|---|---|
-| Wall-clock | ~26 hrs per run (Modal A100) |
-| Cost per run | ~$80-160 |
-| 3-run headline budget | ~$300-500 |
-| Within §9 cap ($500)? | ✅ at upper edge |
-
-A10G is workable (~$200-400 for headline) but A100 gives both
-cheaper-per-pass AND faster turnaround at this scale.
-
-**Reject local M-series**: 64-day wall-clock per run is simply
-incompatible with the iterative-sweep nature of Stage 3 robustness
-work.
-
-## Open decisions for user
-
-1. **Production N target**: 500K (cheapest) / 1M (recommended) / 2M
-   (most thorough but tight against §9 cap)?
-2. **Cloud target**: A10G (cheaper at 2M; cheaper per-hour) / A100
-   (faster + cheaper per-pass at 500K-1M) / both as A/B?
-3. **Provider**: Modal (recommended for ws2 — Python-native, no
-   container ops) / RunPod / direct cloud?
-
-## Proceed conditions
-
-If user picks **A100 at N=1M**:
-- Phase 0.2 Wave 4A locks the choice + records pre-commit estimate
-  in `tasks/spend.md`: ~$300-500 for headline triple-pass.
-- Stage 1 plan inherits this lock; first Stage 2 dry-run is a 50K
-  sample on A100 to verify per-abstract timing + cost extrapolation.
-
-If user picks **A10G at N=500K** (more conservative):
-- Cost ~$50-100 per run; ~$150-300 for headline.
-- Wall-clock ~55 hrs per run.
-- Pre-commit lower than A100-at-1M but with less methodology
-  coverage.
-
-## Artifacts
-
-- `experiments/phase-0.2/stage2-compute-decision.md` — this matrix
-- Wave 1A timings: `experiments/phase-0.2/qwen3-batching-benchmark.md`
-- Wave 2A timings: `experiments/phase-0.2/section11-production-validation.md`
-- Phase 0.1.E SciNCL smoke: `experiments/phase-0.1/embedding-pipeline-smoke.md`
-- §9 budget: `docs/desiderata.md`
+- Wave 1A timings (Qwen3 bs=1):
+  `experiments/phase-0.2/qwen3-batching-benchmark.md`
+- Wave 2A timings (SPECTER2 production at 3K):
+  `experiments/phase-0.2/section11-production-validation.md`
+- Phase 0.1.E SciNCL smoke (extrapolated to ~0.40 s/abs):
+  `experiments/phase-0.1/embedding-pipeline-smoke.md`
+- §9 budget desideratum: `docs/desiderata.md`
+- Pre-commit estimate: `tasks/spend.md`
+- SciNCL primary contingency:
+  `docs/phases/phase-0.2-scincl-primary-contingency.md`

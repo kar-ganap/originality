@@ -179,6 +179,70 @@ as one normal Stage 2 pass.
 
 ---
 
+## Status update: Wave 4A LOCKED (2026-05-04)
+
+This contingency was authored as a what-if. **Wave 4A locked
+Reading B (SciNCL primary + Qwen3 cross-family, drop SPECTER2 from
+headline) on 2026-05-04 — purely on the Phase 0.1 Check 5c drift
+data, not budget pressure.** SPECTER2 retained in pipeline as
+fallback + Stage 3 robustness swap. The work-items section above
+becomes the actual Stage 1 first-day plan rather than contingency.
+
+The fallback direction (SciNCL → SPECTER2) is now the contingency.
+Trigger conditions for the FALLBACK direction below.
+
+---
+
+## Fallback contingency: SciNCL has its own issues → add SPECTER2 back
+
+Symmetric to the SPECTER2 → SciNCL primary swap. Triggers if any
+of the following surface during Stage 1 / Stage 2:
+
+1. **SciNCL shows its OWN drift artifact at production scale.**
+   E.g., systematic cluster-geometry differences across decades that
+   weren't visible in the Phase 0.1 Check 5c pilot (1000-paper era
+   pool). At Stage 1 production scale (1M papers), some pattern
+   emerges that Check 5c missed.
+
+2. **Cross-family agreement (SciNCL vs Qwen3) is unexpectedly low.**
+   If SciNCL and Qwen3 disagree on >30% of paper similarity rankings
+   at production scale, the cross-family check fails. Adding SPECTER2
+   back gives a third vote.
+
+3. **§11 H7' fails on SciNCL embeddings.** When we re-fit cluster
+   centroids with SciNCL primary (per the work-items section above),
+   if H7' still fails at all K with the projection-bug-fixed
+   Euclidean assignment — DIFFERENT from the SPECTER2 result — then
+   the issue is SciNCL-specific not bug-specific. Re-evaluate.
+
+4. **Stage 1 dry-run shows SciNCL has anomalous production-scale
+   behavior.** E.g., norm bands different from Phase 0.1.E smoke,
+   slower than estimated, or unstable across batches. Dry-run is the
+   first chance to catch SciNCL-specific quirks.
+
+Fallback action if ANY of the above fires:
+
+- **Re-add SPECTER2 to the headline stack** (back to Reading A's
+  three-model triple-pass).
+- **Re-fit §11 cluster centroids with SPECTER2** (already have
+  these committed; just relabel as primary in plan §1).
+- **Update plan §1 + §11 + cluster-fit manifest** to reflect
+  three-model SciNCL+SPECTER2+Qwen3 stack with SciNCL still
+  reported as headline if it still passes its own validation.
+- **Pre-commit additional ~$75-150 spend** in `tasks/spend.md`
+  for the SPECTER2 production runs.
+- **Document the trigger that fired + the fallback action** in
+  `tasks/lessons.md`.
+
+Total fallback effort: ~3 hours code/doc work + ~$75-150 cloud
+spend (less if local re-embedding is feasible at scale).
+
+The Stage 1 dry-run is the FIRST gate where these triggers can
+fire. Verifying SciNCL's production-scale behavior on the 50K
+sample is therefore load-bearing — don't skip it.
+
+---
+
 ## Reversal plan (if SciNCL primary turns out to be worse)
 
 If after switching to SciNCL primary the Stage 1 production
