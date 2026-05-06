@@ -1,0 +1,25 @@
+✓ Initialized. View run at 
+https://modal.com/apps/gkartik-extraneous/main/ap-nbElVj0j67E78DcVQwLwlc
+✓ Created objects.
+Phase 1.2 Step 6 — 5-shard parallel smoke
+
+Dispatching 4 shards via .map()...
+  s3://openalex/data/works/updated_date=2026-01-13/part_0001.gz
+  s3://openalex/data/works/updated_date=2026-01-13/part_0002.gz
+  s3://openalex/data/works/updated_date=2026-01-13/part_0003.gz
+  s3://openalex/data/works/updated_date=2018-06-01/part_0000.gz
+
+  ✓ s3://openalex/data/works/updated_date=2026-01-13/part_0001.gz: 332,603 in → 29,040 out (8.7% yield, 101.6s)
+  ✓ s3://openalex/data/works/updated_date=2026-01-13/part_0002.gz: 332,548 in → 29,233 out (8.8% yield, 122.4s)
+  ✓ s3://openalex/data/works/updated_date=2026-01-13/part_0003.gz: 331,498 in → 29,091 out (8.8% yield, 101.8s)
+  ✓ s3://openalex/data/works/updated_date=2018-06-01/part_0000.gz: 1 in → 0 out (0.0% yield, 1.0s)
+
+5-shard smoke complete: 127s wall-clock
+  successes: 4/4
+  errors:    0
+  total in:  996,650
+  total out: 87,364
+  avg yield: 8.77%
+Stopping app - local entrypoint completed.
+✓ App completed. View run at 
+https://modal.com/apps/gkartik-extraneous/main/ap-nbElVj0j67E78DcVQwLwlc
