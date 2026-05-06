@@ -2,8 +2,7 @@
 
 Loads the works manifest (Step 1), filters out shards already
 processed (Volume idempotency), dispatches the remaining shards
-via ``parse_one_shard.map()``, then triggers the dedup pass and
-downloads the final §0 population to local.
+via ``parse_one_shard.map()``, then triggers the dedup pass.
 
 Resumability: re-running the orchestrator after a crash or
 network drop picks up where it left off — the
@@ -21,12 +20,14 @@ Usage:
 
 The local entrypoint completes when:
 1. All shards are processed (or marked failed), AND
-2. The dedup pass has produced section0-population.parquet on Volume,
-   AND
-3. The population parquet has been downloaded to local
-   data/metadata/.
+2. The dedup pass has produced section0-population.parquet on
+   the Modal Volume.
 
-See ``docs/phases/phase-1.2-plan.md`` for context.
+The §0 population parquet stays on the Modal Volume — at
+~70-100 GB it's too large to download locally for marginal
+gain. Sampling (Step 8) runs server-side; only the ~1 GB
+sample is downloaded to local. See ``docs/phases/phase-1.2-plan.md``
+for context.
 """
 
 from __future__ import annotations
@@ -59,9 +60,6 @@ section0_volume = modal.Volume.from_name(
 _OUT_DIR = Path(__file__).parent
 _MANIFEST_PATH = _OUT_DIR / "openalex-works-manifest.json"
 _DATA_METADATA_DIR = _OUT_DIR.parent.parent / "data" / "metadata"
-_POPULATION_PARQUET_LOCAL = (
-    _DATA_METADATA_DIR / "section0-population.parquet"
-)
 _RESULTS_LOG = _OUT_DIR / "parse-results.json"
 
 
@@ -277,22 +275,15 @@ def main() -> None:
     print(f"  unique paper-ids: {dedup_result.get('n_records', 'N/A'):,}")
     print(f"  output (Volume):  {dedup_result.get('output', 'N/A')}")
 
-    # ---------- Step 7 follow-on: download to local ----------
-
-    print()
-    print("Downloading section0-population.parquet to local...")
-    _DATA_METADATA_DIR.mkdir(parents=True, exist_ok=True)
-    # Modal Volume download API
-    with _POPULATION_PARQUET_LOCAL.open("wb") as f:
-        for chunk in section0_volume.read_file(
-            "section0-population.parquet",
-        ):
-            f.write(chunk)
-    size_mb = _POPULATION_PARQUET_LOCAL.stat().st_size / 1e6
-    print(f"  wrote {_POPULATION_PARQUET_LOCAL} ({size_mb:.1f} MB)")
-
     # ---------- Persist metadata ----------
+    #
+    # The §0 population parquet stays on the Modal Volume. At
+    # ~70-100 GB it's too large to download locally for marginal
+    # gain — sampling (Step 8) runs server-side via
+    # ``sample_population.remote()``, and only the ~1 GB sample
+    # gets downloaded to local.
 
+    _DATA_METADATA_DIR.mkdir(parents=True, exist_ok=True)
     metadata = {
         "snapshot": snapshot,
         "manifest_path": str(_MANIFEST_PATH.relative_to(
@@ -302,14 +293,16 @@ def main() -> None:
         "n_shards_done_at_start": len(done_filenames),
         "n_shards_dispatched": len(remaining) if remaining else 0,
         "dedup_result": dedup_result,
-        "population_parquet_local": str(
-            _POPULATION_PARQUET_LOCAL.relative_to(
-                _MANIFEST_PATH.parent.parent.parent,
-            ),
+        "population_parquet_volume": (
+            "modal://ws2-section0/section0-population.parquet"
         ),
-        "population_size_mb": size_mb,
+        "next_step": (
+            "Run experiments/phase-1.2/sample.py to sample server-side "
+            "and download the sample (~1 GB)."
+        ),
     }
     _RESULTS_LOG.write_text(json.dumps(metadata, indent=2, default=str))
     print(f"  wrote {_RESULTS_LOG}")
     print()
     print("Phase 1.2 Step 7 complete.")
+    print("Population stays on Modal Volume; run sample.py for the sample.")

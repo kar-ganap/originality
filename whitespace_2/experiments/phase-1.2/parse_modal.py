@@ -404,6 +404,99 @@ def dedup_to_population() -> dict[str, Any]:
     }
 
 
+# ---------- Server-side sampling (Step 8) ----------
+
+
+@app.function(
+    image=parse_image,
+    cpu=4,
+    memory=16384,  # 16 GB; sampling is much smaller than dedup
+    volumes={"/output": section0_volume},
+    timeout=1800,
+)
+def sample_population(n: int) -> dict[str, Any]:
+    """Sample N rows from section0-population.parquet using deterministic
+    nested-sampling order (sort by hash(seed|id), take first N).
+
+    Nested property: sample(M) ⊂ sample(N) for any M ≤ N drawn with the
+    same seed. Lets Stage 2 escalate from 1M to 2M without re-embedding.
+
+    Server-side sampling avoids downloading the ~70-100 GB population
+    parquet to local. Output sample is small (~1 GB for N=1M); local
+    can download just the sample.
+
+    Output filename: ``section0-sample-<N_LABEL>.parquet`` where
+    N_LABEL is "1M" for 1_000_000, "500K" for 500_000, etc.
+    """
+    import time
+
+    import duckdb
+
+    nesting_seed = "ws2-phase-1.2-nesting-seed-v1"
+    population_path = "/output/section0-population.parquet"
+
+    # Format N label
+    if n >= 1_000_000 and n % 1_000_000 == 0:
+        n_label = f"{n // 1_000_000}M"
+    elif n >= 1_000_000:
+        # 1.5M → "1_5M"
+        n_label = f"{n / 1_000_000:.1f}M".replace(".", "_")
+    elif n >= 1_000 and n % 1_000 == 0:
+        n_label = f"{n // 1_000}K"
+    else:
+        n_label = str(n)
+
+    output_path = f"/output/section0-sample-{n_label}.parquet"
+
+    t_start = time.time()
+    con = duckdb.connect()
+    con.execute("PRAGMA memory_limit='12GB'")
+    con.execute("PRAGMA threads=4")
+    con.execute("PRAGMA temp_directory='/tmp/duckdb-spill'")
+
+    # Population size (sanity check)
+    n_population = con.execute(
+        f"SELECT COUNT(*) FROM read_parquet('{population_path}')",
+    ).fetchone()[0]
+    print(f"  population: {n_population:,} records")
+    if n > n_population:
+        print(f"  WARN: requested N={n:,} > population {n_population:,}; "
+              "capping at population size")
+
+    # Deterministic hash-order sample. DuckDB's built-in hash() is a
+    # 64-bit hash; collisions extremely unlikely at 72M scale.
+    print(f"  sampling N={n:,} via hash-ordered nested sample...")
+    sql = f"""
+        COPY (
+            SELECT * EXCLUDE (sort_key) FROM (
+                SELECT *,
+                       hash('{nesting_seed}' || id) AS sort_key
+                FROM read_parquet('{population_path}')
+            )
+            ORDER BY sort_key
+            LIMIT {n}
+        ) TO '{output_path}' (FORMAT PARQUET, COMPRESSION 'zstd');
+    """
+    con.execute(sql)
+
+    n_records = con.execute(
+        f"SELECT COUNT(*) FROM read_parquet('{output_path}')",
+    ).fetchone()[0]
+    con.close()
+
+    section0_volume.commit()
+    elapsed = time.time() - t_start
+    return {
+        "n_target": n,
+        "n_actual": int(n_records),
+        "n_label": n_label,
+        "n_population": int(n_population),
+        "output": output_path,
+        "nesting_seed": nesting_seed,
+        "elapsed_sec": elapsed,
+    }
+
+
 # ---------- Single-shard smoke (Step 5) ----------
 
 

@@ -1,73 +1,65 @@
-"""Phase 1.2 Step 8 — nested sampling from §0 population.
+"""Phase 1.2 Step 8 — nested sampling from §0 population (server-side).
 
-Draws a deterministic sample of size N from the §0 population.
-Uses NESTED SAMPLING: the population is sorted by a stable
-seeded hash of paper-id; sample(N) is the first N rows. This
-guarantees:
+Calls the deployed ``sample_population`` Modal function to draw a
+deterministic sample of size N from the §0 population on the Modal
+Volume, then downloads only the sample (~1 GB for N=1M) to local.
+
+Why server-side: the §0 population parquet is ~70-100 GB; downloading
+it just to sample 1M rows wastes bandwidth + local disk. Modal does
+the hash-ordered sample on the volume and returns just the sample.
+
+Nested sampling: rows ordered by ``hash(seed|paper_id)``; the first N
+form the sample. This guarantees:
 
 - sample(1M) ⊂ sample(2M) ⊂ sample(3M) ⊂ ... ⊂ population
 
 Implication: if you embed sample(1M) now and later want sample(2M),
-the embeddings for sample(1M) are reused; only the additional
-1M needs new embedding. Saves Stage 2 / Stage 3 compute when
-escalating N.
+the embeddings for sample(1M) are reused; only the additional 1M
+needs new embedding. Saves Stage 2 / Stage 3 compute when escalating N.
 
 Default N = 1M (Wave 4A locked Stage 2 target). Re-run with
-``--n 2000000`` for a 2M sample at any time; it's a strict
-superset.
+``--n 2000000`` for a 2M sample at any time; it's a strict superset.
 
 Usage:
 
   uv run python experiments/phase-1.2/sample.py --n 1000000
   uv run python experiments/phase-1.2/sample.py --n 2000000
 
-Output: ``data/metadata/section0-sample-NM.parquet`` where N
-is the sample size in millions (formatted ``{N//1_000_000}M``;
-fractional Ns are written as full integers).
+Output:
+
+- Volume: ``/output/section0-sample-<N_LABEL>.parquet`` (server-side)
+- Local:  ``data/metadata/section0-sample-<N_LABEL>.parquet`` (download)
+- Local:  ``data/metadata/section0-sample-<N_LABEL>-manifest.json``
+
+Where ``<N_LABEL>`` is "1M" for 1_000_000, "500K" for 500_000, etc.
 """
 
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
-import sys
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-import polars as pl
+import modal
+
+# Lookup the deployed sample_population Modal function.
+sample_population = modal.Function.from_name(
+    "ws2-parse", "sample_population",
+)
+section0_volume = modal.Volume.from_name(
+    "ws2-section0", create_if_missing=False,
+)
 
 _OUT_DIR = Path(__file__).parent
 _DATA_METADATA_DIR = _OUT_DIR.parent.parent / "data" / "metadata"
-_POPULATION_PARQUET = _DATA_METADATA_DIR / "section0-population.parquet"
 
-# Pinned seed: changing this breaks the nesting property across
-# previously-drawn samples. NEVER change once Stage 2 has begun.
+# Pinned seed: must match parse_modal.py::sample_population.
+# Changing this breaks the nesting property across previously-drawn
+# samples. NEVER change once Stage 2 has begun.
 _NESTING_SEED = "ws2-phase-1.2-nesting-seed-v1"
-
-
-def _ordering_hash(paper_id: str) -> str:
-    """Stable hash of paper_id + nesting seed; used as sort key.
-
-    Using SHA-256 (truncated) ensures uniform random ordering
-    given the seed; deterministic across machines + Python versions.
-    """
-    h = hashlib.sha256(
-        f"{_NESTING_SEED}|{paper_id}".encode("utf-8"),
-    ).hexdigest()
-    return h
-
-
-def _format_n_label(n: int) -> str:
-    """1_000_000 → '1M'; 500_000 → '500K'; 1_500_000 → '1.5M'."""
-    if n >= 1_000_000 and n % 1_000_000 == 0:
-        return f"{n // 1_000_000}M"
-    if n >= 1_000_000:
-        return f"{n / 1_000_000:.1f}M"
-    if n >= 1_000 and n % 1_000 == 0:
-        return f"{n // 1_000}K"
-    return str(n)
 
 
 def main() -> None:
@@ -77,87 +69,61 @@ def main() -> None:
         help="Sample size (default: 1M)",
     )
     parser.add_argument(
-        "--population", type=Path,
-        default=_POPULATION_PARQUET,
-        help=f"Population parquet path (default: {_POPULATION_PARQUET})",
-    )
-    parser.add_argument(
         "--out-dir", type=Path,
         default=_DATA_METADATA_DIR,
-        help=f"Output directory (default: {_DATA_METADATA_DIR})",
+        help=f"Local output directory (default: {_DATA_METADATA_DIR})",
     )
     args = parser.parse_args()
 
-    if not args.population.exists():
-        print(f"ERROR: population parquet not found at {args.population}")
-        print("Run Phase 1.2 Step 7 first to produce it.")
-        sys.exit(1)
+    args.out_dir.mkdir(parents=True, exist_ok=True)
 
-    n_label = _format_n_label(args.n)
-    out_path = args.out_dir / f"section0-sample-{n_label}.parquet"
-    print(f"Phase 1.2 Step 8 — nested sampling N={args.n:,} ({n_label})")
-    print(f"  population: {args.population}")
-    print(f"  output:     {out_path}")
+    print(f"Phase 1.2 Step 8 — nested sampling N={args.n:,}")
     print(f"  nesting seed: {_NESTING_SEED}")
     print()
 
-    # 1. Load population (lazy)
-    lf = pl.scan_parquet(args.population)
-    n_population = int(lf.select(pl.len()).collect().item())
-    print(f"  population size: {n_population:,}")
+    # 1. Server-side sample on Modal
+    print("Calling sample_population.remote() on Modal...")
+    t_start = time.time()
+    result: dict[str, Any] = sample_population.remote(args.n)
+    elapsed_remote = time.time() - t_start
+    n_label = result["n_label"]
+    print(f"  done in {elapsed_remote:.0f}s")
+    print(f"  population size: {result['n_population']:,}")
+    print(f"  sample size:     {result['n_actual']:,} ({n_label})")
+    print(f"  volume path:     {result['output']}")
 
-    if args.n > n_population:
-        print(f"WARN: requested N={args.n:,} > population {n_population:,}")
-        print(f"  → sample size capped at {n_population:,}")
-        n_effective = n_population
-    else:
-        n_effective = args.n
+    # 2. Download just the sample to local
+    sample_filename = f"section0-sample-{n_label}.parquet"
+    local_path = args.out_dir / sample_filename
+    print()
+    print(f"Downloading {sample_filename} from Volume to local...")
+    t_start = time.time()
+    with local_path.open("wb") as f:
+        for chunk in section0_volume.read_file(sample_filename):
+            f.write(chunk)
+    elapsed_dl = time.time() - t_start
+    size_mb = local_path.stat().st_size / 1e6
+    print(f"  wrote {local_path} ({size_mb:.1f} MB, {elapsed_dl:.0f}s)")
 
-    # 2. Compute ordering hash + sort + take first N
-    # We need to load IDs to compute hashes (polars doesn't have a
-    # streaming hash function directly). Load just the id column,
-    # compute the sort key, then re-join with the full population
-    # via id-based filter.
-    print("  computing nesting hash...")
-    ids_df = lf.select("id").collect()
-    ids_list = ids_df["id"].to_list()
-    print(f"  hashed {len(ids_list):,} ids")
-
-    # Pair each id with its hash, sort, take first N ids
-    print("  sorting + taking first N ids...")
-    id_hashes = [
-        (paper_id, _ordering_hash(paper_id)) for paper_id in ids_list
-    ]
-    id_hashes.sort(key=lambda x: x[1])
-    selected_ids = {paper_id for paper_id, _ in id_hashes[:n_effective]}
-    print(f"  selected {len(selected_ids):,} ids")
-
-    # 3. Filter population to selected ids; write
-    print("  filtering + writing parquet...")
-    sample = lf.filter(pl.col("id").is_in(list(selected_ids))).collect()
-    sample.write_parquet(out_path, compression="zstd")
-
-    # Sanity: did we actually get N rows?
-    n_actual = sample.height
-    print(f"  wrote {n_actual:,} rows")
-
-    if n_actual != n_effective:
-        print(f"WARN: expected {n_effective:,} rows; got {n_actual:,}")
-        print("  (could be due to dedup-prior-to-this-step or empty IDs)")
-
-    # 4. Persist sample manifest
+    # 3. Persist sample manifest
     snapshot = datetime.now(timezone.utc).isoformat(timespec="seconds")
     manifest_path = args.out_dir / f"section0-sample-{n_label}-manifest.json"
     manifest: dict[str, Any] = {
         "snapshot": snapshot,
         "sample_n_target": args.n,
-        "sample_n_actual": n_actual,
+        "sample_n_actual": result["n_actual"],
         "n_label": n_label,
-        "population_path": str(args.population),
-        "population_n": n_population,
+        "population_n": result["n_population"],
+        "population_path_volume": (
+            "modal://ws2-section0/section0-population.parquet"
+        ),
         "nesting_seed": _NESTING_SEED,
-        "ordering_hash": "sha256(seed|paper_id)[:64]",
-        "output_parquet": str(out_path),
+        "ordering_hash": "duckdb_hash(seed||paper_id) uint64",
+        "sample_path_volume": result["output"],
+        "sample_path_local": str(local_path),
+        "sample_size_mb": size_mb,
+        "elapsed_remote_sec": elapsed_remote,
+        "elapsed_download_sec": elapsed_dl,
         "nesting_property": (
             "sample(M) ⊂ sample(N) for any M ≤ N drawn with the same "
             "nesting_seed; embeddings of sample(M) reusable when "
