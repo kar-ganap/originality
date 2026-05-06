@@ -1,0 +1,23 @@
+✓ Initialized. View run at 
+https://modal.com/apps/gkartik-extraneous/main/ap-gZghHs7RitFFvzeZVWf0Br
+✓ Created objects.
+├── 🔨 Created mount 
+│   /Users/kartikganapathi/Documents/Personal/random_projects/originality/whites
+│   pace_2/experiments/phase-1.2/parse_modal.py
+├── 🔨 Created mount PythonPackage:whitespace2
+├── 🔨 Created function parse_one_shard.
+└── 🔨 Created function dedup_to_population.
+Phase 1.2 Step 5 — single-shard smoke
+  shard: s3://openalex/data/works/updated_date=2026-01-13/part_0001.gz
+
+  n_in:        332,603
+  n_out:       29,040
+  yield:       8.73%
+  elapsed:     101.3s
+  output:      /output/2026-01-13_part_0001.parquet
+  updated_date: 2026-01-13
+
+  PASS: yield in expected band
+Stopping app - local entrypoint completed.
+✓ App completed. View run at 
+https://modal.com/apps/gkartik-extraneous/main/ap-gZghHs7RitFFvzeZVWf0Br
