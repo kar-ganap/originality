@@ -17,6 +17,7 @@ dependencies = [
     "tqdm>=4.66",
     "python-dotenv>=1.0",
     "modal>=1.2",
+    "polars>=1.0",
 ]
 
 [project.optional-dependencies]
