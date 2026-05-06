@@ -47,7 +47,11 @@ parse_image = (
         "pyarrow>=15",
         "httpx>=0.27",
         "numpy>=1.24,<2",
-        "polars>=1.0",  # streaming dedup in dedup_to_population
+        # DuckDB for cross-shard dedup with disk spill (polars sort
+        # can't stream; OOMs on ~64 GB compressed corpus even with
+        # 32 GB memory). DuckDB's window functions spill to disk
+        # automatically when memory runs short.
+        "duckdb>=1.0",
     )
     # add_local_python_source last per Modal best-practice
     .add_local_python_source("whitespace2")
@@ -289,10 +293,13 @@ def parse_one_shard(shard_url: str) -> dict[str, Any]:
 @app.function(
     image=parse_image,
     cpu=8,
-    memory=32768,  # 32 GB; polars sink_parquet is streaming but
-                   # still benefits from headroom for sort buffers
+    memory=65536,  # 64 GB; DuckDB will spill to disk if needed.
+                   # Increased from 32 GB after polars OOM at scale
+                   # (~64 GB compressed parquet across 2,127 shards
+                   # — too big for in-memory sort).
     volumes={"/output": section0_volume},
-    timeout=3600,
+    timeout=7200,  # 2 hours; window-function dedup with disk spill
+                   # is slower than in-memory but bounded.
 )
 def dedup_to_population() -> dict[str, Any]:
     """Concat all shard parquets + dedup by paper-id (max updated_date wins).
@@ -302,22 +309,20 @@ def dedup_to_population() -> dict[str, Any]:
     partitions. The "current corpus" is built by taking the latest
     record per paper-id across all partitions.
 
-    Polars' lazy scan + sink_parquet pipeline streams through the
-    full filtered corpus (~10M records expected) without
-    materializing the full table in memory.
+    Uses DuckDB's window function (``ROW_NUMBER() OVER PARTITION BY
+    id ORDER BY updated_date DESC``) with automatic disk spill when
+    memory runs short. Spill files go to ``/tmp`` (not the Volume,
+    so they don't persist after the function exits).
 
     Output: ``/output/section0-population.parquet`` on the Volume.
     """
     import glob
     import time
 
-    import polars as pl
+    import duckdb
 
     t_start = time.time()
 
-    # Lazy scan all per-shard parquets matching the filename pattern
-    # (skips section0-population.parquet itself if it exists from
-    # a prior run).
     shard_pattern = "/output/*_part_*.parquet"
     shard_files = sorted(glob.glob(shard_pattern))
     print(f"  found {len(shard_files)} shard parquets to dedup")
@@ -328,23 +333,42 @@ def dedup_to_population() -> dict[str, Any]:
             "elapsed_sec": time.time() - t_start,
         }
 
-    # Streaming dedup: scan → sort by updated_date desc → unique by id
-    # → sink. Polars handles the streaming under the hood.
     output_path = "/output/section0-population.parquet"
 
-    lf = pl.scan_parquet(shard_pattern)
-    # Filter out empty rows defensively (shouldn't be any but
-    # belt-and-suspenders against malformed shards)
-    lf = lf.filter(pl.col("id") != "")
-    deduped = lf.sort("updated_date", descending=True).unique(
-        subset=["id"], keep="first",
-    )
-    deduped.sink_parquet(output_path, compression="zstd")
+    con = duckdb.connect()
+    # Configure DuckDB:
+    # - memory_limit: cap in-memory; spill to disk above this
+    # - threads: use 8 (matches CPU allocation)
+    # - temp_directory: /tmp for spill files
+    con.execute("PRAGMA memory_limit='48GB'")  # leave headroom for OS
+    con.execute("PRAGMA threads=8")
+    con.execute("PRAGMA temp_directory='/tmp/duckdb-spill'")
 
-    # Count after writing (sink_parquet doesn't return row count)
-    n_records = pl.scan_parquet(output_path).select(
-        pl.len(),
-    ).collect().item()
+    # Window-function dedup: keep latest version per paper-id.
+    # COPY ... TO writes the final parquet directly (no intermediate
+    # table needed, but DuckDB will materialize via temp dir if
+    # memory is tight).
+    print("  running DuckDB window-function dedup...")
+    sql = f"""
+        COPY (
+            SELECT * EXCLUDE (rn) FROM (
+                SELECT *,
+                       ROW_NUMBER() OVER (
+                           PARTITION BY id
+                           ORDER BY updated_date DESC
+                       ) AS rn
+                FROM read_parquet('{shard_pattern}')
+                WHERE id IS NOT NULL AND id != ''
+            ) WHERE rn = 1
+        ) TO '{output_path}' (FORMAT PARQUET, COMPRESSION 'zstd');
+    """
+    con.execute(sql)
+
+    # Count rows in the output
+    n_records = con.execute(
+        f"SELECT COUNT(*) FROM read_parquet('{output_path}')",
+    ).fetchone()[0]
+    con.close()
 
     section0_volume.commit()
     elapsed = time.time() - t_start
