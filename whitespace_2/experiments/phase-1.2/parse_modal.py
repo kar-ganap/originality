@@ -293,13 +293,14 @@ def parse_one_shard(shard_url: str) -> dict[str, Any]:
 @app.function(
     image=parse_image,
     cpu=8,
-    memory=65536,  # 64 GB; DuckDB will spill to disk if needed.
-                   # Increased from 32 GB after polars OOM at scale
-                   # (~64 GB compressed parquet across 2,127 shards
-                   # — too big for in-memory sort).
+    memory=65536,  # 64 GB; first pass uses tiny memory, second pass
+                   # uses hash-join with small winners table in memory.
+                   # The previous attempt used a full window function
+                   # over ~64 GB compressed parquet which OOMed even
+                   # with disk spill (working set ~250 GB decompressed).
+    ephemeral_disk=524_288,  # 512 GB ephemeral; DuckDB spill files go here
     volumes={"/output": section0_volume},
-    timeout=7200,  # 2 hours; window-function dedup with disk spill
-                   # is slower than in-memory but bounded.
+    timeout=7200,
 )
 def dedup_to_population() -> dict[str, Any]:
     """Concat all shard parquets + dedup by paper-id (max updated_date wins).
@@ -309,10 +310,19 @@ def dedup_to_population() -> dict[str, Any]:
     partitions. The "current corpus" is built by taking the latest
     record per paper-id across all partitions.
 
-    Uses DuckDB's window function (``ROW_NUMBER() OVER PARTITION BY
-    id ORDER BY updated_date DESC``) with automatic disk spill when
-    memory runs short. Spill files go to ``/tmp`` (not the Volume,
-    so they don't persist after the function exits).
+    Two-pass approach (after first attempt with single window-function
+    OOMed despite 64 GB + disk spill):
+
+    1. **Pass 1** — small projection: scan ALL shards, GROUP BY id,
+       MAX(updated_date). Result: ~10-15M (id, max_date) pairs ≈
+       ~500 MB. Fits comfortably in memory.
+    2. **Pass 2** — hash-join: scan ALL shards again, INNER JOIN
+       with winners table on (id, updated_date). The small winners
+       table goes into a hash table in memory; the big shard scan
+       streams through, looking up matches. Output streams to parquet.
+
+    Both passes are bounded; no operation needs to materialize the
+    full corpus in memory.
 
     Output: ``/output/section0-population.parquet`` on the Volume.
     """
@@ -336,33 +346,46 @@ def dedup_to_population() -> dict[str, Any]:
     output_path = "/output/section0-population.parquet"
 
     con = duckdb.connect()
-    # Configure DuckDB:
-    # - memory_limit: cap in-memory; spill to disk above this
-    # - threads: use 8 (matches CPU allocation)
-    # - temp_directory: /tmp for spill files
-    con.execute("PRAGMA memory_limit='48GB'")  # leave headroom for OS
+    con.execute("PRAGMA memory_limit='48GB'")
     con.execute("PRAGMA threads=8")
     con.execute("PRAGMA temp_directory='/tmp/duckdb-spill'")
 
-    # Window-function dedup: keep latest version per paper-id.
-    # COPY ... TO writes the final parquet directly (no intermediate
-    # table needed, but DuckDB will materialize via temp dir if
-    # memory is tight).
-    print("  running DuckDB window-function dedup...")
-    sql = f"""
+    # ---------- Pass 1: build winners table ----------
+    print("  Pass 1: GROUP BY id MAX(updated_date) (small projection)")
+    t_pass1 = time.time()
+    con.execute(f"""
+        CREATE TEMP TABLE winners AS
+        SELECT id, MAX(updated_date) AS max_updated_date
+        FROM read_parquet('{shard_pattern}')
+        WHERE id IS NOT NULL AND id != ''
+        GROUP BY id;
+    """)
+    n_winners = con.execute(
+        "SELECT COUNT(*) FROM winners",
+    ).fetchone()[0]
+    print(f"    found {n_winners:,} unique paper-ids "
+          f"({time.time() - t_pass1:.0f}s)")
+
+    # ---------- Pass 2: hash-join + write ----------
+    print("  Pass 2: hash-join shards × winners; write parquet")
+    t_pass2 = time.time()
+    # If multiple shards have a paper at the same updated_date,
+    # we still need to deduplicate down to one. Use ROW_NUMBER() on the
+    # join result restricted to winning (id, date) pairs — small after
+    # the join filter so this is cheap.
+    con.execute(f"""
         COPY (
             SELECT * EXCLUDE (rn) FROM (
-                SELECT *,
-                       ROW_NUMBER() OVER (
-                           PARTITION BY id
-                           ORDER BY updated_date DESC
-                       ) AS rn
-                FROM read_parquet('{shard_pattern}')
-                WHERE id IS NOT NULL AND id != ''
+                SELECT s.*,
+                       ROW_NUMBER() OVER (PARTITION BY s.id) AS rn
+                FROM read_parquet('{shard_pattern}') s
+                INNER JOIN winners w
+                    ON s.id = w.id
+                    AND s.updated_date = w.max_updated_date
             ) WHERE rn = 1
         ) TO '{output_path}' (FORMAT PARQUET, COMPRESSION 'zstd');
-    """
-    con.execute(sql)
+    """)
+    print(f"    wrote {output_path} ({time.time() - t_pass2:.0f}s)")
 
     # Count rows in the output
     n_records = con.execute(
@@ -374,6 +397,7 @@ def dedup_to_population() -> dict[str, Any]:
     elapsed = time.time() - t_start
     return {
         "n_records": int(n_records),
+        "n_winners": int(n_winners),
         "n_shards_concat": len(shard_files),
         "output": output_path,
         "elapsed_sec": elapsed,
