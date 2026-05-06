@@ -1,4 +1,5 @@
-"""§0 analytical-population filter (LOCKED per Phase 0.2 + Phase 1.1).
+"""§0 analytical-population filter (LOCKED per Phase 0.2 + Phase 1.1;
+type allow-list amended per Phase 1.2 H2 audit).
 
 The filter pipeline produces the §0 population P from raw OpenAlex
 Work records. Lifted into a clean module for Phase 1.2's bulk-dump
@@ -19,6 +20,17 @@ Filter sequence (each must pass):
    reconstruction. Catches "Abstract not available" boilerplate
    (~3-7 tokens) without over-filtering legitimate short pre-1990
    conference abstracts. Threshold per Phase 0.2 consolidation §B.
+5. **Type allow-list.** Only ``article``, ``preprint``, ``review``,
+   ``book-chapter``, ``dissertation``, ``book``, ``letter``,
+   ``editorial``, ``report`` types pass. Phase 1.2 H2 audit
+   amendment: the un-type-filtered population was 39.9%
+   ``type='dataset'`` (largely GBIF "Occurrence Download" auto-
+   generated DOIs) plus several smaller non-research types
+   (paratext, libguides, peer-review, erratum, retraction,
+   reference-entry, supplementary-materials, grant). Excluding
+   these via an allow-list rather than a deny-list is the
+   defensible methodology choice — additions to OpenAlex's type
+   vocabulary default to "out" until inspected.
 
 The 25-token production junk-year list (post-2000-coined only)
 is locked per Phase 0.2 consolidation §A. Pre-1990 chip names
@@ -26,7 +38,9 @@ is locked per Phase 0.2 consolidation §A. Pre-1990 chip names
 were REMOVED to avoid systematic false-positive exclusion of
 legitimate early-era papers.
 
-See ``docs/phases/phase-0.2-plan.md`` §0 for the locked spec.
+See ``docs/phases/phase-0.2-plan.md`` §0 for the original
+locked spec; ``docs/phases/phase-1.2-retro.md`` (TBD) for the
+type allow-list amendment.
 """
 
 from __future__ import annotations
@@ -48,6 +62,26 @@ JUNK_YEAR_THRESHOLD: int = 1990
 
 #: ≥15 tokens minimum (Phase 0.2 consolidation §B)
 EMPTY_ABSTRACT_MIN_TOKENS: int = 15
+
+#: Allowed OpenAlex work types (Phase 1.2 amendment). Anything not in
+#: this set is excluded — including ``dataset`` (GBIF / Zenodo data
+#: DOIs), ``paratext`` (frontmatter, indices), ``libguides`` (library
+#: research guides), ``peer-review`` (review reports), ``erratum``,
+#: ``retraction``, ``reference-entry``, ``supplementary-materials``,
+#: ``grant``, ``software``, ``standard``, and OpenAlex's catch-all
+#: ``other``. The allow-list bias is deliberate: new types added to
+#: OpenAlex's vocabulary default to "out" until human-inspected.
+ALLOWED_WORK_TYPES: frozenset[str] = frozenset({
+    "article",
+    "preprint",
+    "review",
+    "book-chapter",
+    "dissertation",
+    "book",
+    "letter",
+    "editorial",
+    "report",
+})
 
 #: Production junk-year tokens. Post-2000-coined only (Phase 0.2
 #: consolidation §A). Word-boundary matched (Wave 1C fix).
@@ -128,6 +162,15 @@ def passes_empty_abstract_filter(
     return abstract_token_count(work) >= min_tokens
 
 
+def passes_type_filter(
+    work: dict[str, Any],
+    allowed: frozenset[str] = ALLOWED_WORK_TYPES,
+) -> bool:
+    """True iff work's ``type`` is in the research-paper allow-list."""
+    work_type = work.get("type")
+    return isinstance(work_type, str) and work_type in allowed
+
+
 def passes_junk_year_filter(
     work: dict[str, Any],
     patterns: tuple[re.Pattern[str], ...] = PRODUCTION_PATTERNS,
@@ -178,5 +221,7 @@ def apply_section0_filter(
         if not passes_junk_year_filter(w):
             continue
         if not passes_empty_abstract_filter(w):
+            continue
+        if not passes_type_filter(w):
             continue
         yield w

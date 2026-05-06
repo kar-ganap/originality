@@ -404,6 +404,105 @@ def dedup_to_population() -> dict[str, Any]:
     }
 
 
+# ---------- §0 type allow-list amendment (Phase 1.2 retro) ----------
+
+
+@app.function(
+    image=parse_image,
+    cpu=8,
+    memory=32768,
+    ephemeral_disk=524_288,
+    volumes={"/output": section0_volume},
+    timeout=3600,
+)
+def filter_population_by_type() -> dict[str, Any]:
+    """Apply the §0 type allow-list amendment to the v1 population,
+    producing ``section0-population-v2.parquet`` on the Volume.
+
+    Source: ``/output/section0-population.parquet`` (v1; un-type-
+    filtered, 72.17M rows).
+    Output: ``/output/section0-population-v2.parquet`` (allowed types
+    only; expected ~36-37M rows based on the 1M sample's type
+    distribution).
+
+    Allow-list (mirrors ``ALLOWED_WORK_TYPES`` in
+    ``whitespace2.section0_filter``): article, preprint, review,
+    book-chapter, dissertation, book, letter, editorial, report.
+    Anything else (dataset, paratext, libguides, peer-review, erratum,
+    retraction, reference-entry, supplementary-materials, grant,
+    software, standard, other, NULL) is dropped.
+
+    No re-parse required — ``type`` is already a column in the v1
+    population parquet.
+    """
+    import time
+
+    import duckdb
+
+    # Mirror ALLOWED_WORK_TYPES; can't import the constant because the
+    # remote container doesn't have whitespace2 on its sys.path until
+    # add_local_python_source completes the build, but we want the
+    # allow-list inline for SQL-readability anyway.
+    allowed_types = (
+        "article", "preprint", "review", "book-chapter", "dissertation",
+        "book", "letter", "editorial", "report",
+    )
+
+    src_path = "/output/section0-population.parquet"
+    dst_path = "/output/section0-population-v2.parquet"
+
+    t_start = time.time()
+    con = duckdb.connect()
+    con.execute("PRAGMA memory_limit='28GB'")
+    con.execute("PRAGMA threads=8")
+    con.execute("PRAGMA temp_directory='/tmp/duckdb-spill'")
+    con.execute("PRAGMA preserve_insertion_order=false")
+
+    n_v1 = con.execute(
+        f"SELECT COUNT(*) FROM read_parquet('{src_path}')",
+    ).fetchone()[0]
+    print(f"  v1 population: {n_v1:,} records")
+
+    # Per-type counts pre-filter (informational)
+    print("  v1 type distribution:")
+    type_dist = con.execute(f"""
+        SELECT type, COUNT(*) AS n
+        FROM read_parquet('{src_path}')
+        GROUP BY type ORDER BY n DESC
+    """).fetchall()
+    for t, n in type_dist:
+        kept = "KEEP" if t in allowed_types else "DROP"
+        print(f"    {kept} {t!s:<25} {n:>10,}")
+
+    allowed_quoted = ", ".join(f"'{t}'" for t in allowed_types)
+    print(f"  filtering to allow-list: {allowed_types}")
+    con.execute(f"""
+        COPY (
+            SELECT *
+            FROM read_parquet('{src_path}')
+            WHERE type IN ({allowed_quoted})
+        ) TO '{dst_path}' (FORMAT PARQUET, COMPRESSION 'zstd');
+    """)
+
+    n_v2 = con.execute(
+        f"SELECT COUNT(*) FROM read_parquet('{dst_path}')",
+    ).fetchone()[0]
+    con.close()
+
+    section0_volume.commit()
+    elapsed = time.time() - t_start
+    return {
+        "n_v1": int(n_v1),
+        "n_v2": int(n_v2),
+        "kept_fraction": n_v2 / n_v1 if n_v1 else 0.0,
+        "allowed_types": list(allowed_types),
+        "type_distribution_v1": [(t, int(n)) for t, n in type_dist],
+        "v1_path": src_path,
+        "v2_path": dst_path,
+        "elapsed_sec": elapsed,
+    }
+
+
 # ---------- Server-side sampling (Step 8) ----------
 
 
@@ -415,15 +514,21 @@ def dedup_to_population() -> dict[str, Any]:
     volumes={"/output": section0_volume},
     timeout=3600,
 )
-def sample_population(n: int) -> dict[str, Any]:
-    """Sample N rows from section0-population.parquet using deterministic
+def sample_population(
+    n: int,
+    population_filename: str = "section0-population.parquet",
+    output_suffix: str = "",
+) -> dict[str, Any]:
+    """Sample N rows from a population parquet using deterministic
     nested-sampling order (sort by hash(seed|id), take first N).
 
     Nested property: sample(M) ⊂ sample(N) for any M ≤ N drawn with the
-    same seed. Lets Stage 2 escalate from 1M to 2M without re-embedding.
+    same seed AND the same population. Lets Stage 2 escalate from 1M to
+    2M without re-embedding.
 
-    Server-side sampling avoids downloading the ~3 GB population parquet
-    locally; only the small sample (~50 MB for N=1M) is downloaded.
+    Server-side sampling avoids downloading the ~50 GB population
+    parquet locally; only the small sample (~800 MB for N=1M) is
+    downloaded.
 
     Implementation: 2-pass to keep working set small.
     - Pass 1: hash-rank just (id, hash) over the population, take top N.
@@ -435,15 +540,23 @@ def sample_population(n: int) -> dict[str, Any]:
     abstracts OOMs at ~12 GB on a 32 GB box (DuckDB materializes the
     full row width during the sort).
 
-    Output filename: ``section0-sample-<N_LABEL>.parquet`` where
-    N_LABEL is "1M" for 1_000_000, "500K" for 500_000, etc.
+    Args:
+        n: sample size.
+        population_filename: which parquet on the Volume to sample from.
+            Defaults to v1 ``section0-population.parquet``; pass
+            ``section0-population-v2.parquet`` for the type-filtered v2.
+        output_suffix: appended to the sample filename (before
+            ``.parquet``). E.g., ``"-v2"`` produces
+            ``section0-sample-<N_LABEL>-v2.parquet``.
+
+    Output filename: ``section0-sample-<N_LABEL><output_suffix>.parquet``.
     """
     import time
 
     import duckdb
 
     nesting_seed = "ws2-phase-1.2-nesting-seed-v1"
-    population_path = "/output/section0-population.parquet"
+    population_path = f"/output/{population_filename}"
 
     # Format N label
     if n >= 1_000_000 and n % 1_000_000 == 0:
@@ -456,7 +569,7 @@ def sample_population(n: int) -> dict[str, Any]:
     else:
         n_label = str(n)
 
-    output_path = f"/output/section0-sample-{n_label}.parquet"
+    output_path = f"/output/section0-sample-{n_label}{output_suffix}.parquet"
 
     t_start = time.time()
     con = duckdb.connect()
@@ -598,14 +711,16 @@ def dedup_spot_check(ids: list[str]) -> dict[str, Any]:
 def generate_heldouts(
     sample_filename: str,
     n_per: int,
+    population_filename: str = "section0-population.parquet",
+    output_suffix: str = "",
 ) -> dict[str, Any]:
     """Generate held-out sets for Stage 2 §11 cluster-fit + drift studies.
 
     Produces 4 held-out Parquet files:
-        heldout-1975-cs.parquet
-        heldout-1975-physics.parquet
-        heldout-2020-cs.parquet
-        heldout-2020-physics.parquet
+        heldout-1975-cs<suffix>.parquet
+        heldout-1975-physics<suffix>.parquet
+        heldout-2020-cs<suffix>.parquet
+        heldout-2020-physics<suffix>.parquet
 
     Each contains ``n_per`` papers (typically 500). Each is disjoint
     from the sample (anti-joined on ``id``) and disjoint from the
@@ -622,13 +737,22 @@ def generate_heldouts(
     seed than the sample's nesting hash so held-outs aren't
     correlated with sample membership beyond the disjointness
     constraint.
+
+    Args:
+        sample_filename: which sample parquet to anti-join against.
+        n_per: papers per cell.
+        population_filename: which population parquet to draw from.
+            Defaults to v1; pass ``section0-population-v2.parquet``
+            for the type-filtered v2.
+        output_suffix: appended to each held-out filename before
+            ``.parquet`` (e.g., ``"-v2"``).
     """
     import time
 
     import duckdb
 
     HELDOUT_SEED = "ws2-phase-1.2-heldout-seed-v1"
-    population_path = "/output/section0-population.parquet"
+    population_path = f"/output/{population_filename}"
     sample_path = f"/output/{sample_filename}"
 
     cell_specs = [
@@ -657,7 +781,7 @@ def generate_heldouts(
     cell_results: list[dict[str, Any]] = []
     for year, field, concept_id in cell_specs:
         t_cell = time.time()
-        out_filename = f"heldout-{year}-{field}.parquet"
+        out_filename = f"heldout-{year}-{field}{output_suffix}.parquet"
         out_path = f"/output/{out_filename}"
         print(f"  cell {year}-{field}: filtering + ranking + writing...")
 

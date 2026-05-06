@@ -1,0 +1,64 @@
+{
+  "snapshot": "2026-05-06T07:51:30+00:00",
+  "version": "v2",
+  "v2_amendment": "type allow-list (Phase 1.2 retro)",
+  "n_per": 500,
+  "heldout_seed": "ws2-phase-1.2-heldout-seed-v1",
+  "sample_filename": "section0-sample-1M-v2.parquet",
+  "n_sample_excluded": 1000000,
+  "population_path_volume": "modal://ws2-section0/section0-population-v2.parquet",
+  "cells": [
+    {
+      "year": 1975,
+      "field": "cs",
+      "concept_id": "https://openalex.org/C41008148",
+      "n_target": 500,
+      "n_actual": 500,
+      "filename": "heldout-1975-cs-v2.parquet",
+      "output": "/output/heldout-1975-cs-v2.parquet",
+      "elapsed_sec": 1.2041690349578857,
+      "volume_filename": "heldout-1975-cs-v2.parquet",
+      "local_path": "/Users/kartikganapathi/Documents/Personal/random_projects/originality/whitespace_2/data/metadata/heldout-1975-cs-v2.parquet",
+      "size_mb": 0.431319
+    },
+    {
+      "year": 1975,
+      "field": "physics",
+      "concept_id": "https://openalex.org/C121332964",
+      "n_target": 500,
+      "n_actual": 500,
+      "filename": "heldout-1975-physics-v2.parquet",
+      "output": "/output/heldout-1975-physics-v2.parquet",
+      "elapsed_sec": 0.5992081165313721,
+      "volume_filename": "heldout-1975-physics-v2.parquet",
+      "local_path": "/Users/kartikganapathi/Documents/Personal/random_projects/originality/whitespace_2/data/metadata/heldout-1975-physics-v2.parquet",
+      "size_mb": 0.482816
+    },
+    {
+      "year": 2020,
+      "field": "cs",
+      "concept_id": "https://openalex.org/C41008148",
+      "n_target": 500,
+      "n_actual": 500,
+      "filename": "heldout-2020-cs-v2.parquet",
+      "output": "/output/heldout-2020-cs-v2.parquet",
+      "elapsed_sec": 0.6010251045227051,
+      "volume_filename": "heldout-2020-cs-v2.parquet",
+      "local_path": "/Users/kartikganapathi/Documents/Personal/random_projects/originality/whitespace_2/data/metadata/heldout-2020-cs-v2.parquet",
+      "size_mb": 0.731845
+    },
+    {
+      "year": 2020,
+      "field": "physics",
+      "concept_id": "https://openalex.org/C121332964",
+      "n_target": 500,
+      "n_actual": 500,
+      "filename": "heldout-2020-physics-v2.parquet",
+      "output": "/output/heldout-2020-physics-v2.parquet",
+      "elapsed_sec": 0.6213870048522949,
+      "volume_filename": "heldout-2020-physics-v2.parquet",
+      "local_path": "/Users/kartikganapathi/Documents/Personal/random_projects/originality/whitespace_2/data/metadata/heldout-2020-physics-v2.parquet",
+      "size_mb": 0.775807
+    }
+  ]
+}

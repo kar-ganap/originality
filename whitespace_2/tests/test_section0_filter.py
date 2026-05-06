@@ -22,12 +22,14 @@ from __future__ import annotations
 from typing import Any
 
 from whitespace2.section0_filter import (
+    ALLOWED_WORK_TYPES,
     abstract_token_count,
     apply_section0_filter,
     has_abstract,
     passes_empty_abstract_filter,
     passes_junk_year_filter,
     passes_score_any_field,
+    passes_type_filter,
 )
 
 # ---------- helpers for building test work records ----------
@@ -39,6 +41,7 @@ def _make_work(
     year: int | None = 2020,
     concepts: list[dict[str, Any]] | None = None,
     inv: dict[str, list[int]] | None = None,
+    work_type: str = "article",
 ) -> dict[str, Any]:
     if concepts is None:
         concepts = [
@@ -53,6 +56,7 @@ def _make_work(
         "publication_year": year,
         "concepts": concepts,
         "abstract_inverted_index": inv,
+        "type": work_type,
     }
 
 
@@ -331,3 +335,72 @@ def test_apply_section0_filter_drops_each_failure_mode() -> None:
     kept = list(apply_section0_filter(batch))
     # Both legit1 and legit2 share the default id; check count instead of ids
     assert len(kept) == 2
+
+
+# ---------- type allow-list (Phase 1.2 amendment) ----------
+
+
+def test_type_filter_allows_research_paper_types() -> None:
+    """All types in ALLOWED_WORK_TYPES pass."""
+    for work_type in ALLOWED_WORK_TYPES:
+        w = _make_work(work_type=work_type)
+        assert passes_type_filter(w), f"{work_type} should pass"
+
+
+def test_type_filter_excludes_dataset_and_other_junk_types() -> None:
+    """Dataset, paratext, libguides, peer-review, etc. all fail."""
+    junk_types = [
+        "dataset",       # GBIF Occurrence Downloads, Zenodo data DOIs
+        "paratext",      # journal frontmatter / indices
+        "libguides",     # library research guides
+        "peer-review",   # peer-review reports
+        "erratum",       # corrections
+        "retraction",    # retraction notices
+        "reference-entry",   # encyclopedia entries
+        "supplementary-materials",
+        "grant",
+        "software",
+        "standard",
+        "other",         # OpenAlex's catch-all
+    ]
+    for work_type in junk_types:
+        w = _make_work(work_type=work_type)
+        assert not passes_type_filter(w), f"{work_type} should be excluded"
+
+
+def test_type_filter_excludes_missing_or_none_type() -> None:
+    """Missing or None type fails (allow-list bias: unknown types are out)."""
+    w_no_type = _make_work()
+    del w_no_type["type"]
+    assert not passes_type_filter(w_no_type)
+
+    w_none_type = _make_work()
+    w_none_type["type"] = None
+    assert not passes_type_filter(w_none_type)
+
+    w_non_string_type = _make_work()
+    w_non_string_type["type"] = 123
+    assert not passes_type_filter(w_non_string_type)
+
+
+def test_full_pipeline_drops_dataset_even_when_other_fields_valid() -> None:
+    """A type='dataset' work that would otherwise pass §0 is dropped.
+
+    Mirrors the real Phase 1.2 H2-audit finding: GBIF "Occurrence
+    Download" records with cs concepts at score>=0.30 + substantive
+    abstract + valid year all pass the original 4 §0 stages but are
+    not research papers.
+    """
+    gbif_like = _make_work(
+        work_type="dataset",
+        title="Occurrence Download",
+        concepts=[
+            {"id": "https://openalex.org/C41008148", "score": 0.55},  # cs
+            {"id": "https://openalex.org/C36289849", "score": 0.40},  # other
+        ],
+    )
+    legit_article = _make_work(work_type="article")
+
+    kept = list(apply_section0_filter([gbif_like, legit_article]))
+    assert len(kept) == 1
+    assert kept[0]["type"] == "article"

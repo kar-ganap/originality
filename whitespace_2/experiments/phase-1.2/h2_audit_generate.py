@@ -1,8 +1,8 @@
 """Phase 1.2 H2 hand audit — generate the audit sheet.
 
-Picks 100 papers from the 1M sample (50 uniform random + 50
-pre-1990 stratified) and renders them as a Markdown audit sheet
-for human review. The reviewer eyeballs each entry checking for:
+Picks 100 papers from a §0 sample (50 uniform random + 50 pre-1990
+stratified) and renders them as a Markdown audit sheet for human
+review. The reviewer eyeballs each entry checking for:
 
 1. Field plausibility — is this actually a cs / physics paper?
    (concept score≥0.30 already enforced mechanically; the audit
@@ -27,22 +27,28 @@ seeds (so the audit isn't correlated with sample membership).
 
 Usage:
 
+  # v1 sample (un-type-filtered):
   uv run --with duckdb python experiments/phase-1.2/h2_audit_generate.py
 
-Output: experiments/phase-1.2/h2-audit-sheet.md (100 papers).
+  # v2 sample (type allow-list amendment):
+  uv run --with duckdb python experiments/phase-1.2/h2_audit_generate.py \\
+      --sample data/metadata/section0-sample-1M-v2.parquet \\
+      --out experiments/phase-1.2/h2-audit-sheet-v2.md
 """
 
 from __future__ import annotations
 
-import json
+import argparse
 from pathlib import Path
 
 import duckdb
 
+import json
+
 _OUT_DIR = Path(__file__).parent
 _DATA_METADATA_DIR = _OUT_DIR.parent.parent / "data" / "metadata"
-_SAMPLE_PARQUET = _DATA_METADATA_DIR / "section0-sample-1M.parquet"
-_AUDIT_SHEET = _OUT_DIR / "h2-audit-sheet.md"
+_SAMPLE_PARQUET_DEFAULT = _DATA_METADATA_DIR / "section0-sample-1M.parquet"
+_AUDIT_SHEET_DEFAULT = _OUT_DIR / "h2-audit-sheet.md"
 
 _AUDIT_SEED = "ws2-phase-1.2-h2-audit-seed-v1"
 _N_UNIFORM = 50
@@ -110,7 +116,20 @@ def _format_concepts(concepts_json: str | None, top_n: int = 5) -> str:
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--sample", type=Path, default=_SAMPLE_PARQUET_DEFAULT,
+        help=f"Sample parquet (default: {_SAMPLE_PARQUET_DEFAULT})",
+    )
+    parser.add_argument(
+        "--out", type=Path, default=_AUDIT_SHEET_DEFAULT,
+        help=f"Output Markdown sheet (default: {_AUDIT_SHEET_DEFAULT})",
+    )
+    args = parser.parse_args()
+
     print("Phase 1.2 H2 hand audit — generating audit sheet")
+    print(f"  sample:     {args.sample}")
+    print(f"  output:     {args.out}")
     print(f"  uniform N={_N_UNIFORM}; pre-1990 N={_N_PRE1990}")
     print(f"  audit seed: {_AUDIT_SEED}")
     print()
@@ -122,7 +141,7 @@ def main() -> None:
     uniform_rows = con.execute(f"""
         SELECT id, title, publication_year, type,
                abstract_inverted_index_json, concepts_json
-        FROM read_parquet('{_SAMPLE_PARQUET}')
+        FROM read_parquet('{args.sample}')
         ORDER BY hash('{_AUDIT_SEED}|uniform' || id)
         LIMIT {_N_UNIFORM}
     """).fetchall()
@@ -133,7 +152,7 @@ def main() -> None:
     pre1990_rows = con.execute(f"""
         SELECT id, title, publication_year, type,
                abstract_inverted_index_json, concepts_json
-        FROM read_parquet('{_SAMPLE_PARQUET}')
+        FROM read_parquet('{args.sample}')
         WHERE publication_year < 1990
         ORDER BY hash('{_AUDIT_SEED}|pre1990' || id)
         LIMIT {_N_PRE1990}
@@ -150,7 +169,7 @@ def main() -> None:
     lines.append("# Phase 1.2 H2 hand audit — sheet")
     lines.append("")
     lines.append(
-        f"Generated: 100 papers from `section0-sample-1M.parquet`, "
+        f"Generated: 100 papers from `{args.sample.name}`, "
         f"stratified {_N_UNIFORM} uniform + {_N_PRE1990} pre-1990. "
         f"Audit seed: `{_AUDIT_SEED}`."
     )
@@ -204,9 +223,9 @@ def main() -> None:
         lines.append("---")
         lines.append("")
 
-    _AUDIT_SHEET.write_text("\n".join(lines))
+    args.out.write_text("\n".join(lines))
     print()
-    print(f"Wrote {_AUDIT_SHEET}")
+    print(f"Wrote {args.out}")
     print(f"Total: {len(all_rows)} papers")
 
 
