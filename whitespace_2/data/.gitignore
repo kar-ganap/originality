@@ -4,3 +4,9 @@
 !README.md
 !metadata/
 !metadata/**
+
+# Re-ignore Phase 1.2 large parquets (population + samples); these are
+# regenerable from the pinned bulk-dump manifest + parse_modal.py /
+# sample.py with committed seeds. Manifests + held-outs stay tracked.
+metadata/section0-population*.parquet
+metadata/section0-sample-*.parquet

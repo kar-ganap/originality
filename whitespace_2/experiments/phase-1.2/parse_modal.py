@@ -409,10 +409,11 @@ def dedup_to_population() -> dict[str, Any]:
 
 @app.function(
     image=parse_image,
-    cpu=4,
-    memory=16384,  # 16 GB; sampling is much smaller than dedup
+    cpu=8,
+    memory=32768,  # 32 GB
+    ephemeral_disk=524_288,  # 512 GB (Modal minimum); for spill
     volumes={"/output": section0_volume},
-    timeout=1800,
+    timeout=3600,
 )
 def sample_population(n: int) -> dict[str, Any]:
     """Sample N rows from section0-population.parquet using deterministic
@@ -421,9 +422,18 @@ def sample_population(n: int) -> dict[str, Any]:
     Nested property: sample(M) ⊂ sample(N) for any M ≤ N drawn with the
     same seed. Lets Stage 2 escalate from 1M to 2M without re-embedding.
 
-    Server-side sampling avoids downloading the ~70-100 GB population
-    parquet to local. Output sample is small (~1 GB for N=1M); local
-    can download just the sample.
+    Server-side sampling avoids downloading the ~3 GB population parquet
+    locally; only the small sample (~50 MB for N=1M) is downloaded.
+
+    Implementation: 2-pass to keep working set small.
+    - Pass 1: hash-rank just (id, hash) over the population, take top N.
+      ~72M × ~70B ≈ 5 GB working set; fits comfortably.
+    - Pass 2: hash-join the N selected ids back to the population for
+      full rows; write to Parquet.
+
+    The single-pass ``ORDER BY hash`` over the full row including
+    abstracts OOMs at ~12 GB on a 32 GB box (DuckDB materializes the
+    full row width during the sort).
 
     Output filename: ``section0-sample-<N_LABEL>.parquet`` where
     N_LABEL is "1M" for 1_000_000, "500K" for 500_000, etc.
@@ -450,9 +460,10 @@ def sample_population(n: int) -> dict[str, Any]:
 
     t_start = time.time()
     con = duckdb.connect()
-    con.execute("PRAGMA memory_limit='12GB'")
-    con.execute("PRAGMA threads=4")
+    con.execute("PRAGMA memory_limit='28GB'")
+    con.execute("PRAGMA threads=8")
     con.execute("PRAGMA temp_directory='/tmp/duckdb-spill'")
+    con.execute("PRAGMA preserve_insertion_order=false")
 
     # Population size (sanity check)
     n_population = con.execute(
@@ -463,21 +474,30 @@ def sample_population(n: int) -> dict[str, Any]:
         print(f"  WARN: requested N={n:,} > population {n_population:,}; "
               "capping at population size")
 
-    # Deterministic hash-order sample. DuckDB's built-in hash() is a
-    # 64-bit hash; collisions extremely unlikely at 72M scale.
-    print(f"  sampling N={n:,} via hash-ordered nested sample...")
-    sql = f"""
+    # Pass 1: rank by hash over (id, hash) only — small projection.
+    print(f"  pass 1: hash-ranking {n_population:,} ids, taking top {n:,}...")
+    t_p1 = time.time()
+    con.execute(f"""
+        CREATE TEMP TABLE selected_ids AS
+        SELECT id
+        FROM read_parquet('{population_path}')
+        ORDER BY hash('{nesting_seed}' || id)
+        LIMIT {n};
+    """)
+    n_selected = con.execute("SELECT COUNT(*) FROM selected_ids").fetchone()[0]
+    print(f"    pass 1: {n_selected:,} ids selected in {time.time()-t_p1:.0f}s")
+
+    # Pass 2: hash-join back to full population, write Parquet.
+    print(f"  pass 2: joining {n_selected:,} ids to population, writing parquet...")
+    t_p2 = time.time()
+    con.execute(f"""
         COPY (
-            SELECT * EXCLUDE (sort_key) FROM (
-                SELECT *,
-                       hash('{nesting_seed}' || id) AS sort_key
-                FROM read_parquet('{population_path}')
-            )
-            ORDER BY sort_key
-            LIMIT {n}
+            SELECT p.*
+            FROM read_parquet('{population_path}') p
+            INNER JOIN selected_ids s ON p.id = s.id
         ) TO '{output_path}' (FORMAT PARQUET, COMPRESSION 'zstd');
-    """
-    con.execute(sql)
+    """)
+    print(f"    pass 2: written in {time.time()-t_p2:.0f}s")
 
     n_records = con.execute(
         f"SELECT COUNT(*) FROM read_parquet('{output_path}')",
@@ -494,6 +514,134 @@ def sample_population(n: int) -> dict[str, Any]:
         "output": output_path,
         "nesting_seed": nesting_seed,
         "elapsed_sec": elapsed,
+    }
+
+
+# ---------- Held-out generation (Step 9) ----------
+
+
+@app.function(
+    image=parse_image,
+    cpu=8,
+    memory=32768,  # 32 GB
+    ephemeral_disk=524_288,
+    volumes={"/output": section0_volume},
+    timeout=3600,
+)
+def generate_heldouts(
+    sample_filename: str,
+    n_per: int,
+) -> dict[str, Any]:
+    """Generate held-out sets for Stage 2 §11 cluster-fit + drift studies.
+
+    Produces 4 held-out Parquet files:
+        heldout-1975-cs.parquet
+        heldout-1975-physics.parquet
+        heldout-2020-cs.parquet
+        heldout-2020-physics.parquet
+
+    Each contains ``n_per`` papers (typically 500). Each is disjoint
+    from the sample (anti-joined on ``id``) and disjoint from the
+    other held-outs (different year × field cells; rare cross-field
+    overlap is allowed since cs+physics cross-disciplinary papers
+    can legitimately appear in both).
+
+    Field detection: ``concepts_json`` contains an array of concept
+    objects ``{id, score, ...}``; a paper is "cs" if any element has
+    ``id = "https://openalex.org/C41008148"`` AND ``score >= 0.30``.
+    Same threshold for "physics" with ``C121332964``. Mirrors §0.
+
+    Hash-ranking: sort by ``hash(HELDOUT_SEED || id)`` — different
+    seed than the sample's nesting hash so held-outs aren't
+    correlated with sample membership beyond the disjointness
+    constraint.
+    """
+    import time
+
+    import duckdb
+
+    HELDOUT_SEED = "ws2-phase-1.2-heldout-seed-v1"
+    population_path = "/output/section0-population.parquet"
+    sample_path = f"/output/{sample_filename}"
+
+    cell_specs = [
+        (1975, "cs", "https://openalex.org/C41008148"),
+        (1975, "physics", "https://openalex.org/C121332964"),
+        (2020, "cs", "https://openalex.org/C41008148"),
+        (2020, "physics", "https://openalex.org/C121332964"),
+    ]
+
+    t_total = time.time()
+    con = duckdb.connect()
+    con.execute("PRAGMA memory_limit='28GB'")
+    con.execute("PRAGMA threads=8")
+    con.execute("PRAGMA temp_directory='/tmp/duckdb-spill'")
+    con.execute("PRAGMA preserve_insertion_order=false")
+
+    # Cache the sample IDs for anti-join
+    print("  loading sample ids for anti-join...")
+    con.execute(f"""
+        CREATE TEMP TABLE sample_ids AS
+        SELECT id FROM read_parquet('{sample_path}');
+    """)
+    n_sample = con.execute("SELECT COUNT(*) FROM sample_ids").fetchone()[0]
+    print(f"    {n_sample:,} sample ids loaded")
+
+    cell_results: list[dict[str, Any]] = []
+    for year, field, concept_id in cell_specs:
+        t_cell = time.time()
+        out_filename = f"heldout-{year}-{field}.parquet"
+        out_path = f"/output/{out_filename}"
+        print(f"  cell {year}-{field}: filtering + ranking + writing...")
+
+        # Single-CTE: year filter + strict JSON field check + anti-join +
+        # hash-rank. JSON parse is only on year-filtered subset (cheap).
+        con.execute(f"""
+            COPY (
+                SELECT p.*
+                FROM read_parquet('{population_path}') p
+                WHERE p.publication_year = {year}
+                  AND NOT EXISTS (
+                      SELECT 1 FROM sample_ids s WHERE s.id = p.id
+                  )
+                  AND len(list_filter(
+                      from_json(
+                          p.concepts_json,
+                          '[{{"id": "VARCHAR", "score": "DOUBLE"}}]'
+                      ),
+                      c -> c.id = '{concept_id}' AND c.score >= 0.30
+                  )) > 0
+                ORDER BY hash('{HELDOUT_SEED}' || p.id)
+                LIMIT {n_per}
+            ) TO '{out_path}' (FORMAT PARQUET, COMPRESSION 'zstd');
+        """)
+        n_records = con.execute(
+            f"SELECT COUNT(*) FROM read_parquet('{out_path}')",
+        ).fetchone()[0]
+        cell_elapsed = time.time() - t_cell
+        cell_results.append({
+            "year": year,
+            "field": field,
+            "concept_id": concept_id,
+            "n_target": n_per,
+            "n_actual": int(n_records),
+            "filename": out_filename,
+            "output": out_path,
+            "elapsed_sec": cell_elapsed,
+        })
+        print(f"    {n_records}/{n_per} written in {cell_elapsed:.0f}s")
+
+    con.close()
+    section0_volume.commit()
+
+    return {
+        "n_per_target": n_per,
+        "heldout_seed": HELDOUT_SEED,
+        "sample_filename": sample_filename,
+        "n_sample_excluded": int(n_sample),
+        "population_path": population_path,
+        "cells": cell_results,
+        "elapsed_sec": time.time() - t_total,
     }
 
 

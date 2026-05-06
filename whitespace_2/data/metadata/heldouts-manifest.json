@@ -1,0 +1,65 @@
+{
+  "snapshot": "2026-05-06T03:47:06+00:00",
+  "n_per": 500,
+  "heldout_seed": "ws2-phase-1.2-heldout-seed-v1",
+  "sample_filename": "section0-sample-1M.parquet",
+  "n_sample_excluded": 1000000,
+  "population_path_volume": "modal://ws2-section0/section0-population.parquet",
+  "elapsed_remote_sec": 300.36453795433044,
+  "cells": [
+    {
+      "year": 1975,
+      "field": "cs",
+      "concept_id": "https://openalex.org/C41008148",
+      "n_target": 500,
+      "n_actual": 500,
+      "filename": "heldout-1975-cs.parquet",
+      "output": "/output/heldout-1975-cs.parquet",
+      "elapsed_sec": 96.84044742584229,
+      "local_path": "/Users/kartikganapathi/Documents/Personal/random_projects/originality/whitespace_2/data/metadata/heldout-1975-cs.parquet",
+      "size_kb": 420.6875,
+      "elapsed_download_sec": 1.3830938339233398
+    },
+    {
+      "year": 1975,
+      "field": "physics",
+      "concept_id": "https://openalex.org/C121332964",
+      "n_target": 500,
+      "n_actual": 500,
+      "filename": "heldout-1975-physics.parquet",
+      "output": "/output/heldout-1975-physics.parquet",
+      "elapsed_sec": 63.35237908363342,
+      "local_path": "/Users/kartikganapathi/Documents/Personal/random_projects/originality/whitespace_2/data/metadata/heldout-1975-physics.parquet",
+      "size_kb": 469.9521484375,
+      "elapsed_download_sec": 0.7220518589019775
+    },
+    {
+      "year": 2020,
+      "field": "cs",
+      "concept_id": "https://openalex.org/C41008148",
+      "n_target": 500,
+      "n_actual": 500,
+      "filename": "heldout-2020-cs.parquet",
+      "output": "/output/heldout-2020-cs.parquet",
+      "elapsed_sec": 70.87475347518921,
+      "local_path": "/Users/kartikganapathi/Documents/Personal/random_projects/originality/whitespace_2/data/metadata/heldout-2020-cs.parquet",
+      "size_kb": 634.0166015625,
+      "elapsed_download_sec": 0.6259152889251709
+    },
+    {
+      "year": 2020,
+      "field": "physics",
+      "concept_id": "https://openalex.org/C121332964",
+      "n_target": 500,
+      "n_actual": 500,
+      "filename": "heldout-2020-physics.parquet",
+      "output": "/output/heldout-2020-physics.parquet",
+      "elapsed_sec": 63.65790104866028,
+      "local_path": "/Users/kartikganapathi/Documents/Personal/random_projects/originality/whitespace_2/data/metadata/heldout-2020-physics.parquet",
+      "size_kb": 739.615234375,
+      "elapsed_download_sec": 0.8173370361328125
+    }
+  ],
+  "field_detection": "strict: concepts_json contains a concept with matching id AND score >= 0.30 (mirrors \u00a70 threshold)",
+  "ordering_hash": "duckdb_hash(HELDOUT_SEED || id) uint64; per-cell ordering"
+}
