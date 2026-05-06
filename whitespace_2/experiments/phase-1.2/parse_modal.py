@@ -47,6 +47,7 @@ parse_image = (
         "pyarrow>=15",
         "httpx>=0.27",
         "numpy>=1.24,<2",
+        "polars>=1.0",  # streaming dedup in dedup_to_population
     )
     # add_local_python_source last per Modal best-practice
     .add_local_python_source("whitespace2")
@@ -279,6 +280,79 @@ def parse_one_shard(shard_url: str) -> dict[str, Any]:
         "elapsed_sec": elapsed,
         "updated_date": updated_date,
         "yield_pct": (n_out / n_in * 100.0) if n_in > 0 else 0.0,
+    }
+
+
+# ---------- Cross-shard dedup (Phase 1.2 Step 7 follow-on) ----------
+
+
+@app.function(
+    image=parse_image,
+    cpu=8,
+    memory=32768,  # 32 GB; polars sink_parquet is streaming but
+                   # still benefits from headroom for sort buffers
+    volumes={"/output": section0_volume},
+    timeout=3600,
+)
+def dedup_to_population() -> dict[str, Any]:
+    """Concat all shard parquets + dedup by paper-id (max updated_date wins).
+
+    OpenAlex's incremental snapshot model means a paper updated
+    multiple times appears in multiple ``updated_date=YYYY-MM-DD/``
+    partitions. The "current corpus" is built by taking the latest
+    record per paper-id across all partitions.
+
+    Polars' lazy scan + sink_parquet pipeline streams through the
+    full filtered corpus (~10M records expected) without
+    materializing the full table in memory.
+
+    Output: ``/output/section0-population.parquet`` on the Volume.
+    """
+    import glob
+    import time
+
+    import polars as pl
+
+    t_start = time.time()
+
+    # Lazy scan all per-shard parquets matching the filename pattern
+    # (skips section0-population.parquet itself if it exists from
+    # a prior run).
+    shard_pattern = "/output/*_part_*.parquet"
+    shard_files = sorted(glob.glob(shard_pattern))
+    print(f"  found {len(shard_files)} shard parquets to dedup")
+
+    if not shard_files:
+        return {
+            "error": "no shard parquets found at /output",
+            "elapsed_sec": time.time() - t_start,
+        }
+
+    # Streaming dedup: scan → sort by updated_date desc → unique by id
+    # → sink. Polars handles the streaming under the hood.
+    output_path = "/output/section0-population.parquet"
+
+    lf = pl.scan_parquet(shard_pattern)
+    # Filter out empty rows defensively (shouldn't be any but
+    # belt-and-suspenders against malformed shards)
+    lf = lf.filter(pl.col("id") != "")
+    deduped = lf.sort("updated_date", descending=True).unique(
+        subset=["id"], keep="first",
+    )
+    deduped.sink_parquet(output_path, compression="zstd")
+
+    # Count after writing (sink_parquet doesn't return row count)
+    n_records = pl.scan_parquet(output_path).select(
+        pl.len(),
+    ).collect().item()
+
+    section0_volume.commit()
+    elapsed = time.time() - t_start
+    return {
+        "n_records": int(n_records),
+        "n_shards_concat": len(shard_files),
+        "output": output_path,
+        "elapsed_sec": elapsed,
     }
 
 
