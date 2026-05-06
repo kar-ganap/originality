@@ -1,0 +1,62 @@
+{
+  "n_picks": 5,
+  "pass_count": 5,
+  "fail_count": 0,
+  "results": [
+    {
+      "paper_id": "https://openalex.org/W235010030",
+      "publication_year": 1975,
+      "n_shard_appearances": 1,
+      "shard_dates": [
+        "2025-10-10T17:16:08.811Z"
+      ],
+      "max_shard_date": "2025-10-10T17:16:08.811Z",
+      "population_date": "2025-10-10T17:16:08.811Z",
+      "dedup_correct": true
+    },
+    {
+      "paper_id": "https://openalex.org/W6910573308",
+      "publication_year": 1995,
+      "n_shard_appearances": 1,
+      "shard_dates": [
+        "2025-11-06T06:51:31.235Z"
+      ],
+      "max_shard_date": "2025-11-06T06:51:31.235Z",
+      "population_date": "2025-11-06T06:51:31.235Z",
+      "dedup_correct": true
+    },
+    {
+      "paper_id": "https://openalex.org/W1879397024",
+      "publication_year": 2010,
+      "n_shard_appearances": 1,
+      "shard_dates": [
+        "2025-10-10T17:16:08.811Z"
+      ],
+      "max_shard_date": "2025-10-10T17:16:08.811Z",
+      "population_date": "2025-10-10T17:16:08.811Z",
+      "dedup_correct": true
+    },
+    {
+      "paper_id": "https://openalex.org/W4393509058",
+      "publication_year": 2020,
+      "n_shard_appearances": 1,
+      "shard_dates": [
+        "2025-11-06T06:51:31.235Z"
+      ],
+      "max_shard_date": "2025-11-06T06:51:31.235Z",
+      "population_date": "2025-11-06T06:51:31.235Z",
+      "dedup_correct": true
+    },
+    {
+      "paper_id": "https://openalex.org/W6942415085",
+      "publication_year": 2024,
+      "n_shard_appearances": 1,
+      "shard_dates": [
+        "2025-11-06T06:51:31.235Z"
+      ],
+      "max_shard_date": "2025-11-06T06:51:31.235Z",
+      "population_date": "2025-11-06T06:51:31.235Z",
+      "dedup_correct": true
+    }
+  ]
+}

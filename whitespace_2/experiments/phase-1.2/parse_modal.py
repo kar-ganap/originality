@@ -517,6 +517,73 @@ def sample_population(n: int) -> dict[str, Any]:
     }
 
 
+# ---------- Dedup correctness spot-check (retro pressure-point D) ----------
+
+
+@app.function(
+    image=parse_image,
+    cpu=4,
+    memory=16384,
+    volumes={"/output": section0_volume},
+    timeout=900,
+)
+def dedup_spot_check(ids: list[str]) -> dict[str, Any]:
+    """For a small set of paper ids, return where they appear across the
+    per-shard parquets vs the deduplicated population. Used to verify
+    the cross-shard dedup is collapsing to max(updated_date) correctly.
+
+    Returns:
+      ``shard_appearances``: list of (id, filename, updated_date) — every
+        per-shard row matching the ids.
+      ``population``: list of (id, updated_date) — the post-dedup row for
+        each id.
+
+    The local caller cross-checks: for each id, population.updated_date
+    must equal max(shard.updated_date) for that id.
+    """
+    import duckdb
+
+    con = duckdb.connect()
+    con.execute("PRAGMA memory_limit='12GB'")
+    con.execute("PRAGMA threads=4")
+    con.execute("PRAGMA temp_directory='/tmp/duckdb-spill'")
+
+    ids_str = ", ".join(f"'{i}'" for i in ids)
+
+    print(f"  scanning shards for {len(ids)} ids...")
+    shard_rows = con.execute(f"""
+        SELECT id, filename, updated_date
+        FROM read_parquet('/output/*_part_*.parquet', filename=true)
+        WHERE id IN ({ids_str})
+        ORDER BY id, updated_date
+    """).fetchall()
+    print(f"    {len(shard_rows)} shard appearances total")
+
+    print("  scanning population for the same ids...")
+    pop_rows = con.execute(f"""
+        SELECT id, updated_date
+        FROM read_parquet('/output/section0-population.parquet')
+        WHERE id IN ({ids_str})
+        ORDER BY id
+    """).fetchall()
+    print(f"    {len(pop_rows)} population rows")
+
+    con.close()
+    return {
+        "shard_appearances": [
+            {
+                "id": r[0],
+                "filename": str(r[1]).split("/")[-1] if r[1] else None,
+                "updated_date": r[2],
+            }
+            for r in shard_rows
+        ],
+        "population": [
+            {"id": r[0], "updated_date": r[1]} for r in pop_rows
+        ],
+    }
+
+
 # ---------- Held-out generation (Step 9) ----------
 
 
