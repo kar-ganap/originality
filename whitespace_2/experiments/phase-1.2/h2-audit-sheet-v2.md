@@ -2,13 +2,21 @@
 
 Generated: 100 papers from `section0-sample-1M-v2.parquet`, stratified 50 uniform + 50 pre-1990. Audit seed: `ws2-phase-1.2-h2-audit-seed-v1`.
 
-**Reviewer task:** for each paper below, check:
+## Reviewer task
 
-1. **Field**: is the paper plausibly cs or physics? (if it's primarily another field that just mentions a cs/physics term, FLAG)
-2. **Abstract**: is the reconstructed abstract real prose, not garbled / OCR slop / index artifacts?
-3. **Pre-1990 junk tokens**: for stratum=pre1990, does the abstract contain post-2000 tokens (e.g., "2024", "GPT", "COVID", "ChatGPT")? FLAG if yes.
+For each of the 100 papers below, decide whether §0 was right to include it. Write one verdict on the `**Verdict:** _____` line:
 
-Mark each paper with `OK` / `FLAG: <reason>` in the line below the abstract. Pass criterion: **0 FLAGs** out of 100.
+- **`OK`** — clearly a research paper in cs or physics with a real abstract. No further note needed.
+- **`FLAG: WRONG_FIELD`** — paper is primarily about something else (e.g., chemistry, marketing, biology) and only got tagged as cs/physics because of one or two boilerplate keywords. Add a short reason.
+- **`FLAG: BAD_ABSTRACT`** — the abstract is publisher boilerplate (citation menu, icon labels, download buttons), OCR fragments, a stub like "Abstract not available," or otherwise unusable as a representation of the paper's content.
+- **`FLAG: JUNK_YEAR`** — pre-1990 paper that contains a post-2000 token the regex missed (e.g., "ChatGPT", "blockchain", "transformer architecture"). Note the specific token.
+- **`FLAG: BORDERLINE`** — you're not sure; note why.
+
+**Three things to know going in:**
+
+1. The pass criterion of "0 FLAGs" is aspirational. We expect some FLAGs — the goal is to characterize which patterns of §0 false positives are common, not to certify perfection.
+2. Multi-field papers (e.g., a real cs paper that also has bio concepts) are **OK**. The test is whether the paper genuinely belongs in a cs/physics analytical population, not whether cs/physics is its only or primary field.
+3. If you start seeing the same FLAG pattern repeat (3+ instances of the same root cause), you can stop reviewing the rest of that pattern's likely cases and just note "pattern X seen ≥3 times; recommend filter Y." We're after kinds of error, not a complete enumeration.
 
 ---
 
