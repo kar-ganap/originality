@@ -30,7 +30,7 @@ For each of the 100 papers below, decide whether §0 was right to include it. Wr
 
 Likely the most common research design utilized by experimental consumer researchers is a very straightforward manipulation of one or more independent variables that the researcher believes will affect a dependent variable. Virtually all consumer researchers learn at one point how to describe and analyze such designs and are typically quite adept at it. For example, a researcher manipulates two independent variables between subjects and performs a two-by-two ANOVA examining their impact on a dependent variable …
 
-**Verdict:** _____
+**Verdict:** FLAG: WRONG_FIELD (seems like a statistics/marketing research paper)
 
 ---
 
@@ -42,7 +42,7 @@ Likely the most common research design utilized by experimental consumer researc
 
 > Recently it was revealed that the whole Fermi surface is fully gapped for several families of underdoped cuprates. The existence of the finite energy gap along the $d$-wave nodal lines ("nodal gap") contrasts the common understanding of the $d$-wave pairing symmetry, which challenges the present theories for the high-$T_c$ superconductors. Here we propose that the incommensurate diagonal spin-density-wave order can account for the above experimental observation. The Fermi surface and the local density of states are also studied. Our results are in good agreement with many important experiments in high-$T_c$ superconductors.
 
-**Verdict:** _____
+**Verdict:** OK
 
 ---
 
@@ -54,7 +54,7 @@ Likely the most common research design utilized by experimental consumer researc
 
 > Views Icon Views Article contents Figures & tables Video Audio Supplementary Data Peer Review Share Icon Share Twitter Facebook Reddit LinkedIn Tools Icon Tools Reprints and Permissions Cite Icon Cite Search Site Citation W. C. Gardiner, W. G. Mallard, K. Morinaga, D. L. Ripley, B. F. Walker; Heat‐Release Profiles in the High‐Temperature Oxidation of Acetylene in Shock Waves. J. Chem. Phys. 15 June 1966; 44 (12): 4653–4654. https://doi.org/10.1063/1.1726700 Download citation file: Ris (Zotero) Reference Manager EasyBib Bookends Mendeley Papers EndNote RefWorks BibTex toolbar search Search Dropdown Menu toolbar search search input Search input auto suggest filter your search All ContentAIP Publishing PortfolioThe Journal of Chemical Physics Search Advanced Search |Citation Search
 
-**Verdict:** _____
+**Verdict:** OK
 
 ---
 
@@ -66,7 +66,7 @@ Likely the most common research design utilized by experimental consumer researc
 
 > This paper reports research undertaken to design and implement a B+-tree-based keyed sequential-access method (KSAM). KSAM provides primary and secondary access, which can be based on direct or sequential processing. Primary access to a data file requires three levels of indexes: super, master, and primary indexes. Secondary access requires an additional index level: secondary indexes. The superindex and master indexes are transparent to the user and are used solely by the system.
 
-**Verdict:** _____
+**Verdict:** OK
 
 ---
 
@@ -78,7 +78,7 @@ Likely the most common research design utilized by experimental consumer researc
 
 > Obale gradova definirane su kao prijelazne zone između urbanog tkiva i vode. One se često smatraju pokretačima urbanog razvoja jer njihovo uređenje ima potencijal stvoriti novu sliku grada, privući investicije i spriječiti propadanje prostora. Ovaj rad predlaže cjelovito uređenje obale na području Grčeva, na potezu od brodogradilišta Viktor Lenac do lučice Borik. Projekt obuhvaća izgradnju suvremene obalne šetnice, uređenje plažnih prostora i formiranje žala, kao i stvaranje uvjeta za smještaj suhe marine (suhe komunalne luke) namijenjene plovilima, čime se prostor obogaćuje dodatnim sadržajima javne i rekreativne namjene. Cilj je revitalizirati sada zapušten i infrastrukturno nedovoljno razvijen dio obale, stvarajući pritom funkcionalan, siguran i krajobrazno privlačan javni prostor. Primarni naglasak stavljen je na projektiranje šetnice, dok su za ostale objekte dane okvirne dimenzije, preliminarna situacija i lokacija izgradnje. Metodološki okvir rada temelji se na primjeni suvremenih tehnologija snimanja i digitalne dokumentacije prostora. Korištenjem LiDAR-a, ručnog LiDAR-a te 3D oblaka točaka, uz primjenu SLAM HLS tehnologije, provodi se precizno trodimenzionalno mapiranje obalnog pojasa. Tako prikupljeni podaci omogućuju detaljnu analizu topografskih, infrastrukturnih i prirodnih elemenata te služe kao podloga za planiranje optimalnih rješenja.
 
-**Verdict:** _____
+**Verdict:** OK (cs is one possible field but the language is Croatian)
 
 ---
 
@@ -90,7 +90,7 @@ Likely the most common research design utilized by experimental consumer researc
 
 > Bu çalışma, on dokuzuncu yüzyılın sonlarında belirgin şekilde uluslararası sisteme eklemlenen Japonya ve Çin’in, bu tarihlerden günümüze kadar olan dönemdeki ikili ilişkilerini ve bu ilişkilerin uluslararası sistemin etkisiyle uğradığı değişimleri “Tehdit Dengesi Teorisi” bağlamında açıklamayı amaçlamaktadır. Çalışmada Japonya ve Çin ilişkilerinin tarihi, sistem düzeyinde ve sistem dönemlerine göre değerlendirilmiştir. İki ülkenin on dokuzuncu yüzyılın sonlarından günümüze kadar sırasıyla çok kutuplu, çift kutuplu ve son olarak tek kutuplu veya gevşek tek kutuplu sistemlerdeki ilişkilerinin değişimleri anlatılmış ve bu şekilde dönemsel olarak ortaya çıkan farklılıklar açıklanmaya çalışılmıştır. İki ülke arasında ortaya çıkan bu farklılıkların sebebi realist teori kapsamında Stephen Walt’un öne sürdüğü Tehdit Dengesi Teorisi ile tespit edilmeye çalışılmıştır. Çalışmada, tehdit algılarının değişiminin değerlendirilmesi ve tespiti de Tehdit Dengesi Teorisi kapsamında öne sürülen dört değerlendirme birimine göre yapılmıştır. Bu bağlamda çalışmada ilk olarak, Tehdit Dengesi Teorisi ve değerlendirme birimleri açıklanmıştır. Ardından, günümüze değin Çin-Japonya ilişkileri gözden geçirilmiş ve iki ülke arasındaki temel sorunlar açıklanmıştır. Son olarak, on dokuzuncu yüzyılın sonlarından günümüze kadar geçen sürede meydana gelen sistem değişikliklerinin iki ülke ilişkileri üzerine yansımaları dört değerlendirme birimi temelinde ve tehdit algısı bağlamında değerlendirilmiştir. Varılan sonuca göre, geleneksel rakipler olarak kendileri için birbirlerinden daha büyük tehlikeler hissettikleri dönemlerde Çin ve Japonya daha iyi ilişkilere sahip olmuşlardır. Uluslararası sistemin yapısında kaynaklı olarak kendilerine yönelmiş daha büyük tehditler görmediklerinde ise iki ülke daha sorunlu ve çatışmacı dönemler geçirme başlamışlardır.
 
-**Verdict:** _____
+**Verdict:** FLAG: WRONG_FIELD (likely some game theory too, mostly international relations/economics, also language is Turkish)
 
 ---
 
