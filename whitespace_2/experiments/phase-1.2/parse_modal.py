@@ -503,6 +503,227 @@ def filter_population_by_type() -> dict[str, Any]:
     }
 
 
+# ---------- §0 v3 amendments (Phase 1.2 H2 audit retro) ----------
+
+
+@app.function(
+    image=parse_image,
+    cpu=8,
+    memory=32768,
+    ephemeral_disk=524_288,
+    volumes={"/output": section0_volume},
+    timeout=3600,
+)
+def filter_population_v3() -> dict[str, Any]:
+    """Apply §0 v3 amendments to the v2 population.
+
+    v3 = v2 with:
+      1. Concept-score threshold 0.30 → 0.40
+      2. Abstract-token minimum 15 → 50
+      3. Abstract-prefix blacklist (publisher chrome)
+      4. Title-prefix blacklist (non-paper artifacts)
+
+    Locked patterns mirror ``whitespace2.section0_filter`` (see that
+    module for rationale). Reproduced here inline because the SQL
+    UDFs need them in-scope on the remote container.
+
+    Source: ``/output/section0-population-v2.parquet`` (38.7M rows
+    after the v2 type allow-list amendment).
+    Output: ``/output/section0-population-v3.parquet``.
+
+    Expected v3 size: ~30-32M rows (audit projected ~25-50% drop on
+    top of v2, mostly publisher-chrome ACS papers + weak-CS-score
+    papers).
+
+    Also computes per-stage independent drop counts as an
+    informational audit trail in the return dict.
+    """
+    import re
+    import time
+
+    import duckdb
+    import orjson
+
+    # Mirror section0_filter v3 constants. Keep in sync.
+    score_threshold_v3 = 0.40
+    min_tokens_v3 = 50
+    cs_id = "https://openalex.org/C41008148"
+    physics_id = "https://openalex.org/C121332964"
+    prefix_lookahead = 20
+
+    abs_prefix_re = re.compile(
+        r"^("
+        r"(?:ADVERTISEMENT\s+)?RETURN TO ISSUE"
+        r"|Views Icon Views"
+        r"|Article Metrics"
+        r"|This is the author'?s version"
+        r")",
+        re.IGNORECASE,
+    )
+    title_prefix_re = re.compile(
+        r"^("
+        r"NEW PRODUCTS\b"
+        r"|Contributors(?:\s*$|\s*[:,;.]|\s+\d)"
+        r"|Annex\s+\d+"
+        r"|Key Messages\b"
+        r"|Editorial Board\b"
+        r")",
+        re.IGNORECASE,
+    )
+
+    def _reconstruct_prefix(json_str: str | None) -> str:
+        if not json_str:
+            return ""
+        try:
+            inv = orjson.loads(json_str)
+        except Exception:
+            return ""
+        if not isinstance(inv, dict):
+            return ""
+        pos_to_word: dict[int, str] = {}
+        for word, positions in inv.items():
+            if not isinstance(positions, list):
+                continue
+            for p in positions:
+                if isinstance(p, int) and 0 <= p < prefix_lookahead:
+                    pos_to_word[p] = word
+        if not pos_to_word:
+            return ""
+        max_pos = max(pos_to_word.keys())
+        return " ".join(
+            pos_to_word.get(i, "") for i in range(max_pos + 1)
+        ).strip()
+
+    def passes_abs_prefix(json_str: str | None) -> bool:
+        prefix = _reconstruct_prefix(json_str)
+        if not prefix:
+            return True
+        return abs_prefix_re.match(prefix) is None
+
+    def passes_title_prefix(title: str | None) -> bool:
+        if not isinstance(title, str):
+            return True
+        return title_prefix_re.match(title) is None
+
+    def count_tokens(json_str: str | None) -> int:
+        if not json_str:
+            return 0
+        try:
+            inv = orjson.loads(json_str)
+        except Exception:
+            return 0
+        if not isinstance(inv, dict):
+            return 0
+        return sum(
+            len(ps) for ps in inv.values() if isinstance(ps, list)
+        )
+
+    src = "/output/section0-population-v2.parquet"
+    dst = "/output/section0-population-v3.parquet"
+
+    con = duckdb.connect()
+    con.execute("PRAGMA memory_limit='28GB'")
+    con.execute("PRAGMA threads=8")
+    con.execute("PRAGMA temp_directory='/tmp/duckdb-spill'")
+    con.execute("PRAGMA preserve_insertion_order=false")
+
+    # Register UDFs. Explicit types so DuckDB vectorizes without
+    # falling back to per-row Python introspection.
+    con.create_function(
+        "passes_abs_prefix", passes_abs_prefix,
+        [duckdb.typing.VARCHAR], duckdb.typing.BOOLEAN,
+    )
+    con.create_function(
+        "passes_title_prefix", passes_title_prefix,
+        [duckdb.typing.VARCHAR], duckdb.typing.BOOLEAN,
+    )
+    con.create_function(
+        "count_tokens", count_tokens,
+        [duckdb.typing.VARCHAR], duckdb.typing.INTEGER,
+    )
+
+    n_v2 = con.execute(
+        f"SELECT COUNT(*) FROM read_parquet('{src}')",
+    ).fetchone()[0]
+    print(f"  v2 population: {n_v2:,} records")
+
+    t_start = time.time()
+
+    # Single-pass v3 filter. The SQL is the canonical v3 spec; keep
+    # in sync with ``whitespace2.section0_filter.apply_section0_filter_v3``.
+    filter_sql = f"""
+        len(list_filter(
+            from_json(concepts_json,
+                      '[{{"id": "VARCHAR", "score": "DOUBLE"}}]'),
+            c -> (c.id = '{cs_id}' OR c.id = '{physics_id}')
+                 AND c.score >= {score_threshold_v3}
+        )) > 0
+        AND count_tokens(abstract_inverted_index_json) >= {min_tokens_v3}
+        AND passes_abs_prefix(abstract_inverted_index_json)
+        AND passes_title_prefix(title)
+    """
+
+    con.execute(f"""
+        COPY (
+            SELECT *
+            FROM read_parquet('{src}')
+            WHERE {filter_sql}
+        ) TO '{dst}' (FORMAT PARQUET, COMPRESSION 'zstd');
+    """)
+
+    n_v3 = con.execute(
+        f"SELECT COUNT(*) FROM read_parquet('{dst}')",
+    ).fetchone()[0]
+    print(f"  v3 population: {n_v3:,} records "
+          f"({100 * n_v3 / n_v2:.2f}% kept)")
+
+    # Per-stage independent drop accounting. Each stage's "passes"
+    # count is over the full v2 population (NOT cascaded). Useful
+    # for identifying which stage carries which patterns; the
+    # numbers don't sum because of overlap.
+    print("  per-stage drop accounting (independent of cascade):")
+    stage_specs = [
+        ("score_ge_0.40", f"""
+            len(list_filter(
+                from_json(concepts_json,
+                          '[{{"id": "VARCHAR", "score": "DOUBLE"}}]'),
+                c -> (c.id = '{cs_id}' OR c.id = '{physics_id}')
+                     AND c.score >= {score_threshold_v3}
+            )) > 0
+        """),
+        ("tokens_ge_50",
+         f"count_tokens(abstract_inverted_index_json) >= {min_tokens_v3}"),
+        ("abstract_prefix_ok",
+         "passes_abs_prefix(abstract_inverted_index_json)"),
+        ("title_prefix_ok", "passes_title_prefix(title)"),
+    ]
+    stage_drops: dict[str, dict[str, int]] = {}
+    for label, predicate in stage_specs:
+        n_pass = con.execute(f"""
+            SELECT COUNT(*) FROM read_parquet('{src}') WHERE {predicate}
+        """).fetchone()[0]
+        n_drop = n_v2 - n_pass
+        stage_drops[label] = {"n_passes": int(n_pass), "n_drops": int(n_drop)}
+        print(f"    {label:<22} passes {n_pass:>10,}  "
+              f"drops {n_drop:>10,} ({100 * n_drop / n_v2:.2f}%)")
+
+    con.close()
+    section0_volume.commit()
+    elapsed = time.time() - t_start
+
+    return {
+        "n_v2": int(n_v2),
+        "n_v3": int(n_v3),
+        "kept_fraction": n_v3 / n_v2 if n_v2 else 0.0,
+        "v2_path": src,
+        "v3_path": dst,
+        "score_threshold_v3": score_threshold_v3,
+        "min_tokens_v3": min_tokens_v3,
+        "stage_drops_independent": stage_drops,
+        "elapsed_sec": elapsed,
+    }
+
+
 # ---------- Server-side sampling (Step 8) ----------
 
 
