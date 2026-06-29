@@ -1,0 +1,19 @@
+Phase 1.2 v3 build — resume after sample-download hang
+
+[3/4] generate_heldouts.remote(sample=section0-sample-1M-v3.parquet, source=v3, suffix=-v3)...
+      4 cells in 146s
+        heldout-1975-cs-v3.parquet: 500/500
+        heldout-1975-physics-v3.parquet: 500/500
+        heldout-2020-cs-v3.parquet: 500/500
+        heldout-2020-physics-v3.parquet: 500/500
+
+[4/4] downloading held-out cells...
+      heldout-1975-cs-v3.parquet: 497 KB
+      heldout-1975-physics-v3.parquet: 521 KB
+      heldout-2020-cs-v3.parquet: 759 KB
+      heldout-2020-physics-v3.parquet: 817 KB
+
+Wrote /Users/kartikganapathi/Documents/Personal/random_projects/originality/whitespace_2/data/metadata/section0-sample-1M-v3-manifest.json
+Wrote /Users/kartikganapathi/Documents/Personal/random_projects/originality/whitespace_2/data/metadata/heldouts-v3-manifest.json
+
+v3 build complete. Next: run h2_audit_generate.py against the v3 sample.

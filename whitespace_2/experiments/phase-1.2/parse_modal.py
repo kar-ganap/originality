@@ -505,51 +505,36 @@ def filter_population_by_type() -> dict[str, Any]:
 
 # ---------- §0 v3 amendments (Phase 1.2 H2 audit retro) ----------
 
+#: v3 constants mirrored from ``whitespace2.section0_filter``. Kept
+#: here at module level so worker processes (forked by
+#: ProcessPoolExecutor) inherit them without re-import overhead.
+_V3_CS_ID_FULL = "https://openalex.org/C41008148"
+_V3_PHYSICS_ID_FULL = "https://openalex.org/C121332964"
+_V3_SCORE_THRESHOLD = 0.40
+_V3_MIN_TOKENS = 50
+_V3_PREFIX_LOOKAHEAD = 20
 
-@app.function(
-    image=parse_image,
-    cpu=8,
-    memory=32768,
-    ephemeral_disk=524_288,
-    volumes={"/output": section0_volume},
-    timeout=3600,
-)
-def filter_population_v3() -> dict[str, Any]:
-    """Apply §0 v3 amendments to the v2 population.
 
-    v3 = v2 with:
-      1. Concept-score threshold 0.30 → 0.40
-      2. Abstract-token minimum 15 → 50
-      3. Abstract-prefix blacklist (publisher chrome)
-      4. Title-prefix blacklist (non-paper artifacts)
+def _v3_process_row_group(
+    args: tuple[str, int, str],
+) -> dict[str, Any]:
+    """Worker for parallel ``filter_population_v3``.
 
-    Locked patterns mirror ``whitespace2.section0_filter`` (see that
-    module for rationale). Reproduced here inline because the SQL
-    UDFs need them in-scope on the remote container.
+    Reads one row group from the v2 parquet, applies v3 filters,
+    writes filtered rows to a tmp parquet, returns counters + tmp
+    path. Must be module-level (not a closure) so
+    ProcessPoolExecutor can pickle it.
 
-    Source: ``/output/section0-population-v2.parquet`` (38.7M rows
-    after the v2 type allow-list amendment).
-    Output: ``/output/section0-population-v3.parquet``.
-
-    Expected v3 size: ~30-32M rows (audit projected ~25-50% drop on
-    top of v2, mostly publisher-chrome ACS papers + weak-CS-score
-    papers).
-
-    Also computes per-stage independent drop counts as an
-    informational audit trail in the return dict.
+    Imports are inside the function so the worker has a clean
+    import namespace regardless of how the pool spawns it.
     """
     import re
-    import time
 
-    import duckdb
     import orjson
+    import pyarrow as pa
+    import pyarrow.parquet as pq
 
-    # Mirror section0_filter v3 constants. Keep in sync.
-    score_threshold_v3 = 0.40
-    min_tokens_v3 = 50
-    cs_id = "https://openalex.org/C41008148"
-    physics_id = "https://openalex.org/C121332964"
-    prefix_lookahead = 20
+    src, rg_idx, tmp_dir = args
 
     abs_prefix_re = re.compile(
         r"^("
@@ -571,145 +556,269 @@ def filter_population_v3() -> dict[str, Any]:
         re.IGNORECASE,
     )
 
-    def _reconstruct_prefix(json_str: str | None) -> str:
-        if not json_str:
-            return ""
-        try:
-            inv = orjson.loads(json_str)
-        except Exception:
-            return ""
-        if not isinstance(inv, dict):
-            return ""
-        pos_to_word: dict[int, str] = {}
-        for word, positions in inv.items():
-            if not isinstance(positions, list):
-                continue
-            for p in positions:
-                if isinstance(p, int) and 0 <= p < prefix_lookahead:
-                    pos_to_word[p] = word
-        if not pos_to_word:
-            return ""
-        max_pos = max(pos_to_word.keys())
-        return " ".join(
-            pos_to_word.get(i, "") for i in range(max_pos + 1)
-        ).strip()
+    pf = pq.ParquetFile(src)
+    rb = pf.read_row_group(rg_idx)
+    n_rows = rb.num_rows
 
-    def passes_abs_prefix(json_str: str | None) -> bool:
-        prefix = _reconstruct_prefix(json_str)
-        if not prefix:
-            return True
-        return abs_prefix_re.match(prefix) is None
+    concepts_col = rb.column("concepts_json").to_pylist()
+    inv_col = rb.column("abstract_inverted_index_json").to_pylist()
+    title_col = rb.column("title").to_pylist()
 
-    def passes_title_prefix(title: str | None) -> bool:
-        if not isinstance(title, str):
-            return True
-        return title_prefix_re.match(title) is None
+    stage_pass = {
+        "score_ge_0.40": 0,
+        "tokens_ge_50": 0,
+        "abstract_prefix_ok": 0,
+        "title_prefix_ok": 0,
+    }
+    keep_indices: list[int] = []
 
-    def count_tokens(json_str: str | None) -> int:
-        if not json_str:
-            return 0
-        try:
-            inv = orjson.loads(json_str)
-        except Exception:
-            return 0
-        if not isinstance(inv, dict):
-            return 0
-        return sum(
-            len(ps) for ps in inv.values() if isinstance(ps, list)
+    for i in range(n_rows):
+        # Concept score ≥ 0.40 on cs OR physics
+        score_ok = False
+        cj = concepts_col[i]
+        if cj:
+            try:
+                concepts = orjson.loads(cj)
+                if isinstance(concepts, list):
+                    for c in concepts:
+                        if not isinstance(c, dict):
+                            continue
+                        if c.get("id") in (
+                            _V3_CS_ID_FULL, _V3_PHYSICS_ID_FULL,
+                        ):
+                            score = c.get("score")
+                            if (
+                                isinstance(score, (int, float))
+                                and score >= _V3_SCORE_THRESHOLD
+                            ):
+                                score_ok = True
+                                break
+            except Exception:
+                pass
+        if score_ok:
+            stage_pass["score_ge_0.40"] += 1
+
+        # Token count + abstract prefix share one JSON parse
+        token_count = 0
+        prefix = ""
+        ij = inv_col[i]
+        if ij:
+            try:
+                inv = orjson.loads(ij)
+                if isinstance(inv, dict):
+                    token_count = sum(
+                        len(ps) for ps in inv.values()
+                        if isinstance(ps, list)
+                    )
+                    if inv:
+                        pos_to_word: dict[int, str] = {}
+                        for word, positions in inv.items():
+                            if not isinstance(positions, list):
+                                continue
+                            for p in positions:
+                                if (
+                                    isinstance(p, int)
+                                    and 0 <= p < _V3_PREFIX_LOOKAHEAD
+                                ):
+                                    pos_to_word[p] = word
+                        if pos_to_word:
+                            max_pos = max(pos_to_word.keys())
+                            prefix = " ".join(
+                                pos_to_word.get(k, "")
+                                for k in range(max_pos + 1)
+                            ).strip()
+            except Exception:
+                pass
+        tokens_ok = token_count >= _V3_MIN_TOKENS
+        if tokens_ok:
+            stage_pass["tokens_ge_50"] += 1
+        abs_ok = (not prefix) or (abs_prefix_re.match(prefix) is None)
+        if abs_ok:
+            stage_pass["abstract_prefix_ok"] += 1
+
+        # Title prefix
+        title = title_col[i]
+        title_ok = (
+            not isinstance(title, str)
+            or title_prefix_re.match(title) is None
         )
+        if title_ok:
+            stage_pass["title_prefix_ok"] += 1
+
+        if score_ok and tokens_ok and abs_ok and title_ok:
+            keep_indices.append(i)
+
+    out_path: str | None = None
+    if keep_indices:
+        mask = pa.array(keep_indices, type=pa.int64())
+        filtered = rb.take(mask)
+        out_path = f"{tmp_dir}/chunk_{rg_idx:04d}.parquet"
+        pq.write_table(filtered, out_path, compression="zstd")
+
+    return {
+        "rg_idx": rg_idx,
+        "n_in": n_rows,
+        "n_out": len(keep_indices),
+        "stage_pass": stage_pass,
+        "out_path": out_path,
+    }
+
+
+@app.function(
+    image=parse_image,
+    cpu=8,
+    memory=32768,
+    ephemeral_disk=524_288,
+    volumes={"/output": section0_volume},
+    timeout=3600,
+)
+def filter_population_v3() -> dict[str, Any]:
+    """Apply §0 v3 amendments to the v2 population (parallel).
+
+    v3 = v2 with:
+      1. Concept-score threshold 0.30 → 0.40
+      2. Abstract-token minimum 15 → 50
+      3. Abstract-prefix blacklist (publisher chrome)
+      4. Title-prefix blacklist (non-paper artifacts)
+
+    Locked patterns mirror ``whitespace2.section0_filter``.
+
+    Source: ``/output/section0-population-v2.parquet`` (38.7M rows).
+    Output: ``/output/section0-population-v3.parquet``.
+
+    **Implementation lessons (Phase 1.2 retro):**
+
+    1. DuckDB Python UDFs (``type='native'``) at 38M-row scale hit
+       the 1-hour timeout in our first attempt. Per-row Python/C
+       boundary overhead is the bottleneck.
+    2. PyArrow streaming with single-threaded Python (orjson + re)
+       got to ~64% in ~21 min before being cancelled. The local
+       client disconnected; root cause unclear.
+    3. This implementation parallelizes across 8 CPU cores via
+       ProcessPoolExecutor over row groups (315 rg × ~123K rows
+       each). Expected runtime ~5-10 min on 8 cores. Each worker
+       writes a per-row-group chunk; the main process streams-
+       concatenates them at the end.
+
+    Per-stage drop accounting is computed alongside the filter
+    (cheap counters in each worker) — no extra scan.
+    """
+    import concurrent.futures
+    import os
+    import shutil
+    import time
+
+    import pyarrow.parquet as pq
 
     src = "/output/section0-population-v2.parquet"
     dst = "/output/section0-population-v3.parquet"
+    tmp_dir = "/tmp/v3_chunks"
+    workers = 8
 
-    con = duckdb.connect()
-    con.execute("PRAGMA memory_limit='28GB'")
-    con.execute("PRAGMA threads=8")
-    con.execute("PRAGMA temp_directory='/tmp/duckdb-spill'")
-    con.execute("PRAGMA preserve_insertion_order=false")
+    if os.path.exists(tmp_dir):
+        shutil.rmtree(tmp_dir)
+    os.makedirs(tmp_dir, exist_ok=True)
 
-    # Register UDFs. Explicit types so DuckDB vectorizes without
-    # falling back to per-row Python introspection.
-    con.create_function(
-        "passes_abs_prefix", passes_abs_prefix,
-        [duckdb.typing.VARCHAR], duckdb.typing.BOOLEAN,
+    pf = pq.ParquetFile(src)
+    n_v2 = pf.metadata.num_rows
+    n_rg = pf.num_row_groups
+    print(
+        f"  v2 population: {n_v2:,} records ({n_rg} row groups)",
+        flush=True,
     )
-    con.create_function(
-        "passes_title_prefix", passes_title_prefix,
-        [duckdb.typing.VARCHAR], duckdb.typing.BOOLEAN,
-    )
-    con.create_function(
-        "count_tokens", count_tokens,
-        [duckdb.typing.VARCHAR], duckdb.typing.INTEGER,
-    )
-
-    n_v2 = con.execute(
-        f"SELECT COUNT(*) FROM read_parquet('{src}')",
-    ).fetchone()[0]
-    print(f"  v2 population: {n_v2:,} records")
+    print(f"  parallelism: {workers} workers (one rg at a time per worker)",
+          flush=True)
 
     t_start = time.time()
+    args_list = [(src, i, tmp_dir) for i in range(n_rg)]
 
-    # Single-pass v3 filter. The SQL is the canonical v3 spec; keep
-    # in sync with ``whitespace2.section0_filter.apply_section0_filter_v3``.
-    filter_sql = f"""
-        len(list_filter(
-            from_json(concepts_json,
-                      '[{{"id": "VARCHAR", "score": "DOUBLE"}}]'),
-            c -> (c.id = '{cs_id}' OR c.id = '{physics_id}')
-                 AND c.score >= {score_threshold_v3}
-        )) > 0
-        AND count_tokens(abstract_inverted_index_json) >= {min_tokens_v3}
-        AND passes_abs_prefix(abstract_inverted_index_json)
-        AND passes_title_prefix(title)
-    """
+    n_v3 = 0
+    stage_pass = {
+        "score_ge_0.40": 0,
+        "tokens_ge_50": 0,
+        "abstract_prefix_ok": 0,
+        "title_prefix_ok": 0,
+    }
+    chunk_paths: list[str] = []
+    completed = 0
 
-    con.execute(f"""
-        COPY (
-            SELECT *
-            FROM read_parquet('{src}')
-            WHERE {filter_sql}
-        ) TO '{dst}' (FORMAT PARQUET, COMPRESSION 'zstd');
-    """)
+    with concurrent.futures.ProcessPoolExecutor(
+        max_workers=workers,
+    ) as executor:
+        for result in executor.map(_v3_process_row_group, args_list):
+            n_v3 += result["n_out"]
+            for k, v in result["stage_pass"].items():
+                stage_pass[k] += v
+            if result["out_path"]:
+                chunk_paths.append(result["out_path"])
+            completed += 1
+            if completed % 20 == 0 or completed == n_rg:
+                elapsed = time.time() - t_start
+                avg_per_rg = elapsed / completed if completed else 0
+                eta = (n_rg - completed) * avg_per_rg
+                rate = (n_v2 * completed / n_rg) / elapsed if elapsed else 0
+                print(
+                    f"  progress: rg {completed:>3}/{n_rg} "
+                    f"kept {n_v3:>11,} "
+                    f"rate {rate/1000:.0f}K/s "
+                    f"eta {eta/60:.1f}m",
+                    flush=True,
+                )
 
-    n_v3 = con.execute(
-        f"SELECT COUNT(*) FROM read_parquet('{dst}')",
-    ).fetchone()[0]
-    print(f"  v3 population: {n_v3:,} records "
-          f"({100 * n_v3 / n_v2:.2f}% kept)")
-
-    # Per-stage independent drop accounting. Each stage's "passes"
-    # count is over the full v2 population (NOT cascaded). Useful
-    # for identifying which stage carries which patterns; the
-    # numbers don't sum because of overlap.
-    print("  per-stage drop accounting (independent of cascade):")
-    stage_specs = [
-        ("score_ge_0.40", f"""
-            len(list_filter(
-                from_json(concepts_json,
-                          '[{{"id": "VARCHAR", "score": "DOUBLE"}}]'),
-                c -> (c.id = '{cs_id}' OR c.id = '{physics_id}')
-                     AND c.score >= {score_threshold_v3}
-            )) > 0
-        """),
-        ("tokens_ge_50",
-         f"count_tokens(abstract_inverted_index_json) >= {min_tokens_v3}"),
-        ("abstract_prefix_ok",
-         "passes_abs_prefix(abstract_inverted_index_json)"),
-        ("title_prefix_ok", "passes_title_prefix(title)"),
-    ]
-    stage_drops: dict[str, dict[str, int]] = {}
-    for label, predicate in stage_specs:
-        n_pass = con.execute(f"""
-            SELECT COUNT(*) FROM read_parquet('{src}') WHERE {predicate}
-        """).fetchone()[0]
-        n_drop = n_v2 - n_pass
-        stage_drops[label] = {"n_passes": int(n_pass), "n_drops": int(n_drop)}
-        print(f"    {label:<22} passes {n_pass:>10,}  "
-              f"drops {n_drop:>10,} ({100 * n_drop / n_v2:.2f}%)")
-
-    con.close()
-    section0_volume.commit()
     elapsed = time.time() - t_start
+    print(
+        f"  filter complete: {n_v3:,} kept "
+        f"({100 * n_v3 / n_v2:.2f}% of v2) in {elapsed:.0f}s",
+        flush=True,
+    )
+
+    # Concat per-row-group chunks → final v3 parquet (streaming
+    # via ParquetWriter; no full materialization).
+    print(
+        f"  concatenating {len(chunk_paths)} chunks → "
+        f"{os.path.basename(dst)}...", flush=True,
+    )
+    t_concat = time.time()
+    chunk_paths.sort()
+    writer: pq.ParquetWriter | None = None
+    for cp in chunk_paths:
+        pf_chunk = pq.ParquetFile(cp)
+        for batch in pf_chunk.iter_batches(batch_size=50_000):
+            if writer is None:
+                writer = pq.ParquetWriter(
+                    dst, batch.schema, compression="zstd",
+                )
+            writer.write_batch(batch)
+    if writer is not None:
+        writer.close()
+    print(f"  concat done in {time.time() - t_concat:.0f}s", flush=True)
+
+    # Cleanup tmp chunks
+    for cp in chunk_paths:
+        try:
+            os.remove(cp)
+        except OSError:
+            pass
+    try:
+        os.rmdir(tmp_dir)
+    except OSError:
+        pass
+
+    # Per-stage drop accounting
+    print("  per-stage drop accounting (independent of cascade):")
+    stage_drops: dict[str, dict[str, int]] = {}
+    for label, n_pass in stage_pass.items():
+        n_drop = n_v2 - n_pass
+        stage_drops[label] = {
+            "n_passes": int(n_pass), "n_drops": int(n_drop),
+        }
+        print(
+            f"    {label:<22} passes {n_pass:>10,}  "
+            f"drops {n_drop:>10,} ({100 * n_drop / n_v2:.2f}%)",
+            flush=True,
+        )
+
+    section0_volume.commit()
 
     return {
         "n_v2": int(n_v2),
@@ -717,8 +826,8 @@ def filter_population_v3() -> dict[str, Any]:
         "kept_fraction": n_v3 / n_v2 if n_v2 else 0.0,
         "v2_path": src,
         "v3_path": dst,
-        "score_threshold_v3": score_threshold_v3,
-        "min_tokens_v3": min_tokens_v3,
+        "score_threshold_v3": _V3_SCORE_THRESHOLD,
+        "min_tokens_v3": _V3_MIN_TOKENS,
         "stage_drops_independent": stage_drops,
         "elapsed_sec": elapsed,
     }
