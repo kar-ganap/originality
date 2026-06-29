@@ -199,13 +199,130 @@ def passes_junk_year_filter(
     return True
 
 
+# ---------- §0 v3 amendments (Phase 1.2 H2 audit retro) ----------
+
+#: Stronger concept-score threshold for v3 (was 0.30 in v2). The
+#: H2 audit found ~10-15% of v2 sample had a CS/physics concept at
+#: 0.30-0.39 but was actually in a different field — concept-tagger
+#: noise firing on incidental keywords. Raising to 0.40 eliminates
+#: most of this with a mild temporal bias toward better-indexed
+#: (modern) papers.
+SCORE_THRESHOLD_V3: float = 0.40
+
+#: Stronger abstract-token min for v3 (was 15). Catches publication-
+#: status placeholders ("This is the author's version of..."),
+#: bibliography stubs, and "Abstract not available" boilerplate that
+#: cleared the 15-token threshold. Mild pre-1990 bias (older
+#: abstracts are shorter on average); pre-1990 is already its own
+#: stratum so the effect is tractable.
+EMPTY_ABSTRACT_MIN_TOKENS_V3: int = 50
+
+#: Abstract-prefix blacklist (v3). Captures publisher chrome that
+#: OpenAlex put in the abstract field instead of the paper's actual
+#: abstract. Audit found 12-13 of 100 sampled papers (~28% of FLAGs)
+#: matched these patterns. Sub-patterns:
+#:  - ``ADVERTISEMENT RETURN TO ISSUE`` / ``RETURN TO ISSUE`` →
+#:    ACS Publications template (J. Am. Chem. Soc., Anal. Chem.,
+#:    Chem. Eng. News).
+#:  - ``Views Icon Views`` → Wiley / OUP / Portland Press / AIP
+#:    template (Biochem J, Current History, J. Chem. Phys.).
+#:  - ``Article Metrics`` → metric-stub-only abstracts.
+#:  - ``This is the author's version`` → publication-status
+#:    placeholders where the abstract field was never populated
+#:    (the underlying paper may be real research).
+ABSTRACT_PREFIX_BLACKLIST_PATTERN: re.Pattern[str] = re.compile(
+    r"^("
+    r"(?:ADVERTISEMENT\s+)?RETURN TO ISSUE"
+    r"|Views Icon Views"
+    r"|Article Metrics"
+    r"|This is the author'?s version"
+    r")",
+    re.IGNORECASE,
+)
+
+#: Title-prefix blacklist (v3). Captures non-paper artifacts where the
+#: OpenAlex ``type`` field is ``article`` but the work is front-matter,
+#: a news brief, or a procedural document.
+#:  - ``NEW PRODUCTS`` → C&EN-style product announcements.
+#:  - ``Contributors`` (alone, with terminal punctuation, or with year/
+#:    issue suffix) → magazine contributor bio sections. NOT a real
+#:    paper title like "Contributors to Variance..." (those have a
+#:    preposition next; we require Contributors to terminate, be
+#:    followed by `:` `,` `;` `.`, or be followed by a digit/year).
+#:  - ``Annex \d+`` → CoARA-style working-group annex documents.
+#:  - ``Key Messages`` → OECD-style policy briefs.
+#:  - ``Editorial Board`` → editorial-board listings.
+TITLE_PREFIX_BLACKLIST_PATTERN: re.Pattern[str] = re.compile(
+    r"^("
+    r"NEW PRODUCTS\b"
+    r"|Contributors(?:\s*$|\s*[:,;.]|\s+\d)"
+    r"|Annex\s+\d+"
+    r"|Key Messages\b"
+    r"|Editorial Board\b"
+    r")",
+    re.IGNORECASE,
+)
+
+#: Number of leading word-positions reconstructed when checking the
+#: abstract prefix. 20 is comfortably more than the longest blacklist
+#: pattern (~5 words).
+ABSTRACT_PREFIX_LOOKAHEAD: int = 20
+
+
+def _reconstruct_abstract_prefix(
+    inv: Any, n_positions: int = ABSTRACT_PREFIX_LOOKAHEAD,
+) -> str:
+    """Reconstruct the first ``n_positions`` words of the abstract.
+
+    Walks the inverted index, finds which word lies at each position
+    0..n_positions-1, joins them with single spaces. Gaps (positions
+    with no word) are skipped silently — OpenAlex sometimes has them.
+    """
+    if not isinstance(inv, dict) or not inv:
+        return ""
+    pos_to_word: dict[int, str] = {}
+    for word, positions in inv.items():
+        if not isinstance(positions, list):
+            continue
+        for p in positions:
+            if isinstance(p, int) and 0 <= p < n_positions:
+                pos_to_word[p] = word
+    if not pos_to_word:
+        return ""
+    max_pos = max(pos_to_word.keys())
+    return " ".join(pos_to_word.get(i, "") for i in range(max_pos + 1)).strip()
+
+
+def passes_abstract_prefix_filter(
+    work: dict[str, Any],
+    pattern: re.Pattern[str] = ABSTRACT_PREFIX_BLACKLIST_PATTERN,
+) -> bool:
+    """True iff the abstract prefix does NOT match the blacklist."""
+    inv = work.get("abstract_inverted_index")
+    prefix = _reconstruct_abstract_prefix(inv)
+    if not prefix:
+        return True  # no prefix to test — let other filters handle
+    return pattern.match(prefix) is None
+
+
+def passes_title_prefix_filter(
+    work: dict[str, Any],
+    pattern: re.Pattern[str] = TITLE_PREFIX_BLACKLIST_PATTERN,
+) -> bool:
+    """True iff the title does NOT start with a blacklisted prefix."""
+    title = work.get("title")
+    if not isinstance(title, str):
+        return True  # missing / non-string title → let other filters handle
+    return pattern.match(title) is None
+
+
 # ---------- pipeline ----------
 
 
 def apply_section0_filter(
     works: Iterable[dict[str, Any]],
 ) -> Iterator[dict[str, Any]]:
-    """Yield works that pass all four §0 filter stages.
+    """Yield works that pass all five v2 §0 filter stages.
 
     Lazy iterator: critical at production scale (492M-record bulk
     dump streams through; materializing the full corpus would OOM).
@@ -223,5 +340,40 @@ def apply_section0_filter(
         if not passes_empty_abstract_filter(w):
             continue
         if not passes_type_filter(w):
+            continue
+        yield w
+
+
+def apply_section0_filter_v3(
+    works: Iterable[dict[str, Any]],
+) -> Iterator[dict[str, Any]]:
+    """Yield works that pass all §0 v3 filter stages.
+
+    v3 = v2 with two thresholds raised + two prefix filters added:
+      - Concept-score threshold 0.30 → 0.40
+      - Abstract token min 15 → 50
+      - Abstract-prefix blacklist (publisher chrome)
+      - Title-prefix blacklist (non-paper artifacts)
+      - Junk-year regex and type allow-list unchanged
+
+    v3 is a strict superset of v2 filters; anything v3 yields, v2
+    would also yield. The reverse is not true.
+    """
+    for w in works:
+        if not passes_score_any_field(w, threshold=SCORE_THRESHOLD_V3):
+            continue
+        if not has_abstract(w):
+            continue
+        if not passes_junk_year_filter(w):
+            continue
+        if not passes_empty_abstract_filter(
+            w, min_tokens=EMPTY_ABSTRACT_MIN_TOKENS_V3,
+        ):
+            continue
+        if not passes_type_filter(w):
+            continue
+        if not passes_abstract_prefix_filter(w):
+            continue
+        if not passes_title_prefix_filter(w):
             continue
         yield w

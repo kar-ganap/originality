@@ -22,13 +22,20 @@ from __future__ import annotations
 from typing import Any
 
 from whitespace2.section0_filter import (
+    ABSTRACT_PREFIX_BLACKLIST_PATTERN,
     ALLOWED_WORK_TYPES,
+    EMPTY_ABSTRACT_MIN_TOKENS_V3,
+    SCORE_THRESHOLD_V3,
+    TITLE_PREFIX_BLACKLIST_PATTERN,
     abstract_token_count,
     apply_section0_filter,
+    apply_section0_filter_v3,
     has_abstract,
+    passes_abstract_prefix_filter,
     passes_empty_abstract_filter,
     passes_junk_year_filter,
     passes_score_any_field,
+    passes_title_prefix_filter,
     passes_type_filter,
 )
 
@@ -404,3 +411,280 @@ def test_full_pipeline_drops_dataset_even_when_other_fields_valid() -> None:
     kept = list(apply_section0_filter([gbif_like, legit_article]))
     assert len(kept) == 1
     assert kept[0]["type"] == "article"
+
+
+# ---------- §0 v3 amendments (Phase 1.2 H2 audit retro) ----------
+
+
+def _make_inv_from_text(text: str) -> dict[str, list[int]]:
+    """Build an inverted index from a space-separated text string.
+
+    Used in v3 tests so the prefix-blacklist patterns are easy to
+    write out as natural English rather than as raw position maps.
+    """
+    inv: dict[str, list[int]] = {}
+    for i, word in enumerate(text.split()):
+        inv.setdefault(word, []).append(i)
+    return inv
+
+
+def test_abstract_prefix_blocks_acs_advertisement_chrome() -> None:
+    """ACS Publications "ADVERTISEMENT RETURN TO ISSUE..." abstracts blocked."""
+    acs_chrome = _make_work(
+        inv=_make_inv_from_text(
+            "ADVERTISEMENT RETURN TO ISSUE PREV Article NEXT Some Chemistry Paper "
+            "with normal-looking words after the publisher chrome prefix"
+        ),
+    )
+    assert not passes_abstract_prefix_filter(acs_chrome)
+
+    cen_news = _make_work(
+        inv=_make_inv_from_text(
+            "RETURN TO ISSUE PREV News NEXT GOVERNMENT Russia's Big Bomb "
+            "Soviet explodes megaton nuclear weapon"
+        ),
+    )
+    assert not passes_abstract_prefix_filter(cen_news)
+
+
+def test_abstract_prefix_blocks_wiley_oup_aip_views_icon_chrome() -> None:
+    """Wiley / OUP / AIP "Views Icon Views..." chrome blocked."""
+    wiley_chrome = _make_work(
+        inv=_make_inv_from_text(
+            "Views Icon Views Article contents Figures and tables Video Audio "
+            "Supplementary Data Peer Review Share Icon Share"
+        ),
+    )
+    assert not passes_abstract_prefix_filter(wiley_chrome)
+
+
+def test_abstract_prefix_blocks_article_metrics_stubs() -> None:
+    """Article Metrics chrome blocked."""
+    metrics_stub = _make_work(
+        inv=_make_inv_from_text(
+            "Article MetricsDownloadsCitationsNo data available "
+            "AugSepOctNovDecJan Total months"
+        ),
+    )
+    assert not passes_abstract_prefix_filter(metrics_stub)
+
+
+def test_abstract_prefix_blocks_author_version_placeholders() -> None:
+    """Publication-status placeholders ("This is the author's version...") blocked."""
+    author_version = _make_work(
+        inv=_make_inv_from_text(
+            "This is the author's version of a work that was accepted for "
+            "publication in Neurocomputing"
+        ),
+    )
+    assert not passes_abstract_prefix_filter(author_version)
+
+
+def test_abstract_prefix_passes_real_abstracts() -> None:
+    """Real research abstracts pass the prefix filter."""
+    real_paper = _make_work(
+        inv=_make_inv_from_text(
+            "We present a novel algorithm for computing the convex hull "
+            "of n points in three dimensions with optimal time complexity"
+        ),
+    )
+    assert passes_abstract_prefix_filter(real_paper)
+
+
+def test_abstract_prefix_case_insensitive() -> None:
+    """Prefix match is case-insensitive."""
+    # mixed-case "ReTuRn To IsSuE" should still match
+    weird_case = _make_work(
+        inv=_make_inv_from_text(
+            "ReTuRn To IsSuE PREV some other content here"
+        ),
+    )
+    assert not passes_abstract_prefix_filter(weird_case)
+
+
+def test_abstract_prefix_handles_missing_or_empty() -> None:
+    """No abstract / empty abstract / non-dict inv → pass (other filters catch)."""
+    no_inv = _make_work()
+    no_inv["abstract_inverted_index"] = None
+    assert passes_abstract_prefix_filter(no_inv)
+
+    empty_inv = _make_work(inv={})
+    assert passes_abstract_prefix_filter(empty_inv)
+
+
+def test_title_prefix_blocks_known_artifact_titles() -> None:
+    """Front-matter / news-brief / annex titles blocked."""
+    assert not passes_title_prefix_filter(_make_work(title="NEW PRODUCTS"))
+    assert not passes_title_prefix_filter(_make_work(title="Contributors"))
+    assert not passes_title_prefix_filter(_make_work(title="Contributors:"))
+    assert not passes_title_prefix_filter(
+        _make_work(title="Contributors 2024"),
+    )
+    assert not passes_title_prefix_filter(
+        _make_work(title="Annex 3 Communication and Data Management Guidelines"),
+    )
+    assert not passes_title_prefix_filter(_make_work(title="Key Messages"))
+    assert not passes_title_prefix_filter(_make_work(title="Editorial Board 2024"))
+
+
+def test_title_prefix_passes_real_titles_starting_with_blacklist_words() -> None:
+    """Real paper titles starting with blacklist words but in real-paper
+    contexts pass — i.e., the regex is precise enough.
+    """
+    # "Annex Effects in..." — "Annex" without a number → not the
+    # blacklisted "Annex 3" pattern
+    assert passes_title_prefix_filter(
+        _make_work(title="Annex Effects in Quantum Hall Systems"),
+    )
+    # "Contributors to Variance..." — "Contributors" followed by " to "
+    # (preposition + alphabetic continuation) → not the blacklisted
+    # form (which requires terminal punct, end-of-string, or digit
+    # suffix)
+    assert passes_title_prefix_filter(
+        _make_work(title="Contributors to Variance in fMRI BOLD Signal"),
+    )
+
+
+def test_title_prefix_handles_missing_title() -> None:
+    """Missing / None / non-string title → pass."""
+    w = _make_work()
+    del w["title"]
+    assert passes_title_prefix_filter(w)
+
+    w_none = _make_work()
+    w_none["title"] = None
+    assert passes_title_prefix_filter(w_none)
+
+    w_non_string = _make_work()
+    w_non_string["title"] = 42
+    assert passes_title_prefix_filter(w_non_string)
+
+
+def test_score_threshold_v3_is_higher_than_v2() -> None:
+    """v3 score threshold (0.40) excludes papers v2 (0.30) admits."""
+    boundary_paper = _make_work(
+        concepts=[{"id": "https://openalex.org/C41008148", "score": 0.35}],
+    )
+    # v2: passes (0.35 >= 0.30)
+    assert passes_score_any_field(boundary_paper)
+    # v3: fails (0.35 < 0.40)
+    assert not passes_score_any_field(
+        boundary_paper, threshold=SCORE_THRESHOLD_V3,
+    )
+
+
+def test_min_tokens_v3_is_higher_than_v2() -> None:
+    """v3 token min (50) rejects abstracts v2 (15) admits."""
+    short_paper = _make_work(
+        inv={f"word{i}": [i] for i in range(30)},  # 30 tokens
+    )
+    # v2: passes (30 >= 15)
+    assert passes_empty_abstract_filter(short_paper)
+    # v3: fails (30 < 50)
+    assert not passes_empty_abstract_filter(
+        short_paper, min_tokens=EMPTY_ABSTRACT_MIN_TOKENS_V3,
+    )
+
+
+def test_v3_pipeline_drops_publisher_chrome_paper() -> None:
+    """v3 drops an ACS chrome paper that v2 would have kept.
+
+    The underlying paper might be real chemistry research, but the
+    abstract field is unusable for downstream embeddings.
+    """
+    # An ACS-chrome paper with otherwise valid §0 fields
+    acs_paper = _make_work(
+        work_type="article",
+        concepts=[{"id": "https://openalex.org/C41008148", "score": 0.55}],
+        inv=_make_inv_from_text(
+            "ADVERTISEMENT RETURN TO ISSUE PREV Article NEXT Aliphatic semidiones "
+            "XXIV Bicyclo n.2.0 alkane semidiones Glen Russell Philip Whittle "
+            "Cite this J. Am. Chem. Soc. publication date October citation "
+            "downloads icon altmetric attention score view page"
+        ),
+    )
+    # v2 keeps it (passes type + score + token min + has_abstract +
+    # junk_year)
+    v2_kept = list(apply_section0_filter([acs_paper]))
+    assert len(v2_kept) == 1
+    # v3 drops it (prefix blacklist)
+    v3_kept = list(apply_section0_filter_v3([acs_paper]))
+    assert len(v3_kept) == 0
+
+
+def test_v3_pipeline_drops_low_confidence_concept_paper() -> None:
+    """v3 drops a paper with CS concept only at 0.30-0.39 (concept-tagger noise)."""
+    weak_cs_paper = _make_work(
+        work_type="article",
+        concepts=[{"id": "https://openalex.org/C41008148", "score": 0.34}],
+        inv=_make_inv_from_text(" ".join(f"word{i}" for i in range(60))),
+    )
+    # v2 keeps it (passes 0.30 threshold)
+    assert len(list(apply_section0_filter([weak_cs_paper]))) == 1
+    # v3 drops it (fails 0.40 threshold)
+    assert len(list(apply_section0_filter_v3([weak_cs_paper]))) == 0
+
+
+def test_v3_pipeline_keeps_legitimate_paper() -> None:
+    """A real CS paper with strong concept score + long real abstract → v3 keeps."""
+    real_paper = _make_work(
+        work_type="article",
+        concepts=[{"id": "https://openalex.org/C41008148", "score": 0.85}],
+        inv=_make_inv_from_text(
+            "We present a novel algorithm for solving the maximum bipartite "
+            "matching problem in O(V sqrt E) time with applications to "
+            "scheduling network flow and pattern recognition tasks in modern "
+            "distributed systems. The algorithm extends the Hopcroft-Karp "
+            "approach with a novel pruning heuristic that reduces the constant "
+            "factor by approximately 30 percent on dense instances. We prove "
+            "correctness via reduction to alternating-path arguments and "
+            "demonstrate empirical speedups on standard benchmarks."
+        ),
+    )
+    kept = list(apply_section0_filter_v3([real_paper]))
+    assert len(kept) == 1
+
+
+def test_v3_pipeline_drops_short_abstract_paper() -> None:
+    """v3 drops a paper with 15-49 token abstract (v2 would keep)."""
+    short_paper = _make_work(
+        work_type="article",
+        concepts=[{"id": "https://openalex.org/C41008148", "score": 0.85}],
+        inv={f"word{i}": [i] for i in range(20)},  # 20 tokens (v2 OK, v3 NO)
+    )
+    assert len(list(apply_section0_filter([short_paper]))) == 1
+    assert len(list(apply_section0_filter_v3([short_paper]))) == 0
+
+
+def test_v3_pipeline_drops_title_artifact_paper() -> None:
+    """v3 drops a paper with blacklisted title prefix (v2 would keep)."""
+    artifact = _make_work(
+        work_type="article",
+        title="Annex 3 Communication and Data Management Guidelines for CoARA WGs",
+        concepts=[{"id": "https://openalex.org/C41008148", "score": 0.85}],
+        inv=_make_inv_from_text(" ".join(f"word{i}" for i in range(60))),
+    )
+    assert len(list(apply_section0_filter([artifact]))) == 1
+    assert len(list(apply_section0_filter_v3([artifact]))) == 0
+
+
+def test_apply_section0_filter_v3_is_a_generator() -> None:
+    """v3 pipeline is lazy (production-scale streaming compat)."""
+    works = [
+        _make_work(
+            concepts=[{"id": "https://openalex.org/C41008148", "score": 0.85}],
+            inv=_make_inv_from_text(" ".join(f"word{i}" for i in range(60))),
+        )
+        for _ in range(3)
+    ]
+    result = apply_section0_filter_v3(works)
+    assert hasattr(result, "__iter__")
+    assert len(list(result)) == 3
+
+
+def test_v3_prefix_patterns_module_level() -> None:
+    """Sanity check that the module-level pattern constants are exposed."""
+    assert ABSTRACT_PREFIX_BLACKLIST_PATTERN.match("RETURN TO ISSUE PREV Article")
+    assert ABSTRACT_PREFIX_BLACKLIST_PATTERN.match("Views Icon Views Article contents")
+    assert TITLE_PREFIX_BLACKLIST_PATTERN.match("NEW PRODUCTS")
+    assert TITLE_PREFIX_BLACKLIST_PATTERN.match("Editorial Board 2024")
