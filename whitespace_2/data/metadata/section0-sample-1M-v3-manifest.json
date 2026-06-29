@@ -1,0 +1,42 @@
+{
+  "snapshot": "2026-06-29T17:53:16+00:00",
+  "version": "v3",
+  "v3_amendments": [
+    "concept-score 0.30 \u2192 0.40",
+    "abstract-token-min 15 \u2192 50",
+    "abstract-prefix blacklist (publisher chrome)",
+    "title-prefix blacklist (non-paper artifacts)"
+  ],
+  "sample_n_target": 1000000,
+  "sample_n_actual": 1000000,
+  "n_label": "1M",
+  "population_path_volume": "modal://ws2-section0/section0-population-v3.parquet",
+  "population_n_v2": 38697769,
+  "population_n_v3": 24492279,
+  "kept_fraction_v2_to_v3": 0.6329119128288765,
+  "score_threshold_v3": 0.4,
+  "min_tokens_v3": 50,
+  "stage_drops_independent": {
+    "score_ge_0.40": {
+      "n_passes": 27319136,
+      "n_drops": 11378633
+    },
+    "tokens_ge_50": {
+      "n_passes": 34310592,
+      "n_drops": 4387177
+    },
+    "abstract_prefix_ok": {
+      "n_passes": 38202515,
+      "n_drops": 495254
+    },
+    "title_prefix_ok": {
+      "n_passes": 38692362,
+      "n_drops": 5407
+    }
+  },
+  "nesting_seed": "ws2-phase-1.2-nesting-seed-v1",
+  "ordering_hash": "duckdb_hash(seed||paper_id) uint64",
+  "sample_path_volume": "/output/section0-sample-1M-v3.parquet",
+  "sample_path_local": "/Users/kartikganapathi/Documents/Personal/random_projects/originality/whitespace_2/data/metadata/section0-sample-1M-v3.parquet",
+  "sample_size_mb": 310.378496
+}

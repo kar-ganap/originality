@@ -1,0 +1,16 @@
+{
+  "snapshot": "2026-05-06T03:22:26+00:00",
+  "sample_n_target": 1000000,
+  "sample_n_actual": 1000000,
+  "n_label": "1M",
+  "population_n": 72173308,
+  "population_path_volume": "modal://ws2-section0/section0-population.parquet",
+  "nesting_seed": "ws2-phase-1.2-nesting-seed-v1",
+  "ordering_hash": "duckdb_hash(seed||paper_id) uint64",
+  "sample_path_volume": "/output/section0-sample-1M.parquet",
+  "sample_path_local": "/Users/kartikganapathi/Documents/Personal/random_projects/originality/whitespace_2/data/metadata/section0-sample-1M.parquet",
+  "sample_size_mb": 817.008112,
+  "elapsed_remote_sec": 125.09974408149719,
+  "elapsed_download_sec": 42.42790102958679,
+  "nesting_property": "sample(M) \u2282 sample(N) for any M \u2264 N drawn with the same nesting_seed; embeddings of sample(M) reusable when escalating to sample(N)"
+}

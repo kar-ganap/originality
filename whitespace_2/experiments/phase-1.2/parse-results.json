@@ -1,0 +1,16 @@
+{
+  "snapshot": "2026-05-06T02:45:52+00:00",
+  "manifest_path": "experiments/phase-1.2/openalex-works-manifest.json",
+  "n_shards_total": 2127,
+  "n_shards_done_at_start": 2127,
+  "n_shards_dispatched": 0,
+  "dedup_result": {
+    "n_records": 72173308,
+    "n_winners": 72173308,
+    "n_shards_concat": 2127,
+    "output": "/output/section0-population.parquet",
+    "elapsed_sec": 1275.030957698822
+  },
+  "population_parquet_local": "data/metadata/section0-population.parquet",
+  "population_size_mb": 54818.176119
+}

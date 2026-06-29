@@ -1,0 +1,126 @@
+{
+  "snapshot": "2026-05-06T07:51:30+00:00",
+  "version": "v2",
+  "v2_amendment": "type allow-list (Phase 1.2 retro)",
+  "sample_n_target": 1000000,
+  "sample_n_actual": 1000000,
+  "n_label": "1M",
+  "population_path_volume": "modal://ws2-section0/section0-population-v2.parquet",
+  "population_n_v1": 72173308,
+  "population_n_v2": 38697769,
+  "kept_fraction": 0.5361784026859348,
+  "allowed_types": [
+    "article",
+    "preprint",
+    "review",
+    "book-chapter",
+    "dissertation",
+    "book",
+    "letter",
+    "editorial",
+    "report"
+  ],
+  "type_distribution_v1": [
+    [
+      "article",
+      31218229
+    ],
+    [
+      "dataset",
+      28888342
+    ],
+    [
+      "other",
+      3969564
+    ],
+    [
+      "preprint",
+      3145421
+    ],
+    [
+      "dissertation",
+      2097727
+    ],
+    [
+      "book-chapter",
+      1215085
+    ],
+    [
+      "book",
+      382775
+    ],
+    [
+      "report",
+      305075
+    ],
+    [
+      "paratext",
+      292679
+    ],
+    [
+      "review",
+      255485
+    ],
+    [
+      "libguides",
+      140876
+    ],
+    [
+      "peer-review",
+      83415
+    ],
+    [
+      "standard",
+      46183
+    ],
+    [
+      "letter",
+      41973
+    ],
+    [
+      "editorial",
+      35999
+    ],
+    [
+      "erratum",
+      27727
+    ],
+    [
+      "reference-entry",
+      18139
+    ],
+    [
+      "software",
+      4782
+    ],
+    [
+      "supplementary-materials",
+      3012
+    ],
+    [
+      "retraction",
+      519
+    ],
+    [
+      "database",
+      208
+    ],
+    [
+      "book-section",
+      39
+    ],
+    [
+      "grant",
+      33
+    ],
+    [
+      "report-component",
+      21
+    ]
+  ],
+  "nesting_seed": "ws2-phase-1.2-nesting-seed-v1",
+  "ordering_hash": "duckdb_hash(seed||paper_id) uint64",
+  "sample_path_volume": "/output/section0-sample-1M-v2.parquet",
+  "sample_path_local": "/Users/kartikganapathi/Documents/Personal/random_projects/originality/whitespace_2/data/metadata/section0-sample-1M-v2.parquet",
+  "sample_size_mb": 1239.36642
+}
