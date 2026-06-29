@@ -281,3 +281,126 @@ not with a pre-emptive filter.
    robustness check, per the program's "Multiple metrics per
    experiment" ground rule (applied here to multiple corpus
    definitions).
+
+## 7. v3 build results + spot-check audit (2026-06-29)
+
+### 7.a v3 build
+
+Implemented per §3: regex prefix blacklist + abstract-token-min
+15→50 + concept-score 0.30→0.40 + title-prefix heuristic.
+
+**v2 → v3: 38,697,769 → 24,492,279 (63.29% kept).**
+
+Per-stage independent drop accounting (each stage measured over
+the full v2 population; numbers don't sum due to overlap):
+
+| Stage | Drops | % of v2 |
+|---|---|---|
+| `score_ge_0.40` | 11,378,633 | **29.40%** ← dominant |
+| `tokens_ge_50` | 4,387,177 | 11.34% |
+| `abstract_prefix_ok` | 495,254 | 1.28% |
+| `title_prefix_ok` | 5,407 | 0.01% |
+
+The concept-score raise (0.30→0.40) carries nearly all the cleanup.
+The publisher-chrome regex caught **~500K papers** (small as % of
+v2, but a meaningful absolute reduction of low-signal abstracts).
+The title-prefix heuristic was tightly targeted, catching ~5,400
+non-paper artifacts (NEW PRODUCTS, Contributors, Annex N, etc.).
+
+### 7.b v3 spot-check audit (30 papers)
+
+Same audit seed as v2 (`ws2-phase-1.2-h2-audit-seed-v1`) so the
+papers are directly comparable: the v3 sheet's papers 1-15 and
+86-100 were reviewed (uniform-stratum head + pre-1990-stratum tail).
+
+| Verdict | Count | % |
+|---|---|---|
+| **OK** | 17 | 57% |
+| `FLAG: WRONG_FIELD` | 6 | 20% |
+| `FLAG: BAD_ABSTRACT` | 0 | 0% |
+| `FLAG: BORDERLINE` | 7 | 23% |
+| `FLAG: JUNK_YEAR` | 0 | 0% |
+
+**Hard FLAG rate: 20%** (95% CI roughly [8%, 39%] at n=30).
+**JUNK_YEAR: still 0** (now confirmed across both audit rounds:
+v2 100 + v3 30 = 130 papers, 0 JUNK_YEAR).
+
+### 7.c v2 → v3 comparison
+
+| Metric | v2 (100 papers) | v3 (30 papers) | Δ |
+|---|---|---|---|
+| OK | 42% | 57% | **+15pp** |
+| Hard FLAG | 44% | 20% | **−24pp** |
+| BAD_ABSTRACT | 3% | 0% | −3pp |
+| BORDERLINE | 14% | 23% | +9pp |
+| JUNK_YEAR | 0% | 0% | — |
+
+**v3 hit the §3 target (hard FLAG ≤20%) at the upper bound.**
+
+### 7.d What the v3 residual looks like
+
+The cleanup left genuinely harder patterns:
+
+1. **EE/CS boundary papers** — 3 of 7 v3 BORDERLINEs are
+   electrical-engineering papers (signal processing, cellular
+   networks, circuit design) that share concepts/methods with CS.
+   This boundary is fundamentally fuzzy and cannot be filtered
+   without nicking real theoretical CS.
+2. **Non-English social-science** — 2-3 papers persisted
+   (Turkish IR, Ukrainian econ, pharma chemometrics). The
+   concept-score raise eliminated some but not all; these have
+   CS concepts at 0.40+ via incidental keywords.
+3. **Inaccessible-link borderline** — 1 paper marked BORDERLINE
+   because the OpenAlex link was broken; cannot be filtered
+   programmatically.
+4. **One self-reported rubric inconsistency** — the Croatian
+   urban-planning paper used as the "OK example" in §3 of this
+   doc was flipped to WRONG_FIELD in the v3 audit. The reviewer
+   noted they applied a stricter standard on the second pass.
+   Implication: v3's measured 20% hard FLAG is probably a slight
+   over-estimate vs the v2-rubric standard. By the v2 standard,
+   v3 hard FLAG is likely closer to ~15%.
+
+### 7.e Decision
+
+**Lock v3 as the analytical population for Phase 1.2.** Three
+reasons:
+
+1. Hard-FLAG rate is at the §3 target; further amendments
+   (e.g., filtering EE, language filtering) would carry larger
+   bias risk than the marginal improvement justifies.
+2. The big methodological wins are now visible across two audits:
+   JUNK_YEAR confirmed 0/130; publisher chrome filtered; concept-
+   tagger noise sharply reduced.
+3. Residual FLAGs are pattern types (field-boundary ambiguity,
+   non-English social-science with strong CS concept tags) that
+   are fundamentally hard to filter without selection bias.
+   Accepting ~15-20% residual is the principled trade-off
+   (per §1.a aspirational framing).
+
+The robustness pair stays in scope: v2 and v3 are both available
+on the Modal Volume, and Stage 2 can re-run any headline analysis
+on either corpus. If the Stage 2 divergence test changes sign or
+magnitude between corpora, that's a finding about §0
+sensitivity worth reporting.
+
+### 7.f Build saga (notes for the Phase 1.2 retro)
+
+The §0 v3 build went through three implementation attempts:
+
+1. **Attempt 1 — DuckDB Python UDFs (`type='native'`)**: timed
+   out at the 1-hour function timeout. UDF Python/C boundary
+   overhead is the bottleneck at 38M rows; never even finished
+   the COPY operation.
+2. **Attempt 2 — Single-threaded PyArrow streaming + orjson +
+   compiled regex**: reached 64% in ~21 min, then was cancelled
+   by an unexplained local-client disconnect.
+3. **Attempt 3 — ProcessPoolExecutor across 8 row-group workers**:
+   filter finished in 299s (5 min) + concat in 624s (10 min).
+   Total filter step: ~16 min. Sample step: 79s. Heldouts: 146s.
+
+A separate hang surfaced in the Modal Volume read iterator on
+the 310 MB sample download (file fully wrote to disk but iterator
+never returned). Resolved by killing the local script and
+re-downloading via `modal volume get`, then running
+`resume_v3.py` for heldouts + manifests.
