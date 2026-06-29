@@ -224,8 +224,12 @@ and option 1 risks excluding genuine theoretical CS work that
 matters for the diversity time-series. The 3 pure-math papers add
 ~3% noise to a 38M-paper corpus — within the noise floor.
 
-**User call required before §0 v3 lands.** Default if unspecified
-will be option 2 (loose).
+**Decision (locked 2026-06-28):** Option 2 / loose. Pure math
+stays in. §0 v3 will *not* add a math filter; the 3 audited pure-
+math FPs are accepted as collateral and characterized in this doc
+as known noise. If Stage 2 surfaces a measurable math-cluster
+effect that distorts the headline test, we revisit with data —
+not with a pre-emptive filter.
 
 ## 5. Limitations of this audit
 
