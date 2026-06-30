@@ -1666,9 +1666,18 @@ def compute_confusion_matrix(
                 row_norm[gg][ns] = (k / row_total) if row_total else 0.0
                 lo, hi = _wilson_ci(k=k, n=row_total)
                 row_norm_ci[gg][ns] = (lo, hi)
-                halfwidth = (hi - lo) / 2.0
-                if halfwidth > max_halfwidth:
-                    max_halfwidth = halfwidth
+                # H5 measures the uncertainty of the bias estimates that
+                # are actually APPLIED. apply_bias_correction only ever uses
+                # rows with evidence (sum > 0) — in practice the gg-unknown
+                # row, since gg-confident names never enter the low-conf
+                # NamSor sample. Empty rows get a degenerate (0, 1) Wilson
+                # band (half-width 0.5); including them would peg
+                # max_ci_halfwidth at 0.5 for every region and make H5
+                # unpassable by construction. So exclude empty rows.
+                if row_total > 0:
+                    halfwidth = (hi - lo) / 2.0
+                    if halfwidth > max_halfwidth:
+                        max_halfwidth = halfwidth
 
         result[str(region)] = {
             "n_sample": int(len(sub)),

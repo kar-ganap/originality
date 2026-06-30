@@ -1516,6 +1516,51 @@ def test_compute_confusion_matrix_handles_namsor_unknown(
     assert result["latin"]["row_normalized"]["unknown"]["male"] == 0.5
 
 
+def test_compute_confusion_matrix_excludes_empty_rows_from_ci(
+    tmp_path: Path,
+) -> None:
+    """max_ci_halfwidth (the H5 metric) ignores structurally-empty gg
+    rows. The low-conf bias sample never contains gg-confident names, so
+    the gg-male / gg-female rows have zero samples and a degenerate
+    (0, 1) Wilson band — those must NOT peg max_ci_halfwidth at 0.5.
+
+    Here the gg-unknown row has 40 well-sampled names (CI half-width well
+    under 0.5), while gg-male / gg-female are empty. max_ci_halfwidth
+    must reflect only the populated gg-unknown row.
+    """
+    n = 40
+    per_author = pa.table({
+        "author_id": [f"A{i}" for i in range(n)],
+        "author_first_name": [f"N{i}" for i in range(n)],
+        "gg_label": ["unknown"] * n,
+        "gender": ["unknown"] * n,
+        "gender_probability": [0.0] * n,
+    })
+    per_author_path = tmp_path / "pa.parquet"
+    pq.write_table(per_author, str(per_author_path))
+
+    # 30 male / 10 female NamSor verdicts on the 40 gg-unknown names.
+    bias_sample = pa.table({
+        "first_name": [f"N{i}" for i in range(n)],
+        "script_region": ["latin"] * n,
+        "namsor_gender": ["male"] * 30 + ["female"] * 10,
+        "namsor_probability": [0.9] * n,
+    })
+    bias_sample_path = tmp_path / "bs.parquet"
+    pq.write_table(bias_sample, str(bias_sample_path))
+
+    result = compute_confusion_matrix(
+        bias_sample_parquet=bias_sample_path,
+        per_author_parquet=per_author_path,
+    )
+    latin = result["latin"]
+    # gg-male / gg-female rows are empty → their (0,1) bands are excluded.
+    assert latin["counts"]["male"] == {"male": 0, "female": 0, "unknown": 0}
+    # The H5 metric reflects only the populated gg-unknown row (n=40),
+    # whose worst-cell half-width is far below the degenerate 0.5.
+    assert latin["max_ci_halfwidth"] < 0.2
+
+
 def test_compute_confusion_matrix_country_axis(tmp_path: Path) -> None:
     """region_column='primary_country' groups the matrix by each name's
     modal country (joined from per-author) instead of by script.
