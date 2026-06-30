@@ -26,6 +26,10 @@ import pyarrow.parquet as pq
 from whitespace2.demographics import (
     _extract_first_name,
     _extract_source_type,
+    _gg_label_to_gender_probability,
+    aggregate_per_author,
+    annotate_gender_country,
+    annotate_with_gender_guesser,
     compute_career_length_screen,
     compute_orcid_consistency,
     explode_authorships_for_paper,
@@ -502,3 +506,170 @@ def test_validate_disambiguation_e2e(tmp_path: Path) -> None:
     # JSON loadable
     loaded = json.loads(out.read_text())
     assert loaded["h1_career_length_screen"]["n_unique_authors"] == 5
+
+
+# ---------- gender_guesser annotation (Step 3a) ----------
+
+
+def test_gg_label_to_gender_probability_mapping() -> None:
+    """gender_guesser's 6-class labels → (gender, probability) tuples.
+
+    Mapping (per Phase 1.3 plan §"Gender stack"):
+      male / female    → confident (p=1.0)
+      mostly_*         → mid (p=0.7)
+      andy             → unknown (p=0.0; ambiguous unisex name)
+      unknown          → unknown (p=0.0; not in gender_guesser's dictionary)
+    """
+    assert _gg_label_to_gender_probability("male") == ("male", 1.0)
+    assert _gg_label_to_gender_probability("female") == ("female", 1.0)
+    assert _gg_label_to_gender_probability("mostly_male") == ("male", 0.7)
+    assert _gg_label_to_gender_probability("mostly_female") == ("female", 0.7)
+    assert _gg_label_to_gender_probability("andy") == ("unknown", 0.0)
+    assert _gg_label_to_gender_probability("unknown") == ("unknown", 0.0)
+    # Defensive: any other string → unknown
+    assert _gg_label_to_gender_probability("bogus") == ("unknown", 0.0)
+
+
+def test_annotate_with_gender_guesser_known_names() -> None:
+    """Known names from the smoke: John → male, Mary → mostly_female,
+    Hiroshi → male, Wei → andy (Asian unisex), Asdfg → unknown.
+
+    Returns dict[first_name → {gg_label, gender, probability}].
+    """
+    out = annotate_with_gender_guesser(
+        ["John", "Mary", "Hiroshi", "Wei", "Asdfg"],
+    )
+    assert out["John"]["gg_label"] == "male"
+    assert out["John"]["gender"] == "male"
+    assert out["John"]["probability"] == 1.0
+    # Mary → mostly_female in gender_guesser's dict (it's conservative)
+    assert out["Mary"]["gg_label"] == "mostly_female"
+    assert out["Mary"]["gender"] == "female"
+    assert out["Mary"]["probability"] == 0.7
+    assert out["Hiroshi"]["gender"] == "male"
+    assert out["Wei"]["gender"] == "unknown"
+    assert out["Wei"]["probability"] == 0.0
+    assert out["Asdfg"]["gender"] == "unknown"
+
+
+def test_annotate_with_gender_guesser_dedupes_and_handles_empty() -> None:
+    """Duplicate names appear once in output; empty / whitespace
+    names are skipped (no entry in result dict).
+    """
+    out = annotate_with_gender_guesser(
+        ["John", "John", "", "  ", "Mary"],
+    )
+    assert set(out.keys()) == {"John", "Mary"}
+
+
+def test_aggregate_per_author_single_paper() -> None:
+    """Author with 1 paper → 1 output row with that paper's fields."""
+    # Per-author-paper input: 1 author, 1 paper
+    authorships = pa.table({
+        "author_id": ["https://openalex.org/A1"],
+        "publication_year": [2020],
+        "author_first_name": ["John"],
+        "first_name_is_initial": [False],
+        "author_orcid": ["https://orcid.org/0000-1"],
+        "countries": [["US"]],
+        "source_type": ["journal"],
+    })
+    name_gender = {"John": {
+        "gg_label": "male", "gender": "male", "probability": 1.0,
+    }}
+    result = aggregate_per_author(authorships, name_gender)
+
+    assert result.num_rows == 1
+    row = result.to_pylist()[0]
+    assert row["author_id"] == "https://openalex.org/A1"
+    assert row["author_first_name"] == "John"
+    assert row["gender"] == "male"
+    assert row["gender_probability"] == 1.0
+    assert row["n_papers"] == 1
+    assert row["primary_country"] == "US"
+    assert row["n_papers_with_orcid"] == 1
+
+
+def test_aggregate_per_author_multi_paper_picks_mode() -> None:
+    """Author with N papers — primary_country = most-common; gender
+    derived from author_first_name; n_papers counted.
+    """
+    authorships = pa.table({
+        "author_id": ["https://openalex.org/A1"] * 4,
+        "publication_year": [2018, 2019, 2020, 2021],
+        "author_first_name": ["Mary", "Mary", "Mary", "Mary"],
+        "first_name_is_initial": [False] * 4,
+        "author_orcid": [None, None,
+                          "https://orcid.org/0000-2",
+                          "https://orcid.org/0000-2"],
+        "countries": [["US"], ["US"], ["CA"], ["US"]],  # US wins
+        "source_type": ["journal"] * 4,
+    })
+    name_gender = {"Mary": {
+        "gg_label": "mostly_female", "gender": "female", "probability": 0.7,
+    }}
+    result = aggregate_per_author(authorships, name_gender)
+    assert result.num_rows == 1
+    row = result.to_pylist()[0]
+    assert row["author_id"] == "https://openalex.org/A1"
+    assert row["gender"] == "female"
+    assert row["gender_probability"] == 0.7
+    assert row["n_papers"] == 4
+    assert row["primary_country"] == "US"
+    assert row["n_papers_with_orcid"] == 2
+
+
+def test_aggregate_per_author_unknown_name_yields_unknown_gender() -> None:
+    """Author with first name not in name_gender dict → gender='unknown'."""
+    authorships = pa.table({
+        "author_id": ["https://openalex.org/A1"],
+        "publication_year": [2020],
+        "author_first_name": ["Xyzzy"],
+        "first_name_is_initial": [False],
+        "author_orcid": [None],
+        "countries": [[]],
+        "source_type": ["journal"],
+    })
+    result = aggregate_per_author(authorships, {})
+    row = result.to_pylist()[0]
+    assert row["gender"] == "unknown"
+    assert row["gender_probability"] == 0.0
+    assert row["primary_country"] is None  # empty countries → None
+
+
+def test_annotate_gender_country_e2e(tmp_path: Path) -> None:
+    """End-to-end: write a per-author-paper parquet, run
+    annotate_gender_country, verify per-author output parquet has
+    expected columns + sensible values.
+    """
+    rows = pa.table({
+        "author_id": [
+            "https://openalex.org/A1", "https://openalex.org/A1",
+            "https://openalex.org/A2",
+        ],
+        "publication_year": [2019, 2020, 2020],
+        "author_first_name": ["John", "John", "Mary"],
+        "first_name_is_initial": [False, False, False],
+        "author_orcid": [
+            "https://orcid.org/0000-1", "https://orcid.org/0000-1", None,
+        ],
+        "countries": [["US"], ["US"], ["UK"]],
+        "source_type": ["journal", "journal", "journal"],
+    })
+    src = tmp_path / "authorships.parquet"
+    pq.write_table(rows, str(src))
+    dst = tmp_path / "authors.parquet"
+
+    summary = annotate_gender_country(src, dst)
+
+    assert dst.exists()
+    out = pq.read_table(str(dst))
+    assert out.num_rows == 2  # 2 unique authors
+    assert summary["n_unique_authors"] == 2
+    assert summary["n_unique_first_names"] == 2
+    # Coverage breakdown
+    by_aid = {r["author_id"]: r for r in out.to_pylist()}
+    assert by_aid["https://openalex.org/A1"]["gender"] == "male"
+    assert by_aid["https://openalex.org/A1"]["primary_country"] == "US"
+    assert by_aid["https://openalex.org/A2"]["gender"] == "female"
+    assert by_aid["https://openalex.org/A2"]["primary_country"] == "UK"

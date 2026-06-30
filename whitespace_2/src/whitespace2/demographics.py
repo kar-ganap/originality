@@ -16,6 +16,7 @@ row count.
 from __future__ import annotations
 
 import json
+from collections.abc import Iterable
 from pathlib import Path
 from typing import Any
 
@@ -434,3 +435,221 @@ def validate_disambiguation(
 
     output_json.write_text(json.dumps(result, indent=2))
     return result
+
+
+# ---------- Step 3a: gender_guesser annotation + per-author rollup ----------
+#
+# Phase 1.3 plan §"Pre-flight choices already locked": gender_guesser
+# is the offline / deterministic / free primary inference. Step 3b
+# layers Genderize cross-validation on top of this; Step 4 layers
+# NamSor bias estimation. Step 3a produces a per-author parquet with
+# gender_guesser-only annotation that downstream can join with the
+# Genderize + NamSor outputs.
+#
+# gender_guesser returns one of six labels:
+#   male            confident male                  → ("male",    p=1.0)
+#   female          confident female                → ("female",  p=1.0)
+#   mostly_male     unisex but mostly male          → ("male",    p=0.7)
+#   mostly_female   unisex but mostly female        → ("female",  p=0.7)
+#   andy            ambiguous unisex (used both)    → ("unknown", p=0.0)
+#   unknown         name not in the dictionary      → ("unknown", p=0.0)
+#
+# The p≥0.8 "confident" gate maps cleanly: confident = label ∈
+# {male, female}. mostly_* fall into the low-confidence subset that
+# Genderize (Step 3b) cross-validates and NamSor (Step 4) bias-
+# estimates.
+
+_GG_LABEL_MAP: dict[str, tuple[str, float]] = {
+    "male": ("male", 1.0),
+    "female": ("female", 1.0),
+    "mostly_male": ("male", 0.7),
+    "mostly_female": ("female", 0.7),
+    "andy": ("unknown", 0.0),
+    "unknown": ("unknown", 0.0),
+}
+
+
+def _gg_label_to_gender_probability(label: str) -> tuple[str, float]:
+    """Map a gender_guesser raw label to (gender, probability).
+
+    Unknown / unexpected labels default to ("unknown", 0.0) — safer
+    than raising, since gender_guesser's label set could expand in
+    future versions and we want the pipeline to keep running.
+    """
+    return _GG_LABEL_MAP.get(label, ("unknown", 0.0))
+
+
+def annotate_with_gender_guesser(
+    first_names: Iterable[str],
+) -> dict[str, dict[str, Any]]:
+    """Per-name gender_guesser annotation.
+
+    Deduplicates the input. Empty / whitespace-only names are
+    skipped. Returns ``{first_name: {gg_label, gender, probability}}``.
+
+    Lazy import of ``gender_guesser`` (it's in the ``demo`` extra;
+    we don't want top-of-module imports to fail when the extra
+    isn't installed and the user isn't running the annotation
+    step).
+    """
+    import gender_guesser.detector as gg_detector
+
+    detector = gg_detector.Detector()
+    unique = {n.strip() for n in first_names if isinstance(n, str) and n.strip()}
+
+    out: dict[str, dict[str, Any]] = {}
+    for name in unique:
+        label = detector.get_gender(name)
+        gender, p = _gg_label_to_gender_probability(label)
+        out[name] = {"gg_label": label, "gender": gender, "probability": p}
+    return out
+
+
+def aggregate_per_author(
+    authorships_table: pa.Table,
+    name_gender_dict: dict[str, dict[str, Any]],
+) -> pa.Table:
+    """Per-author rollup from per-author-paper rows.
+
+    Inputs:
+      - ``authorships_table`` from :func:`extract_authorships`
+        (the per-author-paper parquet schema)
+      - ``name_gender_dict`` from :func:`annotate_with_gender_guesser`
+        (``{first_name: {gg_label, gender, probability}}``)
+
+    For each unique ``author_id``:
+      - ``author_first_name`` = mode (most common across that author's
+        paper rows; consistent author_id should have consistent name)
+      - ``gender`` / ``gender_probability`` = lookup ``author_first_name``
+        in ``name_gender_dict``, default ``("unknown", 0.0)``
+      - ``primary_country`` = most common country across the author's
+        per-paper ``countries`` lists (None if none)
+      - ``n_papers`` = count of paper rows for this author_id
+      - ``n_papers_with_orcid`` = count where ``author_orcid`` non-null
+      - ``min_year`` / ``max_year`` = first / last paper year
+        (None if no non-null years)
+
+    Returns a per-author Arrow table.
+    """
+    df = authorships_table.select([
+        "author_id",
+        "publication_year",
+        "author_first_name",
+        "author_orcid",
+        "countries",
+    ]).to_pandas()
+
+    def _mode_or_none(values: Any) -> str | None:
+        cleaned = [v for v in values if isinstance(v, str) and v]
+        if not cleaned:
+            return None
+        from collections import Counter
+        return Counter(cleaned).most_common(1)[0][0]
+
+    def _country_mode(country_lists: Any) -> str | None:
+        from collections import Counter
+        flat: list[str] = []
+        for lst in country_lists:
+            if lst is None:
+                continue
+            # lst may be a Python list or a numpy array — iterate
+            # without relying on its truthiness (numpy arrays raise
+            # DeprecationWarning on bool conversion).
+            try:
+                items = list(lst)
+            except TypeError:
+                continue
+            flat.extend(c for c in items if isinstance(c, str))
+        if not flat:
+            return None
+        return Counter(flat).most_common(1)[0][0]
+
+    grouped = df.groupby("author_id").agg(
+        author_first_name=("author_first_name", _mode_or_none),
+        n_papers=("author_first_name", "count"),
+        n_papers_with_orcid=("author_orcid", lambda s: int(s.notna().sum())),
+        min_year=("publication_year", lambda s: (
+            int(s.min()) if s.notna().any() else None
+        )),
+        max_year=("publication_year", lambda s: (
+            int(s.max()) if s.notna().any() else None
+        )),
+        primary_country=("countries", _country_mode),
+    ).reset_index()
+
+    # Attach gender via lookup
+    def _lookup(name: str | None) -> tuple[str, float]:
+        if not isinstance(name, str) or not name:
+            return ("unknown", 0.0)
+        rec = name_gender_dict.get(name)
+        if not rec:
+            return ("unknown", 0.0)
+        return (rec["gender"], rec["probability"])
+
+    grouped["gender"] = grouped["author_first_name"].apply(
+        lambda n: _lookup(n)[0],
+    )
+    grouped["gender_probability"] = grouped["author_first_name"].apply(
+        lambda n: _lookup(n)[1],
+    )
+    grouped["gg_label"] = grouped["author_first_name"].apply(
+        lambda n: (
+            name_gender_dict.get(n, {}).get("gg_label", "unknown")
+            if isinstance(n, str)
+            else "unknown"
+        ),
+    )
+
+    return pa.Table.from_pandas(grouped, preserve_index=False)
+
+
+def annotate_gender_country(
+    authorships_parquet: str | Path,
+    output_parquet: str | Path,
+) -> dict[str, Any]:
+    """End-to-end Step 3a driver: per-author gender + country annotation.
+
+    Reads the Step 1 output, extracts unique first names, runs
+    :func:`annotate_with_gender_guesser`, aggregates per-author via
+    :func:`aggregate_per_author`, writes the per-author parquet,
+    and returns a summary dict.
+
+    Step 3a covers gender_guesser only. Step 3b will layer Genderize
+    cross-validation on top by joining a second annotation dict into
+    the per-author table.
+    """
+    authorships_parquet = Path(authorships_parquet)
+    output_parquet = Path(output_parquet)
+
+    table = pq.read_table(str(authorships_parquet))
+
+    first_names = table.column("author_first_name").to_pylist()
+    name_to_gg = annotate_with_gender_guesser(first_names)
+
+    per_author = aggregate_per_author(table, name_to_gg)
+    pq.write_table(per_author, str(output_parquet), compression="zstd")
+
+    # Coverage summary
+    df = per_author.to_pandas()
+    n_authors = int(len(df))
+    gender_counts = df["gender"].value_counts().to_dict()
+    gender_confident = int(
+        ((df["gender"] != "unknown") & (df["gender_probability"] >= 0.8)).sum(),
+    )
+    n_with_country = int(df["primary_country"].notna().sum())
+
+    return {
+        "source": str(authorships_parquet),
+        "output": str(output_parquet),
+        "n_unique_authors": n_authors,
+        "n_unique_first_names": int(len(name_to_gg)),
+        "gender_counts": {str(k): int(v) for k, v in gender_counts.items()},
+        "gender_confident_count": gender_confident,
+        "gender_confident_rate": (
+            float(gender_confident / n_authors) if n_authors else 0.0
+        ),
+        "country_coverage_count": n_with_country,
+        "country_coverage_rate": (
+            float(n_with_country / n_authors) if n_authors else 0.0
+        ),
+    }
