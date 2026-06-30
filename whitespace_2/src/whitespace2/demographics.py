@@ -661,8 +661,14 @@ def _attach_combined_to_per_author(
     # combine_gg_and_genderize spans gg's full universe, but be safe)
     df["genderize_probability"] = df["genderize_probability"].fillna(0.0)
     df["genderize_count"] = df["genderize_count"].fillna(0).astype(int)
-    df["both_methods_confident"] = df["both_methods_confident"].fillna(False)
-    df["both_methods_agree"] = df["both_methods_agree"].fillna(False)
+    # Explicit bool cast: fillna on an object column otherwise emits a
+    # pandas-2 FutureWarning about silent downcasting.
+    df["both_methods_confident"] = (
+        df["both_methods_confident"].fillna(False).astype(bool)
+    )
+    df["both_methods_agree"] = (
+        df["both_methods_agree"].fillna(False).astype(bool)
+    )
 
     # Override final gender / probability with combined where present
     mask = df["_combined_gender"].notna()
