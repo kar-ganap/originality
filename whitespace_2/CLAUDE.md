@@ -11,7 +11,8 @@ claim is disconfirmed — a successful null.
 
 ## Current State
 
-- **Current Stage:** Stage 1 — Crawl (begins 2026-05-05)
+- **Current Stage:** Stage 1 — Crawl. Phases 1.1–1.3 COMPLETE;
+  **Phase 1.4 (pre-Stage-2 quality gates) next.**
 - **Phase 0.1 (Foundation scoping):** COMPLETE. See
   `docs/phases/phase-0.1-retro.md`.
 - **Phase 0.2 (Pre-registration + Stage-1 prereqs):** COMPLETE
@@ -20,6 +21,19 @@ claim is disconfirmed — a successful null.
   dry run, 2A §11 production validation, 3A ORCID-linkage
   audit, 4A Stage 2 compute decision, 4B Genderize procurement
   resolved no-op). All 10 Phase 0.2 → Stage 1 validation gates met.
+- **Phase 1.1 (Compute substrate):** COMPLETE. Modal A100 preempt
+  + resumable runner + 50K dry-run. See `docs/phases/phase-1.1-retro.md`.
+- **Phase 1.2 (Production §0 pull):** COMPLETE. Bulk-dump parse →
+  v3 analytical population **24,492,279 papers** (v2 retained as
+  robustness pair). §0 amended to v3 (score≥0.40, abstract-token-50,
+  publisher-chrome + title-prefix blacklists). See
+  `docs/phases/phase-1.2-retro.md`.
+- **Phase 1.3 (Disambiguation + demographic inference):** COMPLETE
+  2026-06-30. Per-(year×field×region) demographic coverage tables
+  on v3 + v2 with §9e bias-corrected gender + geographic diversity.
+  **Headline: CS female share 22.4% (1975) → 31.9% (2025)**, robust
+  to §0 filter (v2↔v3 within 1.4pp) + correction axis. See
+  `docs/phases/phase-1.3-retro.md`.
 - **Methodology locks** (per `docs/phases/phase-0.2-plan.md` +
   Phase 0.2 retro):
   - **§0 analytical population**: score≥0.3 + has_abstract +
@@ -37,9 +51,15 @@ claim is disconfirmed — a successful null.
     empirically validated (r_H75 ∈ [1.17, 1.44] across K)
   - **Stage 2 compute target**: Modal A100 preemptible at N=1M
     headline + N=500K robustness; budget $250-550 within §9 cap
-- **Next:** Stage 1 (Crawl) — production-scale data work begins.
-  First task: Stage 1 plan authored + 50K-sample A100 preemptible
-  dry-run + resumable-runner implementation.
+- **Demographic substrate (Phase 1.3):** gender via gender_guesser
+  primary + Genderize keyed cross-validation; NamSor **Option B**
+  (sample-based per-region bias estimation, not direct labeling) →
+  §9e-style correction; country from affiliations; reusable
+  per-region bias kernel `experiments/phase-1.3/v3-confusion-matrix.json`.
+- **Next:** Phase 1.4 — pre-Stage-2 quality gates + transition
+  signoff. First tasks: year-bound the corpus to 1970–2024 (pre-1970
+  mis-dated tail), field-intuition sanity checks at production scale,
+  per-cell H7, then sign off Stage 1 → Stage 2.
 
 ## Constraints
 

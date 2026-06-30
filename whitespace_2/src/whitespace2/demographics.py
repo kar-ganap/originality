@@ -1,0 +1,2583 @@
+"""Phase 1.3 — Author disambiguation + demographic-annotation pipeline.
+
+This module produces per-author-paper records from the §0 v3 corpus
+(via :func:`extract_authorships`), then attaches gender + country
++ confidence + bias-correction features in subsequent steps (added
+as Phase 1.3 progresses).
+
+Phase 1.3 plan: ``docs/phases/phase-1.3-plan.md``.
+
+Step 1 (this module's current scope): extract per-author-paper rows
+from the v3/v2 corpus parquets. Streaming over PyArrow batches so a
+24.5M-paper input stays in <10 GB peak memory regardless of total
+row count.
+"""
+
+from __future__ import annotations
+
+import json
+from collections.abc import Iterable
+from pathlib import Path
+from typing import Any
+
+import pyarrow as pa
+import pyarrow.parquet as pq
+
+
+def _extract_source_type(primary_location_json: Any) -> str | None:
+    """Extract ``source.type`` from a ``primary_location_json`` string.
+
+    Returns ``None`` on missing / non-string / malformed JSON, or
+    when the parsed structure lacks the expected ``source.type``
+    path.
+
+    Used to stratify per-author records by venue type
+    (``"journal"`` / ``"repository"`` / ``"conference"`` / etc.).
+    Phase 1.3 Step 1 smoke surfaced that ~26% of 2020 physics
+    papers have ``source_type='repository'`` (predominantly arXiv
+    preprints) and that those papers are far more likely to have
+    no disambiguated authors (no ``author.id``). Carrying the
+    source type per author-paper row lets downstream stratify
+    coverage + bias correction by venue type.
+    """
+    if not isinstance(primary_location_json, str) or not primary_location_json:
+        return None
+    try:
+        loc = json.loads(primary_location_json)
+    except (json.JSONDecodeError, TypeError):
+        return None
+    if not isinstance(loc, dict):
+        return None
+    source = loc.get("source")
+    if not isinstance(source, dict):
+        return None
+    source_type = source.get("type")
+    if not isinstance(source_type, str):
+        return None
+    return source_type
+
+
+def _extract_first_name(display_name: Any) -> tuple[str, bool]:
+    """Extract a paper-author's first name + an ``is_initial`` flag.
+
+    Heuristic: take the first whitespace-separated token of
+    ``display_name``, strip trailing periods, return as the first
+    name. Flag as ``is_initial`` if the resulting token is ≤2
+    characters (e.g., ``"C"`` from ``"C. Gauss"``; ``"CF"`` from
+    ``"CF Gauss"``) — these names won't yield reliable
+    gender_guesser / Genderize / NamSor lookups and downstream
+    code should skip or treat them as unknown.
+
+    Returns ``("", False)`` on missing / non-string / whitespace-
+    only input.
+    """
+    if not isinstance(display_name, str):
+        return ("", False)
+    tokens = display_name.strip().split()
+    if not tokens:
+        return ("", False)
+    first = tokens[0].rstrip(".")
+    is_initial = len(first) <= 2
+    return (first, is_initial)
+
+
+def explode_authorships_for_paper(
+    paper: dict[str, Any],
+) -> list[dict[str, Any]]:
+    """Explode a single paper's ``authorships_json`` into per-author rows.
+
+    Each emitted row has:
+
+    - ``paper_id`` — copied from the input
+    - ``publication_year`` — copied (may be None)
+    - ``source_type`` — extracted from ``primary_location.source.type``
+      (e.g., ``"journal"``, ``"repository"``, ``"conference"``); used to
+      stratify coverage + bias correction downstream
+    - ``author_id`` — OpenAlex author URI (the disambiguation key)
+    - ``author_display_name`` — full ``author.display_name``
+    - ``author_first_name`` — extracted via :func:`_extract_first_name`
+    - ``first_name_is_initial`` — bool flag
+    - ``author_orcid`` — ORCID URI or None
+    - ``author_position`` — ``"first"``/``"middle"``/``"last"``
+    - ``is_corresponding`` — bool
+    - ``countries`` — list of ISO country codes from
+      ``authorships[i].countries`` (OpenAlex's pre-aggregated field)
+
+    Authors without an ``author.id`` are skipped — there's no stable
+    disambiguation key to track them across papers.
+
+    Returns ``[]`` (empty list, no exception) on missing / malformed
+    / empty / wrong-shape ``authorships_json``.
+    """
+    paper_id = paper.get("id", "")
+    publication_year = paper.get("publication_year")
+    authorships_json = paper.get("authorships_json")
+    source_type = _extract_source_type(paper.get("primary_location_json"))
+
+    if not authorships_json or not isinstance(authorships_json, str):
+        return []
+    try:
+        authorships = json.loads(authorships_json)
+    except (json.JSONDecodeError, TypeError):
+        return []
+    if not isinstance(authorships, list):
+        return []
+
+    rows: list[dict[str, Any]] = []
+    for entry in authorships:
+        if not isinstance(entry, dict):
+            continue
+
+        author_obj = entry.get("author")
+        if not isinstance(author_obj, dict):
+            continue
+
+        author_id = author_obj.get("id")
+        if not isinstance(author_id, str) or not author_id:
+            continue  # no disambiguation key → drop
+
+        display_name = author_obj.get("display_name") or ""
+        if not isinstance(display_name, str):
+            display_name = ""
+        first_name, is_initial = _extract_first_name(display_name)
+
+        orcid = author_obj.get("orcid")
+        if orcid is not None and not isinstance(orcid, str):
+            orcid = None
+
+        author_position = entry.get("author_position")
+        if author_position is not None and not isinstance(author_position, str):
+            author_position = None
+
+        is_corresponding = bool(entry.get("is_corresponding"))
+
+        countries = entry.get("countries") or []
+        if not isinstance(countries, list):
+            countries = []
+        # Filter to string elements only
+        countries = [c for c in countries if isinstance(c, str)]
+
+        rows.append({
+            "paper_id": paper_id,
+            "publication_year": publication_year,
+            "source_type": source_type,
+            "author_id": author_id,
+            "author_display_name": display_name,
+            "author_first_name": first_name,
+            "first_name_is_initial": is_initial,
+            "author_orcid": orcid,
+            "author_position": author_position,
+            "is_corresponding": is_corresponding,
+            "countries": countries,
+        })
+
+    return rows
+
+
+def extract_authorships(
+    source_path: str | Path,
+    output_path: str | Path,
+    batch_size: int = 50_000,
+) -> dict[str, Any]:
+    """Stream a §0 corpus parquet → per-author-paper parquet.
+
+    Lazy/batched: critical at production scale (v3 = 24.5M papers
+    → ~75M author-paper rows). PyArrow batched read keeps peak
+    memory bounded by ``batch_size``-many papers regardless of
+    total row count.
+
+    Only the four columns we need are read off the input parquet
+    (``id``, ``publication_year``, ``authorships_json``,
+    ``primary_location_json``) — PyArrow column projection skips
+    the rest at the file level.
+
+    If no paper in the input has any extractable author (all
+    empty/malformed authorships), no output parquet is written
+    and the result dict reports ``n_author_paper_rows = 0``.
+    """
+    source_path = Path(source_path)
+    output_path = Path(output_path)
+
+    pf = pq.ParquetFile(str(source_path))
+
+    writer: pq.ParquetWriter | None = None
+    n_papers_seen = 0
+    n_rows_written = 0
+
+    for batch in pf.iter_batches(
+        batch_size=batch_size,
+        columns=[
+            "id",
+            "publication_year",
+            "authorships_json",
+            "primary_location_json",
+        ],
+    ):
+        paper_dicts = batch.to_pylist()
+        all_rows: list[dict[str, Any]] = []
+        for paper in paper_dicts:
+            all_rows.extend(explode_authorships_for_paper(paper))
+        if all_rows:
+            out_tbl = pa.Table.from_pylist(all_rows)
+            if writer is None:
+                writer = pq.ParquetWriter(
+                    str(output_path), out_tbl.schema, compression="zstd",
+                )
+            writer.write_table(out_tbl)
+            n_rows_written += len(all_rows)
+        n_papers_seen += len(paper_dicts)
+
+    if writer is not None:
+        writer.close()
+
+    return {
+        "source": str(source_path),
+        "output": str(output_path),
+        "n_papers": int(n_papers_seen),
+        "n_author_paper_rows": int(n_rows_written),
+    }
+
+
+# ---------- Step 2: disambiguation validation -------------------------------
+#
+# H1 (Phase 0.1 §10): cross-era-merger rate ≤ 5%. Per-author career length
+# (max - min publication_year) > 60 → flag as candidate merger.
+#
+# H2 (Phase 0.2 Wave 3A scale-up): paper-level ORCID agreement ≥ 95%. For
+# each ORCID that appears on ≥1 paper, OpenAlex's author.id should be
+# consistent. Disagreement = OpenAlex split a real author across multiple
+# IDs.
+
+
+def compute_career_length_screen(
+    authorships_table: pa.Table,
+    threshold: int = 60,
+) -> dict[str, Any]:
+    """Per-author career-length stats + cross-era-merger flag count.
+
+    For each unique ``author_id`` in the table, compute
+    ``max(publication_year) - min(publication_year)``. Author IDs
+    whose career length exceeds ``threshold`` years are flagged as
+    cross-era-merger candidates (per Phase 0.1 §10).
+
+    Rows with null ``publication_year`` are excluded from the per-
+    author min/max; authors with NO non-null year are dropped from
+    the screen entirely (uncountable).
+    """
+    df = authorships_table.select(
+        ["author_id", "publication_year"],
+    ).to_pandas()
+    df = df[df["publication_year"].notna() & df["author_id"].notna()]
+
+    grouped = df.groupby("author_id").agg(
+        min_year=("publication_year", "min"),
+        max_year=("publication_year", "max"),
+        n_papers=("publication_year", "count"),
+    )
+    grouped["career_length"] = grouped["max_year"] - grouped["min_year"]
+
+    n_unique = int(len(grouped))
+    flagged = grouped[grouped["career_length"] > threshold]
+    n_flagged = int(len(flagged))
+
+    if n_unique > 0:
+        pcts = grouped["career_length"].quantile([0.5, 0.75, 0.9, 0.95, 0.99])
+        percentiles = {
+            "p50": int(pcts.loc[0.50]),
+            "p75": int(pcts.loc[0.75]),
+            "p90": int(pcts.loc[0.90]),
+            "p95": int(pcts.loc[0.95]),
+            "p99": int(pcts.loc[0.99]),
+        }
+    else:
+        percentiles = {"p50": 0, "p75": 0, "p90": 0, "p95": 0, "p99": 0}
+
+    return {
+        "threshold_years": threshold,
+        "n_unique_authors": n_unique,
+        "n_flagged_cross_era_merger": n_flagged,
+        "flagged_fraction": (
+            float(n_flagged / n_unique) if n_unique else 0.0
+        ),
+        "career_length_percentiles": percentiles,
+        "flagged_author_ids_sample": [
+            str(a) for a in flagged.index[:100].tolist()
+        ],
+    }
+
+
+def compute_orcid_consistency(
+    authorships_table: pa.Table,
+) -> dict[str, Any]:
+    """Per-ORCID author.id consistency + paper-level agreement rate.
+
+    Filter to rows where BOTH ``author_orcid`` AND ``author_id`` are
+    non-null. Group by ``author_orcid``:
+
+    - consistent ORCID: maps to exactly 1 author.id
+    - inconsistent ORCID: maps to >1 author.id (potential OpenAlex
+      split of a single real author)
+
+    Paper-level agreement = (#papers on the dominant pairing for each
+    ORCID) / (#orcid-tagged paper rows). This mirrors Phase 0.2 Wave
+    3A's 98.6% measurement and is the H2 metric.
+    """
+    df = authorships_table.select(
+        ["author_id", "author_orcid"],
+    ).to_pandas()
+    df = df[df["author_orcid"].notna() & df["author_id"].notna()]
+
+    n_with_orcid = int(len(df))
+    if n_with_orcid == 0:
+        return {
+            "n_paper_rows_with_orcid": 0,
+            "n_unique_orcids": 0,
+            "n_orcids_consistent": 0,
+            "n_orcids_inconsistent": 0,
+            "orcid_consistency_rate": 0.0,
+            "n_papers_dominant_pairing": 0,
+            "paper_level_agreement_rate": 0.0,
+        }
+
+    by_orcid = df.groupby("author_orcid")["author_id"].agg([
+        ("n_distinct_author_ids", "nunique"),
+        ("total_papers", "count"),
+        # Dominant author.id per ORCID = most frequent (ties → first
+        # alphabetically, which is deterministic across runs).
+        ("dominant_author_id", lambda s: s.value_counts().index[0]),
+    ])
+
+    n_orcids = int(len(by_orcid))
+    consistent_mask = by_orcid["n_distinct_author_ids"] == 1
+    n_consistent = int(consistent_mask.sum())
+    n_inconsistent = n_orcids - n_consistent
+
+    # Paper-level agreement: #papers where author.id == ORCID's
+    # dominant author.id.
+    df_with_dominant = df.merge(
+        by_orcid[["dominant_author_id"]],
+        left_on="author_orcid",
+        right_index=True,
+    )
+    n_agreeing = int(
+        (
+            df_with_dominant["author_id"]
+            == df_with_dominant["dominant_author_id"]
+        ).sum(),
+    )
+
+    return {
+        "n_paper_rows_with_orcid": n_with_orcid,
+        "n_unique_orcids": n_orcids,
+        "n_orcids_consistent": n_consistent,
+        "n_orcids_inconsistent": n_inconsistent,
+        "orcid_consistency_rate": (
+            float(n_consistent / n_orcids) if n_orcids else 0.0
+        ),
+        "n_papers_dominant_pairing": n_agreeing,
+        "paper_level_agreement_rate": (
+            float(n_agreeing / n_with_orcid) if n_with_orcid else 0.0
+        ),
+    }
+
+
+# H1, H2 acceptance thresholds — locked per Phase 1.3 plan §"Pre-
+# registered hypotheses" (Layer A).
+_H1_CROSS_ERA_MERGER_RATE_MAX = 0.05  # 5%
+_H2_ORCID_AGREEMENT_MIN = 0.95         # 95%
+
+
+def validate_disambiguation(
+    authorships_parquet: str | Path,
+    output_json: str | Path,
+    *,
+    career_length_threshold: int = 60,
+) -> dict[str, Any]:
+    """End-to-end disambiguation validation (Step 2).
+
+    Reads the per-author-paper parquet produced by
+    :func:`extract_authorships`, runs the H1 career-length screen
+    and the H2 ORCID consistency check, writes a JSON summary, and
+    returns the same dict.
+
+    Acceptance gates (from Phase 1.3 plan):
+
+    - H1: ``flagged_fraction`` (cross-era-merger rate) ≤ 5%
+    - H2: ``paper_level_agreement_rate`` ≥ 95%
+
+    ``h1_passes`` and ``h2_passes`` boolean flags in the output
+    summarize each gate's verdict.
+    """
+    authorships_parquet = Path(authorships_parquet)
+    output_json = Path(output_json)
+
+    table = pq.read_table(str(authorships_parquet))
+
+    career = compute_career_length_screen(
+        table, threshold=career_length_threshold,
+    )
+    orcid = compute_orcid_consistency(table)
+
+    h1_passes = career["flagged_fraction"] <= _H1_CROSS_ERA_MERGER_RATE_MAX
+    h2_passes = (
+        orcid["paper_level_agreement_rate"] >= _H2_ORCID_AGREEMENT_MIN
+    )
+
+    result: dict[str, Any] = {
+        "source": str(authorships_parquet),
+        "h1_career_length_screen": career,
+        "h2_orcid_consistency": orcid,
+        "h1_threshold_max_flagged_fraction": _H1_CROSS_ERA_MERGER_RATE_MAX,
+        "h2_threshold_min_agreement_rate": _H2_ORCID_AGREEMENT_MIN,
+        "h1_passes": bool(h1_passes),
+        "h2_passes": bool(h2_passes),
+    }
+
+    output_json.write_text(json.dumps(result, indent=2))
+    return result
+
+
+# ---------- Step 3a: gender_guesser annotation + per-author rollup ----------
+#
+# Phase 1.3 plan §"Pre-flight choices already locked": gender_guesser
+# is the offline / deterministic / free primary inference. Step 3b
+# layers Genderize cross-validation on top of this; Step 4 layers
+# NamSor bias estimation. Step 3a produces a per-author parquet with
+# gender_guesser-only annotation that downstream can join with the
+# Genderize + NamSor outputs.
+#
+# gender_guesser returns one of six labels:
+#   male            confident male                  → ("male",    p=1.0)
+#   female          confident female                → ("female",  p=1.0)
+#   mostly_male     unisex but mostly male          → ("male",    p=0.7)
+#   mostly_female   unisex but mostly female        → ("female",  p=0.7)
+#   andy            ambiguous unisex (used both)    → ("unknown", p=0.0)
+#   unknown         name not in the dictionary      → ("unknown", p=0.0)
+#
+# The p≥0.8 "confident" gate maps cleanly: confident = label ∈
+# {male, female}. mostly_* fall into the low-confidence subset that
+# Genderize (Step 3b) cross-validates and NamSor (Step 4) bias-
+# estimates.
+
+_GG_LABEL_MAP: dict[str, tuple[str, float]] = {
+    "male": ("male", 1.0),
+    "female": ("female", 1.0),
+    "mostly_male": ("male", 0.7),
+    "mostly_female": ("female", 0.7),
+    "andy": ("unknown", 0.0),
+    "unknown": ("unknown", 0.0),
+}
+
+
+def _gg_label_to_gender_probability(label: str) -> tuple[str, float]:
+    """Map a gender_guesser raw label to (gender, probability).
+
+    Unknown / unexpected labels default to ("unknown", 0.0) — safer
+    than raising, since gender_guesser's label set could expand in
+    future versions and we want the pipeline to keep running.
+    """
+    return _GG_LABEL_MAP.get(label, ("unknown", 0.0))
+
+
+def annotate_with_gender_guesser(
+    first_names: Iterable[str],
+) -> dict[str, dict[str, Any]]:
+    """Per-name gender_guesser annotation.
+
+    Deduplicates the input. Empty / whitespace-only names are
+    skipped. Returns ``{first_name: {gg_label, gender, probability}}``.
+
+    Lazy import of ``gender_guesser`` (it's in the ``demo`` extra;
+    we don't want top-of-module imports to fail when the extra
+    isn't installed and the user isn't running the annotation
+    step).
+    """
+    import gender_guesser.detector as gg_detector
+
+    detector = gg_detector.Detector()
+    unique = {n.strip() for n in first_names if isinstance(n, str) and n.strip()}
+
+    out: dict[str, dict[str, Any]] = {}
+    for name in unique:
+        label = detector.get_gender(name)
+        gender, p = _gg_label_to_gender_probability(label)
+        out[name] = {"gg_label": label, "gender": gender, "probability": p}
+    return out
+
+
+def aggregate_per_author(
+    authorships_table: pa.Table,
+    name_gender_dict: dict[str, dict[str, Any]],
+) -> pa.Table:
+    """Per-author rollup from per-author-paper rows.
+
+    Inputs:
+      - ``authorships_table`` from :func:`extract_authorships`
+        (the per-author-paper parquet schema)
+      - ``name_gender_dict`` from :func:`annotate_with_gender_guesser`
+        (``{first_name: {gg_label, gender, probability}}``)
+
+    For each unique ``author_id``:
+      - ``author_first_name`` = mode (most common across that author's
+        paper rows; consistent author_id should have consistent name)
+      - ``gender`` / ``gender_probability`` = lookup ``author_first_name``
+        in ``name_gender_dict``, default ``("unknown", 0.0)``
+      - ``primary_country`` = most common country across the author's
+        per-paper ``countries`` lists (None if none)
+      - ``n_papers`` = count of paper rows for this author_id
+      - ``n_papers_with_orcid`` = count where ``author_orcid`` non-null
+      - ``min_year`` / ``max_year`` = first / last paper year
+        (None if no non-null years)
+
+    Returns a per-author Arrow table.
+    """
+    df = authorships_table.select([
+        "author_id",
+        "publication_year",
+        "author_first_name",
+        "author_orcid",
+        "countries",
+    ]).to_pandas()
+
+    def _mode_or_none(values: Any) -> str | None:
+        cleaned = [v for v in values if isinstance(v, str) and v]
+        if not cleaned:
+            return None
+        from collections import Counter
+        return Counter(cleaned).most_common(1)[0][0]
+
+    def _country_mode(country_lists: Any) -> str | None:
+        from collections import Counter
+        flat: list[str] = []
+        for lst in country_lists:
+            if lst is None:
+                continue
+            # lst may be a Python list or a numpy array — iterate
+            # without relying on its truthiness (numpy arrays raise
+            # DeprecationWarning on bool conversion).
+            try:
+                items = list(lst)
+            except TypeError:
+                continue
+            flat.extend(c for c in items if isinstance(c, str))
+        if not flat:
+            return None
+        return Counter(flat).most_common(1)[0][0]
+
+    grouped = df.groupby("author_id").agg(
+        author_first_name=("author_first_name", _mode_or_none),
+        n_papers=("author_first_name", "count"),
+        n_papers_with_orcid=("author_orcid", lambda s: int(s.notna().sum())),
+        min_year=("publication_year", lambda s: (
+            int(s.min()) if s.notna().any() else None
+        )),
+        max_year=("publication_year", lambda s: (
+            int(s.max()) if s.notna().any() else None
+        )),
+        primary_country=("countries", _country_mode),
+    ).reset_index()
+
+    # Attach gender via lookup
+    def _lookup(name: str | None) -> tuple[str, float]:
+        if not isinstance(name, str) or not name:
+            return ("unknown", 0.0)
+        rec = name_gender_dict.get(name)
+        if not rec:
+            return ("unknown", 0.0)
+        return (rec["gender"], rec["probability"])
+
+    grouped["gender"] = grouped["author_first_name"].apply(
+        lambda n: _lookup(n)[0],
+    )
+    grouped["gender_probability"] = grouped["author_first_name"].apply(
+        lambda n: _lookup(n)[1],
+    )
+    grouped["gg_label"] = grouped["author_first_name"].apply(
+        lambda n: (
+            name_gender_dict.get(n, {}).get("gg_label", "unknown")
+            if isinstance(n, str)
+            else "unknown"
+        ),
+    )
+
+    return pa.Table.from_pandas(grouped, preserve_index=False)
+
+
+def _attach_combined_to_per_author(
+    per_author_table: pa.Table,
+    combined_dict: dict[str, dict[str, Any]],
+) -> pa.Table:
+    """Join combined-gender attributes from ``combine_gg_and_genderize``
+    into the per-author table.
+
+    Adds these columns:
+      - ``genderize_gender`` / ``genderize_probability`` /
+        ``genderize_count``: pass-through from Genderize (None / 0
+        for names that weren't queried — e.g., gg already confident).
+      - ``both_methods_confident`` / ``both_methods_agree``: from
+        :func:`combine_gg_and_genderize`.
+
+    Overrides ``gender`` and ``gender_probability`` with the COMBINED
+    values where Genderize successfully extended an unknown gg pick.
+    """
+    import pandas as pd
+
+    df = per_author_table.to_pandas()
+
+    if not combined_dict:
+        # Genderize was invoked but no names had combined data —
+        # still add the columns with default values so the schema
+        # is consistent.
+        df["genderize_gender"] = None
+        df["genderize_probability"] = 0.0
+        df["genderize_count"] = 0
+        df["both_methods_confident"] = False
+        df["both_methods_agree"] = False
+        return pa.Table.from_pandas(df, preserve_index=False)
+
+    rows = []
+    for name, rec in combined_dict.items():
+        rows.append({
+            "author_first_name": name,
+            "genderize_gender": rec.get("genderize_gender"),
+            "genderize_probability": float(
+                rec.get("genderize_probability") or 0.0,
+            ),
+            "genderize_count": int(rec.get("genderize_count") or 0),
+            "both_methods_confident": bool(
+                rec.get("both_methods_confident"),
+            ),
+            "both_methods_agree": bool(rec.get("both_methods_agree")),
+            "_combined_gender": rec.get("combined_gender"),
+            "_combined_probability": float(
+                rec.get("combined_probability") or 0.0,
+            ),
+        })
+
+    combined_df = pd.DataFrame(rows)
+    df = df.merge(combined_df, on="author_first_name", how="left")
+
+    # Defaults for names not in combined dict (shouldn't happen since
+    # combine_gg_and_genderize spans gg's full universe, but be safe)
+    df["genderize_probability"] = df["genderize_probability"].fillna(0.0)
+    df["genderize_count"] = df["genderize_count"].fillna(0).astype(int)
+    # Explicit bool cast: fillna on an object column otherwise emits a
+    # pandas-2 FutureWarning about silent downcasting.
+    df["both_methods_confident"] = (
+        df["both_methods_confident"].fillna(False).astype(bool)
+    )
+    df["both_methods_agree"] = (
+        df["both_methods_agree"].fillna(False).astype(bool)
+    )
+
+    # Override final gender / probability with combined where present
+    mask = df["_combined_gender"].notna()
+    df.loc[mask, "gender"] = df.loc[mask, "_combined_gender"]
+    df.loc[mask, "gender_probability"] = df.loc[
+        mask, "_combined_probability"
+    ]
+    df = df.drop(columns=["_combined_gender", "_combined_probability"])
+
+    return pa.Table.from_pandas(df, preserve_index=False)
+
+
+def annotate_gender_country(
+    authorships_parquet: str | Path,
+    output_parquet: str | Path,
+    *,
+    genderize_api_key: str | None = None,
+    genderize_max_names: int = 2500,
+) -> dict[str, Any]:
+    """End-to-end driver: per-author gender + country annotation.
+
+    Pipeline:
+      1. Extract unique first names from the Step 1 output.
+      2. Run :func:`annotate_with_gender_guesser` (offline; primary).
+      3. If ``genderize_api_key`` is provided, identify gg-unknown
+         names and call :func:`query_genderize` on that subset.
+      4. Fuse via :func:`combine_gg_and_genderize` (gg primary,
+         Genderize extends coverage on gg-unknown names).
+      5. Aggregate per-author via :func:`aggregate_per_author`.
+      6. If Genderize ran, join combined attributes into the
+         per-author table via :func:`_attach_combined_to_per_author`.
+      7. Write per-author parquet; return summary dict.
+
+    When ``genderize_api_key`` is None, behavior matches Step 3a
+    (gg-only) — no Genderize call, no genderize_* columns, no
+    quota consumed.
+    """
+    authorships_parquet = Path(authorships_parquet)
+    output_parquet = Path(output_parquet)
+
+    table = pq.read_table(str(authorships_parquet))
+
+    first_names = table.column("author_first_name").to_pylist()
+    name_to_gg = annotate_with_gender_guesser(first_names)
+
+    genderize_summary: dict[str, Any] | None = None
+    name_to_combined: dict[str, dict[str, Any]] | None = None
+    if genderize_api_key:
+        low_conf_names = [
+            n for n, rec in name_to_gg.items() if rec["gender"] == "unknown"
+        ]
+        gz_result = query_genderize(
+            low_conf_names,
+            api_key=genderize_api_key,
+            max_names=genderize_max_names,
+        )
+        name_to_combined = combine_gg_and_genderize(
+            name_to_gg, gz_result["results"],
+        )
+        genderize_summary = {
+            "n_low_conf_names": len(low_conf_names),
+            "n_names_queried": gz_result["n_names_queried"],
+            "n_calls": gz_result["n_calls"],
+            "n_errors": gz_result["n_errors"],
+            "quota_exhausted": gz_result["quota_exhausted"],
+        }
+
+    per_author = aggregate_per_author(table, name_to_gg)
+
+    if name_to_combined is not None:
+        per_author = _attach_combined_to_per_author(
+            per_author, name_to_combined,
+        )
+
+    pq.write_table(per_author, str(output_parquet), compression="zstd")
+
+    # Coverage summary
+    df = per_author.to_pandas()
+    n_authors = int(len(df))
+    gender_counts = df["gender"].value_counts().to_dict()
+    gender_confident = int(
+        ((df["gender"] != "unknown") & (df["gender_probability"] >= 0.8)).sum(),
+    )
+    n_with_country = int(df["primary_country"].notna().sum())
+
+    result: dict[str, Any] = {
+        "source": str(authorships_parquet),
+        "output": str(output_parquet),
+        "n_unique_authors": n_authors,
+        "n_unique_first_names": int(len(name_to_gg)),
+        "gender_counts": {str(k): int(v) for k, v in gender_counts.items()},
+        "gender_confident_count": gender_confident,
+        "gender_confident_rate": (
+            float(gender_confident / n_authors) if n_authors else 0.0
+        ),
+        "country_coverage_count": n_with_country,
+        "country_coverage_rate": (
+            float(n_with_country / n_authors) if n_authors else 0.0
+        ),
+        "genderize_invoked": genderize_summary is not None,
+    }
+    if genderize_summary is not None:
+        result["genderize_summary"] = genderize_summary
+        # Genderize coverage extension: how many gg-unknown names did
+        # Genderize successfully classify (this is the value Genderize
+        # adds in our methodology — extending gg's coverage on names
+        # gg doesn't know). The Wave-3A-style "agreement rate" is NOT
+        # computable from this output because we only query Genderize
+        # on gg-unknown names (to save quota); gg-confident names are
+        # never seen by Genderize, so no name can satisfy "both
+        # methods confident at ≥0.8". The cross-validation /
+        # bias-estimation metric is locked as NamSor's stratified
+        # sample (Step 4, H5); Genderize's role here is coverage
+        # extension only.
+        if "genderize_gender" in df.columns:
+            mask_extended = (
+                df["genderize_gender"].notna()
+                & df["genderize_gender"].astype(str).ne("None")
+                & (df["gg_label"] == "unknown")
+                & (df["gender"] != "unknown")
+            )
+            result["n_authors_extended_by_genderize"] = int(
+                mask_extended.sum(),
+            )
+
+    return result
+
+
+# ---------- Step 3b: Genderize cross-validation -----------------------------
+#
+# Genderize is a freemium HTTPS API: https://api.genderize.io
+#   GET /?name[]=John&name[]=Mary&apikey=...
+#   → [{"name": "John", "gender": "male", "probability": 0.99, "count": ...},
+#       {"name": "Mary", "gender": "female", "probability": 0.98, "count": ...}]
+#
+# Quota (keyed-free tier): 2,500 names per month (one call counts toward
+# both name-count and call-count). We treat ``max_names`` as the quota
+# gate and stop dispatching once we'd exceed it.
+#
+# Phase 0.2 Wave 1B verified the keyed-free flow with the user's key.
+# Phase 1.3 plan §"Pre-flight choices already locked": Genderize is the
+# **cross-validation** layer over gender_guesser (the primary), not a
+# replacement. Step 3b runs Genderize only on the low-confidence subset
+# (gender_guesser p<0.8).
+
+_GENDERIZE_URL = "https://api.genderize.io"
+
+
+def query_genderize_batch(
+    names: list[str],
+    api_key: str,
+    timeout: float = 30.0,
+) -> dict[str, dict[str, Any]]:
+    """One Genderize HTTP call for up to 10 names.
+
+    Returns ``{name: {gender, probability, count}}``. Names not in
+    the response are simply absent from the output dict (caller
+    decides how to handle).
+
+    Names returned with ``gender=None`` (Genderize couldn't classify)
+    are kept as-is in the dict — that's distinct from "not queried."
+
+    Raises on HTTP errors (≥400) — the orchestrator
+    :func:`query_genderize` catches and counts these.
+    """
+    import requests
+
+    params: dict[str, Any] = {
+        "name[]": list(names),
+        "apikey": api_key,
+    }
+    resp = requests.get(_GENDERIZE_URL, params=params, timeout=timeout)
+    resp.raise_for_status()
+    data = resp.json()
+
+    if not isinstance(data, list):
+        return {}
+
+    out: dict[str, dict[str, Any]] = {}
+    for item in data:
+        if not isinstance(item, dict):
+            continue
+        name = item.get("name")
+        if not isinstance(name, str) or not name:
+            continue
+        out[name] = {
+            "gender": item.get("gender"),  # str | None
+            "probability": float(item.get("probability") or 0.0),
+            "count": int(item.get("count") or 0),
+        }
+    return out
+
+
+def query_genderize(
+    names: Iterable[str],
+    api_key: str,
+    *,
+    max_names: int = 2500,
+    batch_size: int = 10,
+    timeout: float = 30.0,
+) -> dict[str, Any]:
+    """Orchestrate batched Genderize calls up to a quota.
+
+    Batches the input ``names`` into groups of ``batch_size`` (Genderize
+    accepts up to 10 names per request). Stops dispatching once
+    ``max_names`` would be exceeded — keeps prior results, sets
+    ``quota_exhausted=True`` in the summary.
+
+    Errors in individual batches (HTTP 4xx/5xx, network timeouts) are
+    caught and counted in ``n_errors``; the orchestrator continues
+    with subsequent batches so a transient failure doesn't lose all
+    progress.
+
+    Returns a summary dict with the per-name results plus operational
+    metrics for the verify-results doc.
+    """
+    deduped: list[str] = []
+    seen: set[str] = set()
+    for n in names:
+        if not isinstance(n, str) or not n.strip():
+            continue
+        if n in seen:
+            continue
+        seen.add(n)
+        deduped.append(n)
+
+    n_queried = 0
+    n_calls = 0
+    n_errors = 0
+    quota_exhausted = False
+    results: dict[str, dict[str, Any]] = {}
+
+    for i in range(0, len(deduped), batch_size):
+        if n_queried >= max_names:
+            quota_exhausted = True
+            break
+        # Trim the batch to not exceed max_names
+        remaining = max_names - n_queried
+        batch = deduped[i : i + min(batch_size, remaining)]
+        if not batch:
+            quota_exhausted = True
+            break
+
+        try:
+            batch_result = query_genderize_batch(
+                batch, api_key=api_key, timeout=timeout,
+            )
+            results.update(batch_result)
+        except Exception:
+            n_errors += 1
+
+        n_queried += len(batch)
+        n_calls += 1
+
+    # Detect quota exhaustion by post-condition too: if we
+    # processed every item without break, max_names was either
+    # equal to or exceeded len(deduped) — not exhausted in that
+    # case.
+    if n_queried < len(deduped):
+        quota_exhausted = True
+
+    return {
+        "results": results,
+        "n_names_queried": n_queried,
+        "n_calls": n_calls,
+        "n_errors": n_errors,
+        "max_names": max_names,
+        "quota_exhausted": quota_exhausted,
+    }
+
+
+# Confidence gate for "both methods confident" (per Phase 1.3 plan
+# §"Pre-registered hypotheses"): probability ≥ 0.8 from gg AND
+# probability ≥ 0.8 from Genderize.
+_CONFIDENCE_GATE = 0.8
+
+
+def combine_gg_and_genderize(
+    gg_results: dict[str, dict[str, Any]],
+    genderize_results: dict[str, dict[str, Any]],
+) -> dict[str, dict[str, Any]]:
+    """Per-name fusion of gender_guesser + Genderize annotations.
+
+    For each name in ``gg_results`` (the universe is what gg saw):
+
+    - ``combined_gender``: gg's gender if gg is confident (p ≥ 0.8);
+      otherwise Genderize's gender if Genderize is confident;
+      otherwise gg's (low-confidence) gender.
+    - ``combined_probability``: probability associated with combined
+      pick.
+    - ``genderize_gender`` / ``genderize_probability`` /
+      ``genderize_count``: pass-through (or None if Genderize wasn't
+      queried for this name).
+    - ``both_methods_confident``: both gg and Genderize at p ≥ 0.8.
+    - ``both_methods_agree``: both confident AND same gender — the
+      "agreement rate" metric tracked from Phase 0.2 Check 3.
+
+    Names with only gg (no Genderize result) get genderize fields =
+    None and the combined fields fall back to gg's pick.
+    """
+    out: dict[str, dict[str, Any]] = {}
+    for name, gg in gg_results.items():
+        gz = genderize_results.get(name)
+        gg_gender = gg.get("gender", "unknown")
+        gg_prob = float(gg.get("probability", 0.0))
+        gg_confident = gg_prob >= _CONFIDENCE_GATE
+
+        if gz is not None:
+            gz_gender = gz.get("gender")  # str | None
+            gz_prob = float(gz.get("probability", 0.0))
+            gz_count = int(gz.get("count", 0))
+            gz_confident = (
+                isinstance(gz_gender, str) and gz_prob >= _CONFIDENCE_GATE
+            )
+        else:
+            gz_gender = None
+            gz_prob = 0.0
+            gz_count = 0
+            gz_confident = False
+
+        # Combined pick policy (gg is the locked primary per Phase 1.3
+        # plan):
+        #   - If gg has ANY non-"unknown" pick, keep it (gg owns the
+        #     final answer for any name it has signal on, even at
+        #     mid-confidence p=0.7).
+        #   - If gg returned "unknown" (the name isn't in its
+        #     dictionary at all), use Genderize's pick if Genderize
+        #     is confident.
+        #   - Otherwise fall through to gg's "unknown".
+        # This keeps gender_guesser as the locked primary while
+        # letting Genderize EXTEND coverage on names gg can't handle.
+        if gg_gender != "unknown":
+            combined_gender = gg_gender
+            combined_prob = gg_prob
+        elif gz_confident and isinstance(gz_gender, str):
+            combined_gender = gz_gender
+            combined_prob = gz_prob
+        else:
+            combined_gender = gg_gender
+            combined_prob = gg_prob
+
+        both_confident = gg_confident and gz_confident
+        both_agree = (
+            both_confident and gg_gender == gz_gender
+        )
+
+        out[name] = {
+            **gg,
+            "genderize_gender": gz_gender,
+            "genderize_probability": gz_prob,
+            "genderize_count": gz_count,
+            "combined_gender": combined_gender,
+            "combined_probability": combined_prob,
+            "both_methods_confident": both_confident,
+            "both_methods_agree": both_agree,
+        }
+    return out
+
+
+# ---------- Step 4a: script/region tagging + stratified sampling -----------
+#
+# NamSor's per-region accuracy claims (East Asian / Slavic / Arabic / South
+# Asian) are the substantive reason it's the right cross-validation tool
+# for the residual low-confidence subset. To exploit them we need to tag
+# each low-confidence name with the script it's written in (when in a
+# non-Latin script) or — for Latin-script transliterations of non-Western
+# names — fall back to "latin" and let NamSor's own classifier do the work
+# from there. Stratification by script lets the bias-correction (Step 5)
+# fit per-region bias models rather than a global average.
+
+#: Unicode block boundaries used by :func:`tag_script_region`. These cover
+#: the common scripts we see in OpenAlex author records; everything else
+#: (Latin extended, basic Latin) falls through to "latin".
+_SCRIPT_RANGES: tuple[tuple[str, int, int], ...] = (
+    # CJK unified ideographs + extensions, hiragana, katakana, Hangul
+    ("cjk", 0x3040, 0x30FF),    # hiragana + katakana
+    ("cjk", 0x4E00, 0x9FFF),    # CJK unified ideographs
+    ("cjk", 0x3400, 0x4DBF),    # CJK ext-A
+    ("cjk", 0x20000, 0x2A6DF),  # CJK ext-B
+    ("cjk", 0xAC00, 0xD7AF),    # Hangul syllables
+    ("cjk", 0x1100, 0x11FF),    # Hangul Jamo
+    # Cyrillic
+    ("cyrillic", 0x0400, 0x04FF),
+    ("cyrillic", 0x0500, 0x052F),  # Cyrillic supplement
+    # Arabic
+    ("arabic", 0x0600, 0x06FF),
+    ("arabic", 0x0750, 0x077F),  # Arabic supplement
+    # Devanagari + related (Hindi, Marathi, Sanskrit, etc.)
+    ("south_asian", 0x0900, 0x097F),
+    ("south_asian", 0x0980, 0x09FF),  # Bengali
+    ("south_asian", 0x0A00, 0x0A7F),  # Gurmukhi
+    ("south_asian", 0x0A80, 0x0AFF),  # Gujarati
+    ("south_asian", 0x0B00, 0x0B7F),  # Oriya
+    ("south_asian", 0x0B80, 0x0BFF),  # Tamil
+    ("south_asian", 0x0C00, 0x0C7F),  # Telugu
+    ("south_asian", 0x0C80, 0x0CFF),  # Kannada
+    ("south_asian", 0x0D00, 0x0D7F),  # Malayalam
+)
+
+
+def tag_script_region(name: Any) -> str:
+    """Classify a first name into a stratification region by script.
+
+    Returns one of:
+      - ``"cjk"`` — Han, hiragana/katakana, Hangul.
+      - ``"cyrillic"`` — Russian, Ukrainian, Bulgarian, etc.
+      - ``"arabic"`` — Arabic + Arabic supplement.
+      - ``"south_asian"`` — Devanagari, Bengali, Gurmukhi, Gujarati,
+        Tamil, Telugu, Kannada, Malayalam, Oriya.
+      - ``"latin"`` — anything else (incl. Latin-extended, transliterated
+        Asian names that landed in Romaji/Pinyin form, European
+        diacritics).
+      - ``"unknown"`` — empty / non-string / whitespace input.
+
+    Heuristic: examine each character; if ANY character falls in a
+    non-Latin script's Unicode range, return that script. Mixed-script
+    names (rare; usually a typo) pick the first-matched script in the
+    iteration order above (CJK wins ties — reasonable since CJK
+    characters are the strongest distinguishing signal).
+    """
+    if not isinstance(name, str):
+        return "unknown"
+    s = name.strip()
+    if not s:
+        return "unknown"
+
+    for ch in s:
+        cp = ord(ch)
+        for script, lo, hi in _SCRIPT_RANGES:
+            if lo <= cp <= hi:
+                return script
+    return "latin"
+
+
+def stratified_sample_names(
+    names_with_regions: Iterable[tuple[str, str]],
+    n_total: int,
+    seed: str,
+) -> list[tuple[str, str]]:
+    """Deterministic stratified random sample of names by region.
+
+    Allocates ``n_total`` slots across strata as evenly as possible.
+    When a stratum has fewer items than its share, takes all of them
+    and redistributes the leftover slots across the larger strata
+    (sum-preserving).
+
+    Deterministic via ``hash(seed || name || region)`` ordering — same
+    seed + same input order → same output. Suitable for the
+    pre-registered NamSor bias-estimation seed
+    (``ws2-phase-1.3-namsor-seed-v1``) committed in the Phase 1.3
+    plan §3.
+
+    Returns a list of (name, region) tuples; length = ``min(n_total,
+    total population size)``.
+    """
+    import hashlib
+    from collections import defaultdict
+
+    by_region: dict[str, list[str]] = defaultdict(list)
+    for name, region in names_with_regions:
+        by_region[region].append(name)
+
+    # Deterministic per-region ordering by hash(seed||name||region)
+    def _hash_key(seed: str, name: str, region: str) -> int:
+        h = hashlib.blake2b(
+            f"{seed}|{region}|{name}".encode(),
+            digest_size=8,
+        )
+        return int.from_bytes(h.digest(), byteorder="big")
+
+    for region in by_region:
+        by_region[region].sort(key=lambda n: _hash_key(seed, n, region))
+
+    total_pop = sum(len(v) for v in by_region.values())
+    if total_pop <= n_total:
+        # Return everything (preserve hash order for determinism)
+        out: list[tuple[str, str]] = []
+        for region in sorted(by_region):
+            out.extend((n, region) for n in by_region[region])
+        return out
+
+    # Allocate per-stratum slots. Algorithm: greedy iterative.
+    # Compute the equal-share target = n_total / n_nonempty_strata.
+    # If a stratum has fewer items than its share, take all + reduce
+    # the remaining pool / strata; repeat until stable.
+    regions = sorted(by_region)
+    allocation: dict[str, int] = {r: 0 for r in regions}
+    remaining_slots = n_total
+    remaining_regions = list(regions)
+
+    while remaining_regions and remaining_slots > 0:
+        share = max(1, remaining_slots // len(remaining_regions))
+        any_capped = False
+        next_remaining: list[str] = []
+        for r in remaining_regions:
+            cap = len(by_region[r]) - allocation[r]
+            if cap <= share:
+                allocation[r] += cap
+                remaining_slots -= cap
+                any_capped = True
+            else:
+                next_remaining.append(r)
+        if not any_capped:
+            # All remaining regions can absorb at least `share`;
+            # distribute exactly `share` to each, then handle
+            # remainder by round-robin.
+            for r in remaining_regions:
+                allocation[r] += share
+                remaining_slots -= share
+            # Distribute leftover (n_total % n_regions) one-by-one
+            for r in remaining_regions:
+                if remaining_slots <= 0:
+                    break
+                if allocation[r] < len(by_region[r]):
+                    allocation[r] += 1
+                    remaining_slots -= 1
+            break  # done — remaining_slots ought to be 0
+        remaining_regions = next_remaining
+
+    sample: list[tuple[str, str]] = []
+    for region in regions:
+        take = allocation[region]
+        if take > 0:
+            sample.extend(
+                (n, region) for n in by_region[region][:take]
+            )
+    return sample
+
+
+# ---------- Step 4b: NamSor API client --------------------------------------
+#
+# NamSor v2 batch gender endpoint:
+#   POST https://v2.namsor.com/NamSorAPIv2/api2/json/genderBatch
+#   Headers: X-API-KEY, Accept: application/json, Content-Type: application/json
+#   Body: {"personalNames": [{"id": str, "firstName": str, "lastName": str}]}
+#   Batch limit: 100 names per request.
+#   Response:
+#     {"personalNames": [
+#        {"id": ..., "firstName": ..., "lastName": ...,
+#         "script": "LATIN" | "CYRILLIC" | "HAN" | ...,
+#         "likelyGender": "male" | "female" | "unknown",
+#         "genderScale": float in [-1, 1],
+#         "score": float (log-likelihood-ish),
+#         "probabilityCalibrated": float in [0, 1]}
+#     ]}
+#
+# `probabilityCalibrated` is the calibrated confidence for the predicted
+# gender. We use that as the per-name probability. The signed
+# `genderScale` field is informational (negative = male, positive =
+# female; not used in our pipeline).
+#
+# Quota (keyed-free tier): 2,500 names per month. The user
+# explicitly capped Phase 1.3 NamSor spend at ≤$10 (per the plan
+# §"NamSor scope locked"), well within the free tier for our intended
+# stratified-sample size.
+
+_NAMSOR_URL = "https://v2.namsor.com/NamSorAPIv2/api2/json/genderBatch"
+
+
+def query_namsor_batch(
+    names: list[str],
+    api_key: str,
+    timeout: float = 60.0,
+) -> dict[str, dict[str, Any]]:
+    """One NamSor batch call for up to 100 names.
+
+    Returns ``{name: {gender, probability, script, score, gender_scale}}``
+    keyed by the original first-name string we sent (NamSor's response
+    echoes ``id`` which we set to the first name).
+
+    Raises HTTPError on ≥400 — the orchestrator :func:`query_namsor`
+    catches and counts.
+    """
+    import requests
+
+    body = {
+        "personalNames": [
+            {"id": name, "firstName": name, "lastName": ""}
+            for name in names
+        ],
+    }
+    headers = {
+        "X-API-KEY": api_key,
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+    }
+    resp = requests.post(
+        _NAMSOR_URL, headers=headers, json=body, timeout=timeout,
+    )
+    resp.raise_for_status()
+    data = resp.json()
+
+    if not isinstance(data, dict):
+        return {}
+    items = data.get("personalNames")
+    if not isinstance(items, list):
+        return {}
+
+    out: dict[str, dict[str, Any]] = {}
+    for item in items:
+        if not isinstance(item, dict):
+            continue
+        name = item.get("id")
+        if not isinstance(name, str) or not name:
+            continue
+        gender = item.get("likelyGender") or "unknown"
+        if not isinstance(gender, str):
+            gender = "unknown"
+        out[name] = {
+            "gender": gender,
+            "probability": float(item.get("probabilityCalibrated") or 0.0),
+            "score": float(item.get("score") or 0.0),
+            "gender_scale": float(item.get("genderScale") or 0.0),
+            "script": item.get("script"),
+        }
+    return out
+
+
+def query_namsor(
+    names: Iterable[str],
+    api_key: str,
+    *,
+    max_names: int = 2500,
+    batch_size: int = 100,
+    timeout: float = 60.0,
+) -> dict[str, Any]:
+    """Orchestrate batched NamSor calls up to a quota.
+
+    Mirrors :func:`query_genderize`'s shape: dedup, batch, stop at
+    ``max_names`` (default 2,500 — the free-tier monthly quota),
+    count errors but keep partial results, return summary dict.
+    """
+    deduped: list[str] = []
+    seen: set[str] = set()
+    for n in names:
+        if not isinstance(n, str) or not n.strip():
+            continue
+        if n in seen:
+            continue
+        seen.add(n)
+        deduped.append(n)
+
+    n_queried = 0
+    n_calls = 0
+    n_errors = 0
+    quota_exhausted = False
+    results: dict[str, dict[str, Any]] = {}
+
+    for i in range(0, len(deduped), batch_size):
+        if n_queried >= max_names:
+            quota_exhausted = True
+            break
+        remaining = max_names - n_queried
+        batch = deduped[i : i + min(batch_size, remaining)]
+        if not batch:
+            quota_exhausted = True
+            break
+
+        try:
+            batch_result = query_namsor_batch(
+                batch, api_key=api_key, timeout=timeout,
+            )
+            results.update(batch_result)
+        except Exception:
+            n_errors += 1
+
+        n_queried += len(batch)
+        n_calls += 1
+
+    if n_queried < len(deduped):
+        quota_exhausted = True
+
+    return {
+        "results": results,
+        "n_names_queried": n_queried,
+        "n_calls": n_calls,
+        "n_errors": n_errors,
+        "max_names": max_names,
+        "quota_exhausted": quota_exhausted,
+    }
+
+
+# ---------- Step 4c: sample_for_namsor driver -------------------------------
+#
+# End-to-end NamSor bias-sample driver. Takes the per-author parquet
+# (from Step 3c), identifies low-confidence names (combined gender
+# == "unknown" OR combined probability < 0.8), tags by script via
+# tag_script_region, stratified-samples up to max_names (default
+# 2,500 = NamSor's free monthly quota), calls NamSor on the sample,
+# and writes the result to a bias-sample parquet that Step 5 uses
+# to fit the per-region bias-correction model.
+
+#: Pre-registered NamSor stratified-sampling seed (per Phase 1.3 plan
+#: §3 — locked).
+NAMSOR_SAMPLE_SEED: str = "ws2-phase-1.3-namsor-seed-v1"
+
+
+def sample_for_namsor(
+    per_author_parquet: str | Path,
+    output_parquet: str | Path,
+    *,
+    namsor_api_key: str,
+    max_names: int = 2500,
+    seed: str = NAMSOR_SAMPLE_SEED,
+    confidence_gate: float = 0.8,
+) -> dict[str, Any]:
+    """Stratified-sample NamSor bias-estimation driver.
+
+    Pipeline:
+      1. Read per-author parquet (Step 3c output).
+      2. Identify low-confidence names: ``gender == "unknown"`` OR
+         ``gender_probability < confidence_gate``. Take unique
+         first names.
+      3. Tag each low-confidence name by script via
+         :func:`tag_script_region`.
+      4. Stratified random sample (seed-deterministic) of up to
+         ``max_names`` across regions via
+         :func:`stratified_sample_names`.
+      5. Call NamSor on the sample via :func:`query_namsor`.
+      6. Write per-name bias-sample parquet (one row per sampled
+         name) and return a summary dict.
+
+    The output parquet's schema is the load-bearing input for Step 5
+    (per-region gender_guesser-vs-NamSor bias model fitting).
+    """
+    import pandas as pd
+
+    per_author_parquet = Path(per_author_parquet)
+    output_parquet = Path(output_parquet)
+
+    per_author_table = pq.read_table(str(per_author_parquet))
+    df = per_author_table.to_pandas()
+
+    # Low-confidence subset: gg+genderize combined "gender" is
+    # unknown OR probability below the gate.
+    low_conf_mask = (
+        (df["gender"] == "unknown")
+        | (df["gender_probability"].fillna(0.0) < confidence_gate)
+    )
+    low_conf_authors = df.loc[low_conf_mask]
+
+    # Per-unique-name aggregation (count how many authors carry this
+    # first name; useful weight for downstream bias-correction).
+    name_counts = (
+        low_conf_authors["author_first_name"]
+        .dropna()
+        .loc[lambda s: s.astype(str).str.len() > 0]
+        .value_counts()
+        .to_dict()
+    )
+
+    # Tag each unique name by script
+    tagged: list[tuple[str, str]] = [
+        (name, tag_script_region(name)) for name in name_counts
+    ]
+
+    # Stratified sample
+    sample = stratified_sample_names(tagged, n_total=max_names, seed=seed)
+
+    # Per-region sample counts
+    from collections import Counter
+    n_sampled_by_region = dict(Counter(r for _, r in sample))
+
+    # Call NamSor on the sampled names
+    sampled_names = [n for n, _ in sample]
+    name_to_region = dict(sample)
+    namsor_result = query_namsor(
+        sampled_names,
+        api_key=namsor_api_key,
+        max_names=max_names,
+    )
+    namsor_per_name = namsor_result["results"]
+
+    # Build the output parquet: one row per sampled name
+    out_rows = []
+    for name in sampled_names:
+        ns = namsor_per_name.get(name)
+        out_rows.append({
+            "first_name": name,
+            "script_region": name_to_region[name],
+            "n_authors_with_this_name": int(name_counts.get(name, 0)),
+            "namsor_gender": ns["gender"] if ns else None,
+            "namsor_probability": (
+                float(ns["probability"]) if ns else None
+            ),
+            "namsor_script": ns["script"] if ns else None,
+            "namsor_gender_scale": (
+                float(ns["gender_scale"]) if ns else None
+            ),
+            "namsor_score": (
+                float(ns["score"]) if ns else None
+            ),
+        })
+    out_df = pd.DataFrame(out_rows)
+    out_table = pa.Table.from_pandas(out_df, preserve_index=False)
+    pq.write_table(out_table, str(output_parquet), compression="zstd")
+
+    return {
+        "source": str(per_author_parquet),
+        "output": str(output_parquet),
+        "seed": seed,
+        "max_names": max_names,
+        "confidence_gate": confidence_gate,
+        "n_low_conf_names": int(len(name_counts)),
+        "n_sampled": int(len(sample)),
+        "n_sampled_by_region": {
+            str(k): int(v) for k, v in n_sampled_by_region.items()
+        },
+        "n_namsor_classified": int(sum(
+            1 for n in sampled_names if n in namsor_per_name
+        )),
+        "namsor_summary": {
+            "n_names_queried": namsor_result["n_names_queried"],
+            "n_calls": namsor_result["n_calls"],
+            "n_errors": namsor_result["n_errors"],
+            "quota_exhausted": namsor_result["quota_exhausted"],
+        },
+    }
+
+
+# ---------- Step 5a: confusion matrix + Wilson CI ---------------------------
+#
+# Per script-region 3×3 confusion matrix comparing gender_guesser's
+# prediction to NamSor's "ground truth" on the bias sample. Rows are
+# gg's gender; cols are NamSor's gender; cells are counts. Row-
+# normalization gives P(NamSor | gg, region) — the conditional
+# distribution that downstream applies as the bias-correction kernel
+# (Step 5b).
+#
+# Each row-normalized cell carries a Wilson 95% CI computed from the
+# raw count. The maximum CI half-width across all cells in a region
+# is the H5 measurement — Phase 1.3 plan's locked acceptance gate
+# of ≤10pp at N=2,500 stratified sample.
+
+
+# Map of gg/NamSor gender labels to the canonical 3-class set used in
+# the confusion matrix. "None" / unexpected labels map to "unknown".
+_CANONICAL_GENDER: dict[str, str] = {
+    "male": "male", "female": "female", "unknown": "unknown",
+}
+_GENDER_CATEGORIES: tuple[str, str, str] = ("male", "female", "unknown")
+
+
+def _canonicalize_gender(label: Any) -> str:
+    """Normalize a raw gender label to one of {'male', 'female', 'unknown'}."""
+    if not isinstance(label, str):
+        return "unknown"
+    return _CANONICAL_GENDER.get(label.lower(), "unknown")
+
+
+def _wilson_ci(
+    k: int,
+    n: int,
+    confidence: float = 0.95,
+) -> tuple[float, float]:
+    """Wilson score interval for a binomial proportion p=k/n.
+
+    Returns ``(lower, upper)`` clipped to [0, 1]. ``(0.0, 1.0)`` on
+    degenerate ``n=0`` input (uninformative). Two-sided.
+
+    Uses the z-score for 95% (1.96) by default; 99% would be 2.576.
+    The Wilson interval is preferred over the normal approximation
+    on small N: it stays in [0,1], handles k=0 and k=n correctly,
+    and has better coverage at small samples.
+    """
+    if n <= 0:
+        return (0.0, 1.0)
+    # z = inverse normal CDF of (1 + confidence) / 2
+    # Hardcoded common values to avoid scipy dep for this one calculation.
+    z_table = {0.90: 1.6449, 0.95: 1.9600, 0.99: 2.5758}
+    z = z_table.get(confidence, 1.96)
+
+    p_hat = k / n
+    denom = 1.0 + (z * z) / n
+    center = (p_hat + (z * z) / (2.0 * n)) / denom
+    half_width = (
+        z
+        * ((p_hat * (1.0 - p_hat) / n + (z * z) / (4.0 * n * n)) ** 0.5)
+        / denom
+    )
+    lo = max(0.0, center - half_width)
+    hi = min(1.0, center + half_width)
+    return (lo, hi)
+
+
+def compute_confusion_matrix(
+    bias_sample_parquet: str | Path,
+    per_author_parquet: str | Path,
+    *,
+    region_column: str = "script_region",
+) -> dict[str, dict[str, Any]]:
+    """Per-region 3×3 confusion matrix (gg vs NamSor).
+
+    Joins the bias-sample (Step 4c output) to per-author (Step 3c
+    output) by first_name to attach gg's label to each NamSor-
+    classified name. Then groups by ``region_column`` and computes
+    raw counts, row-normalized P(NamSor | gg, region), and per-cell
+    Wilson 95% CIs.
+
+    ``region_column`` selects the stratification axis:
+
+    - ``"script_region"`` (default, the Step 5b HEADLINE axis): the
+      script the name is written in, already a column on the bias
+      sample (Step 4a's :func:`tag_script_region`).
+    - ``"primary_country"`` (the Step 5b ROBUSTNESS axis): each
+      sampled name's *modal* ``primary_country`` across the per-author
+      table is attached, then grouped on. Country is a per-author
+      attribute (not a property of the name string), so the per-name
+      bias sample is keyed by the most common country among the
+      authors who bear that name. Names with no country are dropped
+      from this matrix (pandas groupby drops null keys). The two axes
+      are different signals — script-region is the headline; the
+      per-country matrix exists for the Step 6 sensitivity analysis,
+      NOT to replace the script-region primary.
+
+    Returns a dict keyed by region. Each value has:
+      - ``n_sample``: number of names in the bias sample for this region
+      - ``counts``: dict[gg_gender → dict[namsor_gender → int]]
+      - ``row_normalized``: dict[gg_gender → dict[namsor_gender → float]]
+        — conditional probability P(NamSor | gg, region)
+      - ``row_normalized_ci``: dict[gg_gender → dict[namsor_gender →
+        (low, high)]] Wilson 95% CI for each cell
+      - ``max_ci_halfwidth``: max over all cells of ``(high-low)/2``.
+        This is the per-region H5 metric (≤0.10 gate per plan §3).
+
+    Caveat: regions present in the bias sample but absent from the
+    per-author table will have ``counts[gg=unknown][...] == 0`` for
+    those names (no gg label to attach). Such names are dropped
+    silently — they don't carry information about gg's bias.
+    """
+    bias_sample_parquet = Path(bias_sample_parquet)
+    per_author_parquet = Path(per_author_parquet)
+
+    bias_df = pq.read_table(str(bias_sample_parquet)).to_pandas()
+    pa_cols = ["author_first_name", "gg_label"]
+    if region_column == "primary_country":
+        pa_cols.append("primary_country")
+    pa_df = pq.read_table(
+        str(per_author_parquet),
+        columns=pa_cols,
+    ).to_pandas()
+
+    # Per-name gg label (dedup; gg is deterministic so all rows for
+    # a given name should agree on gg_label — take first).
+    name_to_gg_label = (
+        pa_df.dropna(subset=["author_first_name"])
+        .drop_duplicates(subset=["author_first_name"])
+        .set_index("author_first_name")["gg_label"]
+        .to_dict()
+    )
+
+    # Attach gg label to each bias-sample row
+    bias_df["gg_label"] = bias_df["first_name"].map(name_to_gg_label)
+
+    # For the per-country robustness axis, attach each name's MODAL
+    # primary_country (a name can map to authors in several countries —
+    # take the most common). Script-region needs no such join: it's
+    # already a per-name column on the bias sample.
+    if region_column == "primary_country":
+        name_to_country = (
+            pa_df.dropna(subset=["author_first_name", "primary_country"])
+            .groupby("author_first_name")["primary_country"]
+            .agg(lambda s: s.value_counts().index[0])
+            .to_dict()
+        )
+        bias_df["primary_country"] = bias_df["first_name"].map(name_to_country)
+
+    # Drop rows where we couldn't attach a gg label (shouldn't happen
+    # if Step 4c sampled FROM per-author, but be safe).
+    bias_df = bias_df.dropna(subset=["gg_label"])
+
+    # Canonicalize both sides to the 3-class set
+    bias_df["gg_canonical"] = bias_df["gg_label"].apply(_canonicalize_gender)
+    bias_df["namsor_canonical"] = bias_df["namsor_gender"].apply(
+        _canonicalize_gender,
+    )
+
+    result: dict[str, dict[str, Any]] = {}
+    for region, sub in bias_df.groupby(region_column):
+        # Initialize 3×3 counts
+        counts: dict[str, dict[str, int]] = {
+            gg: {ns: 0 for ns in _GENDER_CATEGORIES}
+            for gg in _GENDER_CATEGORIES
+        }
+        for _, row in sub.iterrows():
+            gg = str(row["gg_canonical"])
+            ns = str(row["namsor_canonical"])
+            counts[gg][ns] += 1
+
+        # Row-normalized + Wilson CIs
+        row_norm: dict[str, dict[str, float]] = {}
+        row_norm_ci: dict[str, dict[str, tuple[float, float]]] = {}
+        max_halfwidth = 0.0
+
+        for gg in _GENDER_CATEGORIES:
+            row_total = sum(counts[gg].values())
+            row_norm[gg] = {}
+            row_norm_ci[gg] = {}
+            for ns in _GENDER_CATEGORIES:
+                k = counts[gg][ns]
+                row_norm[gg][ns] = (k / row_total) if row_total else 0.0
+                lo, hi = _wilson_ci(k=k, n=row_total)
+                row_norm_ci[gg][ns] = (lo, hi)
+                # H5 measures the uncertainty of the bias estimates that
+                # are actually APPLIED. apply_bias_correction only ever uses
+                # rows with evidence (sum > 0) — in practice the gg-unknown
+                # row, since gg-confident names never enter the low-conf
+                # NamSor sample. Empty rows get a degenerate (0, 1) Wilson
+                # band (half-width 0.5); including them would peg
+                # max_ci_halfwidth at 0.5 for every region and make H5
+                # unpassable by construction. So exclude empty rows.
+                if row_total > 0:
+                    halfwidth = (hi - lo) / 2.0
+                    if halfwidth > max_halfwidth:
+                        max_halfwidth = halfwidth
+
+        result[str(region)] = {
+            "n_sample": int(len(sub)),
+            "counts": counts,
+            "row_normalized": row_norm,
+            "row_normalized_ci": row_norm_ci,
+            "max_ci_halfwidth": float(max_halfwidth),
+        }
+    return result
+
+
+# ---------- Step 5b: per-author bias-correction application -----------------
+#
+# Apply the per-region confusion-matrix kernel (Step 5a) to every author
+# in the per-author parquet, writing a calibrated probability triple
+# (corrected_p_male / _female / _unknown) plus a bias_correction_applied
+# flag. Locked design choices (Phase 1.3 plan §3 + todo.md):
+#
+#   1. Trust gg on CONFIDENT names; only correct the LOW-CONFIDENCE
+#      subset. Confident names (gender_probability >= the gate)
+#      never entered the NamSor stratified sample (sample_for_namsor's
+#      low-conf mask is probability < gate), so there is no kernel to
+#      calibrate them with. They get the IDENTITY transform — a one-hot
+#      on their assigned gender — and bias_correction_applied=False.
+#
+#   2. SCRIPT-REGION is the primary (headline) correction axis;
+#      PRIMARY_COUNTRY is the robustness axis (region_axis="country").
+#      The two are different signals; combining them is the Step 6
+#      sensitivity analysis, not done here.
+#
+# For a low-confidence author whose (region, gg-label) cell HAS NamSor
+# evidence (the row-normalized distribution sums to >0), we replace the
+# gg pick with that empirical P(NamSor | gg, region) distribution and
+# set bias_correction_applied=True. For a low-confidence author whose
+# cell is ABSENT (region not sampled, or row empty) we fall back to the
+# identity transform — a gg-unknown author thus stays fully "unknown":
+# conservative, no invented inference (mirrors the E4 escape's
+# "unknown-propagation" philosophy).
+#
+# The corrected triple always sums to 1.0 per author, so Step 5c can
+# sum it directly into per-cell expected gender counts.
+
+
+def apply_bias_correction(
+    per_author_parquet: str | Path,
+    output_parquet: str | Path,
+    *,
+    confusion_matrix: dict[str, Any],
+    region_axis: str = "script",
+    confidence_gate: float = 0.8,
+) -> dict[str, Any]:
+    """Apply the per-region bias-correction kernel to every author.
+
+    Inputs:
+      - ``per_author_parquet``: Step 3c output (per-author rows with
+        ``author_first_name``, ``gg_label``, ``gender``,
+        ``gender_probability``, ``primary_country``).
+      - ``confusion_matrix``: Step 5a output — ``dict[region →
+        {"row_normalized": {gg_gender → {namsor_gender → float}}, ...}]``.
+        Only ``row_normalized`` is read here. May be keyed by
+        script-region (headline) or country (robustness), matching
+        ``region_axis``.
+      - ``region_axis``: ``"script"`` (key each author by
+        :func:`tag_script_region` of their first name — the HEADLINE
+        axis) or ``"country"`` (key by ``primary_country`` — the
+        robustness axis).
+
+    Adds four columns to the per-author table (originals preserved):
+      - ``corrected_p_male`` / ``corrected_p_female`` /
+        ``corrected_p_unknown``: the calibrated probability triple
+        (sums to 1.0 per author).
+      - ``bias_correction_applied``: True iff the NamSor-derived kernel
+        was applied (low-confidence author with an evidenced cell);
+        False for confident authors (identity) and low-confidence
+        authors whose cell had no NamSor evidence (identity fallback).
+
+    Returns a summary dict for the verify-results doc.
+    """
+    per_author_parquet = Path(per_author_parquet)
+    output_parquet = Path(output_parquet)
+
+    if region_axis not in ("script", "country"):
+        raise ValueError(
+            f"region_axis must be 'script' or 'country', got {region_axis!r}",
+        )
+
+    df = pq.read_table(str(per_author_parquet)).to_pandas()
+    n_authors = int(len(df))
+
+    # gg_label may be absent if Genderize-only / a trimmed parquet was
+    # passed; default the whole column to "unknown" so the lookup key
+    # is well-defined.
+    if "gg_label" not in df.columns:
+        df["gg_label"] = "unknown"
+
+    # --- per-author region key (the correction axis) ---
+    if region_axis == "script":
+        unique_names = [
+            n for n in df["author_first_name"].dropna().unique()
+        ]
+        name_to_region = {n: tag_script_region(n) for n in unique_names}
+        region_series = df["author_first_name"].map(name_to_region)
+    else:  # region_axis == "country"
+        if "primary_country" not in df.columns:
+            raise ValueError(
+                "region_axis='country' requires a 'primary_country' "
+                "column in the per-author parquet",
+            )
+        region_series = df["primary_country"]
+
+    gg_canon = df["gg_label"].apply(_canonicalize_gender)
+    gender_canon = df["gender"].apply(_canonicalize_gender)
+    prob = df["gender_probability"].fillna(0.0)
+    low_conf = prob < confidence_gate
+
+    # --- identity transform (one-hot on the assigned gender) ---
+    identity_pm = (gender_canon == "male").astype(float)
+    identity_pf = (gender_canon == "female").astype(float)
+    identity_pu = (gender_canon == "unknown").astype(float)
+
+    # --- flatten the kernel into "region|gg" → probability maps ---
+    corr_m: dict[str, float] = {}
+    corr_f: dict[str, float] = {}
+    corr_u: dict[str, float] = {}
+    for region, region_data in confusion_matrix.items():
+        if not isinstance(region_data, dict):
+            continue
+        row_norm = region_data.get("row_normalized")
+        if not isinstance(row_norm, dict):
+            continue
+        for gg, dist in row_norm.items():
+            if not isinstance(dist, dict):
+                continue
+            pm = float(dist.get("male", 0.0) or 0.0)
+            pf = float(dist.get("female", 0.0) or 0.0)
+            pu = float(dist.get("unknown", 0.0) or 0.0)
+            if (pm + pf + pu) > 0.0:  # cell has NamSor evidence
+                key = f"{region}|{gg}"
+                corr_m[key] = pm
+                corr_f[key] = pf
+                corr_u[key] = pu
+
+    lookup_key = region_series.astype(str) + "|" + gg_canon.astype(str)
+    kernel_pm = lookup_key.map(corr_m)
+    kernel_pf = lookup_key.map(corr_f)
+    kernel_pu = lookup_key.map(corr_u)
+
+    # Apply the kernel only to low-confidence authors whose cell exists.
+    has_evidence = low_conf & kernel_pm.notna()
+
+    df["corrected_p_male"] = kernel_pm.where(has_evidence, identity_pm)
+    df["corrected_p_female"] = kernel_pf.where(has_evidence, identity_pf)
+    df["corrected_p_unknown"] = kernel_pu.where(has_evidence, identity_pu)
+    df["bias_correction_applied"] = has_evidence
+
+    out_table = pa.Table.from_pandas(df, preserve_index=False)
+    pq.write_table(out_table, str(output_parquet), compression="zstd")
+
+    n_low_conf = int(low_conf.sum())
+    n_corrected = int(has_evidence.sum())
+    n_corrected_by_region = {
+        str(k): int(v)
+        for k, v in region_series[has_evidence].value_counts().items()
+    }
+
+    return {
+        "source": str(per_author_parquet),
+        "output": str(output_parquet),
+        "region_axis": region_axis,
+        "confidence_gate": confidence_gate,
+        "n_authors": n_authors,
+        "n_confident_identity": n_authors - n_low_conf,
+        "n_low_conf": n_low_conf,
+        "n_bias_corrected": n_corrected,
+        "n_low_conf_uncorrectable": n_low_conf - n_corrected,
+        "bias_corrected_fraction": (
+            float(n_corrected / n_authors) if n_authors else 0.0
+        ),
+        "n_corrected_by_region": n_corrected_by_region,
+    }
+
+
+# ---------- Step 5c: field extraction + per-cell aggregation ----------------
+#
+# The headline ws2 test needs a per-cell demographic time series. A "cell"
+# is (year × field × region): year + field are PAPER attributes, region is
+# the author's script-region (the 5b headline axis). Because Step 5b's
+# corrected_p_* live on the per-AUTHOR table (year/field aggregated away),
+# Step 5c re-joins three tables:
+#
+#   per-author-paper (Step 1)  → paper_id, publication_year, author_id
+#   corrected per-author (5b)  → author_id → corrected_p_* + modal name
+#   paper→field map (below)    → paper_id → "cs" / "physics"
+#
+# field comes from `concepts_json` on the §0 corpus: a paper is assigned to
+# whichever of the two locked field concepts (CS C41008148 / Physics
+# C121332964) scores higher. Both unit conventions are produced (locked
+# 2026-06-30): `distinct_authors` (each person once per cell — the headline,
+# matching the program's per-capita framing) and `appearances` (each
+# author-paper slot — robustness). Per-cell CIs use a hybrid bootstrap:
+# a true percentile resample for small cells, and the asymptotic (Gaussian)
+# bootstrap SE for large cells where a 10k-resample would blow memory.
+
+_CS_CONCEPT_ID = "https://openalex.org/C41008148"
+_PHYSICS_CONCEPT_ID = "https://openalex.org/C121332964"
+
+
+def extract_primary_field(
+    concepts_json: Any,
+    *,
+    min_score: float = 0.0,
+) -> str | None:
+    """Assign a paper to ``"cs"`` / ``"physics"`` from its ``concepts_json``.
+
+    ``concepts_json`` is the JSON-string array of ``{id, score, ...}``
+    concept objects stored on the §0 corpus. The paper is assigned to
+    whichever of the two locked field concepts — CS (``C41008148``) or
+    Physics (``C121332964``) — has the higher score (argmax; ties → cs).
+    Cross-disciplinary papers thus go to their dominant field.
+
+    Returns ``None`` when neither field concept is present (or the best
+    score is below ``min_score``), and on missing / malformed input.
+    The §0 corpus already requires score ≥0.40 on at least one field
+    concept for membership, so ``min_score`` defaults to 0.0 (assignment
+    is by relative score among the field concepts actually present).
+    """
+    if not isinstance(concepts_json, str) or not concepts_json:
+        return None
+    try:
+        concepts = json.loads(concepts_json)
+    except (json.JSONDecodeError, TypeError):
+        return None
+    if not isinstance(concepts, list):
+        return None
+
+    cs_score: float | None = None
+    phys_score: float | None = None
+    for c in concepts:
+        if not isinstance(c, dict):
+            continue
+        cid = c.get("id")
+        score = c.get("score")
+        if not isinstance(score, (int, float)) or isinstance(score, bool):
+            continue
+        if cid == _CS_CONCEPT_ID and (cs_score is None or score > cs_score):
+            cs_score = float(score)
+        elif cid == _PHYSICS_CONCEPT_ID and (
+            phys_score is None or score > phys_score
+        ):
+            phys_score = float(score)
+
+    if cs_score is None and phys_score is None:
+        return None
+    cs_v = cs_score if cs_score is not None else -1.0
+    phys_v = phys_score if phys_score is not None else -1.0
+    if max(cs_v, phys_v) < min_score:
+        return None
+    return "cs" if cs_v >= phys_v else "physics"
+
+
+def build_paper_field_map(
+    corpus_parquet: str | Path,
+    output_parquet: str | Path,
+    batch_size: int = 50_000,
+) -> dict[str, Any]:
+    """Stream a §0 corpus parquet → a ``paper_id → primary_field`` parquet.
+
+    Reads only ``id`` + ``concepts_json`` (PyArrow column projection),
+    applies :func:`extract_primary_field` per paper, and writes one row
+    per ASSIGNED paper (``paper_id``, ``primary_field``). Papers whose
+    concepts match neither field concept are dropped (inner-join
+    semantics — they don't belong to either field's time series).
+
+    Batched/streaming so the 24.5M-paper v3 corpus stays bounded by
+    ``batch_size`` papers in memory. Mirrors :func:`extract_authorships`.
+    """
+    corpus_parquet = Path(corpus_parquet)
+    output_parquet = Path(output_parquet)
+
+    pf = pq.ParquetFile(str(corpus_parquet))
+    writer: pq.ParquetWriter | None = None
+    n_papers = 0
+    n_cs = 0
+    n_physics = 0
+    n_unassigned = 0
+
+    for batch in pf.iter_batches(
+        batch_size=batch_size, columns=["id", "concepts_json"],
+    ):
+        rows: list[dict[str, Any]] = []
+        for rec in batch.to_pylist():
+            n_papers += 1
+            field = extract_primary_field(rec.get("concepts_json"))
+            if field is None:
+                n_unassigned += 1
+                continue
+            if field == "cs":
+                n_cs += 1
+            else:
+                n_physics += 1
+            rows.append({"paper_id": rec.get("id"), "primary_field": field})
+        if rows:
+            out_tbl = pa.Table.from_pylist(rows)
+            if writer is None:
+                writer = pq.ParquetWriter(
+                    str(output_parquet), out_tbl.schema, compression="zstd",
+                )
+            writer.write_table(out_tbl)
+
+    if writer is not None:
+        writer.close()
+
+    return {
+        "source": str(corpus_parquet),
+        "output": str(output_parquet),
+        "n_papers": int(n_papers),
+        "n_cs": int(n_cs),
+        "n_physics": int(n_physics),
+        "n_unassigned": int(n_unassigned),
+    }
+
+
+#: Pinned seed for the per-cell bootstrap (reproducibility, per ws2
+#: desideratum "pin all seeds"). Combined with the unit name so the two
+#: unit aggregations bootstrap independently.
+CELL_BOOTSTRAP_SEED: str = "ws2-phase-1.3-cell-bootstrap-seed-v1"
+
+_Z_TABLE: dict[float, float] = {0.90: 1.6449, 0.95: 1.9600, 0.99: 2.5758}
+
+
+def _rng_from_seed(seed_str: str) -> Any:
+    """Deterministic numpy Generator from a string seed."""
+    import hashlib
+
+    import numpy as np
+
+    digest = hashlib.blake2b(seed_str.encode(), digest_size=8).digest()
+    return np.random.default_rng(int.from_bytes(digest, byteorder="big"))
+
+
+def _bootstrap_sum_ci(
+    values: Any,
+    *,
+    n_bootstrap: int,
+    rng: Any,
+    confidence: float = 0.95,
+    exact_max_n: int = 1000,
+) -> tuple[float, float, float]:
+    """CI for the sum of a cell's per-author corrected probabilities.
+
+    Returns ``(point, lo, hi)`` where ``point`` is the observed sum.
+
+    Hybrid by cell size:
+      - ``n <= exact_max_n``: a true percentile bootstrap — resample the
+        ``n`` values with replacement ``n_bootstrap`` times, take the
+        2.5 / 97.5 percentiles of the resampled sums. Faithful to the
+        (possibly skewed) small-sample distribution.
+      - ``n > exact_max_n``: the asymptotic (Gaussian) bootstrap CI.
+        The bootstrap SD of a size-``n`` resampled sum equals
+        ``sqrt(n) * popsd(values)``, so ``point ± z·sqrt(n)·popsd``,
+        clipped to ``[0, n]``. O(n) and memory-flat — required for the
+        large recent-year cells (10^5-10^6 authors) where materializing
+        an ``(n_bootstrap, n)`` resample matrix would OOM. By the CLT the
+        sum is Gaussian at that scale, so the approximation is tight.
+    """
+    import numpy as np
+
+    n = int(len(values))
+    point = float(values.sum())
+    if n == 0:
+        return (0.0, 0.0, 0.0)
+
+    if n <= exact_max_n:
+        idx = rng.integers(0, n, size=(n_bootstrap, n))
+        sums = values[idx].sum(axis=1)
+        lo = float(np.percentile(sums, 100.0 * (1.0 - confidence) / 2.0))
+        hi = float(np.percentile(sums, 100.0 * (1.0 + confidence) / 2.0))
+        return (point, lo, hi)
+
+    z = _Z_TABLE.get(confidence, 1.96)
+    se = (n**0.5) * float(values.std())  # popsd (ddof=0)
+    lo = max(0.0, point - z * se)
+    hi = min(float(n), point + z * se)
+    return (point, lo, hi)
+
+
+def _join_cells(
+    authorships_parquet: str | Path,
+    corrected_per_author_parquet: str | Path,
+    paper_field_parquet: str | Path,
+    *,
+    region_axis: str = "script",
+) -> Any:
+    """Join the three Step-5c/6 inputs into one per-author-paper frame.
+
+    Returns a pandas DataFrame with one row per author-paper appearance,
+    carrying ``year`` (renamed from ``publication_year``), ``field``
+    (from the paper→field map), ``region`` (the demographic stratum —
+    script-region of the modal name, or ``primary_country``),
+    ``author_id``, the three ``corrected_p_*`` columns, and
+    ``primary_country`` when the corrected parquet provides it (needed
+    by :func:`build_coverage_table`'s geographic-diversity metric).
+
+    Authors with no modal name / country fall into a ``"unknown"``
+    region rather than being silently dropped by the downstream groupby
+    — consistent with Step 5b's identity fallback.
+    """
+    if region_axis not in ("script", "country"):
+        raise ValueError(
+            f"region_axis must be 'script' or 'country', got {region_axis!r}",
+        )
+
+    have_country = "primary_country" in set(
+        pq.read_schema(str(corrected_per_author_parquet)).names,
+    )
+    corrected_cols = [
+        "author_id",
+        "author_first_name",
+        "corrected_p_male",
+        "corrected_p_female",
+        "corrected_p_unknown",
+    ]
+    if have_country:
+        corrected_cols.append("primary_country")
+
+    ap = pq.read_table(
+        str(authorships_parquet),
+        columns=["paper_id", "publication_year", "author_id"],
+    ).to_pandas()
+    corr = pq.read_table(
+        str(corrected_per_author_parquet), columns=corrected_cols,
+    ).to_pandas()
+    fmap = pq.read_table(
+        str(paper_field_parquet), columns=["paper_id", "primary_field"],
+    ).to_pandas()
+
+    if region_axis == "script":
+        unique_names = list(corr["author_first_name"].dropna().unique())
+        name_to_region = {n: tag_script_region(n) for n in unique_names}
+        corr["region"] = corr["author_first_name"].map(name_to_region)
+    else:  # region_axis == "country"
+        if not have_country:
+            raise ValueError(
+                "region_axis='country' requires a 'primary_country' column "
+                "in the corrected per-author parquet",
+            )
+        corr["region"] = corr["primary_country"]
+    corr["region"] = corr["region"].fillna("unknown")
+
+    merge_cols = [
+        "author_id", "region",
+        "corrected_p_male", "corrected_p_female", "corrected_p_unknown",
+    ]
+    if have_country:
+        merge_cols.append("primary_country")
+
+    return ap.merge(
+        corr[merge_cols], on="author_id", how="inner",
+    ).merge(fmap, on="paper_id", how="inner").rename(
+        columns={"publication_year": "year", "primary_field": "field"},
+    )
+
+
+def build_cell_coverage_table(
+    authorships_parquet: str | Path,
+    corrected_per_author_parquet: str | Path,
+    paper_field_parquet: str | Path,
+    output_parquet: str | Path,
+    *,
+    units: tuple[str, ...] = ("distinct_authors", "appearances"),
+    region_axis: str = "script",
+    n_bootstrap: int = 10_000,
+    seed: str = CELL_BOOTSTRAP_SEED,
+    confidence: float = 0.95,
+    exact_max_n: int = 1000,
+) -> dict[str, Any]:
+    """Aggregate corrected gender into (year × field × region) cells.
+
+    Joins three inputs by ``author_id`` / ``paper_id``:
+      - ``authorships_parquet`` (Step 1): per-author-paper rows
+        (``paper_id``, ``publication_year``, ``author_id``).
+      - ``corrected_per_author_parquet`` (Step 5b): ``author_id`` →
+        ``corrected_p_male`` / ``_female`` / ``_unknown`` + the modal
+        ``author_first_name`` (→ script-region) / ``primary_country``.
+      - ``paper_field_parquet`` (:func:`build_paper_field_map`):
+        ``paper_id`` → ``primary_field``.
+
+    Produces, for each ``unit`` in ``units`` and each
+    (``year``, ``field``, ``region``) cell, the summed corrected
+    probabilities + per-sum bootstrap CIs:
+
+      - ``distinct_authors`` (HEADLINE): each author counted once per
+        cell (dedup on author_id within the cell).
+      - ``appearances`` (robustness): each author-paper slot counted.
+
+    ``region_axis`` mirrors Step 5b: ``"script"`` (the headline,
+    :func:`tag_script_region` of the modal name) or ``"country"``
+    (``primary_country``). Output columns: ``unit, year, field, region,
+    n, sum_p_{male,female,unknown}, ci_{male,female,unknown}_{lo,hi}``.
+    """
+    joined = _join_cells(
+        authorships_parquet,
+        corrected_per_author_parquet,
+        paper_field_parquet,
+        region_axis=region_axis,
+    )
+
+    # Null-year rows can't be placed in a time-series cell — dropped by the
+    # groupby. Count them so the loss is explicit, not silent.
+    n_null_year_rows = int(joined["year"].isna().sum())
+
+    cell_rows: list[dict[str, Any]] = []
+    n_cells_by_unit: dict[str, int] = {}
+    for unit in units:
+        if unit == "distinct_authors":
+            unit_df = joined.drop_duplicates(
+                subset=["year", "field", "region", "author_id"],
+            )
+        elif unit == "appearances":
+            unit_df = joined
+        else:
+            raise ValueError(
+                "units must be a subset of {'distinct_authors', "
+                f"'appearances'}}, got {unit!r}",
+            )
+
+        rng = _rng_from_seed(f"{seed}|{unit}")
+        n_cells = 0
+        for (year, field, region), sub in unit_df.groupby(
+            ["year", "field", "region"], sort=True,
+        ):
+            row: dict[str, Any] = {
+                "unit": unit,
+                "year": int(year),
+                "field": str(field),
+                "region": str(region),
+                "n": int(len(sub)),
+            }
+            for gender in ("male", "female", "unknown"):
+                vals = sub[f"corrected_p_{gender}"].to_numpy()
+                point, lo, hi = _bootstrap_sum_ci(
+                    vals,
+                    n_bootstrap=n_bootstrap,
+                    rng=rng,
+                    confidence=confidence,
+                    exact_max_n=exact_max_n,
+                )
+                row[f"sum_p_{gender}"] = point
+                row[f"ci_{gender}_lo"] = lo
+                row[f"ci_{gender}_hi"] = hi
+            cell_rows.append(row)
+            n_cells += 1
+        n_cells_by_unit[unit] = n_cells
+
+    if cell_rows:
+        out_table = pa.Table.from_pylist(cell_rows)
+    else:
+        out_table = pa.Table.from_pylist([], schema=pa.schema([
+            ("unit", pa.string()), ("year", pa.int64()),
+            ("field", pa.string()), ("region", pa.string()),
+            ("n", pa.int64()),
+            ("sum_p_male", pa.float64()), ("sum_p_female", pa.float64()),
+            ("sum_p_unknown", pa.float64()),
+            ("ci_male_lo", pa.float64()), ("ci_male_hi", pa.float64()),
+            ("ci_female_lo", pa.float64()), ("ci_female_hi", pa.float64()),
+            ("ci_unknown_lo", pa.float64()), ("ci_unknown_hi", pa.float64()),
+        ]))
+    pq.write_table(out_table, str(output_parquet), compression="zstd")
+
+    return {
+        "authorships": str(authorships_parquet),
+        "corrected": str(corrected_per_author_parquet),
+        "paper_field": str(paper_field_parquet),
+        "output": str(output_parquet),
+        "region_axis": region_axis,
+        "units": list(units),
+        "n_bootstrap": n_bootstrap,
+        "seed": seed,
+        "n_joined_rows": int(len(joined)),
+        "n_dropped_null_year": n_null_year_rows,
+        "n_cells_by_unit": n_cells_by_unit,
+    }
+
+
+# ---------- Step 6: coverage table + diversity metrics + sensitivity ---------
+#
+# Step 6 turns 5c's per-cell expected gender counts into the human-facing
+# coverage table the Stage-1→2 transition owes Stage 2: per (year × field ×
+# region) cell, the GENDER axis (coverage rate + female share + Shannon)
+# and the GEOGRAPHIC axis (country coverage + country Shannon + #countries).
+#
+# The geographic-diversity metric reuses Phase 0.1's `demographic_shannon`
+# — Miller-Madow-corrected Shannon entropy (nats) over `primary_country`
+# — so the Stage-1 substrate is consistent with the Phase 0.1 convergence
+# work (see experiments/phase-0.1 check5bd `_shannon_entropy_with_mm`).
+#
+# Proportions (gender coverage, female share) carry bootstrap CIs (the
+# H8 gate is on the female-share CI half-width in pp). The diversity
+# indices are point estimates. CIs use a hybrid: a true percentile
+# bootstrap of the ratio for small cells, and the ratio-linearization
+# (delta-method) SE for large cells where resampling would OOM.
+#
+# perturb_row_normalized is the E2 primitive: it samples each confusion-
+# matrix cell within its 5a Wilson CI and renormalizes, yielding a kernel
+# consistent with the bias estimate's sampling uncertainty. The actual
+# sensitivity SWEEP (perturb K times → apply_bias_correction →
+# build_coverage_table → measure female-share spread) and the script-vs-
+# country axis comparison are thin loops over this + the Step-5/6 functions;
+# their NUMBERS belong to the VERIFY production run, not this module.
+
+
+def _shannon_entropy_mm(counts: Any, n_total: float) -> float:
+    """Miller-Madow-corrected Shannon entropy (nats) from raw counts.
+
+    Matches Phase 0.1's ``_shannon_entropy_with_mm`` (check5bd): plain
+    entropy ``-Σ p ln p`` plus the bias term ``(k-1)/(2n)`` where ``k``
+    is the number of non-empty categories. Accepts float counts (the
+    gender axis sums soft corrected probabilities). Returns 0.0 on
+    empty / non-positive ``n_total``.
+    """
+    import numpy as np
+
+    counts_arr = np.asarray(counts, dtype=np.float64)
+    total = float(n_total)
+    if total <= 0.0:
+        return 0.0
+    p = counts_arr / total
+    p = p[p > 0]
+    h = -float((p * np.log(p)).sum())
+    k_nonzero = int((counts_arr > 0).sum())
+    h += (k_nonzero - 1) / (2.0 * total)
+    return h
+
+
+def _ratio_ci(
+    numerator_vals: Any,
+    denominator_vals: Any,
+    *,
+    n_bootstrap: int,
+    rng: Any,
+    confidence: float = 0.95,
+    exact_max_n: int = 1000,
+) -> tuple[float, float, float]:
+    """CI for a ratio of per-row sums ``Σnum / Σden`` over a cell's rows.
+
+    Returns ``(point, lo, hi)`` clipped to ``[0, 1]``. Used for gender
+    coverage (``den`` = ones → a mean) and female share (``den`` =
+    per-row assigned mass). ``(0, 0, 0)`` when the denominator mass is
+    zero (ratio undefined — e.g., an all-unknown cell).
+
+    Hybrid by cell size, mirroring :func:`_bootstrap_sum_ci`:
+      - ``n <= exact_max_n``: true percentile bootstrap — resample rows
+        with replacement, recompute the ratio, take 2.5 / 97.5 pcts.
+      - ``n > exact_max_n``: the ratio-linearization (delta-method) SE,
+        ``SE = sd(num_i − R·den_i) / (sqrt(n)·mean(den))``, normal CI.
+        O(n), required for the large recent-year cells.
+    """
+    import numpy as np
+
+    num = np.asarray(numerator_vals, dtype=np.float64)
+    den = np.asarray(denominator_vals, dtype=np.float64)
+    n = int(len(num))
+    den_sum = float(den.sum())
+    if n == 0 or den_sum <= 0.0:
+        return (0.0, 0.0, 0.0)
+
+    point = float(num.sum() / den_sum)
+
+    if n <= exact_max_n:
+        idx = rng.integers(0, n, size=(n_bootstrap, n))
+        num_r = num[idx].sum(axis=1)
+        den_r = den[idx].sum(axis=1)
+        valid = den_r > 0
+        ratios = num_r[valid] / den_r[valid]
+        lo = float(np.percentile(ratios, 100.0 * (1.0 - confidence) / 2.0))
+        hi = float(np.percentile(ratios, 100.0 * (1.0 + confidence) / 2.0))
+        return (point, max(0.0, lo), min(1.0, hi))
+
+    z = _Z_TABLE.get(confidence, 1.96)
+    den_mean = float(den.mean())
+    resid = num - point * den  # mean-zero by construction
+    se = float(resid.std()) / ((n**0.5) * den_mean) if den_mean > 0 else 0.0
+    lo = max(0.0, point - z * se)
+    hi = min(1.0, point + z * se)
+    return (point, lo, hi)
+
+
+def build_coverage_table(
+    authorships_parquet: str | Path,
+    corrected_per_author_parquet: str | Path,
+    paper_field_parquet: str | Path,
+    output_parquet: str | Path,
+    *,
+    units: tuple[str, ...] = ("distinct_authors", "appearances"),
+    region_axis: str = "script",
+    n_bootstrap: int = 10_000,
+    seed: str = CELL_BOOTSTRAP_SEED,
+    confidence: float = 0.95,
+    exact_max_n: int = 1000,
+) -> dict[str, Any]:
+    """Per-cell coverage + demographic-diversity table (Step 6).
+
+    Same join + grain + units as :func:`build_cell_coverage_table`, but
+    emits the human-facing metrics rather than raw count sums. For each
+    ``unit`` × (``year``, ``field``, ``region``) cell:
+
+      - **gender axis**: ``gender_coverage_rate`` (= assigned mass / n,
+        +CI), ``female_share`` (= female / assigned mass, +CI +
+        ``female_share_ci_halfwidth`` — the H8 gate quantity),
+        ``gender_shannon`` (MM Shannon over expected male/female mass).
+      - **geographic axis**: ``country_coverage_rate`` (fraction with a
+        non-null country), ``country_shannon`` (the Phase-0.1
+        ``demographic_shannon`` over ``primary_country`` headcounts),
+        ``n_countries``. Null when the corrected parquet lacks
+        ``primary_country``.
+
+    Coverage / share CIs come from :func:`_ratio_ci`; the diversity
+    indices are point estimates. ``region_axis`` mirrors Step 5b.
+    """
+    import numpy as np
+
+    joined = _join_cells(
+        authorships_parquet,
+        corrected_per_author_parquet,
+        paper_field_parquet,
+        region_axis=region_axis,
+    )
+    n_null_year_rows = int(joined["year"].isna().sum())
+    has_country = "primary_country" in joined.columns
+
+    cell_rows: list[dict[str, Any]] = []
+    n_cells_by_unit: dict[str, int] = {}
+    for unit in units:
+        if unit == "distinct_authors":
+            unit_df = joined.drop_duplicates(
+                subset=["year", "field", "region", "author_id"],
+            )
+        elif unit == "appearances":
+            unit_df = joined
+        else:
+            raise ValueError(
+                "units must be a subset of {'distinct_authors', "
+                f"'appearances'}}, got {unit!r}",
+            )
+
+        rng = _rng_from_seed(f"{seed}|{unit}")
+        n_cells = 0
+        for (year, field, region), sub in unit_df.groupby(
+            ["year", "field", "region"], sort=True,
+        ):
+            n = int(len(sub))
+            pm = sub["corrected_p_male"].to_numpy()
+            pf = sub["corrected_p_female"].to_numpy()
+            assigned = pm + pf
+            ones = np.ones(n, dtype=np.float64)
+
+            cov, cov_lo, cov_hi = _ratio_ci(
+                assigned, ones, n_bootstrap=n_bootstrap, rng=rng,
+                confidence=confidence, exact_max_n=exact_max_n,
+            )
+            fshare, fs_lo, fs_hi = _ratio_ci(
+                pf, assigned, n_bootstrap=n_bootstrap, rng=rng,
+                confidence=confidence, exact_max_n=exact_max_n,
+            )
+            sum_m = float(pm.sum())
+            sum_f = float(pf.sum())
+            gender_shannon = _shannon_entropy_mm(
+                np.array([sum_m, sum_f]), sum_m + sum_f,
+            )
+
+            row: dict[str, Any] = {
+                "unit": unit,
+                "year": int(year),
+                "field": str(field),
+                "region": str(region),
+                "n": n,
+                "gender_coverage_rate": cov,
+                "gender_coverage_lo": cov_lo,
+                "gender_coverage_hi": cov_hi,
+                "female_share": fshare,
+                "female_share_lo": fs_lo,
+                "female_share_hi": fs_hi,
+                "female_share_ci_halfwidth": (fs_hi - fs_lo) / 2.0,
+                "gender_shannon": gender_shannon,
+            }
+
+            if has_country:
+                pc = sub["primary_country"].dropna()
+                pc = pc[pc.astype(str).str.len() > 0]
+                n_known = int(len(pc))
+                row["country_coverage_rate"] = (n_known / n) if n else 0.0
+                if n_known > 0:
+                    cc = pc.value_counts().to_numpy()
+                    row["country_shannon"] = _shannon_entropy_mm(cc, n_known)
+                    row["n_countries"] = int(len(cc))
+                else:
+                    row["country_shannon"] = 0.0
+                    row["n_countries"] = 0
+            else:
+                row["country_coverage_rate"] = None
+                row["country_shannon"] = None
+                row["n_countries"] = None
+
+            cell_rows.append(row)
+            n_cells += 1
+        n_cells_by_unit[unit] = n_cells
+
+    if cell_rows:
+        out_table = pa.Table.from_pylist(cell_rows)
+    else:
+        out_table = pa.Table.from_pylist([], schema=pa.schema([
+            ("unit", pa.string()), ("year", pa.int64()),
+            ("field", pa.string()), ("region", pa.string()),
+            ("n", pa.int64()),
+            ("gender_coverage_rate", pa.float64()),
+            ("gender_coverage_lo", pa.float64()),
+            ("gender_coverage_hi", pa.float64()),
+            ("female_share", pa.float64()),
+            ("female_share_lo", pa.float64()),
+            ("female_share_hi", pa.float64()),
+            ("female_share_ci_halfwidth", pa.float64()),
+            ("gender_shannon", pa.float64()),
+            ("country_coverage_rate", pa.float64()),
+            ("country_shannon", pa.float64()),
+            ("n_countries", pa.int64()),
+        ]))
+    pq.write_table(out_table, str(output_parquet), compression="zstd")
+
+    return {
+        "authorships": str(authorships_parquet),
+        "corrected": str(corrected_per_author_parquet),
+        "paper_field": str(paper_field_parquet),
+        "output": str(output_parquet),
+        "region_axis": region_axis,
+        "units": list(units),
+        "n_bootstrap": n_bootstrap,
+        "seed": seed,
+        "n_joined_rows": int(len(joined)),
+        "n_dropped_null_year": n_null_year_rows,
+        "country_metrics_available": has_country,
+        "n_cells_by_unit": n_cells_by_unit,
+    }
+
+
+def perturb_row_normalized(
+    confusion_matrix: dict[str, Any],
+    rng: Any,
+) -> dict[str, Any]:
+    """Draw a kernel perturbed within the 5a Wilson CIs (the E2 primitive).
+
+    For each region and each ``gg`` row of ``row_normalized``, sample
+    every (male/female/unknown) cell uniformly within its
+    ``row_normalized_ci`` ``(lo, hi)`` band, then renormalize the row to
+    sum to 1. Rows whose sampled mass is zero (or that lack CIs) keep
+    their original distribution. Returns a new confusion-matrix dict
+    with the same structure (other keys passed through), suitable to
+    feed straight into :func:`apply_bias_correction`.
+
+    The E2 sensitivity sweep draws many such kernels and measures how
+    far the headline demographic statistic (e.g. per-cell female share)
+    moves — flagging E2 if it exceeds the pre-registered threshold.
+    """
+    perturbed: dict[str, Any] = {}
+    for region, region_data in confusion_matrix.items():
+        if not isinstance(region_data, dict):
+            perturbed[region] = region_data
+            continue
+        row_norm = region_data.get("row_normalized")
+        row_ci = region_data.get("row_normalized_ci")
+        if not isinstance(row_norm, dict):
+            perturbed[region] = region_data
+            continue
+
+        new_row_norm: dict[str, dict[str, float]] = {}
+        for gg, dist in row_norm.items():
+            cis = row_ci.get(gg) if isinstance(row_ci, dict) else None
+            if not isinstance(cis, dict):
+                new_row_norm[gg] = dict(dist)
+                continue
+            sampled: dict[str, float] = {}
+            for ns in _GENDER_CATEGORIES:
+                ci = cis.get(ns)
+                if isinstance(ci, (tuple, list)) and len(ci) == 2:
+                    lo, hi = float(ci[0]), float(ci[1])
+                    sampled[ns] = float(rng.uniform(lo, hi)) if hi > lo else lo
+                else:
+                    sampled[ns] = float(dist.get(ns, 0.0))
+            total = sum(sampled.values())
+            if total > 0:
+                new_row_norm[gg] = {
+                    ns: sampled[ns] / total for ns in sampled
+                }
+            else:
+                new_row_norm[gg] = dict(dist)
+
+        perturbed[region] = {**region_data, "row_normalized": new_row_norm}
+    return perturbed

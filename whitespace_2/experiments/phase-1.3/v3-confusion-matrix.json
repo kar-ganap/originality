@@ -1,0 +1,412 @@
+{
+  "arabic": {
+    "n_sample": 476,
+    "counts": {
+      "male": {
+        "male": 0,
+        "female": 0,
+        "unknown": 0
+      },
+      "female": {
+        "male": 0,
+        "female": 0,
+        "unknown": 0
+      },
+      "unknown": {
+        "male": 301,
+        "female": 175,
+        "unknown": 0
+      }
+    },
+    "row_normalized": {
+      "male": {
+        "male": 0.0,
+        "female": 0.0,
+        "unknown": 0.0
+      },
+      "female": {
+        "male": 0.0,
+        "female": 0.0,
+        "unknown": 0.0
+      },
+      "unknown": {
+        "male": 0.6323529411764706,
+        "female": 0.36764705882352944,
+        "unknown": 0.0
+      }
+    },
+    "row_normalized_ci": {
+      "male": {
+        "male": [
+          0.0,
+          1.0
+        ],
+        "female": [
+          0.0,
+          1.0
+        ],
+        "unknown": [
+          0.0,
+          1.0
+        ]
+      },
+      "female": {
+        "male": [
+          0.0,
+          1.0
+        ],
+        "female": [
+          0.0,
+          1.0
+        ],
+        "unknown": [
+          0.0,
+          1.0
+        ]
+      },
+      "unknown": {
+        "male": [
+          0.5881381008176307,
+          0.6744485527780557
+        ],
+        "female": [
+          0.32555144722194435,
+          0.4118618991823692
+        ],
+        "unknown": [
+          8.673617379884035e-19,
+          0.008005975305184043
+        ]
+      }
+    },
+    "max_ci_halfwidth": 0.043155225980212486
+  },
+  "cjk": {
+    "n_sample": 607,
+    "counts": {
+      "male": {
+        "male": 0,
+        "female": 0,
+        "unknown": 0
+      },
+      "female": {
+        "male": 0,
+        "female": 0,
+        "unknown": 0
+      },
+      "unknown": {
+        "male": 522,
+        "female": 85,
+        "unknown": 0
+      }
+    },
+    "row_normalized": {
+      "male": {
+        "male": 0.0,
+        "female": 0.0,
+        "unknown": 0.0
+      },
+      "female": {
+        "male": 0.0,
+        "female": 0.0,
+        "unknown": 0.0
+      },
+      "unknown": {
+        "male": 0.8599670510708401,
+        "female": 0.1400329489291598,
+        "unknown": 0.0
+      }
+    },
+    "row_normalized_ci": {
+      "male": {
+        "male": [
+          0.0,
+          1.0
+        ],
+        "female": [
+          0.0,
+          1.0
+        ],
+        "unknown": [
+          0.0,
+          1.0
+        ]
+      },
+      "female": {
+        "male": [
+          0.0,
+          1.0
+        ],
+        "female": [
+          0.0,
+          1.0
+        ],
+        "unknown": [
+          0.0,
+          1.0
+        ]
+      },
+      "unknown": {
+        "male": [
+          0.8300902916260954,
+          0.8853161247018037
+        ],
+        "female": [
+          0.11468387529819628,
+          0.16990970837390465
+        ],
+        "unknown": [
+          0.0,
+          0.00628902812120196
+        ]
+      }
+    },
+    "max_ci_halfwidth": 0.027612916537854186
+  },
+  "cyrillic": {
+    "n_sample": 607,
+    "counts": {
+      "male": {
+        "male": 0,
+        "female": 0,
+        "unknown": 0
+      },
+      "female": {
+        "male": 0,
+        "female": 0,
+        "unknown": 0
+      },
+      "unknown": {
+        "male": 435,
+        "female": 172,
+        "unknown": 0
+      }
+    },
+    "row_normalized": {
+      "male": {
+        "male": 0.0,
+        "female": 0.0,
+        "unknown": 0.0
+      },
+      "female": {
+        "male": 0.0,
+        "female": 0.0,
+        "unknown": 0.0
+      },
+      "unknown": {
+        "male": 0.7166392092257001,
+        "female": 0.2833607907742998,
+        "unknown": 0.0
+      }
+    },
+    "row_normalized_ci": {
+      "male": {
+        "male": [
+          0.0,
+          1.0
+        ],
+        "female": [
+          0.0,
+          1.0
+        ],
+        "unknown": [
+          0.0,
+          1.0
+        ]
+      },
+      "female": {
+        "male": [
+          0.0,
+          1.0
+        ],
+        "female": [
+          0.0,
+          1.0
+        ],
+        "unknown": [
+          0.0,
+          1.0
+        ]
+      },
+      "unknown": {
+        "male": [
+          0.679514304074408,
+          0.7510392142190414
+        ],
+        "female": [
+          0.24896078578095845,
+          0.32048569592559184
+        ],
+        "unknown": [
+          0.0,
+          0.00628902812120196
+        ]
+      }
+    },
+    "max_ci_halfwidth": 0.03576245507231669
+  },
+  "latin": {
+    "n_sample": 606,
+    "counts": {
+      "male": {
+        "male": 0,
+        "female": 0,
+        "unknown": 0
+      },
+      "female": {
+        "male": 0,
+        "female": 0,
+        "unknown": 0
+      },
+      "unknown": {
+        "male": 395,
+        "female": 211,
+        "unknown": 0
+      }
+    },
+    "row_normalized": {
+      "male": {
+        "male": 0.0,
+        "female": 0.0,
+        "unknown": 0.0
+      },
+      "female": {
+        "male": 0.0,
+        "female": 0.0,
+        "unknown": 0.0
+      },
+      "unknown": {
+        "male": 0.6518151815181518,
+        "female": 0.3481848184818482,
+        "unknown": 0.0
+      }
+    },
+    "row_normalized_ci": {
+      "male": {
+        "male": [
+          0.0,
+          1.0
+        ],
+        "female": [
+          0.0,
+          1.0
+        ],
+        "unknown": [
+          0.0,
+          1.0
+        ]
+      },
+      "female": {
+        "male": [
+          0.0,
+          1.0
+        ],
+        "female": [
+          0.0,
+          1.0
+        ],
+        "unknown": [
+          0.0,
+          1.0
+        ]
+      },
+      "unknown": {
+        "male": [
+          0.6130360553128033,
+          0.6886816366255623
+        ],
+        "female": [
+          0.31131836337443763,
+          0.38696394468719675
+        ],
+        "unknown": [
+          0.0,
+          0.006299340681252312
+        ]
+      }
+    },
+    "max_ci_halfwidth": 0.03782279065637956
+  },
+  "south_asian": {
+    "n_sample": 4,
+    "counts": {
+      "male": {
+        "male": 0,
+        "female": 0,
+        "unknown": 0
+      },
+      "female": {
+        "male": 0,
+        "female": 0,
+        "unknown": 0
+      },
+      "unknown": {
+        "male": 3,
+        "female": 1,
+        "unknown": 0
+      }
+    },
+    "row_normalized": {
+      "male": {
+        "male": 0.0,
+        "female": 0.0,
+        "unknown": 0.0
+      },
+      "female": {
+        "male": 0.0,
+        "female": 0.0,
+        "unknown": 0.0
+      },
+      "unknown": {
+        "male": 0.75,
+        "female": 0.25,
+        "unknown": 0.0
+      }
+    },
+    "row_normalized_ci": {
+      "male": {
+        "male": [
+          0.0,
+          1.0
+        ],
+        "female": [
+          0.0,
+          1.0
+        ],
+        "unknown": [
+          0.0,
+          1.0
+        ]
+      },
+      "female": {
+        "male": [
+          0.0,
+          1.0
+        ],
+        "female": [
+          0.0,
+          1.0
+        ],
+        "unknown": [
+          0.0,
+          1.0
+        ]
+      },
+      "unknown": {
+        "male": [
+          0.3006360524426366,
+          0.9544139373553637
+        ],
+        "female": [
+          0.045586062644636216,
+          0.6993639475573634
+        ],
+        "unknown": [
+          0.0,
+          0.48990002040399916
+        ]
+      }
+    },
+    "max_ci_halfwidth": 0.3268889424563636
+  }
+}

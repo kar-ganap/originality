@@ -90,5 +90,20 @@ module = [
 ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
-module = ["gender_guesser.*", "sklearn.*", "scipy.*", "duckdb.*", "matplotlib.*"]
+module = [
+    "gender_guesser.*",
+    "sklearn.*",
+    "scipy.*",
+    "duckdb.*",
+    "matplotlib.*",
+]
 ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+# pyarrow ships partial stubs but several core entry points (ParquetFile,
+# ParquetWriter, write_table, etc.) are typed as untyped functions in
+# strict-mode mypy. Treat pyarrow calls as Any rather than littering the
+# code with per-call # type: ignore comments.
+module = ["pyarrow", "pyarrow.*"]
+ignore_missing_imports = true
+follow_imports = "skip"
