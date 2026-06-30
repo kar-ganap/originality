@@ -25,6 +25,7 @@ import pyarrow.parquet as pq
 
 from whitespace2.demographics import (
     _extract_first_name,
+    _extract_source_type,
     explode_authorships_for_paper,
     extract_authorships,
 )
@@ -66,13 +67,30 @@ def _make_paper(
     paper_id: str = "https://openalex.org/W1000000001",
     year: int | None = 2020,
     authorships: list[dict[str, Any]] | None = None,
+    source_type: str | None = "journal",
 ) -> dict[str, Any]:
     if authorships is None:
         authorships = [_make_author()]
+    primary_location: dict[str, Any] | None
+    if source_type is not None:
+        primary_location = {
+            "source": {
+                "type": source_type,
+                "display_name": "Test Venue",
+                "id": "https://openalex.org/S0001",
+            },
+        }
+    else:
+        primary_location = None
     return {
         "id": paper_id,
         "publication_year": year,
         "authorships_json": json.dumps(authorships),
+        "primary_location_json": (
+            json.dumps(primary_location)
+            if primary_location is not None
+            else None
+        ),
     }
 
 
@@ -106,6 +124,32 @@ def test_extract_first_name_handles_missing_or_empty() -> None:
     assert _extract_first_name(42) == ("", False)  # type: ignore[arg-type]
 
 
+# ---------- _extract_source_type ----------
+
+
+def test_extract_source_type_valid_journal() -> None:
+    """Well-formed primary_location_json → source.type returned."""
+    pl = json.dumps({"source": {"type": "journal", "display_name": "X"}})
+    assert _extract_source_type(pl) == "journal"
+
+    pl_repo = json.dumps({"source": {"type": "repository", "display_name": "arXiv"}})
+    assert _extract_source_type(pl_repo) == "repository"
+
+
+def test_extract_source_type_handles_missing_or_malformed() -> None:
+    """None / empty / malformed / missing-source / missing-type → None."""
+    assert _extract_source_type(None) is None
+    assert _extract_source_type("") is None
+    assert _extract_source_type("{not json") is None
+    assert _extract_source_type("[]") is None  # wrong shape
+    assert _extract_source_type(json.dumps({"source": None})) is None
+    assert _extract_source_type(json.dumps({"source": {}})) is None
+    assert _extract_source_type(
+        json.dumps({"source": {"type": None}}),
+    ) is None
+    assert _extract_source_type(json.dumps({})) is None  # no source key
+
+
 # ---------- explode_authorships_for_paper ----------
 
 
@@ -132,6 +176,7 @@ def test_explode_authorships_produces_one_row_per_author_paper() -> None:
     assert len(rows) == 3
     assert all(r["paper_id"] == "https://openalex.org/W42" for r in rows)
     assert all(r["publication_year"] == 2022 for r in rows)
+    assert all(r["source_type"] == "journal" for r in rows)
     assert [r["author_id"] for r in rows] == [
         "https://openalex.org/A1",
         "https://openalex.org/A2",
@@ -140,6 +185,31 @@ def test_explode_authorships_produces_one_row_per_author_paper() -> None:
     assert [r["author_first_name"] for r in rows] == ["Alice", "Bob", "Carol"]
     assert [r["author_position"] for r in rows] == ["first", "middle", "last"]
     assert [r["is_corresponding"] for r in rows] == [True, False, False]
+
+
+def test_explode_authorships_carries_repository_source_type() -> None:
+    """Repository / preprint papers get source_type='repository' per row."""
+    paper = _make_paper(
+        source_type="repository",
+        authorships=[
+            _make_author(author_id="https://openalex.org/A1"),
+            _make_author(author_id="https://openalex.org/A2"),
+        ],
+    )
+    rows = explode_authorships_for_paper(paper)
+    assert len(rows) == 2
+    assert all(r["source_type"] == "repository" for r in rows)
+
+
+def test_explode_authorships_carries_none_source_type_when_missing() -> None:
+    """Missing primary_location_json → source_type=None on all rows."""
+    paper = _make_paper(
+        source_type=None,  # primary_location_json will be None
+        authorships=[_make_author(author_id="https://openalex.org/A1")],
+    )
+    rows = explode_authorships_for_paper(paper)
+    assert len(rows) == 1
+    assert rows[0]["source_type"] is None
 
 
 def test_explode_authorships_skips_author_without_id() -> None:
@@ -245,7 +315,7 @@ def test_extract_authorships_writes_parquet_with_expected_shape(
     out_tbl = pq.read_table(str(dst))
     assert out_tbl.num_rows == 6
     cols = set(out_tbl.column_names)
-    assert {"paper_id", "publication_year", "author_id",
+    assert {"paper_id", "publication_year", "source_type", "author_id",
             "author_first_name", "author_position",
             "is_corresponding", "author_orcid", "countries"}.issubset(cols)
 

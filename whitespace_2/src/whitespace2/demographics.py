@@ -23,6 +23,39 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 
 
+def _extract_source_type(primary_location_json: Any) -> str | None:
+    """Extract ``source.type`` from a ``primary_location_json`` string.
+
+    Returns ``None`` on missing / non-string / malformed JSON, or
+    when the parsed structure lacks the expected ``source.type``
+    path.
+
+    Used to stratify per-author records by venue type
+    (``"journal"`` / ``"repository"`` / ``"conference"`` / etc.).
+    Phase 1.3 Step 1 smoke surfaced that ~26% of 2020 physics
+    papers have ``source_type='repository'`` (predominantly arXiv
+    preprints) and that those papers are far more likely to have
+    no disambiguated authors (no ``author.id``). Carrying the
+    source type per author-paper row lets downstream stratify
+    coverage + bias correction by venue type.
+    """
+    if not isinstance(primary_location_json, str) or not primary_location_json:
+        return None
+    try:
+        loc = json.loads(primary_location_json)
+    except (json.JSONDecodeError, TypeError):
+        return None
+    if not isinstance(loc, dict):
+        return None
+    source = loc.get("source")
+    if not isinstance(source, dict):
+        return None
+    source_type = source.get("type")
+    if not isinstance(source_type, str):
+        return None
+    return source_type
+
+
 def _extract_first_name(display_name: Any) -> tuple[str, bool]:
     """Extract a paper-author's first name + an ``is_initial`` flag.
 
@@ -56,6 +89,9 @@ def explode_authorships_for_paper(
 
     - ``paper_id`` — copied from the input
     - ``publication_year`` — copied (may be None)
+    - ``source_type`` — extracted from ``primary_location.source.type``
+      (e.g., ``"journal"``, ``"repository"``, ``"conference"``); used to
+      stratify coverage + bias correction downstream
     - ``author_id`` — OpenAlex author URI (the disambiguation key)
     - ``author_display_name`` — full ``author.display_name``
     - ``author_first_name`` — extracted via :func:`_extract_first_name`
@@ -75,6 +111,7 @@ def explode_authorships_for_paper(
     paper_id = paper.get("id", "")
     publication_year = paper.get("publication_year")
     authorships_json = paper.get("authorships_json")
+    source_type = _extract_source_type(paper.get("primary_location_json"))
 
     if not authorships_json or not isinstance(authorships_json, str):
         return []
@@ -122,6 +159,7 @@ def explode_authorships_for_paper(
         rows.append({
             "paper_id": paper_id,
             "publication_year": publication_year,
+            "source_type": source_type,
             "author_id": author_id,
             "author_display_name": display_name,
             "author_first_name": first_name,
@@ -147,9 +185,10 @@ def extract_authorships(
     memory bounded by ``batch_size``-many papers regardless of
     total row count.
 
-    Only the three columns we need are read off the input parquet
-    (``id``, ``publication_year``, ``authorships_json``) — PyArrow
-    column projection skips the rest at the file level.
+    Only the four columns we need are read off the input parquet
+    (``id``, ``publication_year``, ``authorships_json``,
+    ``primary_location_json``) — PyArrow column projection skips
+    the rest at the file level.
 
     If no paper in the input has any extractable author (all
     empty/malformed authorships), no output parquet is written
@@ -166,7 +205,12 @@ def extract_authorships(
 
     for batch in pf.iter_batches(
         batch_size=batch_size,
-        columns=["id", "publication_year", "authorships_json"],
+        columns=[
+            "id",
+            "publication_year",
+            "authorships_json",
+            "primary_location_json",
+        ],
     ):
         paper_dicts = batch.to_pylist()
         all_rows: list[dict[str, Any]] = []

@@ -152,9 +152,7 @@ def _load_specter2_model(device: str, dtype: str) -> dict[str, Any]:
     from adapters import AutoAdapterModel
     from transformers import AutoTokenizer
 
-    tokenizer = AutoTokenizer.from_pretrained(  # type: ignore[no-untyped-call]
-        _SPECTER2_BASE
-    )
+    tokenizer = AutoTokenizer.from_pretrained(_SPECTER2_BASE)
     torch_dtype = _resolve_dtype(dtype)
     model = AutoAdapterModel.from_pretrained(
         _SPECTER2_BASE,
