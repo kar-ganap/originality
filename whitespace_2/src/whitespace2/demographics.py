@@ -766,15 +766,26 @@ def annotate_gender_country(
     }
     if genderize_summary is not None:
         result["genderize_summary"] = genderize_summary
-        # Per-method agreement metric (Phase 0.2 Wave 3A-style)
-        if "both_methods_confident" in df.columns:
-            n_both_confident = int(df["both_methods_confident"].sum())
-            n_both_agree = int(df["both_methods_agree"].sum())
-            result["n_authors_both_methods_confident"] = n_both_confident
-            result["n_authors_both_methods_agree"] = n_both_agree
-            result["agreement_rate_on_both_confident"] = (
-                float(n_both_agree / n_both_confident)
-                if n_both_confident else 0.0
+        # Genderize coverage extension: how many gg-unknown names did
+        # Genderize successfully classify (this is the value Genderize
+        # adds in our methodology — extending gg's coverage on names
+        # gg doesn't know). The Wave-3A-style "agreement rate" is NOT
+        # computable from this output because we only query Genderize
+        # on gg-unknown names (to save quota); gg-confident names are
+        # never seen by Genderize, so no name can satisfy "both
+        # methods confident at ≥0.8". The cross-validation /
+        # bias-estimation metric is locked as NamSor's stratified
+        # sample (Step 4, H5); Genderize's role here is coverage
+        # extension only.
+        if "genderize_gender" in df.columns:
+            mask_extended = (
+                df["genderize_gender"].notna()
+                & df["genderize_gender"].astype(str).ne("None")
+                & (df["gg_label"] == "unknown")
+                & (df["gender"] != "unknown")
+            )
+            result["n_authors_extended_by_genderize"] = int(
+                mask_extended.sum(),
             )
 
     return result

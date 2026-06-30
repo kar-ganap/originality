@@ -921,6 +921,9 @@ def test_annotate_gender_country_with_genderize_extends_coverage(
     assert summary["genderize_invoked"] is True
     assert summary["genderize_summary"]["n_calls"] >= 1
     assert summary["genderize_summary"]["n_names_queried"] == 2
+    # Yiyu (gg unknown, Genderize confident female) is one extension;
+    # Asdfg (Genderize also fails) is not counted.
+    assert summary["n_authors_extended_by_genderize"] == 1
 
     out = pq.read_table(str(dst))
     df = out.to_pandas()
