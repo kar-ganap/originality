@@ -139,6 +139,55 @@ well under the 30% E2 threshold.
 
 ---
 
+## Robustness — axis sensitivity + v2/v3 pair
+
+### Script vs country correction axis (`sensitivity_axis.py`)
+
+Re-running the bias correction keyed on **country** instead of **script**
+and comparing the field-level CS female-share trend:
+
+| Year | script-corrected | country-corrected |
+|---|---|---|
+| 1975 | 0.224 | 0.184 |
+| 1995 | 0.229 | 0.196 |
+| 2015 | 0.278 | 0.261 |
+| 2024 | 0.318 | 0.308 |
+
+Both axes show the **same ~10pp rising trend** (study-window 1970–2024:
+max |diff| 4.93pp, mean 3.01pp over 55 years, narrowing over time). The
+~3pp level gap is **a confound, not a real axis effect**: the v3 NamSor
+sample was *script*-stratified, so the per-country matrix is thin (68
+countries, only 16 with n≥10) and only **41.6% of authors are
+country-correctable** vs 99.97% under script — the uncorrected 58% stay
+"unknown" and depress the country female-share. This **confirms
+script-region is the correct primary axis**; a clean country-axis
+estimate would need a country-stratified NamSor sample (fresh quota).
+
+### v2 / v3 robustness pair
+
+The full pipeline re-run on the **v2** §0 1M sample (`run_pipeline.py
+--reuse-matrix v3-confusion-matrix.json --no-genderize` — the per-region
+bias is §0-version-independent, so **zero new API quota**; 14 min).
+
+| | v3 (24.5M-pop filter) | v2 (38.7M-pop filter) |
+|---|---|---|
+| author-paper rows | 3,124,143 | 2,750,876 |
+| unique authors | 1,822,535 | 1,826,052 |
+| H1 / H2 | 0.014% / 99.6% | 0.024% / 99.7% |
+| H3 confident gender | 41.5% | 43.3% |
+| H4 country coverage | 71.9% | 67.3% |
+| H8 (cells n≥1000) | max 1.48pp | max 1.46pp |
+
+**The CS female-share trend matches within 1.4pp at every decade**
+(v3 vs v2: 1975 0.224/0.218, 1995 0.231/0.237, 2015 0.279/0.291, 2024
+0.319/0.327; max |diff| over the listed years = 1.39pp). Both rise ~10pp.
+**The headline demographic signal is robust to the §0 filter choice** —
+it does not depend on the v2→v3 cleanup (publisher-chrome, concept-score
+0.40, abstract-token-50). Deliverable: `data/metadata/
+v2-coverage-table.parquet`.
+
+---
+
 ## API usage (this run)
 
 - **Genderize:** 2,200 names queried / 220 calls / 0 errors; extended
@@ -167,6 +216,14 @@ well under the 30% E2 threshold.
 3. **The Step-5a H5 bug** (empty gg-rows pegging `max_ci_halfwidth` at
    0.5) was caught by the keyed smoke and fixed (commit `a213f42`) before
    this run — without it every region would have spuriously fired E1.
+4. **The §0 corpus has a pre-1970 mis-dated tail.** The 1M sample
+   contains papers dated back to **1803** with CS/physics concept tags —
+   CS didn't exist in 1803, so these are OpenAlex metadata errors. They
+   are tiny (1–2-author cells) and negligible in count, but Phase 1.4 /
+   Stage 2 should bound the year to the **1970–2024** study window
+   (the §0 filter screened junk-year *tokens* in text, not the
+   `publication_year` field itself). Surfaced by degenerate country
+   female-share (0.0) on those cells in the axis sweep.
 
 ---
 
