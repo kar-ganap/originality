@@ -24,6 +24,7 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 
 from whitespace2.demographics import (
+    _bootstrap_sum_ci,
     _extract_first_name,
     _extract_source_type,
     _gg_label_to_gender_probability,
@@ -32,12 +33,15 @@ from whitespace2.demographics import (
     annotate_gender_country,
     annotate_with_gender_guesser,
     apply_bias_correction,
+    build_cell_coverage_table,
+    build_paper_field_map,
     combine_gg_and_genderize,
     compute_career_length_screen,
     compute_confusion_matrix,
     compute_orcid_consistency,
     explode_authorships_for_paper,
     extract_authorships,
+    extract_primary_field,
     query_genderize,
     query_genderize_batch,
     query_namsor,
@@ -1834,3 +1838,328 @@ def test_confusion_matrix_then_apply_correction_compose(tmp_path: Path) -> None:
     assert summary["n_confident_identity"] == 1
     assert summary["n_bias_corrected"] == 3
     assert summary["n_corrected_by_region"] == {"cjk": 2, "latin": 1}
+
+
+# ---------- Step 5c: field extraction + per-cell aggregation ----------
+
+_CS_ID = "https://openalex.org/C41008148"
+_PHYS_ID = "https://openalex.org/C121332964"
+
+
+def _concepts_json(*pairs: tuple[str, float]) -> str:
+    """Build a concepts_json string from (concept_id, score) pairs."""
+    return json.dumps([{"id": cid, "score": score} for cid, score in pairs])
+
+
+def test_extract_primary_field_cs_and_physics() -> None:
+    """Single-field papers map to that field; cross-disciplinary papers
+    take the higher-scoring of the two locked field concepts (argmax)."""
+    assert extract_primary_field(_concepts_json((_CS_ID, 0.6))) == "cs"
+    assert extract_primary_field(_concepts_json((_PHYS_ID, 0.5))) == "physics"
+    # Cross-disciplinary: physics outscores cs → physics
+    assert extract_primary_field(
+        _concepts_json((_CS_ID, 0.40), (_PHYS_ID, 0.55)),
+    ) == "physics"
+    # Cross-disciplinary: cs outscores physics → cs
+    assert extract_primary_field(
+        _concepts_json((_CS_ID, 0.60), (_PHYS_ID, 0.50)),
+    ) == "cs"
+    # Non-field concepts present alongside cs → still cs
+    assert extract_primary_field(
+        _concepts_json(("https://openalex.org/C999", 0.9), (_CS_ID, 0.45)),
+    ) == "cs"
+
+
+def test_extract_primary_field_none_and_malformed() -> None:
+    """Neither field concept present / malformed input → None."""
+    assert extract_primary_field(
+        _concepts_json(("https://openalex.org/C999", 0.9)),
+    ) is None
+    assert extract_primary_field("[]") is None
+    assert extract_primary_field("{not json") is None
+    assert extract_primary_field(None) is None  # type: ignore[arg-type]
+    assert extract_primary_field("") is None
+
+
+def test_build_paper_field_map(tmp_path: Path) -> None:
+    """Stream a synthetic corpus parquet → paper_id→primary_field map."""
+    corpus = pa.table({
+        "id": [f"https://openalex.org/W{i}" for i in range(4)],
+        "concepts_json": [
+            _concepts_json((_CS_ID, 0.6)),                  # cs
+            _concepts_json((_PHYS_ID, 0.5)),                # physics
+            _concepts_json((_CS_ID, 0.4), (_PHYS_ID, 0.7)),  # physics (argmax)
+            _concepts_json(("https://openalex.org/C999", 0.9)),  # none → drop
+        ],
+    })
+    src = tmp_path / "corpus.parquet"
+    pq.write_table(corpus, str(src))
+    dst = tmp_path / "field_map.parquet"
+
+    summary = build_paper_field_map(src, dst, batch_size=2)
+
+    assert summary["n_papers"] == 4
+    assert summary["n_cs"] == 1
+    assert summary["n_physics"] == 2
+    assert summary["n_unassigned"] == 1
+
+    out = pq.read_table(str(dst)).to_pandas()
+    field_by_paper = dict(zip(out["paper_id"], out["primary_field"], strict=True))
+    assert field_by_paper["https://openalex.org/W0"] == "cs"
+    assert field_by_paper["https://openalex.org/W1"] == "physics"
+    assert field_by_paper["https://openalex.org/W2"] == "physics"
+    # Unassigned paper W3 is absent from the map (inner-join semantics)
+    assert "https://openalex.org/W3" not in field_by_paper
+
+
+def _make_cell_inputs(
+    tmp_path: Path,
+    *,
+    author_paper_rows: list[tuple[str, int | None, str]],
+    authors: list[dict[str, Any]],
+    paper_field_rows: list[tuple[str, str]],
+) -> tuple[Path, Path, Path]:
+    """Write the three Step-5c input parquets, return their paths.
+
+    - author_paper_rows: (paper_id, publication_year, author_id)
+    - authors: per-author dicts (author_id, author_first_name,
+      corrected_p_male/_female/_unknown)
+    - paper_field_rows: (paper_id, primary_field)
+    """
+    ap = pa.table({
+        "paper_id": [r[0] for r in author_paper_rows],
+        "publication_year": [r[1] for r in author_paper_rows],
+        "author_id": [r[2] for r in author_paper_rows],
+    })
+    ap_path = tmp_path / "authorships.parquet"
+    pq.write_table(ap, str(ap_path))
+
+    corr = pa.table({
+        "author_id": [a["author_id"] for a in authors],
+        "author_first_name": [a["author_first_name"] for a in authors],
+        "corrected_p_male": [a["corrected_p_male"] for a in authors],
+        "corrected_p_female": [a["corrected_p_female"] for a in authors],
+        "corrected_p_unknown": [a["corrected_p_unknown"] for a in authors],
+    })
+    corr_path = tmp_path / "corrected.parquet"
+    pq.write_table(corr, str(corr_path))
+
+    fmap = pa.table({
+        "paper_id": [r[0] for r in paper_field_rows],
+        "primary_field": [r[1] for r in paper_field_rows],
+    })
+    fmap_path = tmp_path / "field_map.parquet"
+    pq.write_table(fmap, str(fmap_path))
+
+    return ap_path, corr_path, fmap_path
+
+
+def test_build_cell_coverage_table_distinct_vs_appearances(
+    tmp_path: Path,
+) -> None:
+    """An author with two papers in one cell counts ONCE under the
+    distinct-authors unit and TWICE under the appearances unit, so the
+    two units' summed counts differ by exactly that author's row."""
+    ap_path, corr_path, fmap_path = _make_cell_inputs(
+        tmp_path,
+        author_paper_rows=[
+            ("W1", 2020, "A1"),  # John, twice in 2020-cs
+            ("W2", 2020, "A1"),
+            ("W1", 2020, "A2"),  # Yiyu, once
+        ],
+        authors=[
+            {"author_id": "A1", "author_first_name": "John",
+             "corrected_p_male": 1.0, "corrected_p_female": 0.0,
+             "corrected_p_unknown": 0.0},
+            {"author_id": "A2", "author_first_name": "Yiyu",
+             "corrected_p_male": 0.3, "corrected_p_female": 0.5,
+             "corrected_p_unknown": 0.2},
+        ],
+        paper_field_rows=[("W1", "cs"), ("W2", "cs")],
+    )
+    out_path = tmp_path / "cells.parquet"
+    build_cell_coverage_table(
+        ap_path, corr_path, fmap_path, out_path, n_bootstrap=200,
+    )
+    df = pq.read_table(str(out_path)).to_pandas()
+
+    cells = {
+        (r["unit"], r["year"], r["field"], r["region"]): r
+        for r in df.to_dict("records")
+    }
+    distinct = cells[("distinct_authors", 2020, "cs", "latin")]
+    appear = cells[("appearances", 2020, "cs", "latin")]
+
+    # Distinct: A1 + A2 once each → n=2, male=1.0+0.3=1.3
+    assert distinct["n"] == 2
+    assert abs(distinct["sum_p_male"] - 1.3) < 1e-9
+    assert abs(distinct["sum_p_female"] - 0.5) < 1e-9
+    assert abs(distinct["sum_p_unknown"] - 0.2) < 1e-9
+    # Appearances: A1 twice + A2 once → n=3, male=1.0+1.0+0.3=2.3
+    assert appear["n"] == 3
+    assert abs(appear["sum_p_male"] - 2.3) < 1e-9
+    assert abs(appear["sum_p_female"] - 0.5) < 1e-9
+    assert abs(appear["sum_p_unknown"] - 0.2) < 1e-9
+
+
+def test_build_cell_coverage_table_routes_year_field_region(
+    tmp_path: Path,
+) -> None:
+    """Papers land in the correct (year, field, region) cell; region is
+    the author's script-region, field is the paper's field."""
+    ap_path, corr_path, fmap_path = _make_cell_inputs(
+        tmp_path,
+        author_paper_rows=[
+            ("W1", 2020, "A1"),   # John (latin), 2020 cs
+            ("W2", 1995, "A2"),   # Иван (cyrillic), 1995 physics
+        ],
+        authors=[
+            {"author_id": "A1", "author_first_name": "John",
+             "corrected_p_male": 1.0, "corrected_p_female": 0.0,
+             "corrected_p_unknown": 0.0},
+            {"author_id": "A2", "author_first_name": "Иван",
+             "corrected_p_male": 0.9, "corrected_p_female": 0.05,
+             "corrected_p_unknown": 0.05},
+        ],
+        paper_field_rows=[("W1", "cs"), ("W2", "physics")],
+    )
+    out_path = tmp_path / "cells.parquet"
+    build_cell_coverage_table(
+        ap_path, corr_path, fmap_path, out_path, n_bootstrap=200,
+    )
+    df = pq.read_table(str(out_path)).to_pandas()
+    distinct = df[df["unit"] == "distinct_authors"]
+    keys = {
+        (r["year"], r["field"], r["region"])
+        for r in distinct.to_dict("records")
+    }
+    assert (2020, "cs", "latin") in keys
+    assert (1995, "physics", "cyrillic") in keys
+
+
+def test_build_cell_coverage_table_ci_properties(tmp_path: Path) -> None:
+    """Every cell's bootstrap CI brackets its point estimate and stays
+    within [0, n]; output carries the expected columns."""
+    ap_path, corr_path, fmap_path = _make_cell_inputs(
+        tmp_path,
+        author_paper_rows=[(f"W{i}", 2020, f"A{i}") for i in range(8)],
+        authors=[
+            {"author_id": f"A{i}", "author_first_name": f"Name{i}",
+             "corrected_p_male": 0.6, "corrected_p_female": 0.3,
+             "corrected_p_unknown": 0.1}
+            for i in range(8)
+        ],
+        paper_field_rows=[(f"W{i}", "cs") for i in range(8)],
+    )
+    out_path = tmp_path / "cells.parquet"
+    build_cell_coverage_table(
+        ap_path, corr_path, fmap_path, out_path, n_bootstrap=500,
+    )
+    df = pq.read_table(str(out_path)).to_pandas()
+
+    expected_cols = {
+        "unit", "year", "field", "region", "n",
+        "sum_p_male", "sum_p_female", "sum_p_unknown",
+        "ci_male_lo", "ci_male_hi", "ci_female_lo", "ci_female_hi",
+        "ci_unknown_lo", "ci_unknown_hi",
+    }
+    assert expected_cols.issubset(set(df.columns))
+    # Both units present
+    assert set(df["unit"]) == {"distinct_authors", "appearances"}
+
+    for r in df.to_dict("records"):
+        n = r["n"]
+        for g in ["male", "female", "unknown"]:
+            lo, hi, point = r[f"ci_{g}_lo"], r[f"ci_{g}_hi"], r[f"sum_p_{g}"]
+            assert lo <= point <= hi
+            assert lo >= 0.0
+            assert hi <= n + 1e-9
+
+
+def test_build_cell_coverage_table_deterministic(tmp_path: Path) -> None:
+    """Same pinned seed → identical CIs across runs (reproducibility)."""
+    args = _make_cell_inputs(
+        tmp_path,
+        author_paper_rows=[(f"W{i}", 2020, f"A{i}") for i in range(6)],
+        authors=[
+            {"author_id": f"A{i}", "author_first_name": f"Name{i}",
+             "corrected_p_male": 0.5, "corrected_p_female": 0.4,
+             "corrected_p_unknown": 0.1}
+            for i in range(6)
+        ],
+        paper_field_rows=[(f"W{i}", "cs") for i in range(6)],
+    )
+    out1 = tmp_path / "c1.parquet"
+    out2 = tmp_path / "c2.parquet"
+    build_cell_coverage_table(*args, out1, n_bootstrap=300)
+    build_cell_coverage_table(*args, out2, n_bootstrap=300)
+    df1 = pq.read_table(str(out1)).to_pandas()
+    df2 = pq.read_table(str(out2)).to_pandas()
+    assert df1["ci_male_lo"].tolist() == df2["ci_male_lo"].tolist()
+    assert df1["ci_male_hi"].tolist() == df2["ci_male_hi"].tolist()
+
+
+def test_build_cell_coverage_table_no_silent_drops(tmp_path: Path) -> None:
+    """A nameless author lands in a region='unknown' cell (not dropped),
+    and null-publication_year rows are counted in the summary rather than
+    vanishing silently."""
+    ap_path, corr_path, fmap_path = _make_cell_inputs(
+        tmp_path,
+        author_paper_rows=[
+            ("W1", 2020, "A1"),     # named author, valid year
+            ("W2", 2020, "A2"),     # nameless author → region 'unknown'
+            ("W3", None, "A1"),     # null year → dropped (counted)
+        ],
+        authors=[
+            {"author_id": "A1", "author_first_name": "John",
+             "corrected_p_male": 1.0, "corrected_p_female": 0.0,
+             "corrected_p_unknown": 0.0},
+            {"author_id": "A2", "author_first_name": None,
+             "corrected_p_male": 0.0, "corrected_p_female": 0.0,
+             "corrected_p_unknown": 1.0},
+        ],
+        paper_field_rows=[("W1", "cs"), ("W2", "cs"), ("W3", "cs")],
+    )
+    out_path = tmp_path / "cells.parquet"
+    summary = build_cell_coverage_table(
+        ap_path, corr_path, fmap_path, out_path, n_bootstrap=100,
+    )
+    df = pq.read_table(str(out_path)).to_pandas()
+    distinct = df[df["unit"] == "distinct_authors"]
+    regions = set(distinct["region"])
+    assert "latin" in regions       # John
+    assert "unknown" in regions     # nameless A2 — NOT dropped
+    # The null-year W3 appearance is reported, not silently lost.
+    assert summary["n_dropped_null_year"] == 1
+
+
+def test_bootstrap_sum_ci_exact_and_analytic_branches() -> None:
+    """The hybrid CI helper: true percentile bootstrap for small cells
+    (n <= exact_max_n), Gaussian bootstrap-SE for large ones. Both
+    bracket the point estimate and respect [0, n] bounds."""
+    import numpy as np
+
+    rng = np.random.default_rng(0)
+    # Exact branch (n=2 <= exact_max_n=2): values [1, 0] → sum can be 0..2
+    point, lo, hi = _bootstrap_sum_ci(
+        np.array([1.0, 0.0]), n_bootstrap=500, rng=rng, exact_max_n=2,
+    )
+    assert point == 1.0
+    assert 0.0 <= lo <= 1.0 <= hi <= 2.0
+
+    # Analytic branch (n=5 > exact_max_n=2): varied values, SD>0
+    point, lo, hi = _bootstrap_sum_ci(
+        np.array([0.0, 0.5, 1.0, 0.5, 0.0]),
+        n_bootstrap=500, rng=rng, exact_max_n=2,
+    )
+    assert point == 2.0
+    assert lo < 2.0 < hi
+    assert lo >= 0.0
+    assert hi <= 5.0
+
+    # Degenerate: all-equal values → zero-width CI at the point
+    point, lo, hi = _bootstrap_sum_ci(
+        np.array([0.2, 0.2, 0.2, 0.2, 0.2]),
+        n_bootstrap=500, rng=rng, exact_max_n=2,
+    )
+    assert point == lo == hi == 1.0

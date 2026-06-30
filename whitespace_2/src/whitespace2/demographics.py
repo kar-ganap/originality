@@ -1849,3 +1849,369 @@ def apply_bias_correction(
         ),
         "n_corrected_by_region": n_corrected_by_region,
     }
+
+
+# ---------- Step 5c: field extraction + per-cell aggregation ----------------
+#
+# The headline ws2 test needs a per-cell demographic time series. A "cell"
+# is (year × field × region): year + field are PAPER attributes, region is
+# the author's script-region (the 5b headline axis). Because Step 5b's
+# corrected_p_* live on the per-AUTHOR table (year/field aggregated away),
+# Step 5c re-joins three tables:
+#
+#   per-author-paper (Step 1)  → paper_id, publication_year, author_id
+#   corrected per-author (5b)  → author_id → corrected_p_* + modal name
+#   paper→field map (below)    → paper_id → "cs" / "physics"
+#
+# field comes from `concepts_json` on the §0 corpus: a paper is assigned to
+# whichever of the two locked field concepts (CS C41008148 / Physics
+# C121332964) scores higher. Both unit conventions are produced (locked
+# 2026-06-30): `distinct_authors` (each person once per cell — the headline,
+# matching the program's per-capita framing) and `appearances` (each
+# author-paper slot — robustness). Per-cell CIs use a hybrid bootstrap:
+# a true percentile resample for small cells, and the asymptotic (Gaussian)
+# bootstrap SE for large cells where a 10k-resample would blow memory.
+
+_CS_CONCEPT_ID = "https://openalex.org/C41008148"
+_PHYSICS_CONCEPT_ID = "https://openalex.org/C121332964"
+
+
+def extract_primary_field(
+    concepts_json: Any,
+    *,
+    min_score: float = 0.0,
+) -> str | None:
+    """Assign a paper to ``"cs"`` / ``"physics"`` from its ``concepts_json``.
+
+    ``concepts_json`` is the JSON-string array of ``{id, score, ...}``
+    concept objects stored on the §0 corpus. The paper is assigned to
+    whichever of the two locked field concepts — CS (``C41008148``) or
+    Physics (``C121332964``) — has the higher score (argmax; ties → cs).
+    Cross-disciplinary papers thus go to their dominant field.
+
+    Returns ``None`` when neither field concept is present (or the best
+    score is below ``min_score``), and on missing / malformed input.
+    The §0 corpus already requires score ≥0.40 on at least one field
+    concept for membership, so ``min_score`` defaults to 0.0 (assignment
+    is by relative score among the field concepts actually present).
+    """
+    if not isinstance(concepts_json, str) or not concepts_json:
+        return None
+    try:
+        concepts = json.loads(concepts_json)
+    except (json.JSONDecodeError, TypeError):
+        return None
+    if not isinstance(concepts, list):
+        return None
+
+    cs_score: float | None = None
+    phys_score: float | None = None
+    for c in concepts:
+        if not isinstance(c, dict):
+            continue
+        cid = c.get("id")
+        score = c.get("score")
+        if not isinstance(score, (int, float)) or isinstance(score, bool):
+            continue
+        if cid == _CS_CONCEPT_ID and (cs_score is None or score > cs_score):
+            cs_score = float(score)
+        elif cid == _PHYSICS_CONCEPT_ID and (
+            phys_score is None or score > phys_score
+        ):
+            phys_score = float(score)
+
+    if cs_score is None and phys_score is None:
+        return None
+    cs_v = cs_score if cs_score is not None else -1.0
+    phys_v = phys_score if phys_score is not None else -1.0
+    if max(cs_v, phys_v) < min_score:
+        return None
+    return "cs" if cs_v >= phys_v else "physics"
+
+
+def build_paper_field_map(
+    corpus_parquet: str | Path,
+    output_parquet: str | Path,
+    batch_size: int = 50_000,
+) -> dict[str, Any]:
+    """Stream a §0 corpus parquet → a ``paper_id → primary_field`` parquet.
+
+    Reads only ``id`` + ``concepts_json`` (PyArrow column projection),
+    applies :func:`extract_primary_field` per paper, and writes one row
+    per ASSIGNED paper (``paper_id``, ``primary_field``). Papers whose
+    concepts match neither field concept are dropped (inner-join
+    semantics — they don't belong to either field's time series).
+
+    Batched/streaming so the 24.5M-paper v3 corpus stays bounded by
+    ``batch_size`` papers in memory. Mirrors :func:`extract_authorships`.
+    """
+    corpus_parquet = Path(corpus_parquet)
+    output_parquet = Path(output_parquet)
+
+    pf = pq.ParquetFile(str(corpus_parquet))
+    writer: pq.ParquetWriter | None = None
+    n_papers = 0
+    n_cs = 0
+    n_physics = 0
+    n_unassigned = 0
+
+    for batch in pf.iter_batches(
+        batch_size=batch_size, columns=["id", "concepts_json"],
+    ):
+        rows: list[dict[str, Any]] = []
+        for rec in batch.to_pylist():
+            n_papers += 1
+            field = extract_primary_field(rec.get("concepts_json"))
+            if field is None:
+                n_unassigned += 1
+                continue
+            if field == "cs":
+                n_cs += 1
+            else:
+                n_physics += 1
+            rows.append({"paper_id": rec.get("id"), "primary_field": field})
+        if rows:
+            out_tbl = pa.Table.from_pylist(rows)
+            if writer is None:
+                writer = pq.ParquetWriter(
+                    str(output_parquet), out_tbl.schema, compression="zstd",
+                )
+            writer.write_table(out_tbl)
+
+    if writer is not None:
+        writer.close()
+
+    return {
+        "source": str(corpus_parquet),
+        "output": str(output_parquet),
+        "n_papers": int(n_papers),
+        "n_cs": int(n_cs),
+        "n_physics": int(n_physics),
+        "n_unassigned": int(n_unassigned),
+    }
+
+
+#: Pinned seed for the per-cell bootstrap (reproducibility, per ws2
+#: desideratum "pin all seeds"). Combined with the unit name so the two
+#: unit aggregations bootstrap independently.
+CELL_BOOTSTRAP_SEED: str = "ws2-phase-1.3-cell-bootstrap-seed-v1"
+
+_Z_TABLE: dict[float, float] = {0.90: 1.6449, 0.95: 1.9600, 0.99: 2.5758}
+
+
+def _rng_from_seed(seed_str: str) -> Any:
+    """Deterministic numpy Generator from a string seed."""
+    import hashlib
+
+    import numpy as np
+
+    digest = hashlib.blake2b(seed_str.encode(), digest_size=8).digest()
+    return np.random.default_rng(int.from_bytes(digest, byteorder="big"))
+
+
+def _bootstrap_sum_ci(
+    values: Any,
+    *,
+    n_bootstrap: int,
+    rng: Any,
+    confidence: float = 0.95,
+    exact_max_n: int = 1000,
+) -> tuple[float, float, float]:
+    """CI for the sum of a cell's per-author corrected probabilities.
+
+    Returns ``(point, lo, hi)`` where ``point`` is the observed sum.
+
+    Hybrid by cell size:
+      - ``n <= exact_max_n``: a true percentile bootstrap — resample the
+        ``n`` values with replacement ``n_bootstrap`` times, take the
+        2.5 / 97.5 percentiles of the resampled sums. Faithful to the
+        (possibly skewed) small-sample distribution.
+      - ``n > exact_max_n``: the asymptotic (Gaussian) bootstrap CI.
+        The bootstrap SD of a size-``n`` resampled sum equals
+        ``sqrt(n) * popsd(values)``, so ``point ± z·sqrt(n)·popsd``,
+        clipped to ``[0, n]``. O(n) and memory-flat — required for the
+        large recent-year cells (10^5-10^6 authors) where materializing
+        an ``(n_bootstrap, n)`` resample matrix would OOM. By the CLT the
+        sum is Gaussian at that scale, so the approximation is tight.
+    """
+    import numpy as np
+
+    n = int(len(values))
+    point = float(values.sum())
+    if n == 0:
+        return (0.0, 0.0, 0.0)
+
+    if n <= exact_max_n:
+        idx = rng.integers(0, n, size=(n_bootstrap, n))
+        sums = values[idx].sum(axis=1)
+        lo = float(np.percentile(sums, 100.0 * (1.0 - confidence) / 2.0))
+        hi = float(np.percentile(sums, 100.0 * (1.0 + confidence) / 2.0))
+        return (point, lo, hi)
+
+    z = _Z_TABLE.get(confidence, 1.96)
+    se = (n**0.5) * float(values.std())  # popsd (ddof=0)
+    lo = max(0.0, point - z * se)
+    hi = min(float(n), point + z * se)
+    return (point, lo, hi)
+
+
+def build_cell_coverage_table(
+    authorships_parquet: str | Path,
+    corrected_per_author_parquet: str | Path,
+    paper_field_parquet: str | Path,
+    output_parquet: str | Path,
+    *,
+    units: tuple[str, ...] = ("distinct_authors", "appearances"),
+    region_axis: str = "script",
+    n_bootstrap: int = 10_000,
+    seed: str = CELL_BOOTSTRAP_SEED,
+    confidence: float = 0.95,
+    exact_max_n: int = 1000,
+) -> dict[str, Any]:
+    """Aggregate corrected gender into (year × field × region) cells.
+
+    Joins three inputs by ``author_id`` / ``paper_id``:
+      - ``authorships_parquet`` (Step 1): per-author-paper rows
+        (``paper_id``, ``publication_year``, ``author_id``).
+      - ``corrected_per_author_parquet`` (Step 5b): ``author_id`` →
+        ``corrected_p_male`` / ``_female`` / ``_unknown`` + the modal
+        ``author_first_name`` (→ script-region) / ``primary_country``.
+      - ``paper_field_parquet`` (:func:`build_paper_field_map`):
+        ``paper_id`` → ``primary_field``.
+
+    Produces, for each ``unit`` in ``units`` and each
+    (``year``, ``field``, ``region``) cell, the summed corrected
+    probabilities + per-sum bootstrap CIs:
+
+      - ``distinct_authors`` (HEADLINE): each author counted once per
+        cell (dedup on author_id within the cell).
+      - ``appearances`` (robustness): each author-paper slot counted.
+
+    ``region_axis`` mirrors Step 5b: ``"script"`` (the headline,
+    :func:`tag_script_region` of the modal name) or ``"country"``
+    (``primary_country``). Output columns: ``unit, year, field, region,
+    n, sum_p_{male,female,unknown}, ci_{male,female,unknown}_{lo,hi}``.
+    """
+    corrected_cols = [
+        "author_id",
+        "author_first_name",
+        "corrected_p_male",
+        "corrected_p_female",
+        "corrected_p_unknown",
+    ]
+    if region_axis == "country":
+        corrected_cols.append("primary_country")
+    elif region_axis != "script":
+        raise ValueError(
+            f"region_axis must be 'script' or 'country', got {region_axis!r}",
+        )
+
+    ap = pq.read_table(
+        str(authorships_parquet),
+        columns=["paper_id", "publication_year", "author_id"],
+    ).to_pandas()
+    corr = pq.read_table(
+        str(corrected_per_author_parquet), columns=corrected_cols,
+    ).to_pandas()
+    fmap = pq.read_table(
+        str(paper_field_parquet), columns=["paper_id", "primary_field"],
+    ).to_pandas()
+
+    # Region per author (constant across that author's paper rows).
+    # Authors with no modal name / country fall into a "unknown" region
+    # rather than being silently dropped by the groupby — consistent with
+    # Step 5b's identity fallback (they carry corrected_p_unknown ≈ 1).
+    if region_axis == "script":
+        unique_names = list(corr["author_first_name"].dropna().unique())
+        name_to_region = {n: tag_script_region(n) for n in unique_names}
+        corr["region"] = corr["author_first_name"].map(name_to_region)
+    else:
+        corr["region"] = corr["primary_country"]
+    corr["region"] = corr["region"].fillna("unknown")
+
+    joined = ap.merge(
+        corr[[
+            "author_id", "region",
+            "corrected_p_male", "corrected_p_female", "corrected_p_unknown",
+        ]],
+        on="author_id", how="inner",
+    ).merge(fmap, on="paper_id", how="inner").rename(
+        columns={"publication_year": "year", "primary_field": "field"},
+    )
+
+    # Null-year rows can't be placed in a time-series cell — dropped by the
+    # groupby. Count them so the loss is explicit, not silent.
+    n_null_year_rows = int(joined["year"].isna().sum())
+
+    cell_rows: list[dict[str, Any]] = []
+    n_cells_by_unit: dict[str, int] = {}
+    for unit in units:
+        if unit == "distinct_authors":
+            unit_df = joined.drop_duplicates(
+                subset=["year", "field", "region", "author_id"],
+            )
+        elif unit == "appearances":
+            unit_df = joined
+        else:
+            raise ValueError(
+                "units must be a subset of {'distinct_authors', "
+                f"'appearances'}}, got {unit!r}",
+            )
+
+        rng = _rng_from_seed(f"{seed}|{unit}")
+        n_cells = 0
+        for (year, field, region), sub in unit_df.groupby(
+            ["year", "field", "region"], sort=True,
+        ):
+            row: dict[str, Any] = {
+                "unit": unit,
+                "year": int(year),
+                "field": str(field),
+                "region": str(region),
+                "n": int(len(sub)),
+            }
+            for gender in ("male", "female", "unknown"):
+                vals = sub[f"corrected_p_{gender}"].to_numpy()
+                point, lo, hi = _bootstrap_sum_ci(
+                    vals,
+                    n_bootstrap=n_bootstrap,
+                    rng=rng,
+                    confidence=confidence,
+                    exact_max_n=exact_max_n,
+                )
+                row[f"sum_p_{gender}"] = point
+                row[f"ci_{gender}_lo"] = lo
+                row[f"ci_{gender}_hi"] = hi
+            cell_rows.append(row)
+            n_cells += 1
+        n_cells_by_unit[unit] = n_cells
+
+    if cell_rows:
+        out_table = pa.Table.from_pylist(cell_rows)
+    else:
+        out_table = pa.Table.from_pylist([], schema=pa.schema([
+            ("unit", pa.string()), ("year", pa.int64()),
+            ("field", pa.string()), ("region", pa.string()),
+            ("n", pa.int64()),
+            ("sum_p_male", pa.float64()), ("sum_p_female", pa.float64()),
+            ("sum_p_unknown", pa.float64()),
+            ("ci_male_lo", pa.float64()), ("ci_male_hi", pa.float64()),
+            ("ci_female_lo", pa.float64()), ("ci_female_hi", pa.float64()),
+            ("ci_unknown_lo", pa.float64()), ("ci_unknown_hi", pa.float64()),
+        ]))
+    pq.write_table(out_table, str(output_parquet), compression="zstd")
+
+    return {
+        "authorships": str(authorships_parquet),
+        "corrected": str(corrected_per_author_parquet),
+        "paper_field": str(paper_field_parquet),
+        "output": str(output_parquet),
+        "region_axis": region_axis,
+        "units": list(units),
+        "n_bootstrap": n_bootstrap,
+        "seed": seed,
+        "n_author_paper_rows": int(len(ap)),
+        "n_joined_rows": int(len(joined)),
+        "n_dropped_null_year": n_null_year_rows,
+        "n_cells_by_unit": n_cells_by_unit,
+    }
