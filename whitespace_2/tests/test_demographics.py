@@ -26,8 +26,11 @@ import pyarrow.parquet as pq
 from whitespace2.demographics import (
     _extract_first_name,
     _extract_source_type,
+    compute_career_length_screen,
+    compute_orcid_consistency,
     explode_authorships_for_paper,
     extract_authorships,
+    validate_disambiguation,
 )
 
 # ---------- helpers for building test author records ----------
@@ -337,3 +340,165 @@ def test_extract_authorships_handles_no_authors_papers(
     assert result["n_author_paper_rows"] == 0
     # No output parquet created (acceptable; documented behaviour)
     assert not dst.exists()
+
+
+# ---------- disambiguation validation (Step 2) ----------
+
+
+def _make_author_rows(
+    rows: list[tuple[str, int | None, str | None]],
+) -> pa.Table:
+    """Build a per-author-paper Arrow table from
+    (author_id, publication_year, author_orcid) tuples.
+
+    Used by Step 2 tests to construct mock authorship inputs.
+    """
+    return pa.table({
+        "author_id": [r[0] for r in rows],
+        "publication_year": [r[1] for r in rows],
+        "author_orcid": [r[2] for r in rows],
+    })
+
+
+def test_career_length_screen_flags_long_careers() -> None:
+    """Authors whose papers span >threshold years get flagged."""
+    rows = [
+        # author A1: papers 1980, 2020 (40-year career) — NOT flagged
+        ("https://openalex.org/A1", 1980, None),
+        ("https://openalex.org/A1", 2020, None),
+        # author A2: papers 1950, 2020 (70-year career) — flagged
+        ("https://openalex.org/A2", 1950, None),
+        ("https://openalex.org/A2", 2020, None),
+        # author A3: 1 paper (career=0) — NOT flagged
+        ("https://openalex.org/A3", 2010, None),
+    ]
+    table = _make_author_rows(rows)
+    result = compute_career_length_screen(table, threshold=60)
+
+    assert result["n_unique_authors"] == 3
+    assert result["n_flagged_cross_era_merger"] == 1
+    assert result["flagged_fraction"] == 1 / 3
+
+
+def test_career_length_screen_handles_missing_years() -> None:
+    """Authors with no publication_year are excluded from the screen."""
+    rows = [
+        ("https://openalex.org/A1", None, None),
+        ("https://openalex.org/A1", 2020, None),
+        ("https://openalex.org/A2", None, None),  # only None-year paper
+    ]
+    table = _make_author_rows(rows)
+    result = compute_career_length_screen(table, threshold=60)
+    # A1 contributes (only the non-null year); A2 has no valid year → excluded
+    assert result["n_unique_authors"] == 1
+    assert result["n_flagged_cross_era_merger"] == 0
+
+
+def test_orcid_consistency_perfect_agreement() -> None:
+    """Every ORCID maps to exactly 1 author.id → consistency rate = 1.0."""
+    rows = [
+        ("https://openalex.org/A1", 2020,
+         "https://orcid.org/0000-0001-0000-0001"),
+        ("https://openalex.org/A1", 2021,
+         "https://orcid.org/0000-0001-0000-0001"),
+        ("https://openalex.org/A2", 2020,
+         "https://orcid.org/0000-0001-0000-0002"),
+    ]
+    table = _make_author_rows(rows)
+    result = compute_orcid_consistency(table)
+
+    assert result["n_paper_rows_with_orcid"] == 3
+    assert result["n_unique_orcids"] == 2
+    assert result["n_orcids_consistent"] == 2
+    assert result["n_orcids_inconsistent"] == 0
+    assert result["orcid_consistency_rate"] == 1.0
+    assert result["paper_level_agreement_rate"] == 1.0
+
+
+def test_orcid_consistency_with_split_author() -> None:
+    """One ORCID mapping to two author.ids → consistency rate < 1.0.
+
+    Models OpenAlex disambiguation splitting a real author into 2 IDs.
+    Paper-level agreement = papers on the dominant author.id /
+    total ORCID-tagged papers.
+    """
+    rows = [
+        # ORCID #1 maps to A1 (3 papers) AND A2 (1 paper) — A1 dominant
+        ("https://openalex.org/A1", 2020,
+         "https://orcid.org/0000-0001-0000-0001"),
+        ("https://openalex.org/A1", 2021,
+         "https://orcid.org/0000-0001-0000-0001"),
+        ("https://openalex.org/A1", 2022,
+         "https://orcid.org/0000-0001-0000-0001"),
+        ("https://openalex.org/A2", 2023,
+         "https://orcid.org/0000-0001-0000-0001"),
+        # ORCID #2 maps to A3 (consistent)
+        ("https://openalex.org/A3", 2020,
+         "https://orcid.org/0000-0001-0000-0002"),
+    ]
+    table = _make_author_rows(rows)
+    result = compute_orcid_consistency(table)
+
+    assert result["n_paper_rows_with_orcid"] == 5
+    assert result["n_unique_orcids"] == 2
+    assert result["n_orcids_consistent"] == 1  # ORCID #2 only
+    assert result["n_orcids_inconsistent"] == 1
+    assert result["orcid_consistency_rate"] == 0.5
+    # paper-level: 4 of 5 papers are on the dominant pairing
+    # (3 A1↔ORCID1, 1 A3↔ORCID2; A2↔ORCID1 disagrees)
+    assert result["paper_level_agreement_rate"] == 4 / 5
+
+
+def test_orcid_consistency_filters_nulls() -> None:
+    """Rows with null author_orcid or null author_id are excluded."""
+    rows = [
+        ("https://openalex.org/A1", 2020,
+         "https://orcid.org/0000-0001-0000-0001"),
+        ("https://openalex.org/A2", 2020, None),  # no orcid
+        (None, 2020,                              # type: ignore[list-item]
+         "https://orcid.org/0000-0001-0000-0002"),  # no author_id
+    ]
+    table = _make_author_rows(rows)
+    result = compute_orcid_consistency(table)
+    # Only the first row is analyzable
+    assert result["n_paper_rows_with_orcid"] == 1
+    assert result["n_unique_orcids"] == 1
+
+
+def test_validate_disambiguation_e2e(tmp_path: Path) -> None:
+    """Write a mock authorships parquet, run validate_disambiguation,
+    verify output JSON has the expected H1+H2 fields and verdicts.
+    """
+    rows = [
+        # 4 authors with normal careers (none flagged); 1 with 70yr career (flagged)
+        ("https://openalex.org/A1", 2010, "https://orcid.org/0000-1"),
+        ("https://openalex.org/A1", 2020, "https://orcid.org/0000-1"),
+        ("https://openalex.org/A2", 2015, None),
+        ("https://openalex.org/A3", 2018,
+         "https://orcid.org/0000-2"),
+        ("https://openalex.org/A4", 2020, None),
+        ("https://openalex.org/A5", 1950, None),  # 70-year career → flagged
+        ("https://openalex.org/A5", 2020, None),
+    ]
+    table = _make_author_rows(rows)
+    src = tmp_path / "authorships.parquet"
+    pq.write_table(table, str(src))
+    out = tmp_path / "validation.json"
+
+    result = validate_disambiguation(src, out, career_length_threshold=60)
+
+    assert out.exists()
+    # H1
+    assert result["h1_career_length_screen"]["n_unique_authors"] == 5
+    assert result["h1_career_length_screen"]["n_flagged_cross_era_merger"] == 1
+    assert result["h1_career_length_screen"]["flagged_fraction"] == 1 / 5
+    # H1 acceptance: 20% flagged is > 5%; should NOT pass
+    assert result["h1_passes"] is False
+
+    # H2: 2 orcid-tagged authors, both consistent
+    assert result["h2_orcid_consistency"]["orcid_consistency_rate"] == 1.0
+    assert result["h2_passes"] is True
+
+    # JSON loadable
+    loaded = json.loads(out.read_text())
+    assert loaded["h1_career_length_screen"]["n_unique_authors"] == 5
