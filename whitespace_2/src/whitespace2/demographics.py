@@ -1343,3 +1343,141 @@ def query_namsor(
         "max_names": max_names,
         "quota_exhausted": quota_exhausted,
     }
+
+
+# ---------- Step 4c: sample_for_namsor driver -------------------------------
+#
+# End-to-end NamSor bias-sample driver. Takes the per-author parquet
+# (from Step 3c), identifies low-confidence names (combined gender
+# == "unknown" OR combined probability < 0.8), tags by script via
+# tag_script_region, stratified-samples up to max_names (default
+# 2,500 = NamSor's free monthly quota), calls NamSor on the sample,
+# and writes the result to a bias-sample parquet that Step 5 uses
+# to fit the per-region bias-correction model.
+
+#: Pre-registered NamSor stratified-sampling seed (per Phase 1.3 plan
+#: §3 — locked).
+NAMSOR_SAMPLE_SEED: str = "ws2-phase-1.3-namsor-seed-v1"
+
+
+def sample_for_namsor(
+    per_author_parquet: str | Path,
+    output_parquet: str | Path,
+    *,
+    namsor_api_key: str,
+    max_names: int = 2500,
+    seed: str = NAMSOR_SAMPLE_SEED,
+    confidence_gate: float = 0.8,
+) -> dict[str, Any]:
+    """Stratified-sample NamSor bias-estimation driver.
+
+    Pipeline:
+      1. Read per-author parquet (Step 3c output).
+      2. Identify low-confidence names: ``gender == "unknown"`` OR
+         ``gender_probability < confidence_gate``. Take unique
+         first names.
+      3. Tag each low-confidence name by script via
+         :func:`tag_script_region`.
+      4. Stratified random sample (seed-deterministic) of up to
+         ``max_names`` across regions via
+         :func:`stratified_sample_names`.
+      5. Call NamSor on the sample via :func:`query_namsor`.
+      6. Write per-name bias-sample parquet (one row per sampled
+         name) and return a summary dict.
+
+    The output parquet's schema is the load-bearing input for Step 5
+    (per-region gender_guesser-vs-NamSor bias model fitting).
+    """
+    import pandas as pd
+
+    per_author_parquet = Path(per_author_parquet)
+    output_parquet = Path(output_parquet)
+
+    per_author_table = pq.read_table(str(per_author_parquet))
+    df = per_author_table.to_pandas()
+
+    # Low-confidence subset: gg+genderize combined "gender" is
+    # unknown OR probability below the gate.
+    low_conf_mask = (
+        (df["gender"] == "unknown")
+        | (df["gender_probability"].fillna(0.0) < confidence_gate)
+    )
+    low_conf_authors = df.loc[low_conf_mask]
+
+    # Per-unique-name aggregation (count how many authors carry this
+    # first name; useful weight for downstream bias-correction).
+    name_counts = (
+        low_conf_authors["author_first_name"]
+        .dropna()
+        .loc[lambda s: s.astype(str).str.len() > 0]
+        .value_counts()
+        .to_dict()
+    )
+
+    # Tag each unique name by script
+    tagged: list[tuple[str, str]] = [
+        (name, tag_script_region(name)) for name in name_counts
+    ]
+
+    # Stratified sample
+    sample = stratified_sample_names(tagged, n_total=max_names, seed=seed)
+
+    # Per-region sample counts
+    from collections import Counter
+    n_sampled_by_region = dict(Counter(r for _, r in sample))
+
+    # Call NamSor on the sampled names
+    sampled_names = [n for n, _ in sample]
+    name_to_region = dict(sample)
+    namsor_result = query_namsor(
+        sampled_names,
+        api_key=namsor_api_key,
+        max_names=max_names,
+    )
+    namsor_per_name = namsor_result["results"]
+
+    # Build the output parquet: one row per sampled name
+    out_rows = []
+    for name in sampled_names:
+        ns = namsor_per_name.get(name)
+        out_rows.append({
+            "first_name": name,
+            "script_region": name_to_region[name],
+            "n_authors_with_this_name": int(name_counts.get(name, 0)),
+            "namsor_gender": ns["gender"] if ns else None,
+            "namsor_probability": (
+                float(ns["probability"]) if ns else None
+            ),
+            "namsor_script": ns["script"] if ns else None,
+            "namsor_gender_scale": (
+                float(ns["gender_scale"]) if ns else None
+            ),
+            "namsor_score": (
+                float(ns["score"]) if ns else None
+            ),
+        })
+    out_df = pd.DataFrame(out_rows)
+    out_table = pa.Table.from_pandas(out_df, preserve_index=False)
+    pq.write_table(out_table, str(output_parquet), compression="zstd")
+
+    return {
+        "source": str(per_author_parquet),
+        "output": str(output_parquet),
+        "seed": seed,
+        "max_names": max_names,
+        "confidence_gate": confidence_gate,
+        "n_low_conf_names": int(len(name_counts)),
+        "n_sampled": int(len(sample)),
+        "n_sampled_by_region": {
+            str(k): int(v) for k, v in n_sampled_by_region.items()
+        },
+        "n_namsor_classified": int(sum(
+            1 for n in sampled_names if n in namsor_per_name
+        )),
+        "namsor_summary": {
+            "n_names_queried": namsor_result["n_names_queried"],
+            "n_calls": namsor_result["n_calls"],
+            "n_errors": namsor_result["n_errors"],
+            "quota_exhausted": namsor_result["quota_exhausted"],
+        },
+    }

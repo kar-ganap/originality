@@ -39,6 +39,7 @@ from whitespace2.demographics import (
     query_genderize_batch,
     query_namsor,
     query_namsor_batch,
+    sample_for_namsor,
     stratified_sample_names,
     tag_script_region,
     validate_disambiguation,
@@ -1188,6 +1189,114 @@ def test_query_namsor_respects_max_names_quota(monkeypatch: Any) -> None:
     assert out["n_names_queried"] == 150
     assert out["quota_exhausted"] is True
     assert len(out["results"]) == 150
+
+
+# ---------- Step 4c: sample_for_namsor driver ----------
+
+
+def test_sample_for_namsor_e2e(
+    tmp_path: Path, monkeypatch: Any,
+) -> None:
+    """End-to-end driver: per-author parquet + low-conf identification
+    + script-tagged stratified sample + NamSor query + bias-sample
+    parquet write.
+    """
+    # Build a per-author parquet that mimics Step 3c's output. 4 unique
+    # authors / 4 unique low-conf names; 2 distinct script regions.
+    per_author = pa.table({
+        "author_id": [f"https://openalex.org/A{i}" for i in range(4)],
+        "author_first_name": ["Yiyu", "Junxu", "Иван", "Магдалена"],
+        "gg_label": ["unknown", "unknown", "unknown", "unknown"],
+        "gender": ["unknown"] * 4,
+        "gender_probability": [0.0] * 4,
+        "primary_country": ["CN", "CN", "RU", "BG"],
+        "n_papers": [1, 1, 1, 1],
+    })
+    per_author_path = tmp_path / "per_author.parquet"
+    pq.write_table(per_author, str(per_author_path))
+
+    def fake_post(url: str, headers: dict[str, str],
+                  json: dict[str, Any], timeout: float) -> _FakeResponse:
+        return _FakeResponse({
+            "personalNames": [
+                {"id": p["firstName"], "firstName": p["firstName"],
+                 "script": "LATIN" if not any(
+                     ord(c) > 127 for c in p["firstName"]
+                 ) else "CYRILLIC",
+                 "likelyGender": "female",
+                 "probabilityCalibrated": 0.85}
+                for p in json["personalNames"]
+            ],
+        })
+
+    monkeypatch.setattr("requests.post", fake_post)
+
+    out_path = tmp_path / "namsor-sample.parquet"
+    summary = sample_for_namsor(
+        per_author_path, out_path,
+        namsor_api_key="test-key",
+        max_names=100,
+        seed="test-seed",
+    )
+
+    assert out_path.exists()
+    tbl = pq.read_table(str(out_path))
+    df = tbl.to_pandas()
+    # All 4 low-conf names should be sampled (well below n=100 cap)
+    assert df.shape[0] == 4
+    expected_cols = {
+        "first_name", "script_region", "namsor_gender",
+        "namsor_probability", "namsor_script",
+    }
+    assert expected_cols.issubset(set(df.columns))
+
+    # Summary metrics
+    assert summary["n_low_conf_names"] == 4
+    assert summary["n_sampled"] == 4
+    assert summary["n_namsor_classified"] == 4
+    assert summary["namsor_summary"]["n_calls"] >= 1
+    # Per-region breakdown
+    assert "n_sampled_by_region" in summary
+    assert summary["n_sampled_by_region"]["latin"] == 2  # Yiyu, Junxu
+    assert summary["n_sampled_by_region"]["cyrillic"] == 2  # Иван, Магдалена
+
+
+def test_sample_for_namsor_respects_quota(
+    tmp_path: Path, monkeypatch: Any,
+) -> None:
+    """With 50 low-conf names and max_names=20, only 20 are sampled
+    and sent to NamSor."""
+    per_author = pa.table({
+        "author_id": [f"https://openalex.org/A{i}" for i in range(50)],
+        "author_first_name": [f"Name{i}" for i in range(50)],
+        "gg_label": ["unknown"] * 50,
+        "gender": ["unknown"] * 50,
+        "gender_probability": [0.0] * 50,
+        "primary_country": ["US"] * 50,
+        "n_papers": [1] * 50,
+    })
+    pa_path = tmp_path / "pa.parquet"
+    pq.write_table(per_author, str(pa_path))
+
+    monkeypatch.setattr(
+        "requests.post",
+        lambda url, headers, json, timeout: _FakeResponse({
+            "personalNames": [
+                {"id": p["firstName"], "firstName": p["firstName"],
+                 "script": "LATIN", "likelyGender": "male",
+                 "probabilityCalibrated": 0.9}
+                for p in json["personalNames"]
+            ],
+        }),
+    )
+
+    out = tmp_path / "out.parquet"
+    summary = sample_for_namsor(
+        pa_path, out, namsor_api_key="k", max_names=20, seed="s",
+    )
+    assert summary["n_low_conf_names"] == 50
+    assert summary["n_sampled"] == 20
+    assert summary["n_namsor_classified"] == 20
 
 
 def test_query_namsor_handles_api_error_partial(monkeypatch: Any) -> None:
