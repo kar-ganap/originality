@@ -1,0 +1,330 @@
+{
+  "label": "run-1M-v3",
+  "source": "/private/tmp/claude-501/-Users-kartikganapathi-Documents-Personal-random-projects-originality/8fdb4186-abbc-4f44-b078-5d70d5afbbea/scratchpad/section0-sample-1M-v3.parquet",
+  "outdir": "experiments/phase-1.3/run-1M-v3",
+  "no_api": false,
+  "steps": {
+    "1_extract": {
+      "source": "/private/tmp/claude-501/-Users-kartikganapathi-Documents-Personal-random-projects-originality/8fdb4186-abbc-4f44-b078-5d70d5afbbea/scratchpad/section0-sample-1M-v3.parquet",
+      "output": "experiments/phase-1.3/run-1M-v3/authorships.parquet",
+      "n_papers": 1000000,
+      "n_author_paper_rows": 3124143
+    },
+    "2_disambig": {
+      "source": "experiments/phase-1.3/run-1M-v3/authorships.parquet",
+      "h1_career_length_screen": {
+        "threshold_years": 60,
+        "n_unique_authors": 1821598,
+        "n_flagged_cross_era_merger": 253,
+        "flagged_fraction": 0.00013888904138015083,
+        "career_length_percentiles": {
+          "p50": 0,
+          "p75": 0,
+          "p90": 8,
+          "p95": 15,
+          "p99": 27
+        },
+        "flagged_author_ids_sample": [
+          "https://openalex.org/A5000083042",
+          "https://openalex.org/A5000103692",
+          "https://openalex.org/A5000202774",
+          "https://openalex.org/A5001527340",
+          "https://openalex.org/A5001876235",
+          "https://openalex.org/A5002283497",
+          "https://openalex.org/A5002605354",
+          "https://openalex.org/A5003001610",
+          "https://openalex.org/A5003263988",
+          "https://openalex.org/A5003739044",
+          "https://openalex.org/A5003773351",
+          "https://openalex.org/A5004613584",
+          "https://openalex.org/A5004778021",
+          "https://openalex.org/A5004783053",
+          "https://openalex.org/A5004949427",
+          "https://openalex.org/A5005650687",
+          "https://openalex.org/A5007095369",
+          "https://openalex.org/A5007431940",
+          "https://openalex.org/A5007473459",
+          "https://openalex.org/A5007758675",
+          "https://openalex.org/A5007993158",
+          "https://openalex.org/A5008304313",
+          "https://openalex.org/A5008343558",
+          "https://openalex.org/A5008462514",
+          "https://openalex.org/A5008705634",
+          "https://openalex.org/A5008970877",
+          "https://openalex.org/A5010219271",
+          "https://openalex.org/A5010330189",
+          "https://openalex.org/A5010750838",
+          "https://openalex.org/A5011036793",
+          "https://openalex.org/A5011285650",
+          "https://openalex.org/A5011372419",
+          "https://openalex.org/A5011507387",
+          "https://openalex.org/A5011997121",
+          "https://openalex.org/A5012504689",
+          "https://openalex.org/A5012574220",
+          "https://openalex.org/A5013131492",
+          "https://openalex.org/A5013254098",
+          "https://openalex.org/A5013724084",
+          "https://openalex.org/A5014390830",
+          "https://openalex.org/A5015247956",
+          "https://openalex.org/A5015604027",
+          "https://openalex.org/A5015917265",
+          "https://openalex.org/A5016630616",
+          "https://openalex.org/A5016829171",
+          "https://openalex.org/A5017181625",
+          "https://openalex.org/A5020051729",
+          "https://openalex.org/A5021523215",
+          "https://openalex.org/A5021643661",
+          "https://openalex.org/A5021987582",
+          "https://openalex.org/A5022907688",
+          "https://openalex.org/A5023407367",
+          "https://openalex.org/A5023931771",
+          "https://openalex.org/A5023960152",
+          "https://openalex.org/A5024145352",
+          "https://openalex.org/A5026240836",
+          "https://openalex.org/A5026350256",
+          "https://openalex.org/A5026379425",
+          "https://openalex.org/A5026529104",
+          "https://openalex.org/A5027172954",
+          "https://openalex.org/A5027827663",
+          "https://openalex.org/A5027869209",
+          "https://openalex.org/A5028196052",
+          "https://openalex.org/A5028987844",
+          "https://openalex.org/A5029176853",
+          "https://openalex.org/A5029830698",
+          "https://openalex.org/A5030622571",
+          "https://openalex.org/A5030880091",
+          "https://openalex.org/A5031170255",
+          "https://openalex.org/A5031626805",
+          "https://openalex.org/A5031987377",
+          "https://openalex.org/A5033214483",
+          "https://openalex.org/A5033849139",
+          "https://openalex.org/A5034019517",
+          "https://openalex.org/A5035334682",
+          "https://openalex.org/A5035489547",
+          "https://openalex.org/A5035497706",
+          "https://openalex.org/A5035983011",
+          "https://openalex.org/A5036762154",
+          "https://openalex.org/A5036846951",
+          "https://openalex.org/A5036868114",
+          "https://openalex.org/A5037270981",
+          "https://openalex.org/A5037899534",
+          "https://openalex.org/A5039610620",
+          "https://openalex.org/A5039839005",
+          "https://openalex.org/A5040140211",
+          "https://openalex.org/A5040613892",
+          "https://openalex.org/A5040828608",
+          "https://openalex.org/A5042851333",
+          "https://openalex.org/A5043077347",
+          "https://openalex.org/A5045156120",
+          "https://openalex.org/A5045680475",
+          "https://openalex.org/A5046445815",
+          "https://openalex.org/A5046674773",
+          "https://openalex.org/A5046704046",
+          "https://openalex.org/A5048212308",
+          "https://openalex.org/A5049057728",
+          "https://openalex.org/A5049446469",
+          "https://openalex.org/A5050353111",
+          "https://openalex.org/A5051284623"
+        ]
+      },
+      "h2_orcid_consistency": {
+        "n_paper_rows_with_orcid": 1785003,
+        "n_unique_orcids": 817030,
+        "n_orcids_consistent": 814808,
+        "n_orcids_inconsistent": 2222,
+        "orcid_consistency_rate": 0.9972803936207972,
+        "n_papers_dominant_pairing": 1778304,
+        "paper_level_agreement_rate": 0.9962470651309829
+      },
+      "h1_threshold_max_flagged_fraction": 0.05,
+      "h2_threshold_min_agreement_rate": 0.95,
+      "h1_passes": true,
+      "h2_passes": true
+    },
+    "3_annotate": {
+      "source": "experiments/phase-1.3/run-1M-v3/authorships.parquet",
+      "output": "experiments/phase-1.3/run-1M-v3/per-author.parquet",
+      "n_unique_authors": 1822535,
+      "n_unique_first_names": 210489,
+      "gender_counts": {
+        "unknown": 1020877,
+        "male": 596438,
+        "female": 205220
+      },
+      "gender_confident_count": 756023,
+      "gender_confident_rate": 0.4148194684875736,
+      "country_coverage_count": 1310295,
+      "country_coverage_rate": 0.7189409256886699,
+      "genderize_invoked": true,
+      "genderize_summary": {
+        "n_low_conf_names": 189608,
+        "n_names_queried": 2200,
+        "n_calls": 220,
+        "n_errors": 0,
+        "quota_exhausted": true
+      },
+      "n_authors_extended_by_genderize": 3283
+    },
+    "4_namsor": {
+      "source": "experiments/phase-1.3/run-1M-v3/per-author.parquet",
+      "output": "experiments/phase-1.3/run-1M-v3/namsor-sample.parquet",
+      "seed": "ws2-phase-1.3-namsor-seed-v1",
+      "max_names": 2300,
+      "confidence_gate": 0.8,
+      "n_low_conf_names": 189675,
+      "n_sampled": 2300,
+      "n_sampled_by_region": {
+        "arabic": 476,
+        "cjk": 607,
+        "cyrillic": 607,
+        "latin": 606,
+        "south_asian": 4
+      },
+      "n_namsor_classified": 2300,
+      "namsor_summary": {
+        "n_names_queried": 2300,
+        "n_calls": 23,
+        "n_errors": 0,
+        "quota_exhausted": false
+      }
+    },
+    "5a_confusion": {
+      "arabic": {
+        "n_sample": 476,
+        "max_ci_halfwidth": 0.043155225980212486
+      },
+      "cjk": {
+        "n_sample": 607,
+        "max_ci_halfwidth": 0.027612916537854186
+      },
+      "cyrillic": {
+        "n_sample": 607,
+        "max_ci_halfwidth": 0.03576245507231669
+      },
+      "latin": {
+        "n_sample": 606,
+        "max_ci_halfwidth": 0.03782279065637956
+      },
+      "south_asian": {
+        "n_sample": 4,
+        "max_ci_halfwidth": 0.3268889424563636
+      }
+    },
+    "5b_correct": {
+      "source": "experiments/phase-1.3/run-1M-v3/per-author.parquet",
+      "output": "experiments/phase-1.3/run-1M-v3/corrected.parquet",
+      "region_axis": "script",
+      "confidence_gate": 0.8,
+      "n_authors": 1822535,
+      "n_confident_identity": 756023,
+      "n_low_conf": 1066512,
+      "n_bias_corrected": 1066509,
+      "n_low_conf_uncorrectable": 3,
+      "bias_corrected_fraction": 0.5851788854535029,
+      "n_corrected_by_region": {
+        "latin": 1037797,
+        "cyrillic": 14778,
+        "cjk": 12937,
+        "arabic": 993,
+        "south_asian": 4
+      }
+    },
+    "5c_field_map": {
+      "source": "/private/tmp/claude-501/-Users-kartikganapathi-Documents-Personal-random-projects-originality/8fdb4186-abbc-4f44-b078-5d70d5afbbea/scratchpad/section0-sample-1M-v3.parquet",
+      "output": "experiments/phase-1.3/run-1M-v3/paper-field.parquet",
+      "n_papers": 1000000,
+      "n_cs": 719322,
+      "n_physics": 280678,
+      "n_unassigned": 0
+    },
+    "5c_cells": {
+      "authorships": "experiments/phase-1.3/run-1M-v3/authorships.parquet",
+      "corrected": "experiments/phase-1.3/run-1M-v3/corrected.parquet",
+      "paper_field": "experiments/phase-1.3/run-1M-v3/paper-field.parquet",
+      "output": "experiments/phase-1.3/run-1M-v3/cells.parquet",
+      "region_axis": "script",
+      "units": [
+        "distinct_authors",
+        "appearances"
+      ],
+      "n_bootstrap": 10000,
+      "seed": "ws2-phase-1.3-cell-bootstrap-seed-v1",
+      "n_joined_rows": 3124143,
+      "n_dropped_null_year": 1908,
+      "n_cells_by_unit": {
+        "distinct_authors": 630,
+        "appearances": 630
+      }
+    },
+    "6_coverage": {
+      "authorships": "experiments/phase-1.3/run-1M-v3/authorships.parquet",
+      "corrected": "experiments/phase-1.3/run-1M-v3/corrected.parquet",
+      "paper_field": "experiments/phase-1.3/run-1M-v3/paper-field.parquet",
+      "output": "experiments/phase-1.3/run-1M-v3/coverage.parquet",
+      "region_axis": "script",
+      "units": [
+        "distinct_authors",
+        "appearances"
+      ],
+      "n_bootstrap": 10000,
+      "seed": "ws2-phase-1.3-cell-bootstrap-seed-v1",
+      "n_joined_rows": 3124143,
+      "n_dropped_null_year": 1908,
+      "country_metrics_available": true,
+      "n_cells_by_unit": {
+        "distinct_authors": 630,
+        "appearances": 630
+      }
+    }
+  },
+  "elapsed_sec": 1034.4,
+  "hypotheses": {
+    "H1_cross_era_merger_rate": {
+      "value": 0.00013888904138015083,
+      "passes": true
+    },
+    "H2_orcid_agreement": {
+      "value": 0.9962470651309829,
+      "passes": true
+    },
+    "H3_gender_coverage": {
+      "value": 0.4148194684875736,
+      "threshold": 0.45,
+      "passes": false
+    },
+    "H4_country_coverage": {
+      "value": 0.7189409256886699,
+      "threshold": 0.5,
+      "passes": true
+    },
+    "H5_namsor_ci_halfwidth": {
+      "max_over_regions": 0.3268889424563636,
+      "threshold": 0.1,
+      "passes": false,
+      "E1_fired": true
+    },
+    "H6_namsor_spend_usd": {
+      "value": 0.0,
+      "n_calls": 23,
+      "threshold": 10.0,
+      "passes": true
+    },
+    "H7_namsor_per_region": {
+      "n_sampled_by_region": {
+        "arabic": 476,
+        "cjk": 607,
+        "cyrillic": 607,
+        "latin": 606,
+        "south_asian": 4
+      },
+      "note": "per-headline-CELL counts computed in verify-results.md"
+    },
+    "H8_female_share_ci_halfwidth": {
+      "max_over_headline_cells": 0.375,
+      "threshold": 0.025,
+      "passes": false,
+      "n_cells": 630,
+      "note": "smoke cells are tiny \u2192 wide CIs expected; gate is for production-scale headline cells"
+    }
+  }
+}

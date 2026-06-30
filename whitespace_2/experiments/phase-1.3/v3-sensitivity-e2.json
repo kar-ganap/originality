@@ -1,0 +1,33 @@
+{
+  "k": 200,
+  "threshold_rel_change": 0.3,
+  "cells": {
+    "2020-cs-latin": {
+      "n": 94095,
+      "base_female_share": 0.2992,
+      "sweep_min": 0.2809,
+      "sweep_max": 0.3185,
+      "abs_spread": 0.0376,
+      "rel_spread": 0.1258,
+      "E2_fires": false
+    },
+    "2024-cs-latin": {
+      "n": 149180,
+      "base_female_share": 0.3187,
+      "sweep_min": 0.2984,
+      "sweep_max": 0.339,
+      "abs_spread": 0.0406,
+      "rel_spread": 0.1276,
+      "E2_fires": false
+    },
+    "2025-cs-latin": {
+      "n": 157385,
+      "base_female_share": 0.3193,
+      "sweep_min": 0.2992,
+      "sweep_max": 0.3425,
+      "abs_spread": 0.0433,
+      "rel_spread": 0.1358,
+      "E2_fires": false
+    }
+  }
+}
