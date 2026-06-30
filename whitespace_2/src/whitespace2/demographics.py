@@ -2055,6 +2055,83 @@ def _bootstrap_sum_ci(
     return (point, lo, hi)
 
 
+def _join_cells(
+    authorships_parquet: str | Path,
+    corrected_per_author_parquet: str | Path,
+    paper_field_parquet: str | Path,
+    *,
+    region_axis: str = "script",
+) -> Any:
+    """Join the three Step-5c/6 inputs into one per-author-paper frame.
+
+    Returns a pandas DataFrame with one row per author-paper appearance,
+    carrying ``year`` (renamed from ``publication_year``), ``field``
+    (from the paper→field map), ``region`` (the demographic stratum —
+    script-region of the modal name, or ``primary_country``),
+    ``author_id``, the three ``corrected_p_*`` columns, and
+    ``primary_country`` when the corrected parquet provides it (needed
+    by :func:`build_coverage_table`'s geographic-diversity metric).
+
+    Authors with no modal name / country fall into a ``"unknown"``
+    region rather than being silently dropped by the downstream groupby
+    — consistent with Step 5b's identity fallback.
+    """
+    if region_axis not in ("script", "country"):
+        raise ValueError(
+            f"region_axis must be 'script' or 'country', got {region_axis!r}",
+        )
+
+    have_country = "primary_country" in set(
+        pq.read_schema(str(corrected_per_author_parquet)).names,
+    )
+    corrected_cols = [
+        "author_id",
+        "author_first_name",
+        "corrected_p_male",
+        "corrected_p_female",
+        "corrected_p_unknown",
+    ]
+    if have_country:
+        corrected_cols.append("primary_country")
+
+    ap = pq.read_table(
+        str(authorships_parquet),
+        columns=["paper_id", "publication_year", "author_id"],
+    ).to_pandas()
+    corr = pq.read_table(
+        str(corrected_per_author_parquet), columns=corrected_cols,
+    ).to_pandas()
+    fmap = pq.read_table(
+        str(paper_field_parquet), columns=["paper_id", "primary_field"],
+    ).to_pandas()
+
+    if region_axis == "script":
+        unique_names = list(corr["author_first_name"].dropna().unique())
+        name_to_region = {n: tag_script_region(n) for n in unique_names}
+        corr["region"] = corr["author_first_name"].map(name_to_region)
+    else:  # region_axis == "country"
+        if not have_country:
+            raise ValueError(
+                "region_axis='country' requires a 'primary_country' column "
+                "in the corrected per-author parquet",
+            )
+        corr["region"] = corr["primary_country"]
+    corr["region"] = corr["region"].fillna("unknown")
+
+    merge_cols = [
+        "author_id", "region",
+        "corrected_p_male", "corrected_p_female", "corrected_p_unknown",
+    ]
+    if have_country:
+        merge_cols.append("primary_country")
+
+    return ap.merge(
+        corr[merge_cols], on="author_id", how="inner",
+    ).merge(fmap, on="paper_id", how="inner").rename(
+        columns={"publication_year": "year", "primary_field": "field"},
+    )
+
+
 def build_cell_coverage_table(
     authorships_parquet: str | Path,
     corrected_per_author_parquet: str | Path,
@@ -2092,51 +2169,11 @@ def build_cell_coverage_table(
     (``primary_country``). Output columns: ``unit, year, field, region,
     n, sum_p_{male,female,unknown}, ci_{male,female,unknown}_{lo,hi}``.
     """
-    corrected_cols = [
-        "author_id",
-        "author_first_name",
-        "corrected_p_male",
-        "corrected_p_female",
-        "corrected_p_unknown",
-    ]
-    if region_axis == "country":
-        corrected_cols.append("primary_country")
-    elif region_axis != "script":
-        raise ValueError(
-            f"region_axis must be 'script' or 'country', got {region_axis!r}",
-        )
-
-    ap = pq.read_table(
-        str(authorships_parquet),
-        columns=["paper_id", "publication_year", "author_id"],
-    ).to_pandas()
-    corr = pq.read_table(
-        str(corrected_per_author_parquet), columns=corrected_cols,
-    ).to_pandas()
-    fmap = pq.read_table(
-        str(paper_field_parquet), columns=["paper_id", "primary_field"],
-    ).to_pandas()
-
-    # Region per author (constant across that author's paper rows).
-    # Authors with no modal name / country fall into a "unknown" region
-    # rather than being silently dropped by the groupby — consistent with
-    # Step 5b's identity fallback (they carry corrected_p_unknown ≈ 1).
-    if region_axis == "script":
-        unique_names = list(corr["author_first_name"].dropna().unique())
-        name_to_region = {n: tag_script_region(n) for n in unique_names}
-        corr["region"] = corr["author_first_name"].map(name_to_region)
-    else:
-        corr["region"] = corr["primary_country"]
-    corr["region"] = corr["region"].fillna("unknown")
-
-    joined = ap.merge(
-        corr[[
-            "author_id", "region",
-            "corrected_p_male", "corrected_p_female", "corrected_p_unknown",
-        ]],
-        on="author_id", how="inner",
-    ).merge(fmap, on="paper_id", how="inner").rename(
-        columns={"publication_year": "year", "primary_field": "field"},
+    joined = _join_cells(
+        authorships_parquet,
+        corrected_per_author_parquet,
+        paper_field_parquet,
+        region_axis=region_axis,
     )
 
     # Null-year rows can't be placed in a time-series cell — dropped by the
@@ -2210,8 +2247,322 @@ def build_cell_coverage_table(
         "units": list(units),
         "n_bootstrap": n_bootstrap,
         "seed": seed,
-        "n_author_paper_rows": int(len(ap)),
         "n_joined_rows": int(len(joined)),
         "n_dropped_null_year": n_null_year_rows,
         "n_cells_by_unit": n_cells_by_unit,
     }
+
+
+# ---------- Step 6: coverage table + diversity metrics + sensitivity ---------
+#
+# Step 6 turns 5c's per-cell expected gender counts into the human-facing
+# coverage table the Stage-1→2 transition owes Stage 2: per (year × field ×
+# region) cell, the GENDER axis (coverage rate + female share + Shannon)
+# and the GEOGRAPHIC axis (country coverage + country Shannon + #countries).
+#
+# The geographic-diversity metric reuses Phase 0.1's `demographic_shannon`
+# — Miller-Madow-corrected Shannon entropy (nats) over `primary_country`
+# — so the Stage-1 substrate is consistent with the Phase 0.1 convergence
+# work (see experiments/phase-0.1 check5bd `_shannon_entropy_with_mm`).
+#
+# Proportions (gender coverage, female share) carry bootstrap CIs (the
+# H8 gate is on the female-share CI half-width in pp). The diversity
+# indices are point estimates. CIs use a hybrid: a true percentile
+# bootstrap of the ratio for small cells, and the ratio-linearization
+# (delta-method) SE for large cells where resampling would OOM.
+#
+# perturb_row_normalized is the E2 primitive: it samples each confusion-
+# matrix cell within its 5a Wilson CI and renormalizes, yielding a kernel
+# consistent with the bias estimate's sampling uncertainty. The actual
+# sensitivity SWEEP (perturb K times → apply_bias_correction →
+# build_coverage_table → measure female-share spread) and the script-vs-
+# country axis comparison are thin loops over this + the Step-5/6 functions;
+# their NUMBERS belong to the VERIFY production run, not this module.
+
+
+def _shannon_entropy_mm(counts: Any, n_total: float) -> float:
+    """Miller-Madow-corrected Shannon entropy (nats) from raw counts.
+
+    Matches Phase 0.1's ``_shannon_entropy_with_mm`` (check5bd): plain
+    entropy ``-Σ p ln p`` plus the bias term ``(k-1)/(2n)`` where ``k``
+    is the number of non-empty categories. Accepts float counts (the
+    gender axis sums soft corrected probabilities). Returns 0.0 on
+    empty / non-positive ``n_total``.
+    """
+    import numpy as np
+
+    counts_arr = np.asarray(counts, dtype=np.float64)
+    total = float(n_total)
+    if total <= 0.0:
+        return 0.0
+    p = counts_arr / total
+    p = p[p > 0]
+    h = -float((p * np.log(p)).sum())
+    k_nonzero = int((counts_arr > 0).sum())
+    h += (k_nonzero - 1) / (2.0 * total)
+    return h
+
+
+def _ratio_ci(
+    numerator_vals: Any,
+    denominator_vals: Any,
+    *,
+    n_bootstrap: int,
+    rng: Any,
+    confidence: float = 0.95,
+    exact_max_n: int = 1000,
+) -> tuple[float, float, float]:
+    """CI for a ratio of per-row sums ``Σnum / Σden`` over a cell's rows.
+
+    Returns ``(point, lo, hi)`` clipped to ``[0, 1]``. Used for gender
+    coverage (``den`` = ones → a mean) and female share (``den`` =
+    per-row assigned mass). ``(0, 0, 0)`` when the denominator mass is
+    zero (ratio undefined — e.g., an all-unknown cell).
+
+    Hybrid by cell size, mirroring :func:`_bootstrap_sum_ci`:
+      - ``n <= exact_max_n``: true percentile bootstrap — resample rows
+        with replacement, recompute the ratio, take 2.5 / 97.5 pcts.
+      - ``n > exact_max_n``: the ratio-linearization (delta-method) SE,
+        ``SE = sd(num_i − R·den_i) / (sqrt(n)·mean(den))``, normal CI.
+        O(n), required for the large recent-year cells.
+    """
+    import numpy as np
+
+    num = np.asarray(numerator_vals, dtype=np.float64)
+    den = np.asarray(denominator_vals, dtype=np.float64)
+    n = int(len(num))
+    den_sum = float(den.sum())
+    if n == 0 or den_sum <= 0.0:
+        return (0.0, 0.0, 0.0)
+
+    point = float(num.sum() / den_sum)
+
+    if n <= exact_max_n:
+        idx = rng.integers(0, n, size=(n_bootstrap, n))
+        num_r = num[idx].sum(axis=1)
+        den_r = den[idx].sum(axis=1)
+        valid = den_r > 0
+        ratios = num_r[valid] / den_r[valid]
+        lo = float(np.percentile(ratios, 100.0 * (1.0 - confidence) / 2.0))
+        hi = float(np.percentile(ratios, 100.0 * (1.0 + confidence) / 2.0))
+        return (point, max(0.0, lo), min(1.0, hi))
+
+    z = _Z_TABLE.get(confidence, 1.96)
+    den_mean = float(den.mean())
+    resid = num - point * den  # mean-zero by construction
+    se = float(resid.std()) / ((n**0.5) * den_mean) if den_mean > 0 else 0.0
+    lo = max(0.0, point - z * se)
+    hi = min(1.0, point + z * se)
+    return (point, lo, hi)
+
+
+def build_coverage_table(
+    authorships_parquet: str | Path,
+    corrected_per_author_parquet: str | Path,
+    paper_field_parquet: str | Path,
+    output_parquet: str | Path,
+    *,
+    units: tuple[str, ...] = ("distinct_authors", "appearances"),
+    region_axis: str = "script",
+    n_bootstrap: int = 10_000,
+    seed: str = CELL_BOOTSTRAP_SEED,
+    confidence: float = 0.95,
+    exact_max_n: int = 1000,
+) -> dict[str, Any]:
+    """Per-cell coverage + demographic-diversity table (Step 6).
+
+    Same join + grain + units as :func:`build_cell_coverage_table`, but
+    emits the human-facing metrics rather than raw count sums. For each
+    ``unit`` × (``year``, ``field``, ``region``) cell:
+
+      - **gender axis**: ``gender_coverage_rate`` (= assigned mass / n,
+        +CI), ``female_share`` (= female / assigned mass, +CI +
+        ``female_share_ci_halfwidth`` — the H8 gate quantity),
+        ``gender_shannon`` (MM Shannon over expected male/female mass).
+      - **geographic axis**: ``country_coverage_rate`` (fraction with a
+        non-null country), ``country_shannon`` (the Phase-0.1
+        ``demographic_shannon`` over ``primary_country`` headcounts),
+        ``n_countries``. Null when the corrected parquet lacks
+        ``primary_country``.
+
+    Coverage / share CIs come from :func:`_ratio_ci`; the diversity
+    indices are point estimates. ``region_axis`` mirrors Step 5b.
+    """
+    import numpy as np
+
+    joined = _join_cells(
+        authorships_parquet,
+        corrected_per_author_parquet,
+        paper_field_parquet,
+        region_axis=region_axis,
+    )
+    n_null_year_rows = int(joined["year"].isna().sum())
+    has_country = "primary_country" in joined.columns
+
+    cell_rows: list[dict[str, Any]] = []
+    n_cells_by_unit: dict[str, int] = {}
+    for unit in units:
+        if unit == "distinct_authors":
+            unit_df = joined.drop_duplicates(
+                subset=["year", "field", "region", "author_id"],
+            )
+        elif unit == "appearances":
+            unit_df = joined
+        else:
+            raise ValueError(
+                "units must be a subset of {'distinct_authors', "
+                f"'appearances'}}, got {unit!r}",
+            )
+
+        rng = _rng_from_seed(f"{seed}|{unit}")
+        n_cells = 0
+        for (year, field, region), sub in unit_df.groupby(
+            ["year", "field", "region"], sort=True,
+        ):
+            n = int(len(sub))
+            pm = sub["corrected_p_male"].to_numpy()
+            pf = sub["corrected_p_female"].to_numpy()
+            assigned = pm + pf
+            ones = np.ones(n, dtype=np.float64)
+
+            cov, cov_lo, cov_hi = _ratio_ci(
+                assigned, ones, n_bootstrap=n_bootstrap, rng=rng,
+                confidence=confidence, exact_max_n=exact_max_n,
+            )
+            fshare, fs_lo, fs_hi = _ratio_ci(
+                pf, assigned, n_bootstrap=n_bootstrap, rng=rng,
+                confidence=confidence, exact_max_n=exact_max_n,
+            )
+            sum_m = float(pm.sum())
+            sum_f = float(pf.sum())
+            gender_shannon = _shannon_entropy_mm(
+                np.array([sum_m, sum_f]), sum_m + sum_f,
+            )
+
+            row: dict[str, Any] = {
+                "unit": unit,
+                "year": int(year),
+                "field": str(field),
+                "region": str(region),
+                "n": n,
+                "gender_coverage_rate": cov,
+                "gender_coverage_lo": cov_lo,
+                "gender_coverage_hi": cov_hi,
+                "female_share": fshare,
+                "female_share_lo": fs_lo,
+                "female_share_hi": fs_hi,
+                "female_share_ci_halfwidth": (fs_hi - fs_lo) / 2.0,
+                "gender_shannon": gender_shannon,
+            }
+
+            if has_country:
+                pc = sub["primary_country"].dropna()
+                pc = pc[pc.astype(str).str.len() > 0]
+                n_known = int(len(pc))
+                row["country_coverage_rate"] = (n_known / n) if n else 0.0
+                if n_known > 0:
+                    cc = pc.value_counts().to_numpy()
+                    row["country_shannon"] = _shannon_entropy_mm(cc, n_known)
+                    row["n_countries"] = int(len(cc))
+                else:
+                    row["country_shannon"] = 0.0
+                    row["n_countries"] = 0
+            else:
+                row["country_coverage_rate"] = None
+                row["country_shannon"] = None
+                row["n_countries"] = None
+
+            cell_rows.append(row)
+            n_cells += 1
+        n_cells_by_unit[unit] = n_cells
+
+    if cell_rows:
+        out_table = pa.Table.from_pylist(cell_rows)
+    else:
+        out_table = pa.Table.from_pylist([], schema=pa.schema([
+            ("unit", pa.string()), ("year", pa.int64()),
+            ("field", pa.string()), ("region", pa.string()),
+            ("n", pa.int64()),
+            ("gender_coverage_rate", pa.float64()),
+            ("gender_coverage_lo", pa.float64()),
+            ("gender_coverage_hi", pa.float64()),
+            ("female_share", pa.float64()),
+            ("female_share_lo", pa.float64()),
+            ("female_share_hi", pa.float64()),
+            ("female_share_ci_halfwidth", pa.float64()),
+            ("gender_shannon", pa.float64()),
+            ("country_coverage_rate", pa.float64()),
+            ("country_shannon", pa.float64()),
+            ("n_countries", pa.int64()),
+        ]))
+    pq.write_table(out_table, str(output_parquet), compression="zstd")
+
+    return {
+        "authorships": str(authorships_parquet),
+        "corrected": str(corrected_per_author_parquet),
+        "paper_field": str(paper_field_parquet),
+        "output": str(output_parquet),
+        "region_axis": region_axis,
+        "units": list(units),
+        "n_bootstrap": n_bootstrap,
+        "seed": seed,
+        "n_joined_rows": int(len(joined)),
+        "n_dropped_null_year": n_null_year_rows,
+        "country_metrics_available": has_country,
+        "n_cells_by_unit": n_cells_by_unit,
+    }
+
+
+def perturb_row_normalized(
+    confusion_matrix: dict[str, Any],
+    rng: Any,
+) -> dict[str, Any]:
+    """Draw a kernel perturbed within the 5a Wilson CIs (the E2 primitive).
+
+    For each region and each ``gg`` row of ``row_normalized``, sample
+    every (male/female/unknown) cell uniformly within its
+    ``row_normalized_ci`` ``(lo, hi)`` band, then renormalize the row to
+    sum to 1. Rows whose sampled mass is zero (or that lack CIs) keep
+    their original distribution. Returns a new confusion-matrix dict
+    with the same structure (other keys passed through), suitable to
+    feed straight into :func:`apply_bias_correction`.
+
+    The E2 sensitivity sweep draws many such kernels and measures how
+    far the headline demographic statistic (e.g. per-cell female share)
+    moves — flagging E2 if it exceeds the pre-registered threshold.
+    """
+    perturbed: dict[str, Any] = {}
+    for region, region_data in confusion_matrix.items():
+        if not isinstance(region_data, dict):
+            perturbed[region] = region_data
+            continue
+        row_norm = region_data.get("row_normalized")
+        row_ci = region_data.get("row_normalized_ci")
+        if not isinstance(row_norm, dict):
+            perturbed[region] = region_data
+            continue
+
+        new_row_norm: dict[str, dict[str, float]] = {}
+        for gg, dist in row_norm.items():
+            cis = row_ci.get(gg) if isinstance(row_ci, dict) else None
+            if not isinstance(cis, dict):
+                new_row_norm[gg] = dict(dist)
+                continue
+            sampled: dict[str, float] = {}
+            for ns in _GENDER_CATEGORIES:
+                ci = cis.get(ns)
+                if isinstance(ci, (tuple, list)) and len(ci) == 2:
+                    lo, hi = float(ci[0]), float(ci[1])
+                    sampled[ns] = float(rng.uniform(lo, hi)) if hi > lo else lo
+                else:
+                    sampled[ns] = float(dist.get(ns, 0.0))
+            total = sum(sampled.values())
+            if total > 0:
+                new_row_norm[gg] = {
+                    ns: sampled[ns] / total for ns in sampled
+                }
+            else:
+                new_row_norm[gg] = dict(dist)
+
+        perturbed[region] = {**region_data, "row_normalized": new_row_norm}
+    return perturbed

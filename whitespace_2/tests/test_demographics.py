@@ -28,12 +28,15 @@ from whitespace2.demographics import (
     _extract_first_name,
     _extract_source_type,
     _gg_label_to_gender_probability,
+    _ratio_ci,
+    _shannon_entropy_mm,
     _wilson_ci,
     aggregate_per_author,
     annotate_gender_country,
     annotate_with_gender_guesser,
     apply_bias_correction,
     build_cell_coverage_table,
+    build_coverage_table,
     build_paper_field_map,
     combine_gg_and_genderize,
     compute_career_length_screen,
@@ -42,6 +45,7 @@ from whitespace2.demographics import (
     explode_authorships_for_paper,
     extract_authorships,
     extract_primary_field,
+    perturb_row_normalized,
     query_genderize,
     query_genderize_batch,
     query_namsor,
@@ -1934,13 +1938,20 @@ def _make_cell_inputs(
     ap_path = tmp_path / "authorships.parquet"
     pq.write_table(ap, str(ap_path))
 
-    corr = pa.table({
+    corr_data: dict[str, Any] = {
         "author_id": [a["author_id"] for a in authors],
         "author_first_name": [a["author_first_name"] for a in authors],
         "corrected_p_male": [a["corrected_p_male"] for a in authors],
         "corrected_p_female": [a["corrected_p_female"] for a in authors],
         "corrected_p_unknown": [a["corrected_p_unknown"] for a in authors],
-    })
+    }
+    # Only add primary_country when a fixture supplies it, so 5c's
+    # country-free fixtures keep their original schema.
+    if any("primary_country" in a for a in authors):
+        corr_data["primary_country"] = [
+            a.get("primary_country") for a in authors
+        ]
+    corr = pa.table(corr_data)
     corr_path = tmp_path / "corrected.parquet"
     pq.write_table(corr, str(corr_path))
 
@@ -2163,3 +2174,236 @@ def test_bootstrap_sum_ci_exact_and_analytic_branches() -> None:
         n_bootstrap=500, rng=rng, exact_max_n=2,
     )
     assert point == lo == hi == 1.0
+
+
+# ---------- Step 6: coverage table + diversity metrics + sensitivity ----------
+
+
+def test_shannon_entropy_mm_known_values() -> None:
+    """Miller-Madow Shannon entropy (nats) matches Phase 0.1's formula:
+    single category → 0; two equal → ln2 + MM term; empty → 0."""
+    import numpy as np
+
+    # Single category: H = 0, MM term (k-1)/(2n) = 0
+    assert _shannon_entropy_mm(np.array([5.0]), 5.0) == 0.0
+    # Two equal categories of 5 each (n=10): H = ln2 ≈ 0.6931;
+    # MM term = (2-1)/(2*10) = 0.05 → ≈ 0.7431
+    h = _shannon_entropy_mm(np.array([5.0, 5.0]), 10.0)
+    assert abs(h - (0.6931 + 0.05)) < 1e-3
+    # Degenerate n=0 → 0.0
+    assert _shannon_entropy_mm(np.array([0.0]), 0.0) == 0.0
+
+
+def test_ratio_ci_exact_and_analytic_branches() -> None:
+    """Hybrid ratio CI: true resample for small cells, linearization SE
+    for large. Both bracket the point estimate and stay within [0, 1]."""
+    import numpy as np
+
+    rng = np.random.default_rng(1)
+    # Exact branch: coverage-like ratio, num=[1,1,0,0], denom=ones → 0.5
+    point, lo, hi = _ratio_ci(
+        np.array([1.0, 1.0, 0.0, 0.0]), np.array([1.0, 1.0, 1.0, 1.0]),
+        n_bootstrap=500, rng=rng, exact_max_n=4,
+    )
+    assert point == 0.5
+    assert 0.0 <= lo <= 0.5 <= hi <= 1.0
+
+    # Analytic branch (n=5 > exact_max_n=2): constant ratio 0.6 → SE 0
+    point, lo, hi = _ratio_ci(
+        np.array([0.6, 0.6, 0.6, 0.6, 0.6]), np.array([1.0] * 5),
+        n_bootstrap=500, rng=rng, exact_max_n=2,
+    )
+    assert abs(point - 0.6) < 1e-9
+    assert abs(lo - 0.6) < 1e-9 and abs(hi - 0.6) < 1e-9
+
+    # Undefined ratio (zero denom mass) → degenerate (0, 0, 0)
+    assert _ratio_ci(
+        np.array([0.0, 0.0]), np.array([0.0, 0.0]),
+        n_bootstrap=100, rng=rng, exact_max_n=10,
+    ) == (0.0, 0.0, 0.0)
+
+
+def test_build_coverage_table_metrics(tmp_path: Path) -> None:
+    """Per-cell gender coverage, female share, and country diversity are
+    computed correctly for a known cell."""
+    ap_path, corr_path, fmap_path = _make_cell_inputs(
+        tmp_path,
+        author_paper_rows=[(f"W{i}", 2020, f"A{i}") for i in range(4)],
+        authors=[
+            # 2 confident male, 1 confident female, 1 unknown
+            {"author_id": "A0", "author_first_name": "John",
+             "corrected_p_male": 1.0, "corrected_p_female": 0.0,
+             "corrected_p_unknown": 0.0, "primary_country": "US"},
+            {"author_id": "A1", "author_first_name": "Paul",
+             "corrected_p_male": 1.0, "corrected_p_female": 0.0,
+             "corrected_p_unknown": 0.0, "primary_country": "GB"},
+            {"author_id": "A2", "author_first_name": "Mary",
+             "corrected_p_male": 0.0, "corrected_p_female": 1.0,
+             "corrected_p_unknown": 0.0, "primary_country": "US"},
+            {"author_id": "A3", "author_first_name": "Xyz",
+             "corrected_p_male": 0.0, "corrected_p_female": 0.0,
+             "corrected_p_unknown": 1.0, "primary_country": None},
+        ],
+        paper_field_rows=[(f"W{i}", "cs") for i in range(4)],
+    )
+    out_path = tmp_path / "coverage.parquet"
+    build_coverage_table(
+        ap_path, corr_path, fmap_path, out_path, n_bootstrap=300,
+    )
+    df = pq.read_table(str(out_path)).to_pandas()
+    cell = df[
+        (df["unit"] == "distinct_authors")
+        & (df["year"] == 2020) & (df["field"] == "cs")
+        & (df["region"] == "latin")
+    ].iloc[0]
+
+    assert cell["n"] == 4
+    # Gender coverage: 3 of 4 assigned (male/female) → 0.75
+    assert abs(cell["gender_coverage_rate"] - 0.75) < 1e-9
+    # Female share among assigned: 1 female / 3 assigned → 1/3
+    assert abs(cell["female_share"] - (1.0 / 3.0)) < 1e-9
+    # gender_shannon over (sum_m=2, sum_f=1): MM-corrected, > 0
+    assert cell["gender_shannon"] > 0.0
+    # Country: 3 known (US, GB, US), 1 null → coverage 0.75, 2 distinct
+    assert abs(cell["country_coverage_rate"] - 0.75) < 1e-9
+    assert cell["n_countries"] == 2
+    assert cell["country_shannon"] > 0.0
+    # H8 quantity present
+    assert "female_share_ci_halfwidth" in df.columns
+    assert cell["female_share_ci_halfwidth"] >= 0.0
+
+
+def test_build_coverage_table_both_units_and_ci_bounds(tmp_path: Path) -> None:
+    """Output carries both units; every proportion CI brackets its point
+    estimate and lies within [0, 1]."""
+    ap_path, corr_path, fmap_path = _make_cell_inputs(
+        tmp_path,
+        author_paper_rows=[("W1", 2020, "A0"), ("W2", 2020, "A0"),
+                           ("W1", 2020, "A1")],
+        authors=[
+            {"author_id": "A0", "author_first_name": "John",
+             "corrected_p_male": 0.8, "corrected_p_female": 0.1,
+             "corrected_p_unknown": 0.1, "primary_country": "US"},
+            {"author_id": "A1", "author_first_name": "Mary",
+             "corrected_p_male": 0.2, "corrected_p_female": 0.7,
+             "corrected_p_unknown": 0.1, "primary_country": "CA"},
+        ],
+        paper_field_rows=[("W1", "cs"), ("W2", "cs")],
+    )
+    out_path = tmp_path / "coverage.parquet"
+    build_coverage_table(
+        ap_path, corr_path, fmap_path, out_path, n_bootstrap=300,
+    )
+    df = pq.read_table(str(out_path)).to_pandas()
+    assert set(df["unit"]) == {"distinct_authors", "appearances"}
+    # A0 twice (appearances) vs once (distinct)
+    appear = df[df["unit"] == "appearances"].iloc[0]
+    distinct = df[df["unit"] == "distinct_authors"].iloc[0]
+    assert appear["n"] == 3
+    assert distinct["n"] == 2
+
+    for r in df.to_dict("records"):
+        for lo_c, pt_c, hi_c in [
+            ("gender_coverage_lo", "gender_coverage_rate", "gender_coverage_hi"),
+            ("female_share_lo", "female_share", "female_share_hi"),
+        ]:
+            assert 0.0 <= r[lo_c] <= r[pt_c] <= r[hi_c] <= 1.0
+
+
+def test_build_coverage_table_handles_missing_country(tmp_path: Path) -> None:
+    """When the corrected parquet has no primary_country column, country
+    metrics are null but gender metrics are still produced."""
+    ap_path, corr_path, fmap_path = _make_cell_inputs(
+        tmp_path,
+        author_paper_rows=[("W1", 2020, "A0")],
+        authors=[
+            # No primary_country key → column absent from corrected parquet
+            {"author_id": "A0", "author_first_name": "John",
+             "corrected_p_male": 1.0, "corrected_p_female": 0.0,
+             "corrected_p_unknown": 0.0},
+        ],
+        paper_field_rows=[("W1", "cs")],
+    )
+    out_path = tmp_path / "coverage.parquet"
+    build_coverage_table(
+        ap_path, corr_path, fmap_path, out_path, n_bootstrap=100,
+    )
+    df = pq.read_table(str(out_path)).to_pandas()
+    cell = df[df["unit"] == "distinct_authors"].iloc[0]
+    assert abs(cell["gender_coverage_rate"] - 1.0) < 1e-9
+    # Country metrics null/None (or NaN) when the column is absent
+    cc = cell["country_coverage_rate"]
+    assert cc is None or cc != cc  # None or NaN
+
+
+def test_perturb_row_normalized_within_ci_and_renormalized() -> None:
+    """A perturbed kernel samples each cell within its Wilson CI then
+    renormalizes each gg-row to sum to 1; deterministic given a seed."""
+    import numpy as np
+
+    matrix = {
+        "cjk": {
+            "row_normalized": {
+                "unknown": {"male": 0.25, "female": 0.75, "unknown": 0.0},
+            },
+            "row_normalized_ci": {
+                "unknown": {
+                    "male": (0.10, 0.45), "female": (0.55, 0.90),
+                    "unknown": (0.0, 0.20),
+                },
+            },
+        },
+    }
+    rng = np.random.default_rng(7)
+    perturbed = perturb_row_normalized(matrix, rng)
+    row = perturbed["cjk"]["row_normalized"]["unknown"]
+    # Renormalized → sums to 1
+    assert abs(sum(row.values()) - 1.0) < 1e-9
+    # Determinism: same seed → same draw
+    perturbed2 = perturb_row_normalized(matrix, np.random.default_rng(7))
+    assert perturbed2["cjk"]["row_normalized"]["unknown"] == row
+    # A different seed generally differs
+    perturbed3 = perturb_row_normalized(matrix, np.random.default_rng(8))
+    assert perturbed3["cjk"]["row_normalized"]["unknown"] != row
+
+
+def test_perturb_then_apply_correction_composes(tmp_path: Path) -> None:
+    """A perturbed kernel still drives apply_bias_correction (the E2
+    sensitivity loop's inner step composes end to end)."""
+    import numpy as np
+
+    matrix = {
+        "latin": {
+            "row_normalized": {
+                "unknown": {"male": 0.4, "female": 0.6, "unknown": 0.0},
+            },
+            "row_normalized_ci": {
+                "unknown": {
+                    "male": (0.3, 0.5), "female": (0.5, 0.7),
+                    "unknown": (0.0, 0.1),
+                },
+            },
+        },
+    }
+    perturbed = perturb_row_normalized(matrix, np.random.default_rng(3))
+
+    per_author = pa.table({
+        "author_id": ["A0"],
+        "author_first_name": ["Yiyu"],
+        "gg_label": ["unknown"],
+        "gender": ["unknown"],
+        "gender_probability": [0.0],
+        "primary_country": ["CN"],
+    })
+    src = tmp_path / "pa.parquet"
+    pq.write_table(per_author, str(src))
+    dst = tmp_path / "corrected.parquet"
+    summary = apply_bias_correction(
+        src, dst, confusion_matrix=perturbed, region_axis="script",
+    )
+    assert summary["n_bias_corrected"] == 1
+    row = pq.read_table(str(dst)).to_pandas().iloc[0]
+    # corrected triple still sums to 1 under the perturbed kernel
+    total = (row["corrected_p_male"] + row["corrected_p_female"]
+             + row["corrected_p_unknown"])
+    assert abs(total - 1.0) < 1e-9
