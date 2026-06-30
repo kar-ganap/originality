@@ -27,11 +27,13 @@ from whitespace2.demographics import (
     _extract_first_name,
     _extract_source_type,
     _gg_label_to_gender_probability,
+    _wilson_ci,
     aggregate_per_author,
     annotate_gender_country,
     annotate_with_gender_guesser,
     combine_gg_and_genderize,
     compute_career_length_screen,
+    compute_confusion_matrix,
     compute_orcid_consistency,
     explode_authorships_for_paper,
     extract_authorships,
@@ -1326,3 +1328,180 @@ def test_query_namsor_handles_api_error_partial(monkeypatch: Any) -> None:
     # Batch 1 (100) + batch 3 (50) succeed; batch 2 (100) fails
     assert len(out["results"]) == 150
     assert out["n_errors"] == 1
+
+
+# ---------- Step 5a: Wilson CI + per-region confusion matrix ----------
+
+
+def test_wilson_ci_known_proportions() -> None:
+    """Wilson 95% CI matches known textbook values.
+
+    For p=0.5, n=10 (5 successes), Wilson 95% CI is approx
+    [0.237, 0.763] — comfortably wider than naive ±1.96*sqrt(p(1-p)/n)
+    on small samples.
+    """
+    low, high = _wilson_ci(k=5, n=10, confidence=0.95)
+    assert 0.20 < low < 0.27
+    assert 0.73 < high < 0.80
+
+    # 0 of 10 → CI is right-skewed, doesn't include 0 as center
+    low, high = _wilson_ci(k=0, n=10, confidence=0.95)
+    assert low == 0.0
+    assert 0.20 < high < 0.32
+
+    # All 10 of 10 → CI is left-skewed
+    low, high = _wilson_ci(k=10, n=10, confidence=0.95)
+    assert 0.68 < low < 0.80
+    assert high == 1.0
+
+
+def test_wilson_ci_zero_n() -> None:
+    """n=0 → (0, 1) as a safe degenerate band."""
+    assert _wilson_ci(k=0, n=0) == (0.0, 1.0)
+
+
+def test_compute_confusion_matrix_basic_cjk(tmp_path: Path) -> None:
+    """3×3 confusion matrix per region with row-normalization + Wilson CIs.
+
+    Build a tiny bias-sample + per-author table covering one region
+    (cjk) with 10 names:
+      - 4 gg-male: NamSor agrees on 3, says female on 1
+      - 2 gg-female: NamSor agrees on both
+      - 4 gg-unknown: NamSor says male on 1, female on 3
+    """
+    # Per-author table (the gg side); first_name → gg_label mapping
+    per_author = pa.table({
+        "author_id": [f"A{i}" for i in range(10)],
+        "author_first_name": [
+            "M1", "M2", "M3", "M4",      # gg-male
+            "F1", "F2",                  # gg-female
+            "U1", "U2", "U3", "U4",      # gg-unknown
+        ],
+        "gg_label": [
+            "male", "male", "male", "male",
+            "female", "female",
+            "unknown", "unknown", "unknown", "unknown",
+        ],
+        "gender": [
+            "male", "male", "male", "male",
+            "female", "female",
+            "unknown", "unknown", "unknown", "unknown",
+        ],
+        "gender_probability": [
+            1.0, 1.0, 1.0, 1.0,
+            1.0, 1.0,
+            0.0, 0.0, 0.0, 0.0,
+        ],
+    })
+    per_author_path = tmp_path / "per_author.parquet"
+    pq.write_table(per_author, str(per_author_path))
+
+    # Bias-sample table (the NamSor side)
+    bias_sample = pa.table({
+        "first_name": ["M1", "M2", "M3", "M4", "F1", "F2",
+                        "U1", "U2", "U3", "U4"],
+        "script_region": ["cjk"] * 10,
+        "namsor_gender": [
+            "male", "male", "male", "female",   # 3/4 agree on gg-male
+            "female", "female",                 # 2/2 agree on gg-female
+            "male", "female", "female", "female",  # gg-unknown → 1M/3F
+        ],
+        "namsor_probability": [0.9] * 10,
+    })
+    bias_sample_path = tmp_path / "bias_sample.parquet"
+    pq.write_table(bias_sample, str(bias_sample_path))
+
+    result = compute_confusion_matrix(
+        bias_sample_parquet=bias_sample_path,
+        per_author_parquet=per_author_path,
+    )
+
+    assert "cjk" in result
+    cjk = result["cjk"]
+    assert cjk["n_sample"] == 10
+
+    # Raw counts
+    assert cjk["counts"]["male"] == {"male": 3, "female": 1, "unknown": 0}
+    assert cjk["counts"]["female"] == {"male": 0, "female": 2, "unknown": 0}
+    assert cjk["counts"]["unknown"] == {"male": 1, "female": 3, "unknown": 0}
+
+    # Row-normalized P(NamSor | gg, region)
+    assert cjk["row_normalized"]["male"]["male"] == 0.75
+    assert cjk["row_normalized"]["male"]["female"] == 0.25
+    assert cjk["row_normalized"]["female"]["female"] == 1.0
+    assert cjk["row_normalized"]["unknown"]["male"] == 0.25
+    assert cjk["row_normalized"]["unknown"]["female"] == 0.75
+
+    # CIs present, structured as (low, high)
+    ci = cjk["row_normalized_ci"]["male"]["male"]
+    assert isinstance(ci, tuple) and len(ci) == 2
+    assert 0.0 <= ci[0] <= ci[1] <= 1.0
+
+    # max_ci_halfwidth = max over all cells of (high-low)/2;
+    # small N → wide CIs
+    assert cjk["max_ci_halfwidth"] > 0.3  # very wide on n=4 rows
+    # And the H5 metric (true measurement at scale would be ≤0.10):
+    assert "max_ci_halfwidth" in cjk
+
+
+def test_compute_confusion_matrix_multi_region(tmp_path: Path) -> None:
+    """Multi-region sample → one matrix per region present in bias sample."""
+    per_author = pa.table({
+        "author_id": ["A1", "A2", "A3"],
+        "author_first_name": ["John", "Yiyu", "Иван"],
+        "gg_label": ["male", "unknown", "unknown"],
+        "gender": ["male", "unknown", "unknown"],
+        "gender_probability": [1.0, 0.0, 0.0],
+    })
+    per_author_path = tmp_path / "pa.parquet"
+    pq.write_table(per_author, str(per_author_path))
+
+    bias_sample = pa.table({
+        "first_name": ["John", "Yiyu", "Иван"],
+        "script_region": ["latin", "latin", "cyrillic"],
+        "namsor_gender": ["male", "female", "male"],
+        "namsor_probability": [0.95, 0.85, 0.92],
+    })
+    bias_sample_path = tmp_path / "bs.parquet"
+    pq.write_table(bias_sample, str(bias_sample_path))
+
+    result = compute_confusion_matrix(
+        bias_sample_parquet=bias_sample_path,
+        per_author_parquet=per_author_path,
+    )
+    assert set(result.keys()) == {"latin", "cyrillic"}
+    assert result["latin"]["n_sample"] == 2
+    assert result["cyrillic"]["n_sample"] == 1
+
+
+def test_compute_confusion_matrix_handles_namsor_unknown(
+    tmp_path: Path,
+) -> None:
+    """NamSor's 'unknown' label is a valid column in the matrix."""
+    per_author = pa.table({
+        "author_id": ["A1", "A2"],
+        "author_first_name": ["X", "Y"],
+        "gg_label": ["unknown", "unknown"],
+        "gender": ["unknown", "unknown"],
+        "gender_probability": [0.0, 0.0],
+    })
+    per_author_path = tmp_path / "pa.parquet"
+    pq.write_table(per_author, str(per_author_path))
+
+    bias_sample = pa.table({
+        "first_name": ["X", "Y"],
+        "script_region": ["latin", "latin"],
+        "namsor_gender": ["unknown", "male"],
+        "namsor_probability": [0.5, 0.85],
+    })
+    bias_sample_path = tmp_path / "bs.parquet"
+    pq.write_table(bias_sample, str(bias_sample_path))
+
+    result = compute_confusion_matrix(
+        bias_sample_parquet=bias_sample_path,
+        per_author_parquet=per_author_path,
+    )
+    assert result["latin"]["counts"]["unknown"]["unknown"] == 1
+    assert result["latin"]["counts"]["unknown"]["male"] == 1
+    assert result["latin"]["row_normalized"]["unknown"]["unknown"] == 0.5
+    assert result["latin"]["row_normalized"]["unknown"]["male"] == 0.5

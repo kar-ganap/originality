@@ -1481,3 +1481,166 @@ def sample_for_namsor(
             "quota_exhausted": namsor_result["quota_exhausted"],
         },
     }
+
+
+# ---------- Step 5a: confusion matrix + Wilson CI ---------------------------
+#
+# Per script-region 3×3 confusion matrix comparing gender_guesser's
+# prediction to NamSor's "ground truth" on the bias sample. Rows are
+# gg's gender; cols are NamSor's gender; cells are counts. Row-
+# normalization gives P(NamSor | gg, region) — the conditional
+# distribution that downstream applies as the bias-correction kernel
+# (Step 5b).
+#
+# Each row-normalized cell carries a Wilson 95% CI computed from the
+# raw count. The maximum CI half-width across all cells in a region
+# is the H5 measurement — Phase 1.3 plan's locked acceptance gate
+# of ≤10pp at N=2,500 stratified sample.
+
+
+# Map of gg/NamSor gender labels to the canonical 3-class set used in
+# the confusion matrix. "None" / unexpected labels map to "unknown".
+_CANONICAL_GENDER: dict[str, str] = {
+    "male": "male", "female": "female", "unknown": "unknown",
+}
+_GENDER_CATEGORIES: tuple[str, str, str] = ("male", "female", "unknown")
+
+
+def _canonicalize_gender(label: Any) -> str:
+    """Normalize a raw gender label to one of {'male', 'female', 'unknown'}."""
+    if not isinstance(label, str):
+        return "unknown"
+    return _CANONICAL_GENDER.get(label.lower(), "unknown")
+
+
+def _wilson_ci(
+    k: int,
+    n: int,
+    confidence: float = 0.95,
+) -> tuple[float, float]:
+    """Wilson score interval for a binomial proportion p=k/n.
+
+    Returns ``(lower, upper)`` clipped to [0, 1]. ``(0.0, 1.0)`` on
+    degenerate ``n=0`` input (uninformative). Two-sided.
+
+    Uses the z-score for 95% (1.96) by default; 99% would be 2.576.
+    The Wilson interval is preferred over the normal approximation
+    on small N: it stays in [0,1], handles k=0 and k=n correctly,
+    and has better coverage at small samples.
+    """
+    if n <= 0:
+        return (0.0, 1.0)
+    # z = inverse normal CDF of (1 + confidence) / 2
+    # Hardcoded common values to avoid scipy dep for this one calculation.
+    z_table = {0.90: 1.6449, 0.95: 1.9600, 0.99: 2.5758}
+    z = z_table.get(confidence, 1.96)
+
+    p_hat = k / n
+    denom = 1.0 + (z * z) / n
+    center = (p_hat + (z * z) / (2.0 * n)) / denom
+    half_width = (
+        z
+        * ((p_hat * (1.0 - p_hat) / n + (z * z) / (4.0 * n * n)) ** 0.5)
+        / denom
+    )
+    lo = max(0.0, center - half_width)
+    hi = min(1.0, center + half_width)
+    return (lo, hi)
+
+
+def compute_confusion_matrix(
+    bias_sample_parquet: str | Path,
+    per_author_parquet: str | Path,
+) -> dict[str, dict[str, Any]]:
+    """Per script-region 3×3 confusion matrix (gg vs NamSor).
+
+    Joins the bias-sample (Step 4c output) to per-author (Step 3c
+    output) by first_name to attach gg's label to each NamSor-
+    classified name. Then groups by ``script_region`` and computes
+    raw counts, row-normalized P(NamSor | gg, region), and per-cell
+    Wilson 95% CIs.
+
+    Returns a dict keyed by region. Each value has:
+      - ``n_sample``: number of names in the bias sample for this region
+      - ``counts``: dict[gg_gender → dict[namsor_gender → int]]
+      - ``row_normalized``: dict[gg_gender → dict[namsor_gender → float]]
+        — conditional probability P(NamSor | gg, region)
+      - ``row_normalized_ci``: dict[gg_gender → dict[namsor_gender →
+        (low, high)]] Wilson 95% CI for each cell
+      - ``max_ci_halfwidth``: max over all cells of ``(high-low)/2``.
+        This is the per-region H5 metric (≤0.10 gate per plan §3).
+
+    Caveat: regions present in the bias sample but absent from the
+    per-author table will have ``counts[gg=unknown][...] == 0`` for
+    those names (no gg label to attach). Such names are dropped
+    silently — they don't carry information about gg's bias.
+    """
+    bias_sample_parquet = Path(bias_sample_parquet)
+    per_author_parquet = Path(per_author_parquet)
+
+    bias_df = pq.read_table(str(bias_sample_parquet)).to_pandas()
+    pa_df = pq.read_table(
+        str(per_author_parquet),
+        columns=["author_first_name", "gg_label"],
+    ).to_pandas()
+
+    # Per-name gg label (dedup; gg is deterministic so all rows for
+    # a given name should agree on gg_label — take first).
+    name_to_gg_label = (
+        pa_df.dropna(subset=["author_first_name"])
+        .drop_duplicates(subset=["author_first_name"])
+        .set_index("author_first_name")["gg_label"]
+        .to_dict()
+    )
+
+    # Attach gg label to each bias-sample row
+    bias_df["gg_label"] = bias_df["first_name"].map(name_to_gg_label)
+
+    # Drop rows where we couldn't attach a gg label (shouldn't happen
+    # if Step 4c sampled FROM per-author, but be safe).
+    bias_df = bias_df.dropna(subset=["gg_label"])
+
+    # Canonicalize both sides to the 3-class set
+    bias_df["gg_canonical"] = bias_df["gg_label"].apply(_canonicalize_gender)
+    bias_df["namsor_canonical"] = bias_df["namsor_gender"].apply(
+        _canonicalize_gender,
+    )
+
+    result: dict[str, dict[str, Any]] = {}
+    for region, sub in bias_df.groupby("script_region"):
+        # Initialize 3×3 counts
+        counts: dict[str, dict[str, int]] = {
+            gg: {ns: 0 for ns in _GENDER_CATEGORIES}
+            for gg in _GENDER_CATEGORIES
+        }
+        for _, row in sub.iterrows():
+            gg = str(row["gg_canonical"])
+            ns = str(row["namsor_canonical"])
+            counts[gg][ns] += 1
+
+        # Row-normalized + Wilson CIs
+        row_norm: dict[str, dict[str, float]] = {}
+        row_norm_ci: dict[str, dict[str, tuple[float, float]]] = {}
+        max_halfwidth = 0.0
+
+        for gg in _GENDER_CATEGORIES:
+            row_total = sum(counts[gg].values())
+            row_norm[gg] = {}
+            row_norm_ci[gg] = {}
+            for ns in _GENDER_CATEGORIES:
+                k = counts[gg][ns]
+                row_norm[gg][ns] = (k / row_total) if row_total else 0.0
+                lo, hi = _wilson_ci(k=k, n=row_total)
+                row_norm_ci[gg][ns] = (lo, hi)
+                halfwidth = (hi - lo) / 2.0
+                if halfwidth > max_halfwidth:
+                    max_halfwidth = halfwidth
+
+        result[str(region)] = {
+            "n_sample": int(len(sub)),
+            "counts": counts,
+            "row_normalized": row_norm,
+            "row_normalized_ci": row_norm_ci,
+            "max_ci_halfwidth": float(max_halfwidth),
+        }
+    return result
