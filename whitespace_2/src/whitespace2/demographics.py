@@ -653,3 +653,234 @@ def annotate_gender_country(
             float(n_with_country / n_authors) if n_authors else 0.0
         ),
     }
+
+
+# ---------- Step 3b: Genderize cross-validation -----------------------------
+#
+# Genderize is a freemium HTTPS API: https://api.genderize.io
+#   GET /?name[]=John&name[]=Mary&apikey=...
+#   → [{"name": "John", "gender": "male", "probability": 0.99, "count": ...},
+#       {"name": "Mary", "gender": "female", "probability": 0.98, "count": ...}]
+#
+# Quota (keyed-free tier): 2,500 names per month (one call counts toward
+# both name-count and call-count). We treat ``max_names`` as the quota
+# gate and stop dispatching once we'd exceed it.
+#
+# Phase 0.2 Wave 1B verified the keyed-free flow with the user's key.
+# Phase 1.3 plan §"Pre-flight choices already locked": Genderize is the
+# **cross-validation** layer over gender_guesser (the primary), not a
+# replacement. Step 3b runs Genderize only on the low-confidence subset
+# (gender_guesser p<0.8).
+
+_GENDERIZE_URL = "https://api.genderize.io"
+
+
+def query_genderize_batch(
+    names: list[str],
+    api_key: str,
+    timeout: float = 30.0,
+) -> dict[str, dict[str, Any]]:
+    """One Genderize HTTP call for up to 10 names.
+
+    Returns ``{name: {gender, probability, count}}``. Names not in
+    the response are simply absent from the output dict (caller
+    decides how to handle).
+
+    Names returned with ``gender=None`` (Genderize couldn't classify)
+    are kept as-is in the dict — that's distinct from "not queried."
+
+    Raises on HTTP errors (≥400) — the orchestrator
+    :func:`query_genderize` catches and counts these.
+    """
+    import requests
+
+    params: dict[str, Any] = {
+        "name[]": list(names),
+        "apikey": api_key,
+    }
+    resp = requests.get(_GENDERIZE_URL, params=params, timeout=timeout)
+    resp.raise_for_status()
+    data = resp.json()
+
+    if not isinstance(data, list):
+        return {}
+
+    out: dict[str, dict[str, Any]] = {}
+    for item in data:
+        if not isinstance(item, dict):
+            continue
+        name = item.get("name")
+        if not isinstance(name, str) or not name:
+            continue
+        out[name] = {
+            "gender": item.get("gender"),  # str | None
+            "probability": float(item.get("probability") or 0.0),
+            "count": int(item.get("count") or 0),
+        }
+    return out
+
+
+def query_genderize(
+    names: Iterable[str],
+    api_key: str,
+    *,
+    max_names: int = 2500,
+    batch_size: int = 10,
+    timeout: float = 30.0,
+) -> dict[str, Any]:
+    """Orchestrate batched Genderize calls up to a quota.
+
+    Batches the input ``names`` into groups of ``batch_size`` (Genderize
+    accepts up to 10 names per request). Stops dispatching once
+    ``max_names`` would be exceeded — keeps prior results, sets
+    ``quota_exhausted=True`` in the summary.
+
+    Errors in individual batches (HTTP 4xx/5xx, network timeouts) are
+    caught and counted in ``n_errors``; the orchestrator continues
+    with subsequent batches so a transient failure doesn't lose all
+    progress.
+
+    Returns a summary dict with the per-name results plus operational
+    metrics for the verify-results doc.
+    """
+    deduped: list[str] = []
+    seen: set[str] = set()
+    for n in names:
+        if not isinstance(n, str) or not n.strip():
+            continue
+        if n in seen:
+            continue
+        seen.add(n)
+        deduped.append(n)
+
+    n_queried = 0
+    n_calls = 0
+    n_errors = 0
+    quota_exhausted = False
+    results: dict[str, dict[str, Any]] = {}
+
+    for i in range(0, len(deduped), batch_size):
+        if n_queried >= max_names:
+            quota_exhausted = True
+            break
+        # Trim the batch to not exceed max_names
+        remaining = max_names - n_queried
+        batch = deduped[i : i + min(batch_size, remaining)]
+        if not batch:
+            quota_exhausted = True
+            break
+
+        try:
+            batch_result = query_genderize_batch(
+                batch, api_key=api_key, timeout=timeout,
+            )
+            results.update(batch_result)
+        except Exception:
+            n_errors += 1
+
+        n_queried += len(batch)
+        n_calls += 1
+
+    # Detect quota exhaustion by post-condition too: if we
+    # processed every item without break, max_names was either
+    # equal to or exceeded len(deduped) — not exhausted in that
+    # case.
+    if n_queried < len(deduped):
+        quota_exhausted = True
+
+    return {
+        "results": results,
+        "n_names_queried": n_queried,
+        "n_calls": n_calls,
+        "n_errors": n_errors,
+        "max_names": max_names,
+        "quota_exhausted": quota_exhausted,
+    }
+
+
+# Confidence gate for "both methods confident" (per Phase 1.3 plan
+# §"Pre-registered hypotheses"): probability ≥ 0.8 from gg AND
+# probability ≥ 0.8 from Genderize.
+_CONFIDENCE_GATE = 0.8
+
+
+def combine_gg_and_genderize(
+    gg_results: dict[str, dict[str, Any]],
+    genderize_results: dict[str, dict[str, Any]],
+) -> dict[str, dict[str, Any]]:
+    """Per-name fusion of gender_guesser + Genderize annotations.
+
+    For each name in ``gg_results`` (the universe is what gg saw):
+
+    - ``combined_gender``: gg's gender if gg is confident (p ≥ 0.8);
+      otherwise Genderize's gender if Genderize is confident;
+      otherwise gg's (low-confidence) gender.
+    - ``combined_probability``: probability associated with combined
+      pick.
+    - ``genderize_gender`` / ``genderize_probability`` /
+      ``genderize_count``: pass-through (or None if Genderize wasn't
+      queried for this name).
+    - ``both_methods_confident``: both gg and Genderize at p ≥ 0.8.
+    - ``both_methods_agree``: both confident AND same gender — the
+      "agreement rate" metric tracked from Phase 0.2 Check 3.
+
+    Names with only gg (no Genderize result) get genderize fields =
+    None and the combined fields fall back to gg's pick.
+    """
+    out: dict[str, dict[str, Any]] = {}
+    for name, gg in gg_results.items():
+        gz = genderize_results.get(name)
+        gg_gender = gg.get("gender", "unknown")
+        gg_prob = float(gg.get("probability", 0.0))
+        gg_confident = gg_prob >= _CONFIDENCE_GATE
+
+        if gz is not None:
+            gz_gender = gz.get("gender")  # str | None
+            gz_prob = float(gz.get("probability", 0.0))
+            gz_count = int(gz.get("count", 0))
+            gz_confident = (
+                isinstance(gz_gender, str) and gz_prob >= _CONFIDENCE_GATE
+            )
+        else:
+            gz_gender = None
+            gz_prob = 0.0
+            gz_count = 0
+            gz_confident = False
+
+        # Combined pick policy (gg is the locked primary per Phase 1.3
+        # plan):
+        #   - If gg has ANY non-"unknown" pick, keep it (gg owns the
+        #     final answer for any name it has signal on, even at
+        #     mid-confidence p=0.7).
+        #   - If gg returned "unknown" (the name isn't in its
+        #     dictionary at all), use Genderize's pick if Genderize
+        #     is confident.
+        #   - Otherwise fall through to gg's "unknown".
+        # This keeps gender_guesser as the locked primary while
+        # letting Genderize EXTEND coverage on names gg can't handle.
+        if gg_gender != "unknown":
+            combined_gender = gg_gender
+            combined_prob = gg_prob
+        elif gz_confident and isinstance(gz_gender, str):
+            combined_gender = gz_gender
+            combined_prob = gz_prob
+        else:
+            combined_gender = gg_gender
+            combined_prob = gg_prob
+
+        both_confident = gg_confident and gz_confident
+        both_agree = (
+            both_confident and gg_gender == gz_gender
+        )
+
+        out[name] = {
+            **gg,
+            "genderize_gender": gz_gender,
+            "genderize_probability": gz_prob,
+            "genderize_count": gz_count,
+            "combined_gender": combined_gender,
+            "combined_probability": combined_prob,
+            "both_methods_confident": both_confident,
+            "both_methods_agree": both_agree,
+        }
+    return out

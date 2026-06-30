@@ -30,10 +30,13 @@ from whitespace2.demographics import (
     aggregate_per_author,
     annotate_gender_country,
     annotate_with_gender_guesser,
+    combine_gg_and_genderize,
     compute_career_length_screen,
     compute_orcid_consistency,
     explode_authorships_for_paper,
     extract_authorships,
+    query_genderize,
+    query_genderize_batch,
     validate_disambiguation,
 )
 
@@ -673,3 +676,195 @@ def test_annotate_gender_country_e2e(tmp_path: Path) -> None:
     assert by_aid["https://openalex.org/A1"]["primary_country"] == "US"
     assert by_aid["https://openalex.org/A2"]["gender"] == "female"
     assert by_aid["https://openalex.org/A2"]["primary_country"] == "UK"
+
+
+# ---------- Genderize cross-validation (Step 3b) ----------
+#
+# All tests mock requests.get to avoid consuming the real 2,500/mo
+# free-tier quota. The real Genderize call lives in
+# query_genderize_batch; query_genderize orchestrates batching +
+# quota tracking; combine_gg_and_genderize fuses gg + Genderize
+# outputs per-name.
+
+
+class _FakeResponse:
+    """Minimal stand-in for requests.Response used by tests."""
+
+    def __init__(
+        self,
+        json_data: Any,
+        status_code: int = 200,
+        headers: dict[str, str] | None = None,
+    ) -> None:
+        self._json = json_data
+        self.status_code = status_code
+        self.headers = headers or {}
+
+    def json(self) -> Any:
+        return self._json
+
+    def raise_for_status(self) -> None:
+        if self.status_code >= 400:
+            from requests.exceptions import HTTPError
+            raise HTTPError(f"HTTP {self.status_code}")
+
+
+def test_query_genderize_batch_returns_per_name_dict(monkeypatch: Any) -> None:
+    """A successful Genderize call returns {name: {gender, probability,
+    count}} per name in the response.
+    """
+    captured: dict[str, Any] = {}
+
+    def fake_get(url: str, params: dict[str, Any], timeout: float) -> _FakeResponse:
+        captured["url"] = url
+        captured["params"] = params
+        return _FakeResponse([
+            {"name": "John", "gender": "male", "probability": 0.99,
+             "count": 12345},
+            {"name": "Mary", "gender": "female", "probability": 0.98,
+             "count": 11000},
+        ])
+
+    monkeypatch.setattr("requests.get", fake_get)
+
+    out = query_genderize_batch(["John", "Mary"], api_key="test-key")
+    assert out["John"]["gender"] == "male"
+    assert out["John"]["probability"] == 0.99
+    assert out["John"]["count"] == 12345
+    assert out["Mary"]["gender"] == "female"
+    assert captured["params"]["name[]"] == ["John", "Mary"]
+    assert captured["params"]["apikey"] == "test-key"
+
+
+def test_query_genderize_batch_handles_unknown_response(monkeypatch: Any) -> None:
+    """Genderize returns gender=None for names it can't classify;
+    these still get an entry in the output dict (with gender None).
+    """
+    monkeypatch.setattr(
+        "requests.get",
+        lambda *a, **kw: _FakeResponse([
+            {"name": "Asdfg", "gender": None, "probability": 0.0,
+             "count": 0},
+        ]),
+    )
+    out = query_genderize_batch(["Asdfg"], api_key="test-key")
+    assert "Asdfg" in out
+    assert out["Asdfg"]["gender"] is None
+    assert out["Asdfg"]["probability"] == 0.0
+
+
+def test_query_genderize_orchestrator_batches_10(monkeypatch: Any) -> None:
+    """query_genderize batches 10 names per request; n_calls counted.
+    25 names → 3 calls (10 + 10 + 5).
+    """
+    calls: list[list[str]] = []
+
+    def fake_get(url: str, params: dict[str, Any], timeout: float) -> _FakeResponse:
+        names = params["name[]"]
+        calls.append(names)
+        return _FakeResponse([
+            {"name": n, "gender": "male", "probability": 0.9, "count": 100}
+            for n in names
+        ])
+
+    monkeypatch.setattr("requests.get", fake_get)
+    names = [f"Name{i}" for i in range(25)]
+    out = query_genderize(names, api_key="test-key", max_names=100)
+
+    assert len(calls) == 3
+    assert len(calls[0]) == 10
+    assert len(calls[1]) == 10
+    assert len(calls[2]) == 5
+    assert len(out["results"]) == 25
+    assert out["n_calls"] == 3
+    assert out["n_names_queried"] == 25
+
+
+def test_query_genderize_respects_max_names_quota(monkeypatch: Any) -> None:
+    """Quota cap stops dispatching once max_names is reached.
+    100 input names but max_names=25 → only the first 25 are queried."""
+    def fake_get(url: str, params: dict[str, Any], timeout: float) -> _FakeResponse:
+        return _FakeResponse([
+            {"name": n, "gender": "male", "probability": 0.9, "count": 100}
+            for n in params["name[]"]
+        ])
+    monkeypatch.setattr("requests.get", fake_get)
+
+    out = query_genderize(
+        [f"Name{i}" for i in range(100)],
+        api_key="test-key",
+        max_names=25,
+    )
+    assert out["n_names_queried"] == 25
+    assert out["max_names"] == 25
+    assert out["quota_exhausted"] is True
+    assert len(out["results"]) == 25
+
+
+def test_query_genderize_handles_api_error_partial(monkeypatch: Any) -> None:
+    """If a batch fails mid-orchestration, prior results are kept
+    and the failure is surfaced in the summary (no exception)."""
+    call_counter = [0]
+
+    def fake_get(url: str, params: dict[str, Any], timeout: float) -> _FakeResponse:
+        call_counter[0] += 1
+        if call_counter[0] == 2:
+            return _FakeResponse({"error": "rate limit"}, status_code=429)
+        return _FakeResponse([
+            {"name": n, "gender": "male", "probability": 0.9, "count": 100}
+            for n in params["name[]"]
+        ])
+
+    monkeypatch.setattr("requests.get", fake_get)
+    out = query_genderize(
+        [f"Name{i}" for i in range(25)],
+        api_key="test-key",
+        max_names=100,
+    )
+    # Batch 1 succeeded (10 names), batch 2 failed, batch 3 succeeded (5 names)
+    assert len(out["results"]) == 15
+    assert out["n_errors"] == 1
+
+
+def test_combine_gg_and_genderize_both_confident_and_agree() -> None:
+    """gg confident male + Genderize confident male → agree, combined male."""
+    gg = {"John": {"gg_label": "male", "gender": "male", "probability": 1.0}}
+    genderize = {"John": {"gender": "male", "probability": 0.99, "count": 1}}
+    combined = combine_gg_and_genderize(gg, genderize)
+    assert combined["John"]["combined_gender"] == "male"
+    assert combined["John"]["both_methods_confident"] is True
+    assert combined["John"]["both_methods_agree"] is True
+
+
+def test_combine_gg_and_genderize_disagree() -> None:
+    """gg male + Genderize female → disagree; combined is the GG result
+    (gg is the locked primary per plan §"Gender stack"), but the
+    disagreement flag is set so downstream can audit."""
+    gg = {"Robin": {"gg_label": "mostly_male", "gender": "male", "probability": 0.7}}
+    genderize = {"Robin": {"gender": "female", "probability": 0.8, "count": 100}}
+    combined = combine_gg_and_genderize(gg, genderize)
+    assert combined["Robin"]["both_methods_confident"] is False  # gg not confident
+    assert combined["Robin"]["both_methods_agree"] is False
+    # gg's lower-confidence pick still propagates as combined
+    assert combined["Robin"]["combined_gender"] == "male"
+
+
+def test_combine_gg_only() -> None:
+    """Name with gg result but no Genderize → combined = gg, agree=None."""
+    gg = {"John": {"gg_label": "male", "gender": "male", "probability": 1.0}}
+    combined = combine_gg_and_genderize(gg, {})
+    assert combined["John"]["combined_gender"] == "male"
+    assert combined["John"]["both_methods_confident"] is False  # only gg
+    assert combined["John"]["both_methods_agree"] is False
+    assert combined["John"]["genderize_gender"] is None
+
+
+def test_combine_gg_unknown_genderize_confident() -> None:
+    """gg unknown + Genderize confident → use Genderize."""
+    gg = {"Yiyu": {"gg_label": "unknown", "gender": "unknown",
+                    "probability": 0.0}}
+    genderize = {"Yiyu": {"gender": "female", "probability": 0.95, "count": 50}}
+    combined = combine_gg_and_genderize(gg, genderize)
+    assert combined["Yiyu"]["combined_gender"] == "female"
+    # When gg is unknown but Genderize is confident, Genderize wins
+    assert combined["Yiyu"]["genderize_gender"] == "female"
