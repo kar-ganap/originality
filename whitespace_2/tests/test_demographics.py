@@ -31,6 +31,7 @@ from whitespace2.demographics import (
     aggregate_per_author,
     annotate_gender_country,
     annotate_with_gender_guesser,
+    apply_bias_correction,
     combine_gg_and_genderize,
     compute_career_length_screen,
     compute_confusion_matrix,
@@ -1505,3 +1506,331 @@ def test_compute_confusion_matrix_handles_namsor_unknown(
     assert result["latin"]["counts"]["unknown"]["male"] == 1
     assert result["latin"]["row_normalized"]["unknown"]["unknown"] == 0.5
     assert result["latin"]["row_normalized"]["unknown"]["male"] == 0.5
+
+
+def test_compute_confusion_matrix_country_axis(tmp_path: Path) -> None:
+    """region_column='primary_country' groups the matrix by each name's
+    modal country (joined from per-author) instead of by script.
+
+    This is the per-country robustness matrix locked for Step 5b. The
+    bias sample is per-name and has no country column; the function
+    attaches each name's modal ``primary_country`` from the per-author
+    table before grouping.
+    """
+    per_author = pa.table({
+        "author_id": ["A1", "A2", "A3", "A4"],
+        "author_first_name": ["Yiyu", "Junxu", "Magda", "Magda"],
+        "gg_label": ["unknown", "unknown", "unknown", "unknown"],
+        "gender": ["unknown", "unknown", "unknown", "unknown"],
+        "gender_probability": [0.0, 0.0, 0.0, 0.0],
+        # Magda appears twice: PL twice → modal PL. Yiyu/Junxu → CN.
+        "primary_country": ["CN", "CN", "PL", "PL"],
+    })
+    per_author_path = tmp_path / "pa.parquet"
+    pq.write_table(per_author, str(per_author_path))
+
+    bias_sample = pa.table({
+        "first_name": ["Yiyu", "Junxu", "Magda"],
+        "script_region": ["latin", "latin", "latin"],  # all latin script
+        "namsor_gender": ["female", "male", "female"],
+        "namsor_probability": [0.85, 0.9, 0.8],
+    })
+    bias_sample_path = tmp_path / "bs.parquet"
+    pq.write_table(bias_sample, str(bias_sample_path))
+
+    result = compute_confusion_matrix(
+        bias_sample_parquet=bias_sample_path,
+        per_author_parquet=per_author_path,
+        region_column="primary_country",
+    )
+    # Grouped by country, not by script: CN (Yiyu+Junxu) and PL (Magda).
+    assert set(result.keys()) == {"CN", "PL"}
+    assert result["CN"]["n_sample"] == 2
+    assert result["PL"]["n_sample"] == 1
+    # CN gg-unknown → NamSor 1 female / 1 male
+    assert result["CN"]["counts"]["unknown"]["female"] == 1
+    assert result["CN"]["counts"]["unknown"]["male"] == 1
+
+
+# ---------- Step 5b: per-author bias-correction application ----------
+
+
+def _make_per_author(
+    rows: list[dict[str, Any]],
+) -> pa.Table:
+    """Build a per-author Arrow table (Step 3c-shaped) for Step 5b tests.
+
+    Each input dict supplies author_first_name / gg_label / gender /
+    gender_probability / primary_country; author_id is auto-assigned.
+    """
+    return pa.table({
+        "author_id": [f"https://openalex.org/A{i}" for i in range(len(rows))],
+        "author_first_name": [r["author_first_name"] for r in rows],
+        "gg_label": [r["gg_label"] for r in rows],
+        "gender": [r["gender"] for r in rows],
+        "gender_probability": [r["gender_probability"] for r in rows],
+        "primary_country": [r.get("primary_country") for r in rows],
+    })
+
+
+def test_apply_bias_correction_confident_identity(tmp_path: Path) -> None:
+    """Confident authors (gender_probability >= gate) get the identity
+    transform — one-hot on their assigned gender — and are NOT marked
+    bias_correction_applied. The confusion matrix is irrelevant for
+    them (NamSor never sampled confident names)."""
+    per_author = _make_per_author([
+        {"author_first_name": "John", "gg_label": "male",
+         "gender": "male", "gender_probability": 1.0, "primary_country": "US"},
+        {"author_first_name": "Jane", "gg_label": "female",
+         "gender": "female", "gender_probability": 1.0,
+         "primary_country": "US"},
+    ])
+    src = tmp_path / "pa.parquet"
+    pq.write_table(per_author, str(src))
+    dst = tmp_path / "corrected.parquet"
+
+    summary = apply_bias_correction(
+        src, dst, confusion_matrix={}, region_axis="script",
+    )
+
+    df = pq.read_table(str(dst)).to_pandas()
+    by_aid = {r["author_id"]: r for r in df.to_dict("records")}
+    john = by_aid["https://openalex.org/A0"]
+    jane = by_aid["https://openalex.org/A1"]
+    assert john["corrected_p_male"] == 1.0
+    assert john["corrected_p_female"] == 0.0
+    assert john["corrected_p_unknown"] == 0.0
+    assert bool(john["bias_correction_applied"]) is False
+    assert jane["corrected_p_female"] == 1.0
+    assert jane["corrected_p_male"] == 0.0
+    assert bool(jane["bias_correction_applied"]) is False
+
+    assert summary["n_authors"] == 2
+    assert summary["n_confident_identity"] == 2
+    assert summary["n_low_conf"] == 0
+    assert summary["n_bias_corrected"] == 0
+
+
+def test_apply_bias_correction_low_conf_uses_matrix(tmp_path: Path) -> None:
+    """A low-confidence author whose script-region is present in the
+    confusion matrix gets the row-normalized P(NamSor | gg, region)
+    distribution and bias_correction_applied=True."""
+    per_author = _make_per_author([
+        {"author_first_name": "张伟", "gg_label": "unknown",
+         "gender": "unknown", "gender_probability": 0.0,
+         "primary_country": "CN"},
+    ])
+    src = tmp_path / "pa.parquet"
+    pq.write_table(per_author, str(src))
+    dst = tmp_path / "corrected.parquet"
+
+    confusion_matrix = {
+        "cjk": {
+            "row_normalized": {
+                "male": {"male": 0.0, "female": 0.0, "unknown": 0.0},
+                "female": {"male": 0.0, "female": 0.0, "unknown": 0.0},
+                "unknown": {"male": 0.25, "female": 0.75, "unknown": 0.0},
+            },
+        },
+    }
+
+    summary = apply_bias_correction(
+        src, dst, confusion_matrix=confusion_matrix, region_axis="script",
+    )
+
+    row = pq.read_table(str(dst)).to_pandas().iloc[0]
+    assert row["corrected_p_male"] == 0.25
+    assert row["corrected_p_female"] == 0.75
+    assert row["corrected_p_unknown"] == 0.0
+    assert bool(row["bias_correction_applied"]) is True
+
+    assert summary["n_low_conf"] == 1
+    assert summary["n_bias_corrected"] == 1
+    assert summary["n_corrected_by_region"]["cjk"] == 1
+
+
+def test_apply_bias_correction_uncorrectable_fallback(tmp_path: Path) -> None:
+    """A low-confidence author whose region is absent from the matrix
+    falls back to the identity transform (one-hot on assigned gender)
+    and is NOT marked bias_correction_applied. A gg-unknown author thus
+    stays fully 'unknown' — conservative, no invented inference."""
+    per_author = _make_per_author([
+        {"author_first_name": "محمد", "gg_label": "unknown",
+         "gender": "unknown", "gender_probability": 0.0,
+         "primary_country": "SA"},
+    ])
+    src = tmp_path / "pa.parquet"
+    pq.write_table(per_author, str(src))
+    dst = tmp_path / "corrected.parquet"
+
+    # Matrix only covers "latin"; the author's region ("arabic") is absent.
+    confusion_matrix = {
+        "latin": {
+            "row_normalized": {
+                "unknown": {"male": 0.5, "female": 0.5, "unknown": 0.0},
+            },
+        },
+    }
+    summary = apply_bias_correction(
+        src, dst, confusion_matrix=confusion_matrix, region_axis="script",
+    )
+    row = pq.read_table(str(dst)).to_pandas().iloc[0]
+    assert row["corrected_p_unknown"] == 1.0
+    assert row["corrected_p_male"] == 0.0
+    assert row["corrected_p_female"] == 0.0
+    assert bool(row["bias_correction_applied"]) is False
+
+    assert summary["n_low_conf"] == 1
+    assert summary["n_bias_corrected"] == 0
+    assert summary["n_low_conf_uncorrectable"] == 1
+
+
+def test_apply_bias_correction_country_axis(tmp_path: Path) -> None:
+    """region_axis='country' keys the correction on each author's
+    primary_country (a per-author attribute) rather than the
+    name-derived script-region. Proves the robustness axis works."""
+    per_author = _make_per_author([
+        # Latin-script name, but country CN — country axis should pick
+        # the "CN" matrix row, not the "latin" script row.
+        {"author_first_name": "Yiyu", "gg_label": "unknown",
+         "gender": "unknown", "gender_probability": 0.0,
+         "primary_country": "CN"},
+    ])
+    src = tmp_path / "pa.parquet"
+    pq.write_table(per_author, str(src))
+    dst = tmp_path / "corrected.parquet"
+
+    confusion_matrix = {
+        "CN": {
+            "row_normalized": {
+                "unknown": {"male": 0.4, "female": 0.6, "unknown": 0.0},
+            },
+        },
+    }
+    summary = apply_bias_correction(
+        src, dst, confusion_matrix=confusion_matrix, region_axis="country",
+    )
+    row = pq.read_table(str(dst)).to_pandas().iloc[0]
+    assert row["corrected_p_male"] == 0.4
+    assert row["corrected_p_female"] == 0.6
+    assert bool(row["bias_correction_applied"]) is True
+    assert summary["region_axis"] == "country"
+    assert summary["n_bias_corrected"] == 1
+
+
+def test_apply_bias_correction_preserves_columns_and_sums(
+    tmp_path: Path,
+) -> None:
+    """The corrected parquet keeps the original columns and adds the
+    four Step-5b columns; corrected probabilities sum to 1.0 per author
+    (so Step 5c expected-count sums are well-formed)."""
+    per_author = _make_per_author([
+        {"author_first_name": "John", "gg_label": "male",
+         "gender": "male", "gender_probability": 1.0, "primary_country": "US"},
+        {"author_first_name": "Yiyu", "gg_label": "unknown",
+         "gender": "unknown", "gender_probability": 0.0,
+         "primary_country": "CN"},
+        {"author_first_name": "Zzzz", "gg_label": "unknown",
+         "gender": "unknown", "gender_probability": 0.0,
+         "primary_country": "XX"},
+    ])
+    src = tmp_path / "pa.parquet"
+    pq.write_table(per_author, str(src))
+    dst = tmp_path / "corrected.parquet"
+
+    confusion_matrix = {
+        "latin": {
+            "row_normalized": {
+                "unknown": {"male": 0.3, "female": 0.5, "unknown": 0.2},
+            },
+        },
+    }
+    apply_bias_correction(
+        src, dst, confusion_matrix=confusion_matrix, region_axis="script",
+    )
+    df = pq.read_table(str(dst)).to_pandas()
+
+    # Original columns preserved
+    for col in ["author_id", "author_first_name", "gender",
+                "gender_probability", "primary_country"]:
+        assert col in df.columns
+    # New Step-5b columns added
+    for col in ["corrected_p_male", "corrected_p_female",
+                "corrected_p_unknown", "bias_correction_applied"]:
+        assert col in df.columns
+
+    # Each author's corrected distribution sums to 1.0
+    sums = (
+        df["corrected_p_male"]
+        + df["corrected_p_female"]
+        + df["corrected_p_unknown"]
+    )
+    assert all(abs(s - 1.0) < 1e-9 for s in sums)
+    # John (latin, confident) → identity; Yiyu (latin, low-conf) → corrected;
+    # Zzzz (latin, low-conf) → corrected too (same latin row).
+    by_name = {r["author_first_name"]: r for r in df.to_dict("records")}
+    assert bool(by_name["John"]["bias_correction_applied"]) is False
+    assert bool(by_name["Yiyu"]["bias_correction_applied"]) is True
+    assert by_name["Yiyu"]["corrected_p_female"] == 0.5
+
+
+def test_confusion_matrix_then_apply_correction_compose(tmp_path: Path) -> None:
+    """End-to-end 5a→5b contract: a confusion matrix built by
+    compute_confusion_matrix feeds apply_bias_correction unchanged.
+
+    The script-region keys produced by Step 5a (via the bias sample's
+    script_region column) must line up with the per-author regions
+    Step 5b recomputes via tag_script_region, so a real pipeline
+    composes without an intermediate adapter."""
+    per_author = pa.table({
+        "author_id": ["A0", "A1", "A2", "A3"],
+        "author_first_name": ["John", "张三", "李四", "Wei"],
+        "gg_label": ["male", "unknown", "unknown", "unknown"],
+        "gender": ["male", "unknown", "unknown", "unknown"],
+        "gender_probability": [1.0, 0.0, 0.0, 0.0],
+        "primary_country": ["US", "CN", "CN", "CN"],
+    })
+    per_author_path = tmp_path / "pa.parquet"
+    pq.write_table(per_author, str(per_author_path))
+
+    # NamSor side for the 3 low-conf names. script_region must match
+    # tag_script_region (Step 4c populates it that way in production).
+    bias_sample = pa.table({
+        "first_name": ["张三", "李四", "Wei"],
+        "script_region": ["cjk", "cjk", "latin"],
+        "namsor_gender": ["male", "female", "male"],
+        "namsor_probability": [0.9, 0.88, 0.92],
+    })
+    bias_sample_path = tmp_path / "bs.parquet"
+    pq.write_table(bias_sample, str(bias_sample_path))
+
+    matrix = compute_confusion_matrix(
+        bias_sample_parquet=bias_sample_path,
+        per_author_parquet=per_author_path,
+    )
+    # cjk gg-unknown → 1 male / 1 female → 0.5 / 0.5
+    assert matrix["cjk"]["row_normalized"]["unknown"]["male"] == 0.5
+    assert matrix["latin"]["row_normalized"]["unknown"]["male"] == 1.0
+
+    dst = tmp_path / "corrected.parquet"
+    summary = apply_bias_correction(
+        per_author_path, dst, confusion_matrix=matrix, region_axis="script",
+    )
+    by_name = {
+        r["author_first_name"]: r
+        for r in pq.read_table(str(dst)).to_pandas().to_dict("records")
+    }
+    # John: confident → identity male, not corrected.
+    assert by_name["John"]["corrected_p_male"] == 1.0
+    assert bool(by_name["John"]["bias_correction_applied"]) is False
+    # 张三 / 李四: cjk low-conf → 0.5 / 0.5 from the matrix.
+    assert by_name["张三"]["corrected_p_male"] == 0.5
+    assert by_name["张三"]["corrected_p_female"] == 0.5
+    assert bool(by_name["张三"]["bias_correction_applied"]) is True
+    # Wei: latin low-conf → 1.0 male.
+    assert by_name["Wei"]["corrected_p_male"] == 1.0
+    assert bool(by_name["Wei"]["bias_correction_applied"]) is True
+
+    assert summary["n_confident_identity"] == 1
+    assert summary["n_bias_corrected"] == 3
+    assert summary["n_corrected_by_region"] == {"cjk": 2, "latin": 1}

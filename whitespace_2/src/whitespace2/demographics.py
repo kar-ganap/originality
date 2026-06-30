@@ -1551,14 +1551,32 @@ def _wilson_ci(
 def compute_confusion_matrix(
     bias_sample_parquet: str | Path,
     per_author_parquet: str | Path,
+    *,
+    region_column: str = "script_region",
 ) -> dict[str, dict[str, Any]]:
-    """Per script-region 3×3 confusion matrix (gg vs NamSor).
+    """Per-region 3×3 confusion matrix (gg vs NamSor).
 
     Joins the bias-sample (Step 4c output) to per-author (Step 3c
     output) by first_name to attach gg's label to each NamSor-
-    classified name. Then groups by ``script_region`` and computes
+    classified name. Then groups by ``region_column`` and computes
     raw counts, row-normalized P(NamSor | gg, region), and per-cell
     Wilson 95% CIs.
+
+    ``region_column`` selects the stratification axis:
+
+    - ``"script_region"`` (default, the Step 5b HEADLINE axis): the
+      script the name is written in, already a column on the bias
+      sample (Step 4a's :func:`tag_script_region`).
+    - ``"primary_country"`` (the Step 5b ROBUSTNESS axis): each
+      sampled name's *modal* ``primary_country`` across the per-author
+      table is attached, then grouped on. Country is a per-author
+      attribute (not a property of the name string), so the per-name
+      bias sample is keyed by the most common country among the
+      authors who bear that name. Names with no country are dropped
+      from this matrix (pandas groupby drops null keys). The two axes
+      are different signals — script-region is the headline; the
+      per-country matrix exists for the Step 6 sensitivity analysis,
+      NOT to replace the script-region primary.
 
     Returns a dict keyed by region. Each value has:
       - ``n_sample``: number of names in the bias sample for this region
@@ -1579,9 +1597,12 @@ def compute_confusion_matrix(
     per_author_parquet = Path(per_author_parquet)
 
     bias_df = pq.read_table(str(bias_sample_parquet)).to_pandas()
+    pa_cols = ["author_first_name", "gg_label"]
+    if region_column == "primary_country":
+        pa_cols.append("primary_country")
     pa_df = pq.read_table(
         str(per_author_parquet),
-        columns=["author_first_name", "gg_label"],
+        columns=pa_cols,
     ).to_pandas()
 
     # Per-name gg label (dedup; gg is deterministic so all rows for
@@ -1596,6 +1617,19 @@ def compute_confusion_matrix(
     # Attach gg label to each bias-sample row
     bias_df["gg_label"] = bias_df["first_name"].map(name_to_gg_label)
 
+    # For the per-country robustness axis, attach each name's MODAL
+    # primary_country (a name can map to authors in several countries —
+    # take the most common). Script-region needs no such join: it's
+    # already a per-name column on the bias sample.
+    if region_column == "primary_country":
+        name_to_country = (
+            pa_df.dropna(subset=["author_first_name", "primary_country"])
+            .groupby("author_first_name")["primary_country"]
+            .agg(lambda s: s.value_counts().index[0])
+            .to_dict()
+        )
+        bias_df["primary_country"] = bias_df["first_name"].map(name_to_country)
+
     # Drop rows where we couldn't attach a gg label (shouldn't happen
     # if Step 4c sampled FROM per-author, but be safe).
     bias_df = bias_df.dropna(subset=["gg_label"])
@@ -1607,7 +1641,7 @@ def compute_confusion_matrix(
     )
 
     result: dict[str, dict[str, Any]] = {}
-    for region, sub in bias_df.groupby("script_region"):
+    for region, sub in bias_df.groupby(region_column):
         # Initialize 3×3 counts
         counts: dict[str, dict[str, int]] = {
             gg: {ns: 0 for ns in _GENDER_CATEGORIES}
@@ -1644,3 +1678,174 @@ def compute_confusion_matrix(
             "max_ci_halfwidth": float(max_halfwidth),
         }
     return result
+
+
+# ---------- Step 5b: per-author bias-correction application -----------------
+#
+# Apply the per-region confusion-matrix kernel (Step 5a) to every author
+# in the per-author parquet, writing a calibrated probability triple
+# (corrected_p_male / _female / _unknown) plus a bias_correction_applied
+# flag. Locked design choices (Phase 1.3 plan §3 + todo.md):
+#
+#   1. Trust gg on CONFIDENT names; only correct the LOW-CONFIDENCE
+#      subset. Confident names (gender_probability >= the gate)
+#      never entered the NamSor stratified sample (sample_for_namsor's
+#      low-conf mask is probability < gate), so there is no kernel to
+#      calibrate them with. They get the IDENTITY transform — a one-hot
+#      on their assigned gender — and bias_correction_applied=False.
+#
+#   2. SCRIPT-REGION is the primary (headline) correction axis;
+#      PRIMARY_COUNTRY is the robustness axis (region_axis="country").
+#      The two are different signals; combining them is the Step 6
+#      sensitivity analysis, not done here.
+#
+# For a low-confidence author whose (region, gg-label) cell HAS NamSor
+# evidence (the row-normalized distribution sums to >0), we replace the
+# gg pick with that empirical P(NamSor | gg, region) distribution and
+# set bias_correction_applied=True. For a low-confidence author whose
+# cell is ABSENT (region not sampled, or row empty) we fall back to the
+# identity transform — a gg-unknown author thus stays fully "unknown":
+# conservative, no invented inference (mirrors the E4 escape's
+# "unknown-propagation" philosophy).
+#
+# The corrected triple always sums to 1.0 per author, so Step 5c can
+# sum it directly into per-cell expected gender counts.
+
+
+def apply_bias_correction(
+    per_author_parquet: str | Path,
+    output_parquet: str | Path,
+    *,
+    confusion_matrix: dict[str, Any],
+    region_axis: str = "script",
+    confidence_gate: float = 0.8,
+) -> dict[str, Any]:
+    """Apply the per-region bias-correction kernel to every author.
+
+    Inputs:
+      - ``per_author_parquet``: Step 3c output (per-author rows with
+        ``author_first_name``, ``gg_label``, ``gender``,
+        ``gender_probability``, ``primary_country``).
+      - ``confusion_matrix``: Step 5a output — ``dict[region →
+        {"row_normalized": {gg_gender → {namsor_gender → float}}, ...}]``.
+        Only ``row_normalized`` is read here. May be keyed by
+        script-region (headline) or country (robustness), matching
+        ``region_axis``.
+      - ``region_axis``: ``"script"`` (key each author by
+        :func:`tag_script_region` of their first name — the HEADLINE
+        axis) or ``"country"`` (key by ``primary_country`` — the
+        robustness axis).
+
+    Adds four columns to the per-author table (originals preserved):
+      - ``corrected_p_male`` / ``corrected_p_female`` /
+        ``corrected_p_unknown``: the calibrated probability triple
+        (sums to 1.0 per author).
+      - ``bias_correction_applied``: True iff the NamSor-derived kernel
+        was applied (low-confidence author with an evidenced cell);
+        False for confident authors (identity) and low-confidence
+        authors whose cell had no NamSor evidence (identity fallback).
+
+    Returns a summary dict for the verify-results doc.
+    """
+    per_author_parquet = Path(per_author_parquet)
+    output_parquet = Path(output_parquet)
+
+    if region_axis not in ("script", "country"):
+        raise ValueError(
+            f"region_axis must be 'script' or 'country', got {region_axis!r}",
+        )
+
+    df = pq.read_table(str(per_author_parquet)).to_pandas()
+    n_authors = int(len(df))
+
+    # gg_label may be absent if Genderize-only / a trimmed parquet was
+    # passed; default the whole column to "unknown" so the lookup key
+    # is well-defined.
+    if "gg_label" not in df.columns:
+        df["gg_label"] = "unknown"
+
+    # --- per-author region key (the correction axis) ---
+    if region_axis == "script":
+        unique_names = [
+            n for n in df["author_first_name"].dropna().unique()
+        ]
+        name_to_region = {n: tag_script_region(n) for n in unique_names}
+        region_series = df["author_first_name"].map(name_to_region)
+    else:  # region_axis == "country"
+        if "primary_country" not in df.columns:
+            raise ValueError(
+                "region_axis='country' requires a 'primary_country' "
+                "column in the per-author parquet",
+            )
+        region_series = df["primary_country"]
+
+    gg_canon = df["gg_label"].apply(_canonicalize_gender)
+    gender_canon = df["gender"].apply(_canonicalize_gender)
+    prob = df["gender_probability"].fillna(0.0)
+    low_conf = prob < confidence_gate
+
+    # --- identity transform (one-hot on the assigned gender) ---
+    identity_pm = (gender_canon == "male").astype(float)
+    identity_pf = (gender_canon == "female").astype(float)
+    identity_pu = (gender_canon == "unknown").astype(float)
+
+    # --- flatten the kernel into "region|gg" → probability maps ---
+    corr_m: dict[str, float] = {}
+    corr_f: dict[str, float] = {}
+    corr_u: dict[str, float] = {}
+    for region, region_data in confusion_matrix.items():
+        if not isinstance(region_data, dict):
+            continue
+        row_norm = region_data.get("row_normalized")
+        if not isinstance(row_norm, dict):
+            continue
+        for gg, dist in row_norm.items():
+            if not isinstance(dist, dict):
+                continue
+            pm = float(dist.get("male", 0.0) or 0.0)
+            pf = float(dist.get("female", 0.0) or 0.0)
+            pu = float(dist.get("unknown", 0.0) or 0.0)
+            if (pm + pf + pu) > 0.0:  # cell has NamSor evidence
+                key = f"{region}|{gg}"
+                corr_m[key] = pm
+                corr_f[key] = pf
+                corr_u[key] = pu
+
+    lookup_key = region_series.astype(str) + "|" + gg_canon.astype(str)
+    kernel_pm = lookup_key.map(corr_m)
+    kernel_pf = lookup_key.map(corr_f)
+    kernel_pu = lookup_key.map(corr_u)
+
+    # Apply the kernel only to low-confidence authors whose cell exists.
+    has_evidence = low_conf & kernel_pm.notna()
+
+    df["corrected_p_male"] = kernel_pm.where(has_evidence, identity_pm)
+    df["corrected_p_female"] = kernel_pf.where(has_evidence, identity_pf)
+    df["corrected_p_unknown"] = kernel_pu.where(has_evidence, identity_pu)
+    df["bias_correction_applied"] = has_evidence
+
+    out_table = pa.Table.from_pandas(df, preserve_index=False)
+    pq.write_table(out_table, str(output_parquet), compression="zstd")
+
+    n_low_conf = int(low_conf.sum())
+    n_corrected = int(has_evidence.sum())
+    n_corrected_by_region = {
+        str(k): int(v)
+        for k, v in region_series[has_evidence].value_counts().items()
+    }
+
+    return {
+        "source": str(per_author_parquet),
+        "output": str(output_parquet),
+        "region_axis": region_axis,
+        "confidence_gate": confidence_gate,
+        "n_authors": n_authors,
+        "n_confident_identity": n_authors - n_low_conf,
+        "n_low_conf": n_low_conf,
+        "n_bias_corrected": n_corrected,
+        "n_low_conf_uncorrectable": n_low_conf - n_corrected,
+        "bias_corrected_fraction": (
+            float(n_corrected / n_authors) if n_authors else 0.0
+        ),
+        "n_corrected_by_region": n_corrected_by_region,
+    }
