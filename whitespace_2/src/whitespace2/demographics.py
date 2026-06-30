@@ -603,20 +603,102 @@ def aggregate_per_author(
     return pa.Table.from_pandas(grouped, preserve_index=False)
 
 
+def _attach_combined_to_per_author(
+    per_author_table: pa.Table,
+    combined_dict: dict[str, dict[str, Any]],
+) -> pa.Table:
+    """Join combined-gender attributes from ``combine_gg_and_genderize``
+    into the per-author table.
+
+    Adds these columns:
+      - ``genderize_gender`` / ``genderize_probability`` /
+        ``genderize_count``: pass-through from Genderize (None / 0
+        for names that weren't queried — e.g., gg already confident).
+      - ``both_methods_confident`` / ``both_methods_agree``: from
+        :func:`combine_gg_and_genderize`.
+
+    Overrides ``gender`` and ``gender_probability`` with the COMBINED
+    values where Genderize successfully extended an unknown gg pick.
+    """
+    import pandas as pd
+
+    df = per_author_table.to_pandas()
+
+    if not combined_dict:
+        # Genderize was invoked but no names had combined data —
+        # still add the columns with default values so the schema
+        # is consistent.
+        df["genderize_gender"] = None
+        df["genderize_probability"] = 0.0
+        df["genderize_count"] = 0
+        df["both_methods_confident"] = False
+        df["both_methods_agree"] = False
+        return pa.Table.from_pandas(df, preserve_index=False)
+
+    rows = []
+    for name, rec in combined_dict.items():
+        rows.append({
+            "author_first_name": name,
+            "genderize_gender": rec.get("genderize_gender"),
+            "genderize_probability": float(
+                rec.get("genderize_probability") or 0.0,
+            ),
+            "genderize_count": int(rec.get("genderize_count") or 0),
+            "both_methods_confident": bool(
+                rec.get("both_methods_confident"),
+            ),
+            "both_methods_agree": bool(rec.get("both_methods_agree")),
+            "_combined_gender": rec.get("combined_gender"),
+            "_combined_probability": float(
+                rec.get("combined_probability") or 0.0,
+            ),
+        })
+
+    combined_df = pd.DataFrame(rows)
+    df = df.merge(combined_df, on="author_first_name", how="left")
+
+    # Defaults for names not in combined dict (shouldn't happen since
+    # combine_gg_and_genderize spans gg's full universe, but be safe)
+    df["genderize_probability"] = df["genderize_probability"].fillna(0.0)
+    df["genderize_count"] = df["genderize_count"].fillna(0).astype(int)
+    df["both_methods_confident"] = df["both_methods_confident"].fillna(False)
+    df["both_methods_agree"] = df["both_methods_agree"].fillna(False)
+
+    # Override final gender / probability with combined where present
+    mask = df["_combined_gender"].notna()
+    df.loc[mask, "gender"] = df.loc[mask, "_combined_gender"]
+    df.loc[mask, "gender_probability"] = df.loc[
+        mask, "_combined_probability"
+    ]
+    df = df.drop(columns=["_combined_gender", "_combined_probability"])
+
+    return pa.Table.from_pandas(df, preserve_index=False)
+
+
 def annotate_gender_country(
     authorships_parquet: str | Path,
     output_parquet: str | Path,
+    *,
+    genderize_api_key: str | None = None,
+    genderize_max_names: int = 2500,
 ) -> dict[str, Any]:
-    """End-to-end Step 3a driver: per-author gender + country annotation.
+    """End-to-end driver: per-author gender + country annotation.
 
-    Reads the Step 1 output, extracts unique first names, runs
-    :func:`annotate_with_gender_guesser`, aggregates per-author via
-    :func:`aggregate_per_author`, writes the per-author parquet,
-    and returns a summary dict.
+    Pipeline:
+      1. Extract unique first names from the Step 1 output.
+      2. Run :func:`annotate_with_gender_guesser` (offline; primary).
+      3. If ``genderize_api_key`` is provided, identify gg-unknown
+         names and call :func:`query_genderize` on that subset.
+      4. Fuse via :func:`combine_gg_and_genderize` (gg primary,
+         Genderize extends coverage on gg-unknown names).
+      5. Aggregate per-author via :func:`aggregate_per_author`.
+      6. If Genderize ran, join combined attributes into the
+         per-author table via :func:`_attach_combined_to_per_author`.
+      7. Write per-author parquet; return summary dict.
 
-    Step 3a covers gender_guesser only. Step 3b will layer Genderize
-    cross-validation on top by joining a second annotation dict into
-    the per-author table.
+    When ``genderize_api_key`` is None, behavior matches Step 3a
+    (gg-only) — no Genderize call, no genderize_* columns, no
+    quota consumed.
     """
     authorships_parquet = Path(authorships_parquet)
     output_parquet = Path(output_parquet)
@@ -626,7 +708,35 @@ def annotate_gender_country(
     first_names = table.column("author_first_name").to_pylist()
     name_to_gg = annotate_with_gender_guesser(first_names)
 
+    genderize_summary: dict[str, Any] | None = None
+    name_to_combined: dict[str, dict[str, Any]] | None = None
+    if genderize_api_key:
+        low_conf_names = [
+            n for n, rec in name_to_gg.items() if rec["gender"] == "unknown"
+        ]
+        gz_result = query_genderize(
+            low_conf_names,
+            api_key=genderize_api_key,
+            max_names=genderize_max_names,
+        )
+        name_to_combined = combine_gg_and_genderize(
+            name_to_gg, gz_result["results"],
+        )
+        genderize_summary = {
+            "n_low_conf_names": len(low_conf_names),
+            "n_names_queried": gz_result["n_names_queried"],
+            "n_calls": gz_result["n_calls"],
+            "n_errors": gz_result["n_errors"],
+            "quota_exhausted": gz_result["quota_exhausted"],
+        }
+
     per_author = aggregate_per_author(table, name_to_gg)
+
+    if name_to_combined is not None:
+        per_author = _attach_combined_to_per_author(
+            per_author, name_to_combined,
+        )
+
     pq.write_table(per_author, str(output_parquet), compression="zstd")
 
     # Coverage summary
@@ -638,7 +748,7 @@ def annotate_gender_country(
     )
     n_with_country = int(df["primary_country"].notna().sum())
 
-    return {
+    result: dict[str, Any] = {
         "source": str(authorships_parquet),
         "output": str(output_parquet),
         "n_unique_authors": n_authors,
@@ -652,7 +762,22 @@ def annotate_gender_country(
         "country_coverage_rate": (
             float(n_with_country / n_authors) if n_authors else 0.0
         ),
+        "genderize_invoked": genderize_summary is not None,
     }
+    if genderize_summary is not None:
+        result["genderize_summary"] = genderize_summary
+        # Per-method agreement metric (Phase 0.2 Wave 3A-style)
+        if "both_methods_confident" in df.columns:
+            n_both_confident = int(df["both_methods_confident"].sum())
+            n_both_agree = int(df["both_methods_agree"].sum())
+            result["n_authors_both_methods_confident"] = n_both_confident
+            result["n_authors_both_methods_agree"] = n_both_agree
+            result["agreement_rate_on_both_confident"] = (
+                float(n_both_agree / n_both_confident)
+                if n_both_confident else 0.0
+            )
+
+    return result
 
 
 # ---------- Step 3b: Genderize cross-validation -----------------------------

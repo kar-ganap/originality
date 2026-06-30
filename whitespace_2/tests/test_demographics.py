@@ -868,3 +868,101 @@ def test_combine_gg_unknown_genderize_confident() -> None:
     assert combined["Yiyu"]["combined_gender"] == "female"
     # When gg is unknown but Genderize is confident, Genderize wins
     assert combined["Yiyu"]["genderize_gender"] == "female"
+
+
+# ---------- annotate_gender_country with Genderize (Step 3c) ----------
+
+
+def test_annotate_gender_country_with_genderize_extends_coverage(
+    tmp_path: Path,
+    monkeypatch: Any,
+) -> None:
+    """With genderize_api_key provided, gg-unknown names get Genderize
+    extension. Verify: gg name "Yiyu" → gg unknown; Genderize returns
+    female → per-author table shows gender=female, both_methods_*
+    columns present, summary includes Genderize stats."""
+
+    rows = pa.table({
+        "author_id": [
+            "https://openalex.org/A1", "https://openalex.org/A2",
+            "https://openalex.org/A3",
+        ],
+        "publication_year": [2020, 2020, 2020],
+        "author_first_name": ["John", "Yiyu", "Asdfg"],
+        "first_name_is_initial": [False, False, False],
+        "author_orcid": [None, None, None],
+        "countries": [["US"], ["CN"], ["??"]],
+        "source_type": ["journal", "journal", "journal"],
+    })
+    src = tmp_path / "authorships.parquet"
+    pq.write_table(rows, str(src))
+    dst = tmp_path / "authors.parquet"
+
+    def fake_get(url: str, params: dict[str, Any], timeout: float) -> _FakeResponse:
+        # Genderize sees ["Yiyu", "Asdfg"] (gg-unknown names)
+        responses = {
+            "Yiyu": {"name": "Yiyu", "gender": "female",
+                      "probability": 0.95, "count": 50},
+            "Asdfg": {"name": "Asdfg", "gender": None,
+                       "probability": 0.0, "count": 0},
+        }
+        return _FakeResponse([
+            responses[n] for n in params["name[]"] if n in responses
+        ])
+
+    monkeypatch.setattr("requests.get", fake_get)
+
+    summary = annotate_gender_country(
+        src, dst,
+        genderize_api_key="test-key",
+        genderize_max_names=100,
+    )
+
+    assert summary["genderize_invoked"] is True
+    assert summary["genderize_summary"]["n_calls"] >= 1
+    assert summary["genderize_summary"]["n_names_queried"] == 2
+
+    out = pq.read_table(str(dst))
+    df = out.to_pandas()
+    by_aid = {r["author_id"]: r for r in df.to_dict("records")}
+
+    # John: gg confident male, no Genderize override
+    assert by_aid["https://openalex.org/A1"]["gender"] == "male"
+    # Yiyu: gg unknown, Genderize confident female → combined = female
+    assert by_aid["https://openalex.org/A2"]["gender"] == "female"
+    assert (
+        by_aid["https://openalex.org/A2"]["genderize_gender"] == "female"
+    )
+    # Asdfg: gg unknown, Genderize also can't classify → still unknown
+    assert by_aid["https://openalex.org/A3"]["gender"] == "unknown"
+
+
+def test_annotate_gender_country_without_genderize_unchanged(
+    tmp_path: Path,
+) -> None:
+    """Without genderize_api_key, behavior matches Step 3a — no
+    Genderize call, no genderize_* columns in output, no
+    genderize_invoked flag.
+    """
+    rows = pa.table({
+        "author_id": ["https://openalex.org/A1"],
+        "publication_year": [2020],
+        "author_first_name": ["John"],
+        "first_name_is_initial": [False],
+        "author_orcid": [None],
+        "countries": [["US"]],
+        "source_type": ["journal"],
+    })
+    src = tmp_path / "authorships.parquet"
+    pq.write_table(rows, str(src))
+    dst = tmp_path / "authors.parquet"
+
+    summary = annotate_gender_country(src, dst)
+
+    assert summary["genderize_invoked"] is False
+    assert "genderize_summary" not in summary
+    out = pq.read_table(str(dst))
+    df = out.to_pandas()
+    assert df.iloc[0]["gender"] == "male"
+    # genderize_* columns NOT present when Genderize wasn't run
+    assert "genderize_gender" not in df.columns
