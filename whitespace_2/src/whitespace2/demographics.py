@@ -1190,3 +1190,156 @@ def stratified_sample_names(
                 (n, region) for n in by_region[region][:take]
             )
     return sample
+
+
+# ---------- Step 4b: NamSor API client --------------------------------------
+#
+# NamSor v2 batch gender endpoint:
+#   POST https://v2.namsor.com/NamSorAPIv2/api2/json/genderBatch
+#   Headers: X-API-KEY, Accept: application/json, Content-Type: application/json
+#   Body: {"personalNames": [{"id": str, "firstName": str, "lastName": str}]}
+#   Batch limit: 100 names per request.
+#   Response:
+#     {"personalNames": [
+#        {"id": ..., "firstName": ..., "lastName": ...,
+#         "script": "LATIN" | "CYRILLIC" | "HAN" | ...,
+#         "likelyGender": "male" | "female" | "unknown",
+#         "genderScale": float in [-1, 1],
+#         "score": float (log-likelihood-ish),
+#         "probabilityCalibrated": float in [0, 1]}
+#     ]}
+#
+# `probabilityCalibrated` is the calibrated confidence for the predicted
+# gender. We use that as the per-name probability. The signed
+# `genderScale` field is informational (negative = male, positive =
+# female; not used in our pipeline).
+#
+# Quota (keyed-free tier): 2,500 names per month. The user
+# explicitly capped Phase 1.3 NamSor spend at ≤$10 (per the plan
+# §"NamSor scope locked"), well within the free tier for our intended
+# stratified-sample size.
+
+_NAMSOR_URL = "https://v2.namsor.com/NamSorAPIv2/api2/json/genderBatch"
+
+
+def query_namsor_batch(
+    names: list[str],
+    api_key: str,
+    timeout: float = 60.0,
+) -> dict[str, dict[str, Any]]:
+    """One NamSor batch call for up to 100 names.
+
+    Returns ``{name: {gender, probability, script, score, gender_scale}}``
+    keyed by the original first-name string we sent (NamSor's response
+    echoes ``id`` which we set to the first name).
+
+    Raises HTTPError on ≥400 — the orchestrator :func:`query_namsor`
+    catches and counts.
+    """
+    import requests
+
+    body = {
+        "personalNames": [
+            {"id": name, "firstName": name, "lastName": ""}
+            for name in names
+        ],
+    }
+    headers = {
+        "X-API-KEY": api_key,
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+    }
+    resp = requests.post(
+        _NAMSOR_URL, headers=headers, json=body, timeout=timeout,
+    )
+    resp.raise_for_status()
+    data = resp.json()
+
+    if not isinstance(data, dict):
+        return {}
+    items = data.get("personalNames")
+    if not isinstance(items, list):
+        return {}
+
+    out: dict[str, dict[str, Any]] = {}
+    for item in items:
+        if not isinstance(item, dict):
+            continue
+        name = item.get("id")
+        if not isinstance(name, str) or not name:
+            continue
+        gender = item.get("likelyGender") or "unknown"
+        if not isinstance(gender, str):
+            gender = "unknown"
+        out[name] = {
+            "gender": gender,
+            "probability": float(item.get("probabilityCalibrated") or 0.0),
+            "score": float(item.get("score") or 0.0),
+            "gender_scale": float(item.get("genderScale") or 0.0),
+            "script": item.get("script"),
+        }
+    return out
+
+
+def query_namsor(
+    names: Iterable[str],
+    api_key: str,
+    *,
+    max_names: int = 2500,
+    batch_size: int = 100,
+    timeout: float = 60.0,
+) -> dict[str, Any]:
+    """Orchestrate batched NamSor calls up to a quota.
+
+    Mirrors :func:`query_genderize`'s shape: dedup, batch, stop at
+    ``max_names`` (default 2,500 — the free-tier monthly quota),
+    count errors but keep partial results, return summary dict.
+    """
+    deduped: list[str] = []
+    seen: set[str] = set()
+    for n in names:
+        if not isinstance(n, str) or not n.strip():
+            continue
+        if n in seen:
+            continue
+        seen.add(n)
+        deduped.append(n)
+
+    n_queried = 0
+    n_calls = 0
+    n_errors = 0
+    quota_exhausted = False
+    results: dict[str, dict[str, Any]] = {}
+
+    for i in range(0, len(deduped), batch_size):
+        if n_queried >= max_names:
+            quota_exhausted = True
+            break
+        remaining = max_names - n_queried
+        batch = deduped[i : i + min(batch_size, remaining)]
+        if not batch:
+            quota_exhausted = True
+            break
+
+        try:
+            batch_result = query_namsor_batch(
+                batch, api_key=api_key, timeout=timeout,
+            )
+            results.update(batch_result)
+        except Exception:
+            n_errors += 1
+
+        n_queried += len(batch)
+        n_calls += 1
+
+    if n_queried < len(deduped):
+        quota_exhausted = True
+
+    return {
+        "results": results,
+        "n_names_queried": n_queried,
+        "n_calls": n_calls,
+        "n_errors": n_errors,
+        "max_names": max_names,
+        "quota_exhausted": quota_exhausted,
+    }

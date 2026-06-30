@@ -37,6 +37,8 @@ from whitespace2.demographics import (
     extract_authorships,
     query_genderize,
     query_genderize_batch,
+    query_namsor,
+    query_namsor_batch,
     stratified_sample_names,
     tag_script_region,
     validate_disambiguation,
@@ -1076,3 +1078,142 @@ def test_annotate_gender_country_without_genderize_unchanged(
     assert df.iloc[0]["gender"] == "male"
     # genderize_* columns NOT present when Genderize wasn't run
     assert "genderize_gender" not in df.columns
+
+
+# ---------- Step 4b: NamSor API client ----------
+
+
+def test_query_namsor_batch_returns_per_name_dict(monkeypatch: Any) -> None:
+    """A successful NamSor batch returns {name: {gender, probability,
+    score, script}} per requested name."""
+    captured: dict[str, Any] = {}
+
+    def fake_post(url: str, headers: dict[str, str],
+                  json: dict[str, Any], timeout: float) -> _FakeResponse:
+        captured["url"] = url
+        captured["headers"] = headers
+        captured["json"] = json
+        return _FakeResponse({
+            "personalNames": [
+                {"id": "Yiyu", "firstName": "Yiyu", "lastName": "",
+                 "script": "LATIN", "likelyGender": "female",
+                 "genderScale": 0.27, "score": 1.6,
+                 "probabilityCalibrated": 0.64},
+                {"id": "Junxu", "firstName": "Junxu", "lastName": "",
+                 "script": "LATIN", "likelyGender": "male",
+                 "genderScale": -0.87, "score": 7.18,
+                 "probabilityCalibrated": 0.94},
+            ],
+        })
+
+    monkeypatch.setattr("requests.post", fake_post)
+    out = query_namsor_batch(["Yiyu", "Junxu"], api_key="test-key")
+    assert out["Yiyu"]["gender"] == "female"
+    assert out["Yiyu"]["probability"] == 0.64
+    assert out["Yiyu"]["script"] == "LATIN"
+    assert out["Junxu"]["gender"] == "male"
+    assert out["Junxu"]["probability"] == 0.94
+
+    # Request shape: headers carry X-API-KEY, body is genderBatch shape
+    assert captured["headers"]["X-API-KEY"] == "test-key"
+    assert captured["json"]["personalNames"] == [
+        {"id": "Yiyu", "firstName": "Yiyu", "lastName": ""},
+        {"id": "Junxu", "firstName": "Junxu", "lastName": ""},
+    ]
+
+
+def test_query_namsor_batch_handles_unknown_gender(monkeypatch: Any) -> None:
+    """NamSor can return likelyGender='unknown' for unclassifiable
+    names. Keep in dict with gender='unknown'."""
+    monkeypatch.setattr(
+        "requests.post",
+        lambda url, headers, json, timeout: _FakeResponse({
+            "personalNames": [{
+                "id": "Asdfg", "firstName": "Asdfg",
+                "script": "LATIN", "likelyGender": "unknown",
+                "genderScale": 0.0, "score": 0.0,
+                "probabilityCalibrated": 0.5,
+            }],
+        }),
+    )
+    out = query_namsor_batch(["Asdfg"], api_key="test-key")
+    assert out["Asdfg"]["gender"] == "unknown"
+
+
+def test_query_namsor_orchestrator_batches_100(monkeypatch: Any) -> None:
+    """query_namsor batches 100 names per request (NamSor's batch limit).
+    250 names → 3 calls (100 + 100 + 50)."""
+    calls: list[list[str]] = []
+
+    def fake_post(url: str, headers: dict[str, str],
+                  json: dict[str, Any], timeout: float) -> _FakeResponse:
+        names = [p["firstName"] for p in json["personalNames"]]
+        calls.append(names)
+        return _FakeResponse({
+            "personalNames": [
+                {"id": n, "firstName": n, "script": "LATIN",
+                 "likelyGender": "male", "probabilityCalibrated": 0.9}
+                for n in names
+            ],
+        })
+
+    monkeypatch.setattr("requests.post", fake_post)
+    names = [f"Name{i}" for i in range(250)]
+    out = query_namsor(names, api_key="test-key", max_names=2500)
+
+    assert len(calls) == 3
+    assert [len(c) for c in calls] == [100, 100, 50]
+    assert len(out["results"]) == 250
+    assert out["n_calls"] == 3
+    assert out["n_names_queried"] == 250
+
+
+def test_query_namsor_respects_max_names_quota(monkeypatch: Any) -> None:
+    """500 input names, max_names=150 → only first 150 queried."""
+    monkeypatch.setattr(
+        "requests.post",
+        lambda url, headers, json, timeout: _FakeResponse({
+            "personalNames": [
+                {"id": p["firstName"], "firstName": p["firstName"],
+                 "script": "LATIN", "likelyGender": "male",
+                 "probabilityCalibrated": 0.9}
+                for p in json["personalNames"]
+            ],
+        }),
+    )
+    out = query_namsor(
+        [f"Name{i}" for i in range(500)],
+        api_key="test-key", max_names=150,
+    )
+    assert out["n_names_queried"] == 150
+    assert out["quota_exhausted"] is True
+    assert len(out["results"]) == 150
+
+
+def test_query_namsor_handles_api_error_partial(monkeypatch: Any) -> None:
+    """Transient batch failure → counted in n_errors; subsequent
+    batches still succeed; prior results preserved."""
+    call_counter = [0]
+
+    def fake_post(url: str, headers: dict[str, str],
+                  json: dict[str, Any], timeout: float) -> _FakeResponse:
+        call_counter[0] += 1
+        if call_counter[0] == 2:
+            return _FakeResponse({"error": "rate limit"}, status_code=429)
+        names = [p["firstName"] for p in json["personalNames"]]
+        return _FakeResponse({
+            "personalNames": [
+                {"id": n, "firstName": n, "script": "LATIN",
+                 "likelyGender": "male", "probabilityCalibrated": 0.9}
+                for n in names
+            ],
+        })
+
+    monkeypatch.setattr("requests.post", fake_post)
+    out = query_namsor(
+        [f"Name{i}" for i in range(250)],
+        api_key="test-key", max_names=2500,
+    )
+    # Batch 1 (100) + batch 3 (50) succeed; batch 2 (100) fails
+    assert len(out["results"]) == 150
+    assert out["n_errors"] == 1
