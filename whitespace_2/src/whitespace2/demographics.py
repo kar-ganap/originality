@@ -1020,3 +1020,173 @@ def combine_gg_and_genderize(
             "both_methods_agree": both_agree,
         }
     return out
+
+
+# ---------- Step 4a: script/region tagging + stratified sampling -----------
+#
+# NamSor's per-region accuracy claims (East Asian / Slavic / Arabic / South
+# Asian) are the substantive reason it's the right cross-validation tool
+# for the residual low-confidence subset. To exploit them we need to tag
+# each low-confidence name with the script it's written in (when in a
+# non-Latin script) or — for Latin-script transliterations of non-Western
+# names — fall back to "latin" and let NamSor's own classifier do the work
+# from there. Stratification by script lets the bias-correction (Step 5)
+# fit per-region bias models rather than a global average.
+
+#: Unicode block boundaries used by :func:`tag_script_region`. These cover
+#: the common scripts we see in OpenAlex author records; everything else
+#: (Latin extended, basic Latin) falls through to "latin".
+_SCRIPT_RANGES: tuple[tuple[str, int, int], ...] = (
+    # CJK unified ideographs + extensions, hiragana, katakana, Hangul
+    ("cjk", 0x3040, 0x30FF),    # hiragana + katakana
+    ("cjk", 0x4E00, 0x9FFF),    # CJK unified ideographs
+    ("cjk", 0x3400, 0x4DBF),    # CJK ext-A
+    ("cjk", 0x20000, 0x2A6DF),  # CJK ext-B
+    ("cjk", 0xAC00, 0xD7AF),    # Hangul syllables
+    ("cjk", 0x1100, 0x11FF),    # Hangul Jamo
+    # Cyrillic
+    ("cyrillic", 0x0400, 0x04FF),
+    ("cyrillic", 0x0500, 0x052F),  # Cyrillic supplement
+    # Arabic
+    ("arabic", 0x0600, 0x06FF),
+    ("arabic", 0x0750, 0x077F),  # Arabic supplement
+    # Devanagari + related (Hindi, Marathi, Sanskrit, etc.)
+    ("south_asian", 0x0900, 0x097F),
+    ("south_asian", 0x0980, 0x09FF),  # Bengali
+    ("south_asian", 0x0A00, 0x0A7F),  # Gurmukhi
+    ("south_asian", 0x0A80, 0x0AFF),  # Gujarati
+    ("south_asian", 0x0B00, 0x0B7F),  # Oriya
+    ("south_asian", 0x0B80, 0x0BFF),  # Tamil
+    ("south_asian", 0x0C00, 0x0C7F),  # Telugu
+    ("south_asian", 0x0C80, 0x0CFF),  # Kannada
+    ("south_asian", 0x0D00, 0x0D7F),  # Malayalam
+)
+
+
+def tag_script_region(name: Any) -> str:
+    """Classify a first name into a stratification region by script.
+
+    Returns one of:
+      - ``"cjk"`` — Han, hiragana/katakana, Hangul.
+      - ``"cyrillic"`` — Russian, Ukrainian, Bulgarian, etc.
+      - ``"arabic"`` — Arabic + Arabic supplement.
+      - ``"south_asian"`` — Devanagari, Bengali, Gurmukhi, Gujarati,
+        Tamil, Telugu, Kannada, Malayalam, Oriya.
+      - ``"latin"`` — anything else (incl. Latin-extended, transliterated
+        Asian names that landed in Romaji/Pinyin form, European
+        diacritics).
+      - ``"unknown"`` — empty / non-string / whitespace input.
+
+    Heuristic: examine each character; if ANY character falls in a
+    non-Latin script's Unicode range, return that script. Mixed-script
+    names (rare; usually a typo) pick the first-matched script in the
+    iteration order above (CJK wins ties — reasonable since CJK
+    characters are the strongest distinguishing signal).
+    """
+    if not isinstance(name, str):
+        return "unknown"
+    s = name.strip()
+    if not s:
+        return "unknown"
+
+    for ch in s:
+        cp = ord(ch)
+        for script, lo, hi in _SCRIPT_RANGES:
+            if lo <= cp <= hi:
+                return script
+    return "latin"
+
+
+def stratified_sample_names(
+    names_with_regions: Iterable[tuple[str, str]],
+    n_total: int,
+    seed: str,
+) -> list[tuple[str, str]]:
+    """Deterministic stratified random sample of names by region.
+
+    Allocates ``n_total`` slots across strata as evenly as possible.
+    When a stratum has fewer items than its share, takes all of them
+    and redistributes the leftover slots across the larger strata
+    (sum-preserving).
+
+    Deterministic via ``hash(seed || name || region)`` ordering — same
+    seed + same input order → same output. Suitable for the
+    pre-registered NamSor bias-estimation seed
+    (``ws2-phase-1.3-namsor-seed-v1``) committed in the Phase 1.3
+    plan §3.
+
+    Returns a list of (name, region) tuples; length = ``min(n_total,
+    total population size)``.
+    """
+    import hashlib
+    from collections import defaultdict
+
+    by_region: dict[str, list[str]] = defaultdict(list)
+    for name, region in names_with_regions:
+        by_region[region].append(name)
+
+    # Deterministic per-region ordering by hash(seed||name||region)
+    def _hash_key(seed: str, name: str, region: str) -> int:
+        h = hashlib.blake2b(
+            f"{seed}|{region}|{name}".encode(),
+            digest_size=8,
+        )
+        return int.from_bytes(h.digest(), byteorder="big")
+
+    for region in by_region:
+        by_region[region].sort(key=lambda n: _hash_key(seed, n, region))
+
+    total_pop = sum(len(v) for v in by_region.values())
+    if total_pop <= n_total:
+        # Return everything (preserve hash order for determinism)
+        out: list[tuple[str, str]] = []
+        for region in sorted(by_region):
+            out.extend((n, region) for n in by_region[region])
+        return out
+
+    # Allocate per-stratum slots. Algorithm: greedy iterative.
+    # Compute the equal-share target = n_total / n_nonempty_strata.
+    # If a stratum has fewer items than its share, take all + reduce
+    # the remaining pool / strata; repeat until stable.
+    regions = sorted(by_region)
+    allocation: dict[str, int] = {r: 0 for r in regions}
+    remaining_slots = n_total
+    remaining_regions = list(regions)
+
+    while remaining_regions and remaining_slots > 0:
+        share = max(1, remaining_slots // len(remaining_regions))
+        any_capped = False
+        next_remaining: list[str] = []
+        for r in remaining_regions:
+            cap = len(by_region[r]) - allocation[r]
+            if cap <= share:
+                allocation[r] += cap
+                remaining_slots -= cap
+                any_capped = True
+            else:
+                next_remaining.append(r)
+        if not any_capped:
+            # All remaining regions can absorb at least `share`;
+            # distribute exactly `share` to each, then handle
+            # remainder by round-robin.
+            for r in remaining_regions:
+                allocation[r] += share
+                remaining_slots -= share
+            # Distribute leftover (n_total % n_regions) one-by-one
+            for r in remaining_regions:
+                if remaining_slots <= 0:
+                    break
+                if allocation[r] < len(by_region[r]):
+                    allocation[r] += 1
+                    remaining_slots -= 1
+            break  # done — remaining_slots ought to be 0
+        remaining_regions = next_remaining
+
+    sample: list[tuple[str, str]] = []
+    for region in regions:
+        take = allocation[region]
+        if take > 0:
+            sample.extend(
+                (n, region) for n in by_region[region][:take]
+            )
+    return sample

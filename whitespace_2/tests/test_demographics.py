@@ -37,6 +37,8 @@ from whitespace2.demographics import (
     extract_authorships,
     query_genderize,
     query_genderize_batch,
+    stratified_sample_names,
+    tag_script_region,
     validate_disambiguation,
 )
 
@@ -938,6 +940,111 @@ def test_annotate_gender_country_with_genderize_extends_coverage(
     )
     # Asdfg: gg unknown, Genderize also can't classify → still unknown
     assert by_aid["https://openalex.org/A3"]["gender"] == "unknown"
+
+
+# ---------- Step 4a: script/region tagging + stratified sampler ----------
+
+
+def test_tag_script_region_cjk() -> None:
+    """CJK characters → cjk."""
+    assert tag_script_region("张伟") == "cjk"       # Chinese
+    assert tag_script_region("田中") == "cjk"       # Japanese kanji
+    assert tag_script_region("김민수") == "cjk"     # Korean Hangul
+    assert tag_script_region("ひろし") == "cjk"     # Japanese hiragana
+
+
+def test_tag_script_region_cyrillic() -> None:
+    """Cyrillic → cyrillic."""
+    assert tag_script_region("Иван") == "cyrillic"
+    assert tag_script_region("Людмила") == "cyrillic"
+
+
+def test_tag_script_region_arabic() -> None:
+    """Arabic → arabic."""
+    assert tag_script_region("محمد") == "arabic"
+    assert tag_script_region("فاطمة") == "arabic"
+
+
+def test_tag_script_region_devanagari() -> None:
+    """Devanagari → south_asian."""
+    assert tag_script_region("राम") == "south_asian"
+    assert tag_script_region("प्रिया") == "south_asian"
+
+
+def test_tag_script_region_latin() -> None:
+    """Latin script (incl. transliterations) → latin."""
+    assert tag_script_region("John") == "latin"
+    assert tag_script_region("Hiroshi") == "latin"      # Romaji
+    assert tag_script_region("Yiyu") == "latin"         # Pinyin
+    assert tag_script_region("Fenqiang") == "latin"
+    assert tag_script_region("Müller") == "latin"       # Latin extended
+    assert tag_script_region("Núñez") == "latin"
+
+
+def test_tag_script_region_handles_empty() -> None:
+    """Empty / None / whitespace-only → unknown."""
+    assert tag_script_region("") == "unknown"
+    assert tag_script_region("   ") == "unknown"
+    assert tag_script_region(None) == "unknown"  # type: ignore[arg-type]
+
+
+def test_stratified_sample_respects_strata_counts() -> None:
+    """1000 names across 5 strata, sample 200 → 40 per stratum
+    (deterministic by seed; uniform within stratum)."""
+    names = []
+    for region in ["latin", "cjk", "cyrillic", "arabic", "south_asian"]:
+        for i in range(200):
+            names.append((f"{region}_{i}", region))
+    sample = stratified_sample_names(names, n_total=200, seed="test-seed-v1")
+
+    assert len(sample) == 200
+    from collections import Counter
+    per_region = Counter(r for _, r in sample)
+    # 200/5 = 40 per stratum
+    for region in ["latin", "cjk", "cyrillic", "arabic", "south_asian"]:
+        assert per_region[region] == 40
+
+
+def test_stratified_sample_imbalanced_strata() -> None:
+    """When some strata have fewer items than the per-stratum target,
+    take all of them and over-sample the larger ones (sum-preserving).
+    """
+    # 1000 latin + 5 cjk + 10 cyrillic; sample 100 total
+    names = (
+        [(f"latin_{i}", "latin") for i in range(1000)]
+        + [(f"cjk_{i}", "cjk") for i in range(5)]
+        + [(f"cyr_{i}", "cyrillic") for i in range(10)]
+    )
+    sample = stratified_sample_names(names, n_total=100, seed="test-seed-v1")
+    assert len(sample) == 100
+    from collections import Counter
+    per = Counter(r for _, r in sample)
+    # cjk has only 5 → take all 5
+    assert per["cjk"] == 5
+    # cyrillic has 10 → take all 10
+    assert per["cyrillic"] == 10
+    # Remaining 85 go to latin
+    assert per["latin"] == 85
+
+
+def test_stratified_sample_deterministic_with_seed() -> None:
+    """Same seed → same sample."""
+    names = [(f"n_{i}", "latin") for i in range(100)]
+    s1 = stratified_sample_names(names, n_total=20, seed="seed-A")
+    s2 = stratified_sample_names(names, n_total=20, seed="seed-A")
+    s3 = stratified_sample_names(names, n_total=20, seed="seed-B")
+    assert s1 == s2
+    assert s1 != s3
+
+
+def test_stratified_sample_smaller_than_target() -> None:
+    """When total population < n_total, return everything."""
+    names = [(f"n_{i}", "latin") for i in range(10)]
+    sample = stratified_sample_names(names, n_total=100, seed="x")
+    assert len(sample) == 10
+
+
+# ---------- annotate_gender_country without Genderize (Step 3a check) ----
 
 
 def test_annotate_gender_country_without_genderize_unchanged(
