@@ -96,6 +96,8 @@ def run(
     namsor_max: int,
     n_bootstrap: int,
     label: str,
+    reuse_matrix: Path | None = None,
+    no_genderize: bool = False,
 ) -> dict[str, Any]:
     outdir.mkdir(parents=True, exist_ok=True)
     summary: dict[str, Any] = {"label": label, "source": str(source),
@@ -103,12 +105,23 @@ def run(
                                "steps": {}}
     t0 = time.time()
 
-    genderize_key = None if no_api else os.environ.get("GENDERIZE_API_KEY")
-    namsor_key = None if no_api else os.environ.get("NAMSOR_API_KEY")
-    if not no_api and not namsor_key:
+    # Genderize runs unless suppressed; NamSor sampling runs only when we're
+    # not reusing a precomputed matrix (the v2 robustness pair reuses v3's —
+    # per-region bias is §0-version-independent — to spend zero quota).
+    do_genderize = not (no_api or no_genderize)
+    do_namsor = not no_api and reuse_matrix is None
+    genderize_key = (
+        os.environ.get("GENDERIZE_API_KEY") if do_genderize else None
+    )
+    namsor_key = os.environ.get("NAMSOR_API_KEY") if do_namsor else None
+    if do_namsor and not namsor_key:
         raise SystemExit(
-            "NAMSOR_API_KEY not found in env/.env — set it or pass --no-api",
+            "NAMSOR_API_KEY not found in env/.env — set it, or pass "
+            "--reuse-matrix <json> / --no-api",
         )
+    summary["do_genderize"] = do_genderize
+    summary["do_namsor"] = do_namsor
+    summary["reuse_matrix"] = str(reuse_matrix) if reuse_matrix else None
 
     # ---- Step 1: extract authorships ----
     print(f"[{label}] Step 1 — extract_authorships …", flush=True)
@@ -133,7 +146,20 @@ def run(
 
     # ---- Step 4 + 5a: NamSor bias sample + confusion matrix ----
     confusion_matrix: dict[str, Any] = {}
-    if not no_api:
+    if reuse_matrix is not None:
+        print(f"[{label}] Steps 4/5a — REUSING confusion matrix "
+              f"{reuse_matrix} (zero NamSor quota)", flush=True)
+        confusion_matrix = json.loads(Path(reuse_matrix).read_text())
+        (outdir / "confusion-matrix.json").write_text(
+            json.dumps(confusion_matrix, indent=2, default=list),
+        )
+        summary["steps"]["5a_confusion"] = {
+            region: {"n_sample": m.get("n_sample"),
+                     "max_ci_halfwidth": m.get("max_ci_halfwidth")}
+            for region, m in confusion_matrix.items()
+        }
+        summary["steps"]["5a_confusion"]["_reused_from"] = str(reuse_matrix)
+    elif do_namsor:
         print(f"[{label}] Step 4 — sample_for_namsor (max={namsor_max}) …",
               flush=True)
         ns_pq = outdir / "namsor-sample.parquet"
@@ -212,17 +238,20 @@ def run(
         "passes": s["3_annotate"]["country_coverage_rate"]
         >= _H4_COUNTRY_COVERAGE_MIN,
     }
-    if not no_api:
-        max_hw = max(
-            (m["max_ci_halfwidth"] for m in confusion_matrix.values()),
-            default=0.0,
-        )
+    # H5 from the matrix (computed OR reused); skip only when there's no
+    # matrix at all (--no-api). Drop the bookkeeping key when present.
+    matrix_regions = {k: v for k, v in confusion_matrix.items()
+                      if isinstance(v, dict) and "max_ci_halfwidth" in v}
+    if matrix_regions:
+        max_hw = max(m["max_ci_halfwidth"] for m in matrix_regions.values())
         hyp["H5_namsor_ci_halfwidth"] = {
             "max_over_regions": max_hw,
             "threshold": _H5_CI_HALFWIDTH_MAX,
             "passes": max_hw <= _H5_CI_HALFWIDTH_MAX,
             "E1_fired": max_hw > _H5_CI_HALFWIDTH_MAX,
+            "reused": reuse_matrix is not None,
         }
+    if do_namsor:
         hyp["H6_namsor_spend_usd"] = {
             "value": 0.0,  # free tier
             "n_calls": s["4_namsor"]["namsor_summary"]["n_calls"],
@@ -277,6 +306,11 @@ def main() -> None:
     p.add_argument("--outdir", required=True, type=Path)
     p.add_argument("--no-api", action="store_true",
                    help="gg-only; skip Genderize + NamSor (zero quota)")
+    p.add_argument("--reuse-matrix", type=Path, default=None,
+                   help="reuse a precomputed confusion-matrix JSON (skip "
+                        "NamSor; the v2 robustness pair reuses v3's)")
+    p.add_argument("--no-genderize", action="store_true",
+                   help="skip Genderize (gg-only) but keep NamSor/matrix")
     p.add_argument("--genderize-max", type=int, default=2500)
     p.add_argument("--namsor-max", type=int, default=2500)
     p.add_argument("--n-bootstrap", type=int, default=10_000)
@@ -289,6 +323,7 @@ def main() -> None:
         source=args.source, outdir=args.outdir, no_api=args.no_api,
         genderize_max=args.genderize_max, namsor_max=args.namsor_max,
         n_bootstrap=args.n_bootstrap, label=args.label,
+        reuse_matrix=args.reuse_matrix, no_genderize=args.no_genderize,
     )
     _print_report(summary)
 
