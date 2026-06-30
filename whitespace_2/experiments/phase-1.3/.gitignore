@@ -1,0 +1,6 @@
+# Intermediate / regeneratable run artifacts (data, not code)
+*.parquet
+# Per-run output dirs (smoke + production). Final results docs
+# (verify-results.md, coverage-report.md) live in this dir directly.
+smoke-*/
+run-*/
