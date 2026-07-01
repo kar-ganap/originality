@@ -1,0 +1,10 @@
+{
+  "n": 100000,
+  "dim": 768,
+  "elapsed_sec": 319.2,
+  "per_abs_sec": 0.003192,
+  "all_finite": true,
+  "norm_mean": 23.6999,
+  "norm_in_band": true,
+  "est_cost_usd": 0.2243
+}
