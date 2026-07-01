@@ -152,7 +152,11 @@ def _load_specter2_model(device: str, dtype: str) -> dict[str, Any]:
     from adapters import AutoAdapterModel
     from transformers import AutoTokenizer
 
-    tokenizer = AutoTokenizer.from_pretrained(_SPECTER2_BASE)
+    # transformers>=4.55 ships py.typed but leaves `from_pretrained` untyped, so
+    # mypy --strict flags it as an untyped call once the `embed` extra is
+    # installed (harmless — the return is used dynamically below).
+    tokenizer = AutoTokenizer.from_pretrained(  # type: ignore[no-untyped-call]
+        _SPECTER2_BASE)
     torch_dtype = _resolve_dtype(dtype)
     model = AutoAdapterModel.from_pretrained(
         _SPECTER2_BASE,
