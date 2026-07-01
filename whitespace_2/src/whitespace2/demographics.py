@@ -2096,9 +2096,13 @@ def _join_cells(
             f"region_axis must be 'script' or 'country', got {region_axis!r}",
         )
 
-    have_country = "primary_country" in set(
+    corrected_schema_names = set(
         pq.read_schema(str(corrected_per_author_parquet)).names,
     )
+    have_country = "primary_country" in corrected_schema_names
+    # min_year (author's first-publication year) drives the WS2 career-stage
+    # axis; it survives apply_bias_correction but is read only when present.
+    have_min_year = "min_year" in corrected_schema_names
     corrected_cols = [
         "author_id",
         "author_first_name",
@@ -2108,6 +2112,8 @@ def _join_cells(
     ]
     if have_country:
         corrected_cols.append("primary_country")
+    if have_min_year:
+        corrected_cols.append("min_year")
 
     ap = pq.read_table(
         str(authorships_parquet),
@@ -2139,6 +2145,8 @@ def _join_cells(
     ]
     if have_country:
         merge_cols.append("primary_country")
+    if have_min_year:
+        merge_cols.append("min_year")
 
     return ap.merge(
         corr[merge_cols], on="author_id", how="inner",
@@ -2318,6 +2326,31 @@ def _shannon_entropy_mm(counts: Any, n_total: float) -> float:
     return h
 
 
+def _career_stage_bin(career_stage: Any) -> str | None:
+    """Bin years-since-first-publication into 0-5 / 6-15 / 16+ (WS2).
+
+    ``career_stage = year − author.min_year`` (per ``docs/conceptual.md`` +
+    the pre-registered demographic axis in ``phase-2.0-plan.md``). Returns
+    ``None`` for a null / non-finite / negative stage (the latter is a
+    disambiguation glitch where a paper predates the author's recorded first
+    year) so those authors drop out of the joint plurality rather than
+    landing in a spurious bin.
+    """
+    import math
+
+    try:
+        cs = float(career_stage)
+    except (TypeError, ValueError):
+        return None
+    if not math.isfinite(cs) or cs < 0:
+        return None
+    if cs <= 5:
+        return "0-5"
+    if cs <= 15:
+        return "6-15"
+    return "16+"
+
+
 def _ratio_ci(
     numerator_vals: Any,
     denominator_vals: Any,
@@ -2399,6 +2432,16 @@ def build_coverage_table(
         ``demographic_shannon`` over ``primary_country`` headcounts),
         ``n_countries``. Null when the corrected parquet lacks
         ``primary_country``.
+      - **career-stage joint axis (WS2)**: ``career_joint_shannon``
+        (MM-corrected) + ``career_joint_gini_simpson`` (``1 − Σpᵢ²``) over the
+        joint (gender × country × career-bin) distribution — the
+        pre-registered demographic plurality metric (``phase-2.0-plan.md``).
+        Each author spreads their soft ``corrected_p_{male,female}`` mass
+        across their ``(country, career-bin)``; career-bin = ``year −
+        min_year`` binned 0-5 / 6-15 / 16+. Also ``career_joint_coverage_rate``
+        (fraction of authors with a known country AND career-bin) and
+        ``n_career_joint_categories``. Null unless the corrected parquet has
+        BOTH ``primary_country`` and ``min_year``.
 
     Coverage / share CIs come from :func:`_ratio_ci`; the diversity
     indices are point estimates. ``region_axis`` mirrors Step 5b.
@@ -2413,6 +2456,15 @@ def build_coverage_table(
     )
     n_null_year_rows = int(joined["year"].isna().sum())
     has_country = "primary_country" in joined.columns
+    # WS2 career-stage joint plurality needs BOTH the country and career-stage
+    # (min_year) axes; when either is absent the joint metrics stay null.
+    has_min_year = "min_year" in joined.columns
+    has_career = has_country and has_min_year
+    if has_career:
+        joined = joined.copy()
+        joined["career_bin"] = (
+            joined["year"] - joined["min_year"]
+        ).map(_career_stage_bin)
 
     cell_rows: list[dict[str, Any]] = []
     n_cells_by_unit: dict[str, int] = {}
@@ -2487,6 +2539,58 @@ def build_coverage_table(
                 row["country_shannon"] = None
                 row["n_countries"] = None
 
+            if has_career:
+                # Joint (gender × country × career-stage) plurality: each
+                # author with a known country AND career-bin spreads their soft
+                # corrected male/female mass across that (country, career-bin)
+                # coordinate. Unknown-gender mass is not counted (mirrors
+                # gender_shannon); authors missing country or career-bin drop
+                # out (mirrors country_shannon over known countries).
+                mask = (
+                    sub["primary_country"].notna()
+                    & (sub["primary_country"].astype(str).str.len() > 0)
+                    & sub["career_bin"].notna()
+                )
+                jsub = sub[mask]
+                n_joint_known = int(len(jsub))
+                joint_mass: dict[tuple[str, str, str], float] = {}
+                pmj = jsub["corrected_p_male"].to_numpy()
+                pfj = jsub["corrected_p_female"].to_numpy()
+                cj = jsub["primary_country"].astype(str).to_numpy()
+                sj = jsub["career_bin"].astype(str).to_numpy()
+                for pm_i, pf_i, c_i, s_i in zip(pmj, pfj, cj, sj):
+                    if pm_i > 0:
+                        km = ("male", c_i, s_i)
+                        joint_mass[km] = joint_mass.get(km, 0.0) + float(pm_i)
+                    if pf_i > 0:
+                        kf = ("female", c_i, s_i)
+                        joint_mass[kf] = joint_mass.get(kf, 0.0) + float(pf_i)
+                row["career_joint_coverage_rate"] = (
+                    n_joint_known / n if n else 0.0
+                )
+                if joint_mass:
+                    masses = np.array(
+                        list(joint_mass.values()), dtype=np.float64,
+                    )
+                    total_mass = float(masses.sum())
+                    row["career_joint_shannon"] = _shannon_entropy_mm(
+                        masses, total_mass,
+                    )
+                    pj = masses / total_mass
+                    row["career_joint_gini_simpson"] = float(
+                        1.0 - float((pj**2).sum()),
+                    )
+                    row["n_career_joint_categories"] = int(len(joint_mass))
+                else:
+                    row["career_joint_shannon"] = 0.0
+                    row["career_joint_gini_simpson"] = 0.0
+                    row["n_career_joint_categories"] = 0
+            else:
+                row["career_joint_coverage_rate"] = None
+                row["career_joint_shannon"] = None
+                row["career_joint_gini_simpson"] = None
+                row["n_career_joint_categories"] = None
+
             cell_rows.append(row)
             n_cells += 1
         n_cells_by_unit[unit] = n_cells
@@ -2509,6 +2613,10 @@ def build_coverage_table(
             ("country_coverage_rate", pa.float64()),
             ("country_shannon", pa.float64()),
             ("n_countries", pa.int64()),
+            ("career_joint_coverage_rate", pa.float64()),
+            ("career_joint_shannon", pa.float64()),
+            ("career_joint_gini_simpson", pa.float64()),
+            ("n_career_joint_categories", pa.int64()),
         ]))
     pq.write_table(out_table, str(output_parquet), compression="zstd")
 
