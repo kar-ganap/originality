@@ -3,11 +3,10 @@
 **Stage:** 2 — Walk
 **Phase:** 2.2 — divergence-test execution (CS + Physics)
 **Window opens:** post-Phase-2.1
-**Status:** **PLAN — DRAFT for sign-off.** The pre-registration amendments in
-§"Proposed pre-registration amendments" are **PROPOSED, not yet applied** to
-the locked `docs/phases/phase-2.0-plan.md`. They lock (and get written into
-phase-2.0-plan.md) only on approval, and only then does execution begin — this
-keeps the §5 "pre-registered before full-data run" discipline intact.
+**Status:** **PLAN — amendments LOCKED (user-signed-off 2026-07-01);** ready for
+execution. PA-1/2/3 have been written into `docs/phases/phase-2.0-plan.md` §5
+(all pre-full-data-run, so §5-compliant). Execution (WS-A → G) opens on a fresh
+`phase-2.2-execution` branch off `main` after the Phase 2.1 merge.
 
 > This plan folds in the six items from the 2026-07-01 lit-review / desiderata
 > navigation audit (see §"Audit items addressed"). Three of them are
@@ -39,7 +38,7 @@ audit items so no known gotcha is left unhandled before the headline.
 
 ---
 
-## Proposed pre-registration amendments (REQUIRE SIGN-OFF before locking)
+## Pre-registration amendments (LOCKED — signed off 2026-07-01; in phase-2.0-plan.md §5)
 
 ### PA-1 — Chu-Evans reference-list canonicity as the PRIMARY canonical metric
 - **Why:** `conceptual.md` + close-read 01 lock the canonical *primary* as
