@@ -12,7 +12,11 @@ from __future__ import annotations
 
 import numpy as np
 
-from whitespace2.canonical_metrics import gini, top_k_share
+from whitespace2.canonical_metrics import (
+    age_restricted_concentration,
+    gini,
+    top_k_share,
+)
 from whitespace2.semantic_metrics import (
     cluster_entropy,
     effective_dimensionality,
@@ -109,3 +113,76 @@ def test_top_k_share_known() -> None:
     assert abs(top_k_share(v, 0.25) - 0.7) < 1e-9   # top 1 of 4 = 7/10
     assert abs(top_k_share(v, 0.5) - 0.8) < 1e-9    # top 2 = (7+1)/10
     assert top_k_share(np.array([0.0, 0.0]), 0.5) == 0.0  # degenerate
+
+
+# ---------- age_restricted_concentration (WS3 — citation-age-robust) ----------
+
+
+def test_age_restricted_drops_immature_years() -> None:
+    """snapshot 2026, min_age 5 → only publication years ≤ 2021 retained."""
+    years = np.array([2018, 2019, 2020, 2021, 2022, 2023, 2024])
+    cites = np.array([10, 20, 30, 40, 50, 60, 70])
+    rows = age_restricted_concentration(
+        years, cites, snapshot_year=2026, min_age=5,
+    )
+    got_years = [r["year"] for r in rows]
+    assert got_years == [2018, 2019, 2020, 2021]  # 2022-2024 are < 5 yr old
+
+
+def test_age_restricted_matches_base_metrics() -> None:
+    """Each retained year's gini / top_k_share equals the base metric on its counts."""
+    years = np.array([2000, 2000, 2000, 2000, 2010, 2010])
+    cites = np.array([1.0, 2.0, 3.0, 4.0, 5.0, 5.0])
+    rows = age_restricted_concentration(
+        years, cites, snapshot_year=2026, min_age=5, k_frac=0.5,
+    )
+    by_year = {r["year"]: r for r in rows}
+    assert abs(by_year[2000]["gini"] - gini(np.array([1, 2, 3, 4]))) < 1e-12
+    assert by_year[2000]["n"] == 4
+    assert abs(
+        by_year[2000]["top_k_share"] - top_k_share(np.array([1, 2, 3, 4]), 0.5)
+    ) < 1e-12
+    assert by_year[2010]["gini"] == 0.0  # equal citations → no concentration
+
+
+def test_age_restricted_min_papers_filter() -> None:
+    """Years thinner than min_papers are skipped (Gini on a handful is noise)."""
+    years = np.array([2000, 2000, 2005])  # 2005 has a single paper
+    cites = np.array([3.0, 7.0, 9.0])
+    rows = age_restricted_concentration(
+        years, cites, snapshot_year=2026, min_age=5, min_papers=2,
+    )
+    assert [r["year"] for r in rows] == [2000]
+
+
+def test_age_restricted_empty_when_all_immature() -> None:
+    """No year old enough → empty (caller must not interpret an empty control)."""
+    years = np.array([2023, 2024, 2025])
+    cites = np.array([1, 2, 3])
+    rows = age_restricted_concentration(
+        years, cites, snapshot_year=2026, min_age=5,
+    )
+    assert rows == []
+
+
+def test_age_restriction_excludes_zero_inflated_recent() -> None:
+    """The fix: zero-inflated recent years (Gini→0 by accrual) are dropped,
+    so the retained series carries the real concentration signal (pilot #1)."""
+    # 2024 papers all uncited (age 2 → excluded); 2000 papers concentrated.
+    years = np.array([2024] * 5 + [2000] * 5)
+    cites = np.array([0, 0, 0, 0, 0] + [0, 0, 0, 1, 100])
+    rows = age_restricted_concentration(
+        years, cites, snapshot_year=2026, min_age=5,
+    )
+    assert [r["year"] for r in rows] == [2000]
+    assert rows[0]["gini"] > 0.5  # concentrated, not the spurious 0.0
+
+
+def test_age_restricted_sorted_and_handles_nan_years() -> None:
+    """Rows are year-sorted; non-finite years are ignored."""
+    years = np.array([2010.0, 2000.0, np.nan, 2005.0])
+    cites = np.array([4.0, 1.0, 9.0, 2.0])
+    rows = age_restricted_concentration(
+        years, cites, snapshot_year=2026, min_age=5,
+    )
+    assert [r["year"] for r in rows] == [2000, 2005, 2010]

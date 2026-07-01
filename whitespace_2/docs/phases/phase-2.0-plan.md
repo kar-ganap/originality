@@ -78,11 +78,29 @@ semantic plurality stagnates or declines.
 - **Canonical concentration** must show a significant **positive** slope over
   year (citations concentrate). Metric: citation Gini + top-k share
   (`src/whitespace2/canonical_metrics.py`), **citation-age-robust** per pilot
-  finding #1 — a **fixed N-year citation window** (cites within N years of
-  publication) OR an age-cohort normalization. Raw total-`cited_by_count` per
-  publication year is INVALID across years (recent papers are zero-inflated;
-  Gini is scale-invariant so a rescale is a no-op). If the age-robust
-  canonical control is flat/negative → the analysis substrate is broken; do
+  finding #1. Raw total-`cited_by_count` per publication year is INVALID
+  across years (recent papers are zero-inflated; Gini is scale-invariant so a
+  rescale is a no-op).
+- **Age-restricted, not fixed-window (amended 2026-06-30, Phase 2.1 WS3;
+  user-locked).** The pilot named two candidate robust metrics — a fixed
+  N-year citation window OR an age-cohort normalization. The **fixed N-year
+  window is DROPPED**: it needs `counts_by_year` (citations accrued within N
+  years of publication), which is not in the §0 corpus and — even if
+  re-pulled — OpenAlex's `counts_by_year` does not reach back to ~1970, so a
+  5-yr-from-publication window is unreconstructable for old papers (the whole
+  early window). The committed control is **age restriction**
+  (`age_restricted_concentration`): compute Gini + top-k **per publication
+  year on only the years whose papers are ≥ N years old** at the snapshot,
+  dropping the immature recent tail where Gini spuriously collapses. No data
+  pull — uses the total `cited_by_count` + `publication_year` already in the
+  corpus.
+- **N-floor + residual-gradient caveat.** Age restriction removes the worst
+  zero-inflation but leaves a residual accrual gradient (a 1980 paper still
+  has more accrual years than a 2015 one). So the control is **directional**:
+  Gini/top-k must **rise across the retained mature years**, reported over a
+  **sweep of N ∈ {3, 5, 10}** (Phase 2.2) rather than at a single N. If the
+  positive slope does not survive the sweep — i.e. the age-robust control is
+  flat/negative on the mature years — the analysis substrate is broken; do
   not interpret the primary test.
 
 ### Confound controls (§13)
@@ -99,7 +117,7 @@ semantic plurality stagnates or declines.
 |---|---|---|
 | S1 | Full embed: 1M v3 (headline) + 500K robustness, SciNCL + Qwen3 | Modal A100 preempt; `ws2-embed` + `ChunkedEmbedRunner` (validated at 100K, Phase 1.4). **§9 cost gate: pre-commit ~$77 in `tasks/spend.md`.** |
 | S2 | Career-stage pipeline extension | add the career-stage-binned joint demographic plurality (from `min_year`) to the coverage pipeline (+ tests) |
-| S3 | Citation-age-robust canonical metric | fixed N-year window / age-cohort (pilot finding #1) |
+| S3 | Citation-age-robust canonical metric | **age-restricted** (papers ≥ N yr old; fixed-window dropped — `counts_by_year` unreconstructable pre-~2015); sweep N∈{3,5,10} (pilot finding #1) — DONE Phase 2.1 WS3 |
 | S4 | Compute the 3 axes as annual time series (§11-stratified cluster fit) | demographic / semantic / canonical |
 | S5 | Run the pre-registered divergence test | `divergence_test`; CS then Physics |
 | S6 | 3-panel figure + residual-controls figure | per conceptual.md |
