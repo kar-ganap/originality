@@ -22,6 +22,7 @@ from typing import Any
 
 import pyarrow as pa
 import pyarrow.parquet as pq
+import pytest
 
 from whitespace2.demographics import (
     _bootstrap_sum_ci,
@@ -2449,6 +2450,62 @@ def test_build_coverage_table_career_joint_plurality(tmp_path: Path) -> None:
     assert cell["career_joint_shannon"] > 0.0
     # Joint (3 axes) is at least as diverse as gender alone.
     assert cell["career_joint_shannon"] > cell["gender_shannon"]
+
+
+def test_build_joint_plurality_series_matches_joint(tmp_path: Path) -> None:
+    """The (year, field) joint series equals the per-cell joint when all
+    authors share a region (cross-check vs the WS2 hand-computed 0.736842),
+    and aggregates authors across regions into ONE (year, field) cell."""
+    from whitespace2.demographics import build_joint_plurality_series
+
+    # Same 4 authors as test_build_coverage_table_career_joint_plurality (all
+    # latin → the (2020,cs) cell == the (2020,cs,latin) region cell).
+    ap_path, corr_path, fmap_path = _make_cell_inputs(
+        tmp_path,
+        author_paper_rows=[(f"W{i}", 2020, f"A{i}") for i in range(4)],
+        authors=[
+            {"author_id": "A0", "author_first_name": "John",
+             "corrected_p_male": 1.0, "corrected_p_female": 0.0,
+             "corrected_p_unknown": 0.0, "primary_country": "US",
+             "min_year": 2018},
+            {"author_id": "A1", "author_first_name": "Paul",
+             "corrected_p_male": 1.0, "corrected_p_female": 0.0,
+             "corrected_p_unknown": 0.0, "primary_country": "GB",
+             "min_year": 2010},
+            {"author_id": "A2", "author_first_name": "Mary",
+             "corrected_p_male": 0.0, "corrected_p_female": 1.0,
+             "corrected_p_unknown": 0.0, "primary_country": "US",
+             "min_year": 2000},
+            {"author_id": "A3", "author_first_name": "Ann",
+             "corrected_p_male": 0.2, "corrected_p_female": 0.6,
+             "corrected_p_unknown": 0.2, "primary_country": "US",
+             "min_year": 2018},
+        ],
+        paper_field_rows=[(f"W{i}", "cs") for i in range(4)],
+    )
+    rows = build_joint_plurality_series(ap_path, corr_path, fmap_path)
+    assert len(rows) == 1
+    r = rows[0]
+    assert (r["year"], r["field"], r["n"]) == (2020, "cs", 4)
+    assert r["n_career_joint_categories"] == 4
+    assert abs(r["career_joint_gini_simpson"] - 0.736842105) < 1e-6
+    assert r["career_joint_shannon"] > 0.0
+
+
+def test_build_joint_plurality_series_requires_min_year(tmp_path: Path) -> None:
+    """Without min_year the pre-registered joint series can't be built."""
+    from whitespace2.demographics import build_joint_plurality_series
+
+    ap_path, corr_path, fmap_path = _make_cell_inputs(
+        tmp_path,
+        author_paper_rows=[("W1", 2020, "A0")],
+        authors=[{"author_id": "A0", "author_first_name": "John",
+                  "corrected_p_male": 1.0, "corrected_p_female": 0.0,
+                  "corrected_p_unknown": 0.0, "primary_country": "US"}],
+        paper_field_rows=[("W1", "cs")],
+    )
+    with pytest.raises(ValueError, match="min_year"):
+        build_joint_plurality_series(ap_path, corr_path, fmap_path)
 
 
 def test_build_coverage_table_career_partial_coverage(tmp_path: Path) -> None:

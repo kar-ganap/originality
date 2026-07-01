@@ -6,6 +6,16 @@
 **Status:** Pre-registration LOCKED (per desideratum §5) before any full-data
 run. Stage 2 workstreams headline-level (detailed when each begins).
 
+**Amendments (all pre-full-data-run — §5 compliant):**
+- *2026-06-30 (Phase 2.1 WS3):* canonical control = age-restricted (fixed
+  citation window dropped — `counts_by_year` unreconstructable).
+- *2026-07-01 (Phase 2.2 PA-1/2/3, user-signed-off from the lit-review/
+  desiderata audit):* **PA-1** Chu-Evans reference-list canonicity is the
+  **primary** canonical metric (age-restricted citation Gini/top-k → secondary);
+  **PA-2** decision gate = year-permutation null + a ~0.1σ effect-size floor
+  (replaces bare p<0.05); **PA-3** pre-registered per-metric degenerate-case
+  exclusions. Rationale + detail in the sections below.
+
 > **Desideratum §5:** "The primary statistical test of demographic-vs-semantic
 > divergence is pre-registered (metric, estimator, field, time window, null,
 > threshold) in `docs/phases/phase-2.X-plan.md` **before full-data analysis
@@ -59,12 +69,27 @@ semantic plurality stagnates or declines.
 
 ### Estimator + decision rule
 - **Estimator:** OLS regression of the per-year **(semantic metric /
-  demographic metric) ratio** on year → slope + two-tailed p-value
+  demographic metric) ratio** on year → slope, reported as a **standardized
+  effect** (SD/year AND total standardized change over 1970–2024)
   (`src/whitespace2/divergence.py`).
+- **Significance — permutation null (amended 2026-07-01, Phase 2.2 PA-2).**
+  The decision gate is a **year-label permutation test**, NOT a bare p<0.05:
+  shuffle the year labels N≥10⁴ times, recompute the ratio-slope each time →
+  the null distribution of a slope arising from noise alone in this data; the
+  observed slope must fall **beyond the 99.5/0.5 percentile** (two-tailed).
+  Data-derived and unit-safe (imports none of the CD-critique's units).
+- **Effect-size floor (amended 2026-07-01, Phase 2.2 PA-2).** A slope that
+  beats the permutation null but whose **total standardized change is < ~0.1σ**
+  is reported as **"no material divergence,"** not a confirmation — the
+  CD-critique literature's "treat below ~0.1σ as noise" line (PAP 2025's
+  measurement-artifact residuals are 0.06–0.09σ *total* contrasts; close-read
+  04). A total change clearing **~1σ** (≈0.02 SD/yr × window) is flagged as a
+  **substantial** divergence.
 - **Divergence CONFIRMED** iff:
   (a) BOTH primary semantic ratios (cluster entropy AND effective
-  dimensionality) show a **negative slope significant at p<0.05 two-tailed**,
-  AND (b) the secondary (mean pairwise cosine) agrees directionally.
+  dimensionality) show a **negative slope that clears the permutation null
+  (99.5th pct) AND the ~0.1σ effect-size floor**, AND (b) the secondary (mean
+  pairwise cosine) agrees directionally.
 - **Successful NULL** (Claim #13 disconfirmed — a publishable result): both
   plurality series rise in tandem; no significant negative ratio slope.
 - **MIXED verdict (pre-registered, per pilot finding #2):** the pilot showed
@@ -76,11 +101,25 @@ semantic plurality stagnates or declines.
 
 ### Negative control (pre-registered)
 - **Canonical concentration** must show a significant **positive** slope over
-  year (citations concentrate). Metric: citation Gini + top-k share
-  (`src/whitespace2/canonical_metrics.py`), **citation-age-robust** per pilot
-  finding #1. Raw total-`cited_by_count` per publication year is INVALID
-  across years (recent papers are zero-inflated; Gini is scale-invariant so a
-  rescale is a no-op).
+  year (the canon ossifies / concentrates).
+- **Primary metric (amended 2026-07-01, Phase 2.2 PA-1): Chu-Evans reference-
+  list canonicity** (`reference_canonicity`, `canonical_metrics.py`) — per
+  publication year, the concentration (Gini / top-k) of reference-target
+  frequency **and** the **Spearman rank stability of the top-N=50 most-
+  referenced works across Δ=5** (Δ=1 reported as a comparability column vs
+  Chu-Evans's published values). Built from `referenced_works` (in-corpus) →
+  **no `counts_by_year` needed**, and — since a reference list is fixed at
+  publication — **no citation-accrual confound** (unlike citation Gini).
+  Targets counted over ALL cited works (cross-field foundational works
+  included — the canon a field draws on); the top-N Spearman uses the union of
+  the two years' top-N with actual-frequency ranks. Sample-based (references
+  counted within the 1M sample) — documented. This is the conceptual doc's
+  designated primary canonical operationalization + gives the axis a metric
+  genuinely independent of the citation-distribution ones (§8).
+- **Secondary metric: age-restricted citation Gini + top-k** (the former
+  primary). Raw total-`cited_by_count` per publication year is INVALID across
+  years (recent papers are zero-inflated; Gini is scale-invariant so a rescale
+  is a no-op) — hence the age restriction below.
 - **Age-restricted, not fixed-window (amended 2026-06-30, Phase 2.1 WS3;
   user-locked).** The pilot named two candidate robust metrics — a fixed
   N-year citation window OR an age-cohort normalization. The **fixed N-year
@@ -102,6 +141,21 @@ semantic plurality stagnates or declines.
   positive slope does not survive the sweep — i.e. the age-robust control is
   flat/negative on the mature years — the analysis substrate is broken; do
   not interpret the primary test.
+
+### Degenerate-case exclusions (pre-registered, amended 2026-07-01, Phase 2.2 PA-3)
+
+Per-metric degenerate cases are excluded from the **primary** slope BEFORE
+analysis (Holst-derived, close-read 05), each paired with a sensitivity that
+re-includes them so an exclusion can never silently drive a finding:
+- **effective_dimensionality:** publication-years with **N < 768** are
+  structurally degenerate (participation ratio ≤ N−1 by construction) →
+  excluded from the primary slope; a sensitivity at a higher stability floor
+  (~1500) is also reported.
+- **cluster_entropy:** years with N below the Check-5b N_target (200) flagged.
+- **canonical:** all-zero-citation / all-zero-reference years excluded
+  (concentration undefined).
+- **joint demographic plurality:** cells with zero career-joint coverage
+  excluded (already null in `build_coverage_table`).
 
 ### Confound controls (§13)
 - Field growth + publication volume: the ratio partially controls; the

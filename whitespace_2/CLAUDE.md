@@ -11,8 +11,16 @@ claim is disconfirmed — a successful null.
 
 ## Current State
 
-- **Current Stage:** Stage 2 — Walk **(Phase 2.1 COMPLETE)**. Stage 1
-  (Crawl) CLOSED. **Phase 2.2 (compute series + run the test) next.**
+- **Current Stage:** Stage 2 — Walk **(Phase 2.2 COMPLETE — the pre-registered
+  test is run).** Stage 1 CLOSED. **Headline: Claim #13 robustly DISCONFIRMED
+  (successful null), reframed as "the citation canon concentrates while the
+  semantic frontier + authorship diversify."** The pre-registered ratio
+  estimator returned a "divergence" that was a demographic-denominator confound;
+  raw absolute trends + a full robustness stack (Qwen3 swap, K-sweep, clean
+  subset) show no robust semantic decline, and an independent correctness
+  battery verifies the pipeline. See `docs/phases/phase-2.2-retro.md`. **To
+  fully wrap up WS2:** subfield mechanism test (the pre-registered "single most
+  important analysis"), publication-grade figures, paper draft.
 - **Phase 0.1 (Foundation scoping):** COMPLETE. See
   `docs/phases/phase-0.1-retro.md`.
 - **Phase 0.2 (Pre-registration + Stage-1 prereqs):** COMPLETE
@@ -53,6 +61,21 @@ claim is disconfirmed — a successful null.
   in-window papers, ~$17.4, via a parallel resumable Modal `.map()` path
   (`run_mapped`, `return_exceptions=True`). Vectors on Modal volume
   `ws2-embeddings` `/base-1m/`. See `docs/phases/phase-2.1-retro.md`.
+- **Phase 2.2 (compute the 3 series + run the pre-registered test):**
+  COMPLETE 2026-07-01. **Claim #13 robustly DISCONFIRMED — a successful null,
+  reframed: the citation canon concentrates (reference-canonicity Gini ↑) while
+  the semantic frontier (pairwise cosine ↑ robustly; cluster-entropy /
+  effective-dim noisier) AND authorship (+3.3σ) diversify.** The pre-registered
+  *ratio* estimator returned "divergence" for both fields, but it is
+  **denominator-confounded** (ratio falls whenever demographic outpaces
+  semantic, even as semantic rises); the residual "critical second figure" is
+  collinearity-limited (year VIF 44–60); the one narrowing signal (Physics
+  effective-dim) reverses under Qwen3. A full robustness stack + an independent
+  correctness battery (metrics cross-checked vs scipy/sklearn; year-shuffle +
+  noise placebos find 0 spurious trends) confirm a robust null. New src:
+  `reference_canonicity`, `build_joint_plurality_series`, `permutation_slope_test`,
+  `standardized_effect`, `residual_trend`. Amendments PA-1/2/3 in
+  `phase-2.0-plan.md` §5. See `docs/phases/phase-2.2-retro.md`.
 - **Methodology locks** (per `docs/phases/phase-0.2-plan.md` +
   Phase 0.2 retro):
   - **§0 analytical population**: score≥0.3 + has_abstract +
@@ -75,13 +98,18 @@ claim is disconfirmed — a successful null.
   (sample-based per-region bias estimation, not direct labeling) →
   §9e-style correction; country from affiliations; reusable
   per-region bias kernel `experiments/phase-1.3/v3-confusion-matrix.json`.
-- **Next: Phase 2.2** — compute the 3 annual series (§11-stratified
-  semantic / joint-demographic / age-restricted canonical) from the base
-  1M embeddings (on `ws2-embeddings` `/base-1m/`) and run the
-  pre-registered divergence test (`docs/phases/phase-2.0-plan.md` §5) on
-  CS then Physics. All metric machinery + embeddings are ready (Phase 2.1);
-  Phase 2.2 is execution of the LOCKED test — report divergence / null /
-  mixed honestly.
+- **Next — wrap up WS2 (Stage 2→3 close-out):** the pre-registered test is
+  run; to complete the study: **(1) the subfield mechanism test** — do
+  canon-concentrated subfields show more demographic-semantic divergence? (the
+  conceptual doc's "single most important analysis"; the last place a localized
+  signal could live + the direct test of the reframing); **(2) publication-grade
+  figures** (trim the incomplete final year; polish the 3-panel + residual +
+  cross-field + subfield-decomposition); **(3) the paper draft** — thesis:
+  "canon concentrates while the frontier diversifies, and the naive decoupling
+  test manufactures the opposite." Optional robustness: Genderize-augmented
+  demographic substrate; SPECTER2 third embedding family. **WS3 (theory) is
+  queued AFTER WS2 wraps** (user-locked 2026-07-01); the WS2→WS3 bridge (a
+  per-capita-V extension) is noted in `docs/phases/phase-2.2-retro.md`.
 
 ## Constraints
 

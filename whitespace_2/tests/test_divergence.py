@@ -8,7 +8,13 @@ canonical concentration as a rising negative control).
 
 from __future__ import annotations
 
-from whitespace2.divergence import divergence_test, ols_trend
+from whitespace2.divergence import (
+    divergence_test,
+    ols_trend,
+    permutation_slope_test,
+    residual_trend,
+    standardized_effect,
+)
 
 _YEARS = list(range(1970, 2025))  # 55 points
 _N = len(_YEARS)
@@ -96,6 +102,88 @@ def test_divergence_substrate_broken() -> None:
 
     assert res["substrate_ok"] is False
     assert res["verdict"] == "substrate_broken"
+
+
+def test_permutation_slope_test_clean_vs_flat() -> None:
+    """A clean monotone line beats every shuffle (perm p ≈ 1/(n+1) < 0.01);
+    a flat/near-flat series does not."""
+    x = list(range(55))
+    up = permutation_slope_test(x, [2.0 * i for i in x], n_perm=2000, seed=1)
+    assert up["significant"] is True
+    assert up["perm_pvalue"] < 0.01
+    flat = permutation_slope_test(x, [5.0] * 55, n_perm=2000, seed=1)
+    assert flat["significant"] is False
+    deg = permutation_slope_test([1, 2], [3.0, 4.0], n_perm=100)
+    assert deg["significant"] is False and deg["n"] == 2
+
+
+def test_standardized_effect_ramp() -> None:
+    """A clean linear ramp spans ~sqrt(12) ≈ 3.46 SDs total; sign tracks slope."""
+    x = list(range(55))
+    up = standardized_effect(x, [0.01 * i for i in x])
+    # discrete n=55 ramp spans ~3.37 SDs (→ sqrt(12) ≈ 3.46 in the continuous limit)
+    assert 3.3 < up["total_change_sd"] < 3.5
+    assert up["slope_sd_per_year"] > 0
+    down = standardized_effect(x, [1.0 - 0.01 * i for i in x])
+    assert down["total_change_sd"] < -3.0
+    const = standardized_effect(x, [7.0] * 55)
+    assert const["total_change_sd"] == 0.0
+
+
+def test_divergence_effect_floor_gates_confirmation() -> None:
+    """PA-2: a permutation-significant, downward ratio is NOT confirmed if its
+    total standardized change is below the effect floor. Same synthetic as the
+    confirmed case (~3.46σ change) is rejected under a 5σ floor, accepted at 0.1σ."""
+    dem = _rising_demographic()
+    semantic = {
+        "cluster_entropy": [5.0 - 0.015 * i for i in range(_N)],
+        "effective_dimensionality": [200.0 - 1.5 * i for i in range(_N)],
+        "mean_pairwise_cosine": [0.50 - 0.0015 * i for i in range(_N)],
+    }
+    canonical = [0.40 + 0.003 * i for i in range(_N)]
+    hi = divergence_test(_YEARS, dem, semantic, canonical,
+                         n_perm=2000, effect_floor=5.0)
+    assert hi["divergence_confirmed"] is False   # ~3.46σ < 5σ floor
+    lo = divergence_test(_YEARS, dem, semantic, canonical,
+                         n_perm=2000, effect_floor=0.1)
+    assert lo["divergence_confirmed"] is True
+    # the effect size is surfaced per ratio metric
+    eff = lo["ratio_trends"]["cluster_entropy"]["effect"]["total_change_sd"]
+    assert eff is not None and eff < 0
+
+
+def test_residual_trend_recovers_year_effect() -> None:
+    """A genuine year effect (control independent of year) is recovered + sig."""
+    import numpy as np
+    rng = np.random.default_rng(0)
+    x = np.arange(55.0)
+    ctrl = rng.normal(size=55)          # independent of year
+    y = 2.0 * x + 0.1 * rng.normal(size=55)
+    r = residual_trend(x, y, [ctrl], n_perm=2000, seed=1)
+    assert abs(r["year_coef"] - 2.0) < 0.1
+    assert r["significant"] is True
+    assert r["year_vif"] < 2.0          # control ⊥ year → low collinearity
+
+
+def test_residual_trend_year_effect_vanishes_after_control() -> None:
+    """When the trend is entirely explained by a control, the partial year
+    coefficient collapses to ~0 (not significant) — the WS-F question."""
+    import numpy as np
+    rng = np.random.default_rng(2)
+    x = np.arange(55.0)
+    ctrl = x + 3.0 * rng.normal(size=55)      # correlated w/ year, not identical
+    y = 5.0 * ctrl + 0.01 * rng.normal(size=55)   # y driven entirely by ctrl
+    r = residual_trend(x, y, [ctrl], n_perm=2000, seed=1)
+    assert abs(r["year_coef"]) < 0.5
+    assert r["significant"] is False
+
+
+def test_residual_trend_flags_collinearity() -> None:
+    """Perfectly collinear control (= year) → huge VIF (year effect unreliable)."""
+    import numpy as np
+    x = np.arange(55.0)
+    r = residual_trend(x, 2.0 * x, [x], n_perm=200, seed=1)
+    assert r["year_vif"] > 100.0
 
 
 def test_divergence_handles_zero_demographic() -> None:

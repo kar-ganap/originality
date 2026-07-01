@@ -1,0 +1,20 @@
+{
+  "pool_n": 3000,
+  "query_n": 150,
+  "models": {
+    "scincl": {
+      "model": "scincl",
+      "n_queries": 150,
+      "top1_era_match": 0.6,
+      "topk_era_match_mean": 0.5627,
+      "era_blind_baseline": 0.3333
+    },
+    "qwen3": {
+      "model": "qwen3",
+      "n_queries": 150,
+      "top1_era_match": 0.5933,
+      "topk_era_match_mean": 0.5307,
+      "era_blind_baseline": 0.3333
+    }
+  }
+}
