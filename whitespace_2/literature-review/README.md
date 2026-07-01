@@ -43,12 +43,12 @@ justified by N1's reshuffling of priorities.
 
 | # | Paper | Role for ws2 | Tier | Status |
 |---|---|---|---|---|
-| 08 | **Wu, Wang & Evans 2019**, *Nature* 566, "Large teams develop and small teams disrupt science and technology" | Team-size confound for Test II AND Test IV. Paired with Petersen 2025 (Tier 1) — read together to resolve the team-size interpretation tension for Phase 0.2 pre-registration. | **2A** | pending |
-| 09 | **Cohan, Feldman, Beltagy, Downey & Weld 2020**, *ACL*, SPECTER | Background for SPECTER2; methodology not load-bearing. Single combined session with 10+11. | 2B | pending |
-| 10 | **Singh, D'Arcy, Cohan, Downey & Feldman 2023**, *EMNLP*, SciRepEval (arXiv:2211.13308) | SPECTER2 training/evaluation; methodology not load-bearing. Combined with 09+11. | 2B | pending |
-| 11 | **Ostendorff, Rethmeier, Augenstein, Gipp & Rehm 2022**, *EMNLP*, SciNCL (arXiv:2202.06671) | Within-family robustness partner; we use it but methodology details aren't load-bearing. Combined with 09+10. | 2B | pending |
-| 12 | **Hamilton, Leskovec & Jurafsky 2016**, *ACL*, "Diachronic Word Embeddings Reveal Statistical Laws of Semantic Change" | Methodology template for Stage 3 Flavor A drift mitigation — *conditional* on Check 5c drift-pilot triggering Flavor A. Defer full close read until then. | 2B | pending |
-| 13 | **Uzzi, Mukherjee, Stringer & Jones 2013**, *Science* 342, "Atypical Combinations and Scientific Impact" | Test IV tertiary novelty (Stage 3 only, contingent on Stage 3 bandwidth). Note: fourth author is Stringer, not Stone. | 2B | pending |
+| 08 | **Wu, Wang & Evans 2019**, *Nature* 566, "Large teams develop and small teams disrupt science and technology" | Team-size confound for Test II AND Test IV. Paired with Petersen 2025 (Tier 1) — read together to resolve the team-size interpretation tension for Phase 0.2 pre-registration. | **2A** | deferred → Stage 3 |
+| 09 | **Cohan, Feldman, Beltagy, Downey & Weld 2020**, *ACL*, SPECTER | Background for SPECTER2; methodology not load-bearing. Single combined session with 10+11. | 2B | superseded (empirical validation) |
+| 10 | **Singh, D'Arcy, Cohan, Downey & Feldman 2023**, *EMNLP*, SciRepEval (arXiv:2211.13308) | SPECTER2 training/evaluation; methodology not load-bearing. Combined with 09+11. | 2B | superseded (empirical validation) |
+| 11 | **Ostendorff, Rethmeier, Augenstein, Gipp & Rehm 2022**, *EMNLP*, SciNCL (arXiv:2202.06671) | Within-family robustness partner; we use it but methodology details aren't load-bearing. Combined with 09+10. | 2B | superseded (empirical validation) |
+| 12 | **Hamilton, Leskovec & Jurafsky 2016**, *ACL*, "Diachronic Word Embeddings Reveal Statistical Laws of Semantic Change" | Methodology template for Stage 3 Flavor A drift mitigation — *conditional* on Check 5c drift-pilot triggering Flavor A. Defer full close read until then. | 2B | deferred → Stage 3 |
+| 13 | **Uzzi, Mukherjee, Stringer & Jones 2013**, *Science* 342, "Atypical Combinations and Scientific Impact" | Test IV tertiary novelty (Stage 3 only, contingent on Stage 3 bandwidth). Note: fourth author is Stringer, not Stone. | 2B | deferred → Stage 3 |
 | 14 | **Kozlowski, Larivière, Sugimoto & Monroe-White 2022**, *PNAS* 119(2), "Intersectional inequalities in science" | Intersectional demographic-topic methodology. **Elevated post-N1** because intersectional reporting under §9e propensity weighting is structurally complex; Kozlowski's framework likely informs Methods-level decisions about how to report intersectional cells. | **2A** | pending |
 | 15 | **Funk et al. 2026**, arXiv:2602.05140, "Is Innovation Becoming Less Disruptive? An Inventory of the Literature" | Canonical literature inventory. Reviewer-engagement piece. Lighter close read (~2 hrs) since it's mostly inventory. | **2A** | pending |
 | 16 | **Culbert et al. 2024/2025**, *Scientometrics*, "Reference coverage analysis of OpenAlex compared to Web of Science and Scopus" | **Highest post-N1 priority shift.** §0/§9e are OpenAlex-specific commitments; this paper informs whether the ~50% abstract bottleneck and 55% UNKNOWN-affiliation rate are OpenAlex-specific or universal. Could also surface a WoS/Scopus cross-substrate robustness check for Stage 3. | **2A** | pending |
@@ -236,13 +236,48 @@ sibling-project tradition.
 5. Phase 0.1 closure gate: all Tier 1 and Tier 2 files complete with
    Discussion Notes filled; `synthesis.md` populated; no un-addressed
    contradictions with Phase 0.1 methodology commitments.
+   **(Honest status, 2026-07-01 Phase 2.2 WS-G:** Tier 1 (01–07) was fully
+   close-read and drove the Phase 0.1/0.2 methodology. Tier 2 (08–16) was
+   **not** close-read — Phase 0.1 closed on Tier 1 + scoping, and the study
+   proceeded. Tier 2 is now dispositioned rather than left dangling — see
+   "Tier 2 disposition" below. The gate as literally worded was not met; the
+   substantive intent (no un-addressed methodology contradiction) holds for
+   Test I, with three genuinely-open items flagged for the write-up.)**
 
 ## Status tracking
 
 Per-paper status in the tables above: `pending` / `reading` / `draft`
-/ `under review` / `complete`. Update as work proceeds. The retrospective
-(`docs/phases/phase-0.1-retro.md`) will summarize any papers whose close
+/ `under review` / `complete` / `superseded (empirical validation)` /
+`deferred → Stage 3`. Update as work proceeds. The retrospective
+(`docs/phases/phase-0.1-retro.md`) summarizes any papers whose close
 reading triggered Phase 0.1 methodology revision.
+
+## Tier 2 disposition (2026-07-01, Phase 2.2 WS-G — audit item 5)
+
+Tier 2 (08–16) was never close-read; the lit-review/desiderata audit
+surfaced it. Each paper is now dispositioned:
+
+- **Superseded (closed) — 09 SPECTER, 10 SciRepEval, 11 SciNCL.** These are
+  model-methodology background; the models themselves were **empirically
+  validated** (Phase 0.1.E embedding smoke + Phase 1.1 A100 runs: norm bands,
+  finiteness, cross-era era-match), which is stronger than reading the papers.
+  Non-load-bearing → closed.
+- **Deferred → Stage 3 — 08 Wu-Wang-Evans, 12 Hamilton (diachronic
+  embeddings), 13 Uzzi.** 08's team-size interpretation is only load-bearing
+  for the Stage-3 subfield / Test-II/IV analyses (Test I does not depend on
+  it); 12 is conditional on Flavor-A drift mitigation; 13 is Stage-3 tertiary
+  novelty. Read when Stage 3 is planned, so they're fresh.
+- **OPEN — read before the Methods / write-up (still `pending`):**
+  - **16 Culbert et al. (OpenAlex reference/abstract coverage) — highest
+    priority.** Informs whether the ~50% abstract bottleneck + affiliation-
+    coverage limits are OpenAlex-specific or universal — directly relevant to
+    the Methods/Limitations and a possible WoS/Scopus robustness check.
+  - **14 Kozlowski (intersectional inequalities)** — informs how intersectional
+    demographic cells are reported under §9e weighting.
+  - **15 Funk 2026 (disruption-literature inventory)** — reviewer-engagement /
+    positioning for the Discussion.
+  These three do NOT block Phase 2.2's Test I, but must be read before the
+  paper draft (Stage 2 S8 / Stage 3).
 
 ## References
 
