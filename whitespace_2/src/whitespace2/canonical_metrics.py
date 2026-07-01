@@ -10,6 +10,14 @@ analysis substrate is broken.
   - ``gini`` — Gini coefficient of the citation distribution.
   - ``top_k_share`` — fraction of total citations held by the top
     ``k_frac`` of works.
+  - ``reference_canonicity`` — the **primary** canonical metric (Chu-Evans,
+    pre-registered PA-1): per publication year, the concentration (Gini /
+    top-k) of how often each cited work is referenced, plus the **Spearman
+    rank stability of the top-N most-referenced works across a Δ-year gap**
+    (the canon ossifying). Built from ``referenced_works`` — needs no
+    ``counts_by_year``, and since a reference list is fixed at publication it
+    has **no citation-accrual confound** (unlike citation Gini below). Targets
+    are counted over ALL cited works (cross-field foundational works included).
   - ``age_restricted_concentration`` — the two above per publication year,
     but **only on years whose papers are ≥ ``min_age`` years old** at the
     snapshot. This is the citation-age-robust negative control (Phase-1.4
@@ -125,4 +133,108 @@ def age_restricted_concentration(
             "gini": gini(c),
             "top_k_share": top_k_share(c, k_frac),
         })
+    return rows
+
+
+def _top_n_ids(freq: dict[str, int], top_n: int) -> list[str]:
+    """The ``top_n`` most-referenced work-ids (ties broken by id for
+    determinism)."""
+    return [
+        wid for wid, _ in sorted(
+            freq.items(), key=lambda kv: (-kv[1], kv[0]),
+        )[:top_n]
+    ]
+
+
+def _reference_stability(
+    freq_t: dict[str, int], freq_t2: dict[str, int], top_n: int,
+) -> float | None:
+    """Spearman rank correlation of reference frequencies over the union of
+    the two years' top-N most-referenced works.
+
+    Each year's top-N canon is unioned; every work in the union is scored by
+    its actual reference frequency in each year (0 if absent that year), and
+    the two frequency vectors' Spearman correlation is the canon's stability:
+    ≈1 = the same works stay canonical (ossified), ≤0 = turnover. Returns
+    ``None`` when the union has < 2 works or a year's scores are constant
+    (correlation undefined).
+    """
+    from scipy.stats import spearmanr
+
+    union = sorted(set(_top_n_ids(freq_t, top_n)) | set(_top_n_ids(freq_t2, top_n)))
+    if len(union) < 2:
+        return None
+    x = np.array([freq_t.get(w, 0) for w in union], dtype=np.float64)
+    y = np.array([freq_t2.get(w, 0) for w in union], dtype=np.float64)
+    if x.std() == 0.0 or y.std() == 0.0:
+        return None
+    rho = float(spearmanr(x, y).statistic)
+    return rho if np.isfinite(rho) else None
+
+
+def reference_canonicity(
+    publication_years: Any,
+    referenced_works: Any,
+    *,
+    top_n: int = 50,
+    deltas: tuple[int, ...] = (5, 1),
+    k_frac: float = 0.1,
+    min_papers: int = 1,
+) -> list[dict[str, Any]]:
+    """Chu-Evans reference-list canonicity per publication year (primary
+    canonical metric, PA-1).
+
+    ``publication_years`` and ``referenced_works`` are parallel over papers;
+    ``referenced_works[i]`` is that paper's list of referenced work-ids (``None``
+    / empty tolerated). For each publication year with ≥ ``min_papers`` papers
+    and at least one reference edge, returns:
+
+      - ``ref_gini`` / ``ref_top_k_share`` — concentration of reference-target
+        frequency (how unequally references pile onto a few canonical works).
+      - ``canon_spearman_d{Δ}`` for each Δ in ``deltas`` — the top-``top_n``
+        rank stability vs year *t+Δ* (``None`` when *t+Δ* is absent — window
+        edge). PA-1 primary Δ=5, with Δ=1 as a comparability column.
+
+    No age-restriction and no ``counts_by_year``: a reference list is fixed at
+    publication, so recent years are NOT zero-inflated (contrast citation
+    Gini). Targets counted over ALL cited works. Years with papers but zero
+    reference edges are excluded (PA-3 degenerate). Rows sorted by year.
+    """
+    from collections import Counter
+
+    years = np.asarray(publication_years, dtype=np.float64)
+    year_freq: dict[int, Counter[str]] = {}
+    year_papers: dict[int, int] = {}
+    for y, refs in zip(years, referenced_works, strict=True):
+        if not np.isfinite(y):
+            continue
+        yi = int(y)
+        year_papers[yi] = year_papers.get(yi, 0) + 1
+        counter = year_freq.setdefault(yi, Counter())
+        if refs is not None:
+            counter.update(str(w) for w in refs)
+
+    rows: list[dict[str, Any]] = []
+    for yi in sorted(year_freq):
+        if year_papers[yi] < min_papers:
+            continue
+        freq = year_freq[yi]
+        counts = np.array(list(freq.values()), dtype=np.float64)
+        if counts.size == 0:  # papers had no references (PA-3 degenerate)
+            continue
+        row: dict[str, Any] = {
+            "year": yi,
+            "n_papers": year_papers[yi],
+            "n_ref_edges": int(counts.sum()),
+            "n_distinct_targets": int(counts.size),
+            "ref_gini": gini(counts),
+            "ref_top_k_share": top_k_share(counts, k_frac),
+        }
+        for d in deltas:
+            other = year_freq.get(yi + d)
+            row[f"canon_spearman_d{d}"] = (
+                _reference_stability(freq, other, top_n)
+                if other is not None else None
+            )
+        rows.append(row)
     return rows

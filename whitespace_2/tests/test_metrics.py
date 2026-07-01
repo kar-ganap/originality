@@ -15,6 +15,7 @@ import numpy as np
 from whitespace2.canonical_metrics import (
     age_restricted_concentration,
     gini,
+    reference_canonicity,
     top_k_share,
 )
 from whitespace2.semantic_metrics import (
@@ -186,3 +187,101 @@ def test_age_restricted_sorted_and_handles_nan_years() -> None:
         years, cites, snapshot_year=2026, min_age=5,
     )
     assert [r["year"] for r in rows] == [2000, 2005, 2010]
+
+
+# ---------- reference_canonicity (WS-A — Chu-Evans primary canonical, PA-1) ----------
+
+
+def test_reference_canonicity_concentration_matches_base() -> None:
+    """Per-year reference-target concentration == gini/top_k on the freq counts.
+
+    Year 2000: W1 referenced 3×, W2 2×, W3 1× → counts {3,2,1}."""
+    years = np.array([2000, 2000, 2000])
+    refs = [["W1", "W2", "W3"], ["W1", "W2"], ["W1"]]  # W1:3 W2:2 W3:1
+    rows = reference_canonicity(years, refs, top_n=50, deltas=(5,), k_frac=0.5)
+    r = rows[0]
+    counts = np.array([3.0, 2.0, 1.0])
+    assert r["year"] == 2000
+    assert r["n_papers"] == 3
+    assert r["n_ref_edges"] == 6
+    assert r["n_distinct_targets"] == 3
+    assert abs(r["ref_gini"] - gini(counts)) < 1e-12
+    assert abs(r["ref_top_k_share"] - top_k_share(counts, 0.5)) < 1e-12
+
+
+def test_reference_canonicity_no_age_restriction() -> None:
+    """Unlike citation Gini, recent years get a concentration value (a
+    reference list is fixed at publication → no accrual confound)."""
+    years = np.array([2000, 2000, 2024, 2024])
+    refs = [["W1", "W2"], ["W1"], ["W9", "W8"], ["W9"]]
+    rows = reference_canonicity(years, refs, deltas=(5,))
+    got = {r["year"] for r in rows}
+    assert 2024 in got  # the recent year is NOT dropped
+    assert 2000 in got
+
+
+def test_reference_canonicity_counts_all_targets() -> None:
+    """Targets are counted over ALL cited works, incl. cross-field/external
+    ids not otherwise in the corpus (PA-1: the canon a field draws on)."""
+    years = np.array([2000, 2000])
+    refs = [["W_ext_math", "W1"], ["W_ext_math"]]  # external id referenced 2×
+    rows = reference_canonicity(years, refs, k_frac=0.5)
+    r = rows[0]
+    assert r["n_distinct_targets"] == 2  # W_ext_math + W1 both counted
+    assert r["n_ref_edges"] == 3
+
+
+def test_reference_canonicity_stability_high_vs_low() -> None:
+    """A canon stable across Δ=5 → Spearman ≈ 1; a fully-turned-over canon →
+    lower (negative) Spearman."""
+    # Stable: 2000 and 2005 share the same top ranking (W1>W2>W3).
+    stable_years = np.array([2000]*6 + [2005]*6)
+    stable_refs = (
+        [["W1", "W2", "W3"], ["W1", "W2"], ["W1"], ["W1"], ["W2"], ["W3"]]
+        + [["W1", "W2", "W3"], ["W1", "W2"], ["W1"], ["W1"], ["W2"], ["W3"]]
+    )
+    srows = {r["year"]: r for r in
+             reference_canonicity(stable_years, stable_refs, top_n=50, deltas=(5,))}
+    assert abs(srows[2000]["canon_spearman_d5"] - 1.0) < 1e-9
+
+    # Turnover: 2000's canon is {W1,W2}; 2005's is disjoint {W3,W4}.
+    turn_years = np.array([2000, 2000, 2000, 2005, 2005, 2005])
+    turn_refs = [["W1", "W2"], ["W1"], ["W1", "W2"],
+                 ["W3", "W4"], ["W3"], ["W3", "W4"]]
+    trows = {r["year"]: r for r in
+             reference_canonicity(turn_years, turn_refs, top_n=50, deltas=(5,))}
+    assert trows[2000]["canon_spearman_d5"] < srows[2000]["canon_spearman_d5"]
+    assert trows[2000]["canon_spearman_d5"] < 0.0  # anti-correlated canons
+
+
+def test_reference_canonicity_delta_columns_and_edges() -> None:
+    """Δ=5 and Δ=1 columns both produced; years without a t+Δ partner → None."""
+    years = np.array([2000]*2 + [2001]*2 + [2005]*2)
+    refs = [["W1"], ["W1", "W2"]] * 3
+    rows = {r["year"]: r for r in
+            reference_canonicity(years, refs, deltas=(5, 1))}
+    # 2000 has both a +1 (2001) and a +5 (2005) partner.
+    assert rows[2000]["canon_spearman_d1"] is not None
+    assert rows[2000]["canon_spearman_d5"] is not None
+    # 2001 has no +5 (2006 absent) and no +1 (2002 absent).
+    assert rows[2001]["canon_spearman_d5"] is None
+    assert rows[2001]["canon_spearman_d1"] is None
+    # 2005 has neither partner.
+    assert rows[2005]["canon_spearman_d5"] is None
+
+
+def test_reference_canonicity_excludes_zero_reference_years() -> None:
+    """A year whose papers carry no references is excluded (PA-3 degenerate)."""
+    years = np.array([2000, 2000, 2010, 2010])
+    refs = [["W1"], ["W1", "W2"], [], []]  # 2010 papers have empty ref lists
+    rows = reference_canonicity(years, refs, deltas=(5,))
+    got = {r["year"] for r in rows}
+    assert got == {2000}  # 2010 dropped (no reference edges)
+
+
+def test_reference_canonicity_min_papers_and_sorted() -> None:
+    """min_papers filters thin years; rows are year-sorted; None refs safe."""
+    years = np.array([2010, 2000, 2000])
+    refs = [["W5"], ["W1"], None]  # 2010 has 1 paper; None ref list tolerated
+    rows = reference_canonicity(years, refs, deltas=(5,), min_papers=2)
+    assert [r["year"] for r in rows] == [2000]  # 2010 (1 paper) filtered out
