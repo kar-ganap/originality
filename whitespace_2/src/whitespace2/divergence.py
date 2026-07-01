@@ -151,6 +151,75 @@ def standardized_effect(years: Any, values: Any) -> dict[str, Any]:
             "total_change_sd": slope * yr / sd, "n": n}
 
 
+def residual_trend(
+    years: Any,
+    values: Any,
+    controls: Any = (),
+    *,
+    n_perm: int = 10_000,
+    seed: int = 0,
+    alpha: float = 0.01,
+) -> dict[str, Any]:
+    """Partial year-coefficient of ``values ~ 1 + year + controls`` (WS-F).
+
+    The pre-registered "critical second figure": does the semantic trend
+    survive controlling for confounds (publication volume, demographic
+    composition)? Returns the OLS coefficient on ``year`` net of ``controls``
+    (each a per-year series), with a **Freedman-Lane** permutation null (shuffle
+    the reduced-model residuals, add back the reduced fit, refit → the null
+    distribution of the year coefficient — the correct permutation for a partial
+    coefficient when year and the controls are collinear).
+
+    Also returns ``year_vif`` = ``1/(1−R²)`` of regressing year on the controls:
+    year and volume/demographic all rise together, so a high VIF (≳10) means the
+    year effect can't be cleanly separated — the coefficient is then reported
+    but flagged unreliable. Degenerate input → ``significant=False``.
+    """
+    y = np.asarray(values, dtype=np.float64)
+    yr = np.asarray(years, dtype=np.float64)
+    ctrls = [np.asarray(c, dtype=np.float64) for c in controls]
+    mask = ~(np.isnan(y) | np.isnan(yr))
+    for c in ctrls:
+        mask &= ~np.isnan(c)
+    y, yr = y[mask], yr[mask]
+    ctrls = [c[mask] for c in ctrls]
+    n = int(y.size)
+    p = 2 + len(ctrls)
+    if n < p + 1 or float(np.ptp(yr)) == 0.0:
+        return {"year_coef": None, "perm_pvalue": None, "n": n,
+                "year_vif": None, "n_perm": n_perm, "alpha": alpha,
+                "significant": False}
+
+    ones = np.ones(n)
+    x_full = np.column_stack([ones, yr, *ctrls])
+    pinv = np.linalg.pinv(x_full)               # (p, n)
+    year_coef = float((pinv[1] @ y))
+    x_red = np.column_stack([ones, *ctrls]) if ctrls else ones.reshape(-1, 1)
+    beta_red, *_ = np.linalg.lstsq(x_red, y, rcond=None)
+    fitted_red = x_red @ beta_red
+    resid = y - fitted_red
+
+    # VIF of year vs the controls (collinearity diagnostic)
+    if ctrls:
+        b_yr, *_ = np.linalg.lstsq(x_red, yr, rcond=None)
+        ss_res = float(((yr - x_red @ b_yr) ** 2).sum())
+        ss_tot = float(((yr - yr.mean()) ** 2).sum())
+        r2 = 1.0 - ss_res / ss_tot if ss_tot > 0 else 0.0
+        vif = 1.0 / (1.0 - r2) if r2 < 1.0 else float("inf")
+    else:
+        vif = 1.0
+
+    rng = np.random.default_rng(seed)
+    idx = np.argsort(rng.random((n_perm, n)), axis=1)
+    ystar = fitted_red[None, :] + resid[idx]    # (n_perm, n), Freedman-Lane
+    perm_coefs = ystar @ pinv[1]                 # (n_perm,)
+    exceed = int(np.sum(np.abs(perm_coefs) >= abs(year_coef)))
+    perm_p = (1 + exceed) / (n_perm + 1)
+    return {"year_coef": year_coef, "perm_pvalue": float(perm_p), "n": n,
+            "year_vif": float(vif), "n_perm": n_perm, "alpha": alpha,
+            "significant": bool(perm_p < alpha)}
+
+
 def _ratio(numerator: Any, denominator: Any) -> tuple[list[float], list[int]]:
     """Elementwise num/den, dropping positions where den ≤ 0 or is NaN.
 

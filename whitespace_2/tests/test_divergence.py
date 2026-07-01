@@ -12,6 +12,7 @@ from whitespace2.divergence import (
     divergence_test,
     ols_trend,
     permutation_slope_test,
+    residual_trend,
     standardized_effect,
 )
 
@@ -149,6 +150,40 @@ def test_divergence_effect_floor_gates_confirmation() -> None:
     # the effect size is surfaced per ratio metric
     eff = lo["ratio_trends"]["cluster_entropy"]["effect"]["total_change_sd"]
     assert eff is not None and eff < 0
+
+
+def test_residual_trend_recovers_year_effect() -> None:
+    """A genuine year effect (control independent of year) is recovered + sig."""
+    import numpy as np
+    rng = np.random.default_rng(0)
+    x = np.arange(55.0)
+    ctrl = rng.normal(size=55)          # independent of year
+    y = 2.0 * x + 0.1 * rng.normal(size=55)
+    r = residual_trend(x, y, [ctrl], n_perm=2000, seed=1)
+    assert abs(r["year_coef"] - 2.0) < 0.1
+    assert r["significant"] is True
+    assert r["year_vif"] < 2.0          # control ⊥ year → low collinearity
+
+
+def test_residual_trend_year_effect_vanishes_after_control() -> None:
+    """When the trend is entirely explained by a control, the partial year
+    coefficient collapses to ~0 (not significant) — the WS-F question."""
+    import numpy as np
+    rng = np.random.default_rng(2)
+    x = np.arange(55.0)
+    ctrl = x + 3.0 * rng.normal(size=55)      # correlated w/ year, not identical
+    y = 5.0 * ctrl + 0.01 * rng.normal(size=55)   # y driven entirely by ctrl
+    r = residual_trend(x, y, [ctrl], n_perm=2000, seed=1)
+    assert abs(r["year_coef"]) < 0.5
+    assert r["significant"] is False
+
+
+def test_residual_trend_flags_collinearity() -> None:
+    """Perfectly collinear control (= year) → huge VIF (year effect unreliable)."""
+    import numpy as np
+    x = np.arange(55.0)
+    r = residual_trend(x, 2.0 * x, [x], n_perm=200, seed=1)
+    assert r["year_vif"] > 100.0
 
 
 def test_divergence_handles_zero_demographic() -> None:
