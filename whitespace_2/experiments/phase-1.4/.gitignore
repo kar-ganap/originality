@@ -1,0 +1,5 @@
+# Large / regeneratable embed artifacts (data, not code)
+*.npy
+*.parquet
+smoke-100k/scincl-vectors/
+smoke-100k/qwen3-vectors/

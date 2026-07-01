@@ -1,0 +1,76 @@
+{
+  "A1_year_bound": {
+    "corpus_year_range": [
+      1790,
+      2027
+    ],
+    "n_authorcells_pre1970": 16669,
+    "n_authorcells_1970_2024": 2460198,
+    "n_authorcells_post2024": 276368,
+    "pre1970_pct": 0.605,
+    "post2024_by_year": {
+      "2025": 214296,
+      "2026": 62071,
+      "2027": 1
+    }
+  },
+  "A1_headline_2024_vs_2025": {
+    "fs_2024": 0.3187,
+    "fs_2025": 0.3193
+  },
+  "A2_volume_cs": {
+    "1975": 1064,
+    "1985": 2151,
+    "1995": 6449,
+    "2005": 29922,
+    "2015": 62696,
+    "2024": 150061
+  },
+  "A2_volume_physics": {
+    "1975": 1705,
+    "1985": 2873,
+    "1995": 6524,
+    "2005": 14941,
+    "2015": 36703,
+    "2024": 50797
+  },
+  "A2_female_share_cs_latin": {
+    "1975": 0.2242,
+    "1985": 0.2359,
+    "1995": 0.2307,
+    "2005": 0.2577,
+    "2015": 0.2792,
+    "2024": 0.3187
+  },
+  "A2_physics_ge_cs_1975": {
+    "cs_female_share_1975": 0.2242,
+    "physics_female_share_1975": 0.2753,
+    "cs_n_1975": 1058,
+    "physics_n_1975": 1688
+  },
+  "A2_china_cs_authorshare": {
+    "1995": 0.0215,
+    "2005": 0.1546,
+    "2015": 0.1946,
+    "2024": 0.298
+  },
+  "A3_per_cell_h7": {
+    "n_headline_cells_n>=1000": 110,
+    "headline_cells_with_ns>=10": 57,
+    "headline_cells_with_ns<10": 53,
+    "min_ns_in_headline_cell": 0,
+    "median_ns_in_headline_cell": 10
+  },
+  "A3_coverage_overall": {
+    "gender_coverage_mean": 1.0,
+    "country_coverage_mean": 0.8163
+  },
+  "A4_career_length": {
+    "n_authors": 1821598,
+    "p50": 0,
+    "p90": 8,
+    "p99": 27,
+    "n_over_60yr": 253,
+    "pct_over_60yr": 0.0139
+  }
+}
