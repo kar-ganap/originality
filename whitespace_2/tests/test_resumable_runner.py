@@ -516,6 +516,46 @@ def test_run_mapped_rejects_empty(tmp_path: Path) -> None:
         runner.run_mapped([], map_fn=_CountingMap())
 
 
+def test_run_mapped_tolerates_failed_chunks_and_resumes(tmp_path: Path) -> None:
+    """A map_fn that returns exceptions for some chunks (Modal
+    return_exceptions=True) saves the good ones and raises a resume-needed
+    error; a second pass whose map_fn succeeds completes the run.
+
+    This is the production-hardening: on the base-1M Qwen3 embed a single
+    transient chunk failure must NOT discard the concurrently-completed later
+    chunks — the good ones are persisted and only the failed one is re-run.
+    """
+    abstracts = [f"abs {i}" for i in range(500)]  # 5 chunks
+    out_dir = tmp_path / "out"
+    runner = ChunkedEmbedRunner(
+        model_fn=_deterministic_embed, chunk_size=100, output_dir=out_dir,
+    )
+
+    def flaky_map(chunks: list[list[str]]) -> list[Any]:
+        # First dispatch: chunk index 2 "fails" (returns an exception object),
+        # mirroring Modal .map(return_exceptions=True).
+        out: list[Any] = [_deterministic_embed(c) for c in chunks]
+        out[2] = RuntimeError("simulated transient preemption")
+        return out
+
+    with pytest.raises(RuntimeError, match="incomplete"):
+        runner.run_mapped(abstracts, map_fn=flaky_map)
+
+    # The 4 good chunks were persisted; the failed one was not.
+    done = sorted(
+        int(line.strip())
+        for line in (out_dir / "done.txt").read_text().splitlines()
+        if line.strip()
+    )
+    assert done == [0, 1, 3, 4]  # chunk 2 left undone
+
+    # Resume with a clean map_fn → only the missing chunk is re-dispatched.
+    mp2 = _CountingMap()
+    result = runner.run_mapped(abstracts, map_fn=mp2)
+    assert mp2.n_chunks_embedded == 1
+    assert np.array_equal(result, _deterministic_embed(abstracts))
+
+
 def test_run_mapped_shape_mismatch_raises(tmp_path: Path) -> None:
     """A map_fn returning the wrong row count for a chunk is a hard error."""
     abstracts = [f"abs {i}" for i in range(300)]

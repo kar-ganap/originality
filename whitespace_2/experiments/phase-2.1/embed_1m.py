@@ -110,7 +110,11 @@ def _embed_one(
     def map_fn(chunks: list[list[str]]) -> Any:
         # Modal .map is order-preserving (default order_outputs=True): result i
         # ↔ input chunk i, exactly the contract run_mapped requires.
-        return fn.map(chunks)
+        # return_exceptions=True → a chunk whose call exhausts its retries
+        # yields the exception instead of aborting the whole map, so one
+        # transient failure doesn't discard the concurrently-completed chunks;
+        # run_mapped persists the good ones and a resume re-runs only the rest.
+        return fn.map(chunks, return_exceptions=True)
 
     print(f"[{model}] embedding {len(abstracts):,} abstracts "
           f"(A100, chunks of {_CHUNK_SIZE}, Modal .map fan-out) …", flush=True)

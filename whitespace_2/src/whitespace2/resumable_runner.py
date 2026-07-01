@@ -217,6 +217,16 @@ class ChunkedEmbedRunner:
         results zip back onto their chunk ids. (Modal's ``.map`` returns in
         input order by default; do not pass ``order_outputs=False``.)
 
+        **Per-chunk failure tolerance.** An item in the result stream that is a
+        ``BaseException`` (Modal's ``fn.map(..., return_exceptions=True)`` for a
+        call that exhausted its retries) is skipped, not saved — so one
+        transient chunk failure does NOT discard the concurrently-completed
+        later chunks. If any chunk is still incomplete after the pass,
+        ``run_mapped`` raises ``RuntimeError`` naming the count; re-running
+        resumes only the missing chunks (bounded rework). Without
+        ``return_exceptions`` the stream is plain arrays and a failed call
+        propagates out of ``map_fn`` as before (also resumable on re-run).
+
         Cuts the wall-clock of the long-pole Qwen3 bs=1 embed (~10 hrs
         sequential at 1M) by fanning chunks across Modal containers, while
         preserving the SAME resumable chunk-to-disk contract as :meth:`run`:
@@ -258,7 +268,13 @@ class ChunkedEmbedRunner:
                 for cid in todo_ids
             ]
             results = map_fn(todo_chunks)
+            n_failed = 0
             for chunk_id, vectors in zip(todo_ids, results, strict=True):
+                if isinstance(vectors, BaseException):
+                    # A per-chunk failure (return_exceptions=True); leave it
+                    # undone so a resume re-dispatches only this chunk.
+                    n_failed += 1
+                    continue
                 start = chunk_id * self._chunk_size
                 end = min(start + self._chunk_size, n_total)
                 expected_rows = end - start
@@ -269,6 +285,15 @@ class ChunkedEmbedRunner:
                     )
                 np.save(self.chunk_path(chunk_id), vectors)
                 self._atomic_append_done(chunk_id)
+
+            done_after = self._read_done()
+            missing = [c for c in range(n_chunks) if c not in done_after]
+            if missing:
+                raise RuntimeError(
+                    f"{len(missing)} of {n_chunks} chunks still incomplete "
+                    f"after this pass ({n_failed} failed); re-run to resume "
+                    f"the missing chunks",
+                )
 
         # Final concat in chunk_id order
         all_vectors: list[np.ndarray[Any, Any]] = []
