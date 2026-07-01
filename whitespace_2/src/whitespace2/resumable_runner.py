@@ -47,7 +47,7 @@ exception, wrong shape) trigger re-embedding.
 from __future__ import annotations
 
 import os
-from collections.abc import Callable
+from collections.abc import Callable, Iterable
 from pathlib import Path
 from typing import Any
 
@@ -128,17 +128,29 @@ class ChunkedEmbedRunner:
 
     def _detect_output_dim(self, abstracts: list[str], done: set[int]) -> int:
         """Determine output dim from any existing chunk; else probe model_fn."""
+        from_disk = self._output_dim_from_disk(done)
+        if from_disk is not None:
+            return from_disk
+        # No valid existing chunk; probe with the first abstract
+        sample = self._model_fn([abstracts[0]])
+        return int(sample.shape[1])
+
+    def _output_dim_from_disk(self, done: set[int]) -> int | None:
+        """Output dim from the first loadable done chunk, or None if none.
+
+        Unlike :meth:`_detect_output_dim`, never invokes ``model_fn`` — the
+        parallel :meth:`run_mapped` path has no single-item embed to probe
+        with, and on a fresh run there is nothing to validate anyway.
+        """
         for cid in sorted(done):
             path = self.chunk_path(cid)
             if path.exists():
                 try:
                     sample = np.load(path)
-                    return int(sample.shape[1])
                 except (ValueError, OSError, EOFError):
                     continue
-        # No valid existing chunk; probe with the first abstract
-        sample = self._model_fn([abstracts[0]])
-        return int(sample.shape[1])
+                return int(sample.shape[1])
+        return None
 
     def run(
         self, abstracts: list[str],
@@ -181,6 +193,82 @@ class ChunkedEmbedRunner:
 
             np.save(self.chunk_path(chunk_id), vectors)
             self._atomic_append_done(chunk_id)
+
+        # Final concat in chunk_id order
+        all_vectors: list[np.ndarray[Any, Any]] = []
+        for chunk_id in range(n_chunks):
+            v = np.load(self.chunk_path(chunk_id))
+            all_vectors.append(v)
+        return np.concatenate(all_vectors, axis=0)
+
+    def run_mapped(
+        self,
+        abstracts: list[str],
+        map_fn: Callable[
+            [list[list[str]]], Iterable[np.ndarray[Any, Any]],
+        ],
+    ) -> np.ndarray[Any, Any]:
+        """Embed all abstracts, dispatching not-yet-done chunks concurrently.
+
+        ``map_fn`` maps an ordered ``list`` of chunks (each a ``list[str]``)
+        to an **order-preserving** iterable of per-chunk ``(rows, D)`` arrays
+        — Modal's ``fn.map`` is exactly this. Order preservation is REQUIRED:
+        result ``i`` must correspond to the ``i``-th dispatched chunk so that
+        results zip back onto their chunk ids. (Modal's ``.map`` returns in
+        input order by default; do not pass ``order_outputs=False``.)
+
+        Cuts the wall-clock of the long-pole Qwen3 bs=1 embed (~10 hrs
+        sequential at 1M) by fanning chunks across Modal containers, while
+        preserving the SAME resumable chunk-to-disk contract as :meth:`run`:
+        chunks already in ``done.txt`` with a valid file are skipped;
+        missing / corrupt chunks are re-dispatched; the concat is in
+        chunk-id order. As each mapped result returns it is saved + recorded,
+        so an interrupted parallel run resumes with bounded rework.
+
+        Returns ``(len(abstracts), output_dim)`` in input order.
+        """
+        n_total = len(abstracts)
+        if n_total == 0:
+            raise ValueError("no abstracts to embed")
+
+        n_chunks = (n_total + self._chunk_size - 1) // self._chunk_size
+        done = self._read_done()
+        # Disk-only: on a fresh run nothing is done, so nothing to validate;
+        # on resume, existing valid chunks pin the dim for skip-validation.
+        output_dim = self._output_dim_from_disk(done)
+
+        todo_ids: list[int] = []
+        for chunk_id in range(n_chunks):
+            start = chunk_id * self._chunk_size
+            end = min(start + self._chunk_size, n_total)
+            if (
+                chunk_id in done
+                and output_dim is not None
+                and self._chunk_valid(chunk_id, (end - start, output_dim))
+            ):
+                continue
+            todo_ids.append(chunk_id)
+
+        if todo_ids:
+            todo_chunks = [
+                abstracts[
+                    cid * self._chunk_size
+                    : min(cid * self._chunk_size + self._chunk_size, n_total)
+                ]
+                for cid in todo_ids
+            ]
+            results = map_fn(todo_chunks)
+            for chunk_id, vectors in zip(todo_ids, results, strict=True):
+                start = chunk_id * self._chunk_size
+                end = min(start + self._chunk_size, n_total)
+                expected_rows = end - start
+                if vectors.shape[0] != expected_rows:
+                    raise ValueError(
+                        f"map_fn returned {vectors.shape[0]} rows for chunk "
+                        f"{chunk_id}; expected {expected_rows}"
+                    )
+                np.save(self.chunk_path(chunk_id), vectors)
+                self._atomic_append_done(chunk_id)
 
         # Final concat in chunk_id order
         all_vectors: list[np.ndarray[Any, Any]] = []

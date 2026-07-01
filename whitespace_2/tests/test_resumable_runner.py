@@ -366,3 +366,168 @@ def test_runner_handles_uneven_last_chunk(tmp_path: Path) -> None:
     # Last chunk has 50 vectors
     last_chunk = np.load(tmp_path / "out" / "chunk_000010.npy")
     assert last_chunk.shape == (50, _OUTPUT_DIM)
+
+
+# ---------- run_mapped: parallel Modal .map() dispatch (Phase 2.1 WS4) ----------
+#
+# Qwen3 bs=1 at 1M is ~10 hrs sequential; run_mapped fans chunks out across
+# Modal containers via `fn.map` (an ordered map: result i ↔ input chunk i)
+# while preserving the SAME resumable chunk-to-disk contract as run().
+
+
+class _CountingMap:
+    """Wraps a per-chunk embed into an ordered batch map_fn, counting chunks.
+
+    Mirrors Modal's ``fn.map`` contract: takes an ordered list of chunks
+    (each a ``list[str]``) and returns an ordered list of per-chunk arrays.
+    ``self.n_chunks_embedded`` records how many chunks were dispatched —
+    used to assert that a resume only re-dispatches the missing chunks.
+    """
+
+    def __init__(self, per_chunk: Any = _deterministic_embed) -> None:
+        self.per_chunk = per_chunk
+        self.n_chunks_embedded = 0
+        self.batch_calls = 0
+
+    def __call__(
+        self, chunks: list[list[str]],
+    ) -> list[np.ndarray[Any, Any]]:
+        self.batch_calls += 1
+        out: list[np.ndarray[Any, Any]] = []
+        for chunk in chunks:
+            self.n_chunks_embedded += 1
+            out.append(self.per_chunk(chunk))
+        return out
+
+
+def test_run_mapped_clean(tmp_path: Path) -> None:
+    """1000 abstracts × chunk_size=100 = 10 chunks dispatched via map_fn.
+
+    Result must byte-match the sequential embed (ordering preserved) and
+    write the same chunk files + done.txt the sequential path would.
+    """
+    abstracts = [f"abs {i}" for i in range(1000)]
+    runner = ChunkedEmbedRunner(
+        model_fn=_deterministic_embed,  # unused by run_mapped
+        chunk_size=100,
+        output_dir=tmp_path / "out",
+    )
+    mp = _CountingMap()
+    result = runner.run_mapped(abstracts, map_fn=mp)
+
+    assert result.shape == (1000, _OUTPUT_DIM)
+    expected = _deterministic_embed(abstracts)
+    assert np.array_equal(result, expected)
+    assert mp.n_chunks_embedded == 10
+    for cid in range(10):
+        assert (tmp_path / "out" / f"chunk_{cid:06d}.npy").exists()
+    done = sorted(
+        int(line.strip())
+        for line in (tmp_path / "out" / "done.txt").read_text().splitlines()
+        if line.strip()
+    )
+    assert done == list(range(10))
+
+
+def test_run_mapped_uneven_last_chunk(tmp_path: Path) -> None:
+    """1050 abstracts × chunk_size=100 = 10 full + 1 partial (50) via map."""
+    abstracts = [f"abs {i}" for i in range(1050)]
+    runner = ChunkedEmbedRunner(
+        model_fn=_deterministic_embed,
+        chunk_size=100,
+        output_dir=tmp_path / "out",
+    )
+    result = runner.run_mapped(abstracts, map_fn=_CountingMap())
+
+    assert result.shape == (1050, _OUTPUT_DIM)
+    assert np.array_equal(result, _deterministic_embed(abstracts))
+    last_chunk = np.load(tmp_path / "out" / "chunk_000010.npy")
+    assert last_chunk.shape == (50, _OUTPUT_DIM)
+
+
+def test_run_mapped_resume_only_missing(tmp_path: Path) -> None:
+    """A second run_mapped skips valid done chunks; re-dispatches none."""
+    abstracts = [f"abs {i}" for i in range(1000)]
+    out_dir = tmp_path / "out"
+    runner = ChunkedEmbedRunner(
+        model_fn=_deterministic_embed, chunk_size=100, output_dir=out_dir,
+    )
+    runner.run_mapped(abstracts, map_fn=_CountingMap())
+
+    # Re-run: everything is done + valid → map_fn dispatched 0 chunks.
+    mp2 = _CountingMap()
+    result = runner.run_mapped(abstracts, map_fn=mp2)
+    assert mp2.n_chunks_embedded == 0
+    assert mp2.batch_calls == 0  # empty todo → map_fn not called at all
+    assert np.array_equal(result, _deterministic_embed(abstracts))
+
+
+def test_run_mapped_resumes_from_partial_run(tmp_path: Path) -> None:
+    """Sequential run() dies mid-way; run_mapped resumes the remainder.
+
+    Interop: run_mapped shares the done.txt / chunk-file contract with
+    run(), so a preempted sequential run can be finished by a parallel one.
+    """
+    abstracts = [f"abs {i}" for i in range(1000)]
+    out_dir = tmp_path / "out"
+
+    kill = _KillAfterCalls(kill_after=8)  # probe(1) + chunks 0-6 → dies on 7
+    runner1 = ChunkedEmbedRunner(
+        model_fn=kill.wrap(_deterministic_embed),
+        chunk_size=100, output_dir=out_dir,
+    )
+    with pytest.raises(_SimulatedPreemption):
+        runner1.run(abstracts)
+    for cid in range(7):
+        assert (out_dir / f"chunk_{cid:06d}.npy").exists()
+
+    # Parallel resume: only chunks 7-9 remain.
+    mp = _CountingMap()
+    runner2 = ChunkedEmbedRunner(
+        model_fn=_deterministic_embed, chunk_size=100, output_dir=out_dir,
+    )
+    result = runner2.run_mapped(abstracts, map_fn=mp)
+    assert mp.n_chunks_embedded == 3
+    assert np.array_equal(result, _deterministic_embed(abstracts))
+
+
+def test_run_mapped_corrupt_chunk_recovery(tmp_path: Path) -> None:
+    """Corrupt one chunk after a clean map run; re-run re-dispatches only it."""
+    abstracts = [f"abs {i}" for i in range(1000)]
+    out_dir = tmp_path / "out"
+    runner = ChunkedEmbedRunner(
+        model_fn=_deterministic_embed, chunk_size=100, output_dir=out_dir,
+    )
+    runner.run_mapped(abstracts, map_fn=_CountingMap())
+
+    (out_dir / "chunk_000005.npy").write_bytes(b"")  # truncate → np.load fails
+
+    mp2 = _CountingMap()
+    result = runner.run_mapped(abstracts, map_fn=mp2)
+    assert mp2.n_chunks_embedded == 1  # only chunk 5 re-dispatched
+    assert np.array_equal(result, _deterministic_embed(abstracts))
+
+
+def test_run_mapped_rejects_empty(tmp_path: Path) -> None:
+    runner = ChunkedEmbedRunner(
+        model_fn=_deterministic_embed, chunk_size=10, output_dir=tmp_path / "out",
+    )
+    with pytest.raises(ValueError, match="no abstracts"):
+        runner.run_mapped([], map_fn=_CountingMap())
+
+
+def test_run_mapped_shape_mismatch_raises(tmp_path: Path) -> None:
+    """A map_fn returning the wrong row count for a chunk is a hard error."""
+    abstracts = [f"abs {i}" for i in range(300)]
+    runner = ChunkedEmbedRunner(
+        model_fn=_deterministic_embed, chunk_size=100, output_dir=tmp_path / "out",
+    )
+
+    def bad_map(chunks: list[list[str]]) -> list[np.ndarray[Any, Any]]:
+        # Drop a row from the first chunk's output → shape mismatch.
+        out = [_deterministic_embed(c) for c in chunks]
+        out[0] = out[0][:-1]
+        return out
+
+    with pytest.raises(ValueError, match="rows for chunk"):
+        runner.run_mapped(abstracts, map_fn=bad_map)
