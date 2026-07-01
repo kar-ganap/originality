@@ -11,8 +11,8 @@ claim is disconfirmed — a successful null.
 
 ## Current State
 
-- **Current Stage:** Stage 1 — Crawl. Phases 1.1–1.3 COMPLETE;
-  **Phase 1.4 (pre-Stage-2 quality gates) next.**
+- **Current Stage:** Stage 1 — Crawl **CLOSED** (Phases 1.1–1.4
+  complete). **Stage 2 (Walk) next.**
 - **Phase 0.1 (Foundation scoping):** COMPLETE. See
   `docs/phases/phase-0.1-retro.md`.
 - **Phase 0.2 (Pre-registration + Stage-1 prereqs):** COMPLETE
@@ -34,6 +34,14 @@ claim is disconfirmed — a successful null.
   **Headline: CS female share 22.4% (1975) → 31.9% (2025)**, robust
   to §0 filter (v2↔v3 within 1.4pp) + correction axis. See
   `docs/phases/phase-1.3-retro.md`.
+- **Phase 1.4 (Pre-Stage-2 gates + 100K pilot + pre-registration):**
+  COMPLETE 2026-06-30. Sanity gates pass (year-bound 1970–2024;
+  China's CS rise 2%→30% validates the country inference); Stage-2
+  metric code lifted to `src/` (`semantic_metrics`, `canonical_metrics`,
+  `divergence`); 100K mini-Stage-2 pilot de-risked the embed→semantic→
+  divergence chain ($0.22) + surfaced 3 findings; **divergence test
+  PRE-REGISTERED** (`docs/phases/phase-2.0-plan.md`, §5). **Stage 1
+  CLOSED.** See `docs/phases/phase-1.4-retro.md`.
 - **Methodology locks** (per `docs/phases/phase-0.2-plan.md` +
   Phase 0.2 retro):
   - **§0 analytical population**: score≥0.3 + has_abstract +
@@ -56,10 +64,13 @@ claim is disconfirmed — a successful null.
   (sample-based per-region bias estimation, not direct labeling) →
   §9e-style correction; country from affiliations; reusable
   per-region bias kernel `experiments/phase-1.3/v3-confusion-matrix.json`.
-- **Next:** Phase 1.4 — pre-Stage-2 quality gates + transition
-  signoff. First tasks: year-bound the corpus to 1970–2024 (pre-1970
-  mis-dated tail), field-intuition sanity checks at production scale,
-  per-cell H7, then sign off Stage 1 → Stage 2.
+- **Next:** Stage 2 (Walk), per the pre-registered
+  `docs/phases/phase-2.0-plan.md`. First tasks: **S1** full 1M embed
+  (needs a §9 ~$77 pre-commit in `tasks/spend.md`); **S2** career-stage
+  demographic-plurality extension (from `min_year`); **S3** citation-
+  age-robust canonical metric (pilot finding #1); then compute the 3
+  annual series (§11-stratified) and run the pre-registered divergence
+  test on CS + Physics.
 
 ## Constraints
 
