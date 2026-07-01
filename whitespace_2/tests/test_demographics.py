@@ -1996,6 +1996,9 @@ def _make_cell_inputs(
         corr_data["primary_country"] = [
             a.get("primary_country") for a in authors
         ]
+    # Same for min_year (WS2 career-stage): absent unless a fixture supplies it.
+    if any("min_year" in a for a in authors):
+        corr_data["min_year"] = [a.get("min_year") for a in authors]
     corr = pa.table(corr_data)
     corr_path = tmp_path / "corrected.parquet"
     pq.write_table(corr, str(corr_path))
@@ -2379,6 +2382,129 @@ def test_build_coverage_table_handles_missing_country(tmp_path: Path) -> None:
     # Country metrics null/None (or NaN) when the column is absent
     cc = cell["country_coverage_rate"]
     assert cc is None or cc != cc  # None or NaN
+
+
+def test_career_stage_bin_boundaries() -> None:
+    """0-5 / 6-15 / 16+ bins with null/negative → None (WS2)."""
+    from whitespace2.demographics import _career_stage_bin
+
+    assert _career_stage_bin(0) == "0-5"
+    assert _career_stage_bin(5) == "0-5"
+    assert _career_stage_bin(6) == "6-15"
+    assert _career_stage_bin(15) == "6-15"
+    assert _career_stage_bin(16) == "16+"
+    assert _career_stage_bin(40) == "16+"
+    assert _career_stage_bin(-1) is None  # paper predates first pub year (glitch)
+    assert _career_stage_bin(None) is None
+    assert _career_stage_bin(float("nan")) is None
+
+
+def test_build_coverage_table_career_joint_plurality(tmp_path: Path) -> None:
+    """Joint gender × country × career-stage Shannon + Gini-Simpson (WS2).
+
+    Four authors in the 2020-cs-latin cell with known country + min_year.
+    The joint (g, country, career-bin) mass distribution is hand-computable:
+      (male, US, 0-5): 1.0 (John, cs=2) + 0.2 (Ann, cs=2) = 1.2
+      (male, GB, 6-15): 1.0 (Paul, cs=10)
+      (female, US, 16+): 1.0 (Mary, cs=20)
+      (female, US, 0-5): 0.6 (Ann)
+    total 3.8, 4 categories → Gini-Simpson = 1 − Σp² = 0.736842.
+    """
+    ap_path, corr_path, fmap_path = _make_cell_inputs(
+        tmp_path,
+        author_paper_rows=[(f"W{i}", 2020, f"A{i}") for i in range(4)],
+        authors=[
+            {"author_id": "A0", "author_first_name": "John",
+             "corrected_p_male": 1.0, "corrected_p_female": 0.0,
+             "corrected_p_unknown": 0.0, "primary_country": "US",
+             "min_year": 2018},
+            {"author_id": "A1", "author_first_name": "Paul",
+             "corrected_p_male": 1.0, "corrected_p_female": 0.0,
+             "corrected_p_unknown": 0.0, "primary_country": "GB",
+             "min_year": 2010},
+            {"author_id": "A2", "author_first_name": "Mary",
+             "corrected_p_male": 0.0, "corrected_p_female": 1.0,
+             "corrected_p_unknown": 0.0, "primary_country": "US",
+             "min_year": 2000},
+            {"author_id": "A3", "author_first_name": "Ann",
+             "corrected_p_male": 0.2, "corrected_p_female": 0.6,
+             "corrected_p_unknown": 0.2, "primary_country": "US",
+             "min_year": 2018},
+        ],
+        paper_field_rows=[(f"W{i}", "cs") for i in range(4)],
+    )
+    out_path = tmp_path / "coverage.parquet"
+    build_coverage_table(
+        ap_path, corr_path, fmap_path, out_path, n_bootstrap=200,
+    )
+    df = pq.read_table(str(out_path)).to_pandas()
+    cell = df[
+        (df["unit"] == "distinct_authors")
+        & (df["year"] == 2020) & (df["region"] == "latin")
+    ].iloc[0]
+
+    assert cell["n_career_joint_categories"] == 4
+    assert abs(cell["career_joint_coverage_rate"] - 1.0) < 1e-9
+    assert abs(cell["career_joint_gini_simpson"] - 0.736842105) < 1e-6
+    assert cell["career_joint_shannon"] > 0.0
+    # Joint (3 axes) is at least as diverse as gender alone.
+    assert cell["career_joint_shannon"] > cell["gender_shannon"]
+
+
+def test_build_coverage_table_career_partial_coverage(tmp_path: Path) -> None:
+    """Authors missing country OR min_year drop out of the joint (coverage<1)."""
+    ap_path, corr_path, fmap_path = _make_cell_inputs(
+        tmp_path,
+        author_paper_rows=[(f"W{i}", 2020, f"A{i}") for i in range(3)],
+        authors=[
+            {"author_id": "A0", "author_first_name": "John",
+             "corrected_p_male": 1.0, "corrected_p_female": 0.0,
+             "corrected_p_unknown": 0.0, "primary_country": "US",
+             "min_year": 2015},
+            {"author_id": "A1", "author_first_name": "Paul",
+             "corrected_p_male": 1.0, "corrected_p_female": 0.0,
+             "corrected_p_unknown": 0.0, "primary_country": None,
+             "min_year": 2015},  # missing country → excluded
+            {"author_id": "A2", "author_first_name": "Mary",
+             "corrected_p_male": 0.0, "corrected_p_female": 1.0,
+             "corrected_p_unknown": 0.0, "primary_country": "US",
+             "min_year": None},  # missing min_year → excluded
+        ],
+        paper_field_rows=[(f"W{i}", "cs") for i in range(3)],
+    )
+    out_path = tmp_path / "coverage.parquet"
+    build_coverage_table(
+        ap_path, corr_path, fmap_path, out_path, n_bootstrap=100,
+    )
+    df = pq.read_table(str(out_path)).to_pandas()
+    cell = df[(df["unit"] == "distinct_authors") & (df["region"] == "latin")].iloc[0]
+    # Only A0 has both country + career → 1 of 3 authors in the joint.
+    assert abs(cell["career_joint_coverage_rate"] - (1.0 / 3.0)) < 1e-9
+    assert cell["n_career_joint_categories"] == 1
+
+
+def test_build_coverage_table_career_null_when_no_min_year(tmp_path: Path) -> None:
+    """No min_year column → career-joint metrics are null (like missing country)."""
+    ap_path, corr_path, fmap_path = _make_cell_inputs(
+        tmp_path,
+        author_paper_rows=[("W1", 2020, "A0")],
+        authors=[
+            {"author_id": "A0", "author_first_name": "John",
+             "corrected_p_male": 1.0, "corrected_p_female": 0.0,
+             "corrected_p_unknown": 0.0, "primary_country": "US"},
+        ],
+        paper_field_rows=[("W1", "cs")],
+    )
+    out_path = tmp_path / "coverage.parquet"
+    build_coverage_table(
+        ap_path, corr_path, fmap_path, out_path, n_bootstrap=100,
+    )
+    df = pq.read_table(str(out_path)).to_pandas()
+    cell = df[df["unit"] == "distinct_authors"].iloc[0]
+    cs = cell["career_joint_shannon"]
+    assert cs is None or cs != cs  # None or NaN
+    # Gender metrics still produced.
+    assert abs(cell["gender_coverage_rate"] - 1.0) < 1e-9
 
 
 def test_perturb_row_normalized_within_ci_and_renormalized() -> None:
