@@ -62,19 +62,28 @@ audit items so no known gotcha is left unhandled before the headline.
   (a subsampled canon proxy); Δ=1 reported as a comparability column vs
   Chu-Evans's published values (close-read A4).
 
-### PA-2 — Effect-size floor in the decision rule (not p-value alone)
-- **Why:** close-read 04 (PAP 2025) — headline thresholds must sit **above the
-  0.06–0.09σ per-observation noise floor**. The current §5 rule ("negative
-  slope significant at p<0.05") can be cleared by a trivially small slope over
-  ~53 year-points.
-- **Amendment:** the divergence verdict additionally requires the ratio-slope's
-  **standardized effect** (report σ/year AND total σ-change over 1970–2024) to
-  exceed a pre-registered margin above the noise floor. A slope that is
-  significant but below the floor → reported as **"no material divergence"**,
-  not a confirmation. *Proposed threshold (to confirm at sign-off):* total
-  standardized change ≥ **~0.3σ** over the window (≈ close-read 04's 0.02 SD/yr
-  ×54 ≈ 1σ is comfortably above; 0.3σ is a conservative floor ≈ 3–5× the
-  per-obs noise). Applies to both primary semantic ratios.
+### PA-2 — Permutation null + effect-size floor in the decision rule (not p-value alone)
+- **Why (pinned from close-read 04):** PAP 2025's 0.06–0.09σ is a **total
+  standardized contrast** (CD 2015-vs-1995 = +0.06σ; team k=25-vs-k=2 = 0.09σ),
+  in per-(journal-year)-standardized units — the magnitude a measurement
+  artifact alone can manufacture. The literature's own reform: "report effect
+  sizes in σ; **treat anything below ~0.1σ as noise**." A bare p<0.05 slope
+  over ~53 year-points can sit inside that band.
+- **Decision gate — permutation null (data-derived, unit-safe):** shuffle the
+  year labels, recompute the (semantic/demographic) ratio-slope N≥10⁴ times →
+  the null distribution of "slope from noise alone in OUR data." Require the
+  observed slope beyond the **99.5/0.5 percentile** (two-tailed). Replaces the
+  bare p<0.05 and imports none of PAP's units.
+- **Literature-anchored effect-size floor (veto + reporting):** report the
+  slope as SD/year AND **total standardized change over 1970–2024**. A slope
+  that beats the permutation null but whose total change is **< ~0.1σ** (the
+  CD-critique "below = noise" line) → **"no material divergence,"** not a
+  confirmation. Flag whether it also clears the stronger **~1σ** (≈0.02 SD/yr ×
+  window) "substantial divergence" mark (close-read 04's mooted Test-I
+  threshold). A CONFIRMED divergence needs **both** primary semantic ratios to
+  clear the permutation null AND the 0.1σ floor.
+- *(Retires the earlier ad-hoc 0.3σ placeholder — ~3× the literature's own
+  ~0.1σ noise line, anchored to nothing.)*
 
 ### PA-3 — Per-metric degenerate-case exclusion list (pre-registered)
 - **Why:** Holst-derived (close-read 05) — pre-register which degenerate cases
