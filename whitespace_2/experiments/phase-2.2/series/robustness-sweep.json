@@ -1,0 +1,182 @@
+{
+  "cs": {
+    "base_volctrl/cluster_entropy_K50": {
+      "raw_sd": 1.681,
+      "resid_coef": 0.0028,
+      "resid_dir": "up",
+      "resid_sig": false,
+      "vif": 44.3,
+      "n": 55
+    },
+    "base_volctrl/effective_dim": {
+      "raw_sd": 2.418,
+      "resid_coef": 0.044606,
+      "resid_dir": "up",
+      "resid_sig": false,
+      "vif": 44.3,
+      "n": 55
+    },
+    "base_volctrl/mean_pairwise": {
+      "raw_sd": 3.347,
+      "resid_coef": 0.000644,
+      "resid_dir": "up",
+      "resid_sig": true,
+      "vif": 44.3,
+      "n": 55
+    },
+    "scincl_k30/cluster_entropy": {
+      "raw_sd": 1.446,
+      "resid_coef": -0.000264,
+      "resid_dir": "down",
+      "resid_sig": false,
+      "vif": 44.3,
+      "n": 55
+    },
+    "scincl_k100/cluster_entropy": {
+      "raw_sd": 2.693,
+      "resid_coef": 0.003537,
+      "resid_dir": "up",
+      "resid_sig": false,
+      "vif": 44.3,
+      "n": 55
+    },
+    "qwen3_k50/cluster_entropy": {
+      "raw_sd": 0.099,
+      "resid_coef": -0.002604,
+      "resid_dir": "down",
+      "resid_sig": false,
+      "vif": 44.3,
+      "n": 55
+    },
+    "qwen3_k50/effective_dim": {
+      "raw_sd": 2.095,
+      "resid_coef": 0.865365,
+      "resid_dir": "up",
+      "resid_sig": false,
+      "vif": 44.3,
+      "n": 55
+    },
+    "qwen3_k50/mean_pairwise": {
+      "raw_sd": 3.011,
+      "resid_coef": 0.001274,
+      "resid_dir": "up",
+      "resid_sig": false,
+      "vif": 44.3,
+      "n": 55
+    },
+    "clean05/cluster_entropy_K50": {
+      "raw_sd": 0.373,
+      "resid_coef": 0.004107,
+      "resid_dir": "up",
+      "resid_sig": false,
+      "vif": 44.3,
+      "n": 55
+    },
+    "clean05/effective_dim": {
+      "raw_sd": 2.823,
+      "resid_coef": 0.198167,
+      "resid_dir": "up",
+      "resid_sig": false,
+      "vif": 44.3,
+      "n": 55
+    },
+    "clean05/mean_pairwise": {
+      "raw_sd": 3.333,
+      "resid_coef": 0.000482,
+      "resid_dir": "up",
+      "resid_sig": true,
+      "vif": 44.3,
+      "n": 55
+    }
+  },
+  "physics": {
+    "base_volctrl/cluster_entropy_K50": {
+      "raw_sd": 1.933,
+      "resid_coef": -0.008431,
+      "resid_dir": "down",
+      "resid_sig": false,
+      "vif": 60.5,
+      "n": 55
+    },
+    "base_volctrl/effective_dim": {
+      "raw_sd": -2.856,
+      "resid_coef": -0.41143,
+      "resid_dir": "down",
+      "resid_sig": false,
+      "vif": 60.5,
+      "n": 55
+    },
+    "base_volctrl/mean_pairwise": {
+      "raw_sd": 3.268,
+      "resid_coef": 0.000914,
+      "resid_dir": "up",
+      "resid_sig": true,
+      "vif": 60.5,
+      "n": 55
+    },
+    "scincl_k30/cluster_entropy": {
+      "raw_sd": 2.779,
+      "resid_coef": -0.003966,
+      "resid_dir": "down",
+      "resid_sig": false,
+      "vif": 60.5,
+      "n": 55
+    },
+    "scincl_k100/cluster_entropy": {
+      "raw_sd": 0.712,
+      "resid_coef": -0.011603,
+      "resid_dir": "down",
+      "resid_sig": false,
+      "vif": 60.5,
+      "n": 55
+    },
+    "qwen3_k50/cluster_entropy": {
+      "raw_sd": 2.631,
+      "resid_coef": -0.005496,
+      "resid_dir": "down",
+      "resid_sig": false,
+      "vif": 60.5,
+      "n": 55
+    },
+    "qwen3_k50/effective_dim": {
+      "raw_sd": 2.487,
+      "resid_coef": -0.486925,
+      "resid_dir": "down",
+      "resid_sig": false,
+      "vif": 60.5,
+      "n": 55
+    },
+    "qwen3_k50/mean_pairwise": {
+      "raw_sd": 3.252,
+      "resid_coef": 0.001552,
+      "resid_dir": "up",
+      "resid_sig": true,
+      "vif": 60.5,
+      "n": 55
+    },
+    "clean05/cluster_entropy_K50": {
+      "raw_sd": 2.128,
+      "resid_coef": -0.003274,
+      "resid_dir": "down",
+      "resid_sig": false,
+      "vif": 60.5,
+      "n": 55
+    },
+    "clean05/effective_dim": {
+      "raw_sd": -2.765,
+      "resid_coef": -0.350477,
+      "resid_dir": "down",
+      "resid_sig": false,
+      "vif": 60.5,
+      "n": 55
+    },
+    "clean05/mean_pairwise": {
+      "raw_sd": 3.266,
+      "resid_coef": 0.00107,
+      "resid_dir": "up",
+      "resid_sig": true,
+      "vif": 60.5,
+      "n": 55
+    }
+  }
+}
