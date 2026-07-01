@@ -2351,6 +2351,108 @@ def _career_stage_bin(career_stage: Any) -> str | None:
     return "16+"
 
 
+def _joint_plurality(sub: Any, n: int) -> dict[str, Any]:
+    """Joint (gender × country × career-bin) plurality for one cell (WS2/PA-1).
+
+    Each author with a known country AND career-bin spreads their soft
+    corrected male/female mass across that ``(country, career-bin)`` coordinate;
+    unknown-gender mass and authors missing country/career-bin drop out (mirrors
+    ``gender_shannon`` / ``country_shannon``). ``n`` is the cell's author count
+    (for the coverage rate). Shared by :func:`build_coverage_table` (per
+    year×field×region) and :func:`build_joint_plurality_series` (per year×field,
+    the pre-registered demographic denominator) so both compute the identical
+    joint metric.
+    """
+    import numpy as np
+
+    mask = (
+        sub["primary_country"].notna()
+        & (sub["primary_country"].astype(str).str.len() > 0)
+        & sub["career_bin"].notna()
+    )
+    jsub = sub[mask]
+    n_known = int(len(jsub))
+    joint_mass: dict[tuple[str, str, str], float] = {}
+    pmj = jsub["corrected_p_male"].to_numpy()
+    pfj = jsub["corrected_p_female"].to_numpy()
+    cj = jsub["primary_country"].astype(str).to_numpy()
+    sj = jsub["career_bin"].astype(str).to_numpy()
+    for pm_i, pf_i, c_i, s_i in zip(pmj, pfj, cj, sj):
+        if pm_i > 0:
+            km = ("male", c_i, s_i)
+            joint_mass[km] = joint_mass.get(km, 0.0) + float(pm_i)
+        if pf_i > 0:
+            kf = ("female", c_i, s_i)
+            joint_mass[kf] = joint_mass.get(kf, 0.0) + float(pf_i)
+    out: dict[str, Any] = {
+        "career_joint_coverage_rate": (n_known / n if n else 0.0),
+    }
+    if joint_mass:
+        masses = np.array(list(joint_mass.values()), dtype=np.float64)
+        total_mass = float(masses.sum())
+        out["career_joint_shannon"] = _shannon_entropy_mm(masses, total_mass)
+        pj = masses / total_mass
+        out["career_joint_gini_simpson"] = float(1.0 - float((pj**2).sum()))
+        out["n_career_joint_categories"] = int(len(joint_mass))
+    else:
+        out["career_joint_shannon"] = 0.0
+        out["career_joint_gini_simpson"] = 0.0
+        out["n_career_joint_categories"] = 0
+    return out
+
+
+def build_joint_plurality_series(
+    authorships_parquet: str | Path,
+    corrected_per_author_parquet: str | Path,
+    paper_field_parquet: str | Path,
+    *,
+    unit: str = "distinct_authors",
+) -> list[dict[str, Any]]:
+    """Pre-registered demographic denominator: joint plurality per (year, field).
+
+    The divergence test (`phase-2.0-plan.md` §5) needs the joint (gender ×
+    country × career-stage) plurality per **(year, field)** cell — the overall
+    demographic diversity of who publishes, NOT stratified by region (that's
+    :func:`build_coverage_table`'s finer grain, used for the gender
+    bias-correction axis). Joins the three inputs (like :func:`_join_cells`),
+    bins career-stage, dedups to distinct authors (headline unit), and computes
+    the joint MM-Shannon + Gini-Simpson per (year, field) via
+    :func:`_joint_plurality`. Rows sorted by (year, field); null-year rows
+    dropped by the groupby. Requires ``min_year`` + ``primary_country`` in the
+    corrected parquet.
+    """
+    joined = _join_cells(
+        authorships_parquet, corrected_per_author_parquet,
+        paper_field_parquet, region_axis="script",
+    )
+    if "min_year" not in joined.columns or "primary_country" not in joined.columns:
+        raise ValueError(
+            "joint plurality series needs both min_year and primary_country "
+            "in the corrected per-author parquet",
+        )
+    if unit not in ("distinct_authors", "appearances"):
+        raise ValueError(
+            "unit must be 'distinct_authors' or 'appearances', "
+            f"got {unit!r}",
+        )
+    joined = joined.copy()
+    joined["career_bin"] = (
+        joined["year"] - joined["min_year"]
+    ).map(_career_stage_bin)
+    if unit == "distinct_authors":
+        joined = joined.drop_duplicates(subset=["year", "field", "author_id"])
+
+    rows: list[dict[str, Any]] = []
+    for (year, field), sub in joined.groupby(["year", "field"], sort=True):
+        rows.append({
+            "year": int(year),
+            "field": str(field),
+            "n": int(len(sub)),
+            **_joint_plurality(sub, int(len(sub))),
+        })
+    return rows
+
+
 def _ratio_ci(
     numerator_vals: Any,
     denominator_vals: Any,
@@ -2546,45 +2648,14 @@ def build_coverage_table(
                 # coordinate. Unknown-gender mass is not counted (mirrors
                 # gender_shannon); authors missing country or career-bin drop
                 # out (mirrors country_shannon over known countries).
-                mask = (
-                    sub["primary_country"].notna()
-                    & (sub["primary_country"].astype(str).str.len() > 0)
-                    & sub["career_bin"].notna()
-                )
-                jsub = sub[mask]
-                n_joint_known = int(len(jsub))
-                joint_mass: dict[tuple[str, str, str], float] = {}
-                pmj = jsub["corrected_p_male"].to_numpy()
-                pfj = jsub["corrected_p_female"].to_numpy()
-                cj = jsub["primary_country"].astype(str).to_numpy()
-                sj = jsub["career_bin"].astype(str).to_numpy()
-                for pm_i, pf_i, c_i, s_i in zip(pmj, pfj, cj, sj):
-                    if pm_i > 0:
-                        km = ("male", c_i, s_i)
-                        joint_mass[km] = joint_mass.get(km, 0.0) + float(pm_i)
-                    if pf_i > 0:
-                        kf = ("female", c_i, s_i)
-                        joint_mass[kf] = joint_mass.get(kf, 0.0) + float(pf_i)
-                row["career_joint_coverage_rate"] = (
-                    n_joint_known / n if n else 0.0
-                )
-                if joint_mass:
-                    masses = np.array(
-                        list(joint_mass.values()), dtype=np.float64,
-                    )
-                    total_mass = float(masses.sum())
-                    row["career_joint_shannon"] = _shannon_entropy_mm(
-                        masses, total_mass,
-                    )
-                    pj = masses / total_mass
-                    row["career_joint_gini_simpson"] = float(
-                        1.0 - float((pj**2).sum()),
-                    )
-                    row["n_career_joint_categories"] = int(len(joint_mass))
-                else:
-                    row["career_joint_shannon"] = 0.0
-                    row["career_joint_gini_simpson"] = 0.0
-                    row["n_career_joint_categories"] = 0
+                jp = _joint_plurality(sub, n)
+                row["career_joint_coverage_rate"] = jp[
+                    "career_joint_coverage_rate"]
+                row["career_joint_shannon"] = jp["career_joint_shannon"]
+                row["career_joint_gini_simpson"] = jp[
+                    "career_joint_gini_simpson"]
+                row["n_career_joint_categories"] = jp[
+                    "n_career_joint_categories"]
             else:
                 row["career_joint_coverage_rate"] = None
                 row["career_joint_shannon"] = None
