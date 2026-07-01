@@ -11,8 +11,8 @@ claim is disconfirmed — a successful null.
 
 ## Current State
 
-- **Current Stage:** Stage 1 — Crawl **CLOSED** (Phases 1.1–1.4
-  complete). **Stage 2 (Walk) next.**
+- **Current Stage:** Stage 2 — Walk **(Phase 2.1 COMPLETE)**. Stage 1
+  (Crawl) CLOSED. **Phase 2.2 (compute series + run the test) next.**
 - **Phase 0.1 (Foundation scoping):** COMPLETE. See
   `docs/phases/phase-0.1-retro.md`.
 - **Phase 0.2 (Pre-registration + Stage-1 prereqs):** COMPLETE
@@ -42,6 +42,17 @@ claim is disconfirmed — a successful null.
   divergence chain ($0.22) + surfaced 3 findings; **divergence test
   PRE-REGISTERED** (`docs/phases/phase-2.0-plan.md`, §5). **Stage 1
   CLOSED.** See `docs/phases/phase-1.4-retro.md`.
+- **Phase 2.1 (Stage-2 metric machinery + base 1M embed):** COMPLETE
+  2026-07-01. All 6 acceptance gates pass. §11 cluster-fit
+  (`src/whitespace2/cluster_fit.py`, `project_to_clusters ==
+  KMeans.predict`) + production fit on the 1M SciNCL vectors (effective
+  47.4/50 clusters); career-stage joint gender×country×career plurality
+  (MM Shannon + Gini-Simpson) in `build_coverage_table`; age-restricted
+  canonical control (`age_restricted_concentration`, fixed-window dropped);
+  **base 1M v3 embed** SciNCL (norm 23.70) + Qwen3 (norm 1.000), 902,531
+  in-window papers, ~$17.4, via a parallel resumable Modal `.map()` path
+  (`run_mapped`, `return_exceptions=True`). Vectors on Modal volume
+  `ws2-embeddings` `/base-1m/`. See `docs/phases/phase-2.1-retro.md`.
 - **Methodology locks** (per `docs/phases/phase-0.2-plan.md` +
   Phase 0.2 retro):
   - **§0 analytical population**: score≥0.3 + has_abstract +
@@ -64,13 +75,13 @@ claim is disconfirmed — a successful null.
   (sample-based per-region bias estimation, not direct labeling) →
   §9e-style correction; country from affiliations; reusable
   per-region bias kernel `experiments/phase-1.3/v3-confusion-matrix.json`.
-- **Next:** Stage 2 (Walk), per the pre-registered
-  `docs/phases/phase-2.0-plan.md`. First tasks: **S1** full 1M embed
-  (needs a §9 ~$77 pre-commit in `tasks/spend.md`); **S2** career-stage
-  demographic-plurality extension (from `min_year`); **S3** citation-
-  age-robust canonical metric (pilot finding #1); then compute the 3
-  annual series (§11-stratified) and run the pre-registered divergence
-  test on CS + Physics.
+- **Next: Phase 2.2** — compute the 3 annual series (§11-stratified
+  semantic / joint-demographic / age-restricted canonical) from the base
+  1M embeddings (on `ws2-embeddings` `/base-1m/`) and run the
+  pre-registered divergence test (`docs/phases/phase-2.0-plan.md` §5) on
+  CS then Physics. All metric machinery + embeddings are ready (Phase 2.1);
+  Phase 2.2 is execution of the LOCKED test — report divergence / null /
+  mixed honestly.
 
 ## Constraints
 
