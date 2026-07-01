@@ -54,6 +54,14 @@ _MODELS: dict[str, dict[str, Any]] = {
         "norm_band": (0.99, 1.01),   # last-token EOS pooling + L2 normalize
         "s_per_abs": 0.036,
     },
+    "specter2": {
+        "fn": "embed_chunk_specter2",
+        # CLS pooling (base + proximity adapter); not unit-normalized. The band
+        # is a loose finite-nonzero sanity — the pairwise-cosine metric
+        # normalizes internally, so the raw norm is informational only.
+        "norm_band": (1.0, 100.0),
+        "s_per_abs": 0.01,           # BERT-base encoder ≈ SciNCL on A100
+    },
 }
 
 
@@ -156,7 +164,7 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--source", required=True, type=Path)
     ap.add_argument("--outdir", required=True, type=Path)
-    ap.add_argument("--model", choices=["scincl", "qwen3", "both"],
+    ap.add_argument("--model", choices=["scincl", "qwen3", "specter2", "both"],
                     default="both")
     ap.add_argument("--n", type=int, default=None,
                     help="subset size (smoke the .map path); default all 1M")

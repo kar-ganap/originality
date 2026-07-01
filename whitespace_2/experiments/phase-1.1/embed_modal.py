@@ -135,6 +135,34 @@ def embed_chunk_qwen3(abstracts: list[str]) -> np.ndarray[Any, Any]:
     )
 
 
+@app.function(
+    image=embed_image,
+    gpu="A100",
+    volumes={"/cache": hf_cache, "/chunks": chunk_volume},
+    timeout=3600,
+    retries=modal.Retries(
+        max_retries=3, initial_delay=10.0, max_delay=60.0,
+    ),
+)
+def embed_chunk_specter2(abstracts: list[str]) -> np.ndarray[Any, Any]:
+    """Embed a chunk of abstracts via SPECTER2 (base + proximity adapter) on A100.
+
+    Added Phase 2.3 as the retained **third embedding family** (the pre-committed
+    Stage-3 robustness swap; `docs/phases/phase-0.2-scincl-primary-contingency.md`)
+    to adjudicate the subfield test's embedding-sensitive Physics wrinkle. SPECTER2
+    is domain-trained on scientific text. Returns ``(N, 768)`` float32 (CLS
+    pooling); norms are not unit-normalized (the pairwise-cosine metric
+    normalizes internally, so the raw norm is informational only).
+
+    Modal preemptible-by-default; up to 3 retries on preemption.
+    """
+    from whitespace2 import embeddings as emb
+
+    return emb.embed_specter2(
+        abstracts, device="cuda", batch_size=32, dtype="fp16",
+    )
+
+
 # ---------- Phase 1.1 Step 4: smoke test (local entrypoint) ----------
 
 # Wave 4A SciNCL norm band (revalidation measurement); Qwen3 last-token

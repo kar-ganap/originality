@@ -1,0 +1,27 @@
+VERDICT: MIXED / metric-or-definition-dependent (reported honestly)
+
+G1 negative control (canon Gini rises): passes=True  cs=up/True  physics=up/True
+
+eligible subfields: concepts=80, clusters=50
+
+4-spec grid (γ₁ = slope of divergence on canon-concentration, controlling for log size):
+  scincl|concepts   γ₁=+13.0782 [-2.4806, +28.6371]  std=+0.236σ  perm_p=0.0211*  VIF=2.04  n=80
+                    mean_sem_trend=+2.27σ  mean_dem_trend=+3.13σ  corr(canon,logsize)=+0.70  corr(canon,div)=-0.08
+  scincl|clusters   γ₁=+2.0266 [-1.9894, +6.0426]  std=+0.158σ  perm_p=0.2769  VIF=1.21  n=50
+                    mean_sem_trend=+3.09σ  mean_dem_trend=+3.14σ  corr(canon,logsize)=+0.41  corr(canon,div)=+0.20
+  qwen3|concepts    γ₁=-0.9230 [-18.9906, +17.1445]  std=-0.017σ  perm_p=0.8859  VIF=2.04  n=80
+                    mean_sem_trend=+2.31σ  mean_dem_trend=+3.13σ  corr(canon,logsize)=+0.70  corr(canon,div)=-0.10
+  qwen3|clusters    γ₁=-4.8850 [-14.2292, +4.4592]  std=-0.166σ  perm_p=0.2496  VIF=1.21  n=50
+                    mean_sem_trend=+2.71σ  mean_dem_trend=+3.14σ  corr(canon,logsize)=+0.41  corr(canon,div)=-0.11
+  specter2|concepts  γ₁=-35.7911 [-60.5149, -11.0674]  std=-0.432σ  perm_p=0.0001*  VIF=2.04  n=80
+                    mean_sem_trend=-1.35σ  mean_dem_trend=+3.13σ  corr(canon,logsize)=+0.70  corr(canon,div)=-0.38
+  specter2|clusters  γ₁=-37.7103 [-60.3349, -15.0856]  std=-0.466σ  perm_p=0.0013*  VIF=1.21  n=50
+                    mean_sem_trend=-1.52σ  mean_dem_trend=+3.14σ  corr(canon,logsize)=+0.41  corr(canon,div)=-0.49
+
+per-field (concepts):
+  cs/scincl    γ₁=-7.4332 [-27.7151, +12.8486]  std=-0.129σ  perm_p=0.2427  VIF=2.59  n=60
+  cs/qwen3     γ₁=-16.3154 [-45.6179, +12.9871]  std=-0.234σ  perm_p=0.0727  VIF=2.59  n=60
+  cs/specter2  γ₁=-50.6667 [-85.4536, -15.8798]  std=-0.527σ  perm_p=0.0001*  VIF=2.59  n=60
+  physics/scincl    γ₁=+31.6069 [+8.2978, +54.9160]  std=+0.702σ  perm_p=0.0026*  VIF=1.52  n=20
+  physics/qwen3     γ₁=+11.7731 [-4.4346, +27.9808]  std=+0.417σ  perm_p=0.0796  VIF=1.52  n=20
+  physics/specter2  γ₁=-21.2576 [-57.6279, +15.1126]  std=-0.348σ  perm_p=0.1444  VIF=1.52  n=20

@@ -9,6 +9,17 @@ substrate); no Modal downloads, no API, no embed.
 
 ---
 
+## Amendment (execution, 2026-07-01) — SPECTER2 3rd family
+
+The 4-spec grid ran first and flagged a Physics-only positive γ₁ under SciNCL
+that reversed under Qwen3. Per user request ("run a third embedding model"), the
+pre-committed Stage-3 robustness family **SPECTER2** was embedded on the 1M
+sample (~$3, Modal) and added → a **6-spec grid** + an **aggregate 3-family**
+escalation. SPECTER2 adjudicated the Physics wrinkle (refuted) and — after a
+"verify first" pass (adapter active; not drift; ill-conditioned-σ caught) —
+refined (did not overturn) the Phase-2.2 reframing. See
+`docs/phases/phase-2.3-retro.md`.
+
 ## One-line scope
 
 Test the pre-registered **subfield mechanism** (`docs/conceptual.md` line 35:
