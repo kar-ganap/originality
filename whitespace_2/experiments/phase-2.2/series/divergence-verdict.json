@@ -1,0 +1,102 @@
+{
+  "cs": {
+    "field": "cs",
+    "n_years": 55,
+    "year_range": [
+      1970,
+      2024
+    ],
+    "n_degenerate_years": 7,
+    "ratio_verdict_CONFOUNDED": "divergence",
+    "honest_verdict": "null_semantic_rises (both primary semantic metrics RISE in absolute terms; the falling ratio is demographic-denominator-driven, NOT semantic decline \u2014 Claim #13 not supported)",
+    "raw_absolute_trends_sd": {
+      "demographic": 3.2987277440440876,
+      "cluster_entropy": 1.7165093325024225,
+      "effective_dimensionality": 1.9442714412808038,
+      "mean_pairwise_cosine": 3.345390532137415
+    },
+    "substrate_ok": true,
+    "primary_directions": {
+      "cluster_entropy": "down",
+      "effective_dimensionality": "down"
+    },
+    "ratio_trends": {
+      "cluster_entropy": {
+        "slope": -0.015228252424399943,
+        "direction": "down",
+        "perm_pvalue": 9.999000099990002e-05,
+        "perm_significant": true,
+        "total_change_sd": -3.2381370745826805
+      },
+      "effective_dimensionality": {
+        "slope": -0.17830213759763472,
+        "direction": "down",
+        "perm_pvalue": 9.999000099990002e-05,
+        "perm_significant": true,
+        "total_change_sd": -3.2738757827910914
+      },
+      "mean_pairwise_cosine": {
+        "slope": -0.0009396607082736619,
+        "direction": "down",
+        "perm_pvalue": 9.999000099990002e-05,
+        "perm_significant": true,
+        "total_change_sd": -3.1716158792642526
+      }
+    },
+    "negative_control": {
+      "slope": 0.0011616258285163771,
+      "direction": "up",
+      "perm_significant": true
+    }
+  },
+  "physics": {
+    "field": "physics",
+    "n_years": 55,
+    "year_range": [
+      1970,
+      2024
+    ],
+    "n_degenerate_years": 5,
+    "ratio_verdict_CONFOUNDED": "divergence",
+    "honest_verdict": "mixed_absolute (primary semantic metrics disagree in sign)",
+    "raw_absolute_trends_sd": {
+      "demographic": 3.3364955377891063,
+      "cluster_entropy": 1.868993225273412,
+      "effective_dimensionality": -2.963093580189624,
+      "mean_pairwise_cosine": 3.2679620117436823
+    },
+    "substrate_ok": true,
+    "primary_directions": {
+      "cluster_entropy": "down",
+      "effective_dimensionality": "down"
+    },
+    "ratio_trends": {
+      "cluster_entropy": {
+        "slope": -0.007287879784689521,
+        "direction": "down",
+        "perm_pvalue": 9.999000099990002e-05,
+        "perm_significant": true,
+        "total_change_sd": -3.270705852988128
+      },
+      "effective_dimensionality": {
+        "slope": -0.15500078677716309,
+        "direction": "down",
+        "perm_pvalue": 9.999000099990002e-05,
+        "perm_significant": true,
+        "total_change_sd": -3.302066511889639
+      },
+      "mean_pairwise_cosine": {
+        "slope": -0.0003034885834370383,
+        "direction": "down",
+        "perm_pvalue": 9.999000099990002e-05,
+        "perm_significant": true,
+        "total_change_sd": -2.9376667552738547
+      }
+    },
+    "negative_control": {
+      "slope": 0.0012040911293304726,
+      "direction": "up",
+      "perm_significant": true
+    }
+  }
+}

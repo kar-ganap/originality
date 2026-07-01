@@ -1,0 +1,3854 @@
+{
+  "n_cap": 5000,
+  "snapshot": 2026,
+  "fields": {
+    "cs": {
+      "semantic": {
+        "1970": {
+          "cluster_entropy": 3.46544,
+          "effective_dimensionality": 41.4345,
+          "mean_pairwise_cosine": 0.288467,
+          "n": 515,
+          "n_used": 515,
+          "degenerate": true
+        },
+        "1971": {
+          "cluster_entropy": 3.37483,
+          "effective_dimensionality": 40.7087,
+          "mean_pairwise_cosine": 0.280855,
+          "n": 489,
+          "n_used": 489,
+          "degenerate": true
+        },
+        "1972": {
+          "cluster_entropy": 3.4152,
+          "effective_dimensionality": 39.5878,
+          "mean_pairwise_cosine": 0.279412,
+          "n": 519,
+          "n_used": 519,
+          "degenerate": true
+        },
+        "1973": {
+          "cluster_entropy": 3.44138,
+          "effective_dimensionality": 40.7497,
+          "mean_pairwise_cosine": 0.27896,
+          "n": 574,
+          "n_used": 574,
+          "degenerate": true
+        },
+        "1974": {
+          "cluster_entropy": 3.39458,
+          "effective_dimensionality": 41.2061,
+          "mean_pairwise_cosine": 0.284026,
+          "n": 635,
+          "n_used": 635,
+          "degenerate": true
+        },
+        "1975": {
+          "cluster_entropy": 3.41446,
+          "effective_dimensionality": 41.9817,
+          "mean_pairwise_cosine": 0.282156,
+          "n": 658,
+          "n_used": 658,
+          "degenerate": true
+        },
+        "1976": {
+          "cluster_entropy": 3.45342,
+          "effective_dimensionality": 43.8267,
+          "mean_pairwise_cosine": 0.286499,
+          "n": 712,
+          "n_used": 712,
+          "degenerate": true
+        },
+        "1977": {
+          "cluster_entropy": 3.505,
+          "effective_dimensionality": 45.0566,
+          "mean_pairwise_cosine": 0.291237,
+          "n": 806,
+          "n_used": 806,
+          "degenerate": false
+        },
+        "1978": {
+          "cluster_entropy": 3.4622,
+          "effective_dimensionality": 43.0279,
+          "mean_pairwise_cosine": 0.286733,
+          "n": 810,
+          "n_used": 810,
+          "degenerate": false
+        },
+        "1979": {
+          "cluster_entropy": 3.47832,
+          "effective_dimensionality": 44.2262,
+          "mean_pairwise_cosine": 0.287425,
+          "n": 846,
+          "n_used": 846,
+          "degenerate": false
+        },
+        "1980": {
+          "cluster_entropy": 3.47026,
+          "effective_dimensionality": 43.1363,
+          "mean_pairwise_cosine": 0.291413,
+          "n": 908,
+          "n_used": 908,
+          "degenerate": false
+        },
+        "1981": {
+          "cluster_entropy": 3.47448,
+          "effective_dimensionality": 42.7127,
+          "mean_pairwise_cosine": 0.293351,
+          "n": 894,
+          "n_used": 894,
+          "degenerate": false
+        },
+        "1982": {
+          "cluster_entropy": 3.51513,
+          "effective_dimensionality": 43.6601,
+          "mean_pairwise_cosine": 0.295274,
+          "n": 1026,
+          "n_used": 1026,
+          "degenerate": false
+        },
+        "1983": {
+          "cluster_entropy": 3.52588,
+          "effective_dimensionality": 44.5338,
+          "mean_pairwise_cosine": 0.292164,
+          "n": 1090,
+          "n_used": 1090,
+          "degenerate": false
+        },
+        "1984": {
+          "cluster_entropy": 3.50425,
+          "effective_dimensionality": 45.3028,
+          "mean_pairwise_cosine": 0.294406,
+          "n": 1137,
+          "n_used": 1137,
+          "degenerate": false
+        },
+        "1985": {
+          "cluster_entropy": 3.55352,
+          "effective_dimensionality": 44.662,
+          "mean_pairwise_cosine": 0.297323,
+          "n": 1193,
+          "n_used": 1193,
+          "degenerate": false
+        },
+        "1986": {
+          "cluster_entropy": 3.53436,
+          "effective_dimensionality": 44.311,
+          "mean_pairwise_cosine": 0.297896,
+          "n": 1392,
+          "n_used": 1392,
+          "degenerate": false
+        },
+        "1987": {
+          "cluster_entropy": 3.53174,
+          "effective_dimensionality": 44.303,
+          "mean_pairwise_cosine": 0.299799,
+          "n": 1467,
+          "n_used": 1467,
+          "degenerate": false
+        },
+        "1988": {
+          "cluster_entropy": 3.56032,
+          "effective_dimensionality": 45.4376,
+          "mean_pairwise_cosine": 0.303241,
+          "n": 1646,
+          "n_used": 1646,
+          "degenerate": false
+        },
+        "1989": {
+          "cluster_entropy": 3.56284,
+          "effective_dimensionality": 45.8684,
+          "mean_pairwise_cosine": 0.303917,
+          "n": 1925,
+          "n_used": 1925,
+          "degenerate": false
+        },
+        "1990": {
+          "cluster_entropy": 3.53508,
+          "effective_dimensionality": 44.3684,
+          "mean_pairwise_cosine": 0.30455,
+          "n": 2130,
+          "n_used": 2130,
+          "degenerate": false
+        },
+        "1991": {
+          "cluster_entropy": 3.5906,
+          "effective_dimensionality": 46.0787,
+          "mean_pairwise_cosine": 0.307134,
+          "n": 2289,
+          "n_used": 2289,
+          "degenerate": false
+        },
+        "1992": {
+          "cluster_entropy": 3.57037,
+          "effective_dimensionality": 45.1431,
+          "mean_pairwise_cosine": 0.308201,
+          "n": 2660,
+          "n_used": 2660,
+          "degenerate": false
+        },
+        "1993": {
+          "cluster_entropy": 3.5762,
+          "effective_dimensionality": 46.4419,
+          "mean_pairwise_cosine": 0.309648,
+          "n": 2722,
+          "n_used": 2722,
+          "degenerate": false
+        },
+        "1994": {
+          "cluster_entropy": 3.56872,
+          "effective_dimensionality": 46.2163,
+          "mean_pairwise_cosine": 0.31246,
+          "n": 3033,
+          "n_used": 3033,
+          "degenerate": false
+        },
+        "1995": {
+          "cluster_entropy": 3.57481,
+          "effective_dimensionality": 46.5331,
+          "mean_pairwise_cosine": 0.315168,
+          "n": 3336,
+          "n_used": 3336,
+          "degenerate": false
+        },
+        "1996": {
+          "cluster_entropy": 3.59774,
+          "effective_dimensionality": 45.668,
+          "mean_pairwise_cosine": 0.318466,
+          "n": 3566,
+          "n_used": 3566,
+          "degenerate": false
+        },
+        "1997": {
+          "cluster_entropy": 3.60956,
+          "effective_dimensionality": 46.0829,
+          "mean_pairwise_cosine": 0.320523,
+          "n": 3758,
+          "n_used": 3758,
+          "degenerate": false
+        },
+        "1998": {
+          "cluster_entropy": 3.58776,
+          "effective_dimensionality": 46.373,
+          "mean_pairwise_cosine": 0.320921,
+          "n": 4008,
+          "n_used": 4008,
+          "degenerate": false
+        },
+        "1999": {
+          "cluster_entropy": 3.60878,
+          "effective_dimensionality": 46.5853,
+          "mean_pairwise_cosine": 0.323499,
+          "n": 4595,
+          "n_used": 4595,
+          "degenerate": false
+        },
+        "2000": {
+          "cluster_entropy": 3.60103,
+          "effective_dimensionality": 47.7918,
+          "mean_pairwise_cosine": 0.324085,
+          "n": 5285,
+          "n_used": 5000,
+          "degenerate": false
+        },
+        "2001": {
+          "cluster_entropy": 3.5867,
+          "effective_dimensionality": 47.741,
+          "mean_pairwise_cosine": 0.326178,
+          "n": 5674,
+          "n_used": 5000,
+          "degenerate": false
+        },
+        "2002": {
+          "cluster_entropy": 3.51008,
+          "effective_dimensionality": 44.2362,
+          "mean_pairwise_cosine": 0.32681,
+          "n": 15572,
+          "n_used": 5000,
+          "degenerate": false
+        },
+        "2003": {
+          "cluster_entropy": 3.53986,
+          "effective_dimensionality": 45.6682,
+          "mean_pairwise_cosine": 0.330916,
+          "n": 11763,
+          "n_used": 5000,
+          "degenerate": false
+        },
+        "2004": {
+          "cluster_entropy": 3.55747,
+          "effective_dimensionality": 46.7099,
+          "mean_pairwise_cosine": 0.334768,
+          "n": 11740,
+          "n_used": 5000,
+          "degenerate": false
+        },
+        "2005": {
+          "cluster_entropy": 3.56625,
+          "effective_dimensionality": 47.237,
+          "mean_pairwise_cosine": 0.334933,
+          "n": 13888,
+          "n_used": 5000,
+          "degenerate": false
+        },
+        "2006": {
+          "cluster_entropy": 3.55982,
+          "effective_dimensionality": 46.7809,
+          "mean_pairwise_cosine": 0.337946,
+          "n": 15963,
+          "n_used": 5000,
+          "degenerate": false
+        },
+        "2007": {
+          "cluster_entropy": 3.54948,
+          "effective_dimensionality": 46.6902,
+          "mean_pairwise_cosine": 0.337767,
+          "n": 17604,
+          "n_used": 5000,
+          "degenerate": false
+        },
+        "2008": {
+          "cluster_entropy": 3.52991,
+          "effective_dimensionality": 46.3047,
+          "mean_pairwise_cosine": 0.339123,
+          "n": 22772,
+          "n_used": 5000,
+          "degenerate": false
+        },
+        "2009": {
+          "cluster_entropy": 3.5468,
+          "effective_dimensionality": 47.0302,
+          "mean_pairwise_cosine": 0.339153,
+          "n": 20307,
+          "n_used": 5000,
+          "degenerate": false
+        },
+        "2010": {
+          "cluster_entropy": 3.56966,
+          "effective_dimensionality": 47.5112,
+          "mean_pairwise_cosine": 0.342203,
+          "n": 22530,
+          "n_used": 5000,
+          "degenerate": false
+        },
+        "2011": {
+          "cluster_entropy": 3.56154,
+          "effective_dimensionality": 47.9336,
+          "mean_pairwise_cosine": 0.341057,
+          "n": 23021,
+          "n_used": 5000,
+          "degenerate": false
+        },
+        "2012": {
+          "cluster_entropy": 3.58011,
+          "effective_dimensionality": 47.8823,
+          "mean_pairwise_cosine": 0.343179,
+          "n": 23652,
+          "n_used": 5000,
+          "degenerate": false
+        },
+        "2013": {
+          "cluster_entropy": 3.57953,
+          "effective_dimensionality": 47.8355,
+          "mean_pairwise_cosine": 0.344544,
+          "n": 26685,
+          "n_used": 5000,
+          "degenerate": false
+        },
+        "2014": {
+          "cluster_entropy": 3.58583,
+          "effective_dimensionality": 47.9156,
+          "mean_pairwise_cosine": 0.346974,
+          "n": 26793,
+          "n_used": 5000,
+          "degenerate": false
+        },
+        "2015": {
+          "cluster_entropy": 3.60133,
+          "effective_dimensionality": 48.3137,
+          "mean_pairwise_cosine": 0.347928,
+          "n": 28310,
+          "n_used": 5000,
+          "degenerate": false
+        },
+        "2016": {
+          "cluster_entropy": 3.60664,
+          "effective_dimensionality": 48.4773,
+          "mean_pairwise_cosine": 0.350383,
+          "n": 27542,
+          "n_used": 5000,
+          "degenerate": false
+        },
+        "2017": {
+          "cluster_entropy": 3.61108,
+          "effective_dimensionality": 48.1563,
+          "mean_pairwise_cosine": 0.352747,
+          "n": 24919,
+          "n_used": 5000,
+          "degenerate": false
+        },
+        "2018": {
+          "cluster_entropy": 3.59609,
+          "effective_dimensionality": 46.6649,
+          "mean_pairwise_cosine": 0.352038,
+          "n": 27808,
+          "n_used": 5000,
+          "degenerate": false
+        },
+        "2019": {
+          "cluster_entropy": 3.56884,
+          "effective_dimensionality": 46.7369,
+          "mean_pairwise_cosine": 0.354238,
+          "n": 30350,
+          "n_used": 5000,
+          "degenerate": false
+        },
+        "2020": {
+          "cluster_entropy": 3.53362,
+          "effective_dimensionality": 46.2156,
+          "mean_pairwise_cosine": 0.35606,
+          "n": 32749,
+          "n_used": 5000,
+          "degenerate": false
+        },
+        "2021": {
+          "cluster_entropy": 3.50145,
+          "effective_dimensionality": 45.1193,
+          "mean_pairwise_cosine": 0.355613,
+          "n": 35404,
+          "n_used": 5000,
+          "degenerate": false
+        },
+        "2022": {
+          "cluster_entropy": 3.47684,
+          "effective_dimensionality": 44.6397,
+          "mean_pairwise_cosine": 0.353621,
+          "n": 36401,
+          "n_used": 5000,
+          "degenerate": false
+        },
+        "2023": {
+          "cluster_entropy": 3.45591,
+          "effective_dimensionality": 44.3721,
+          "mean_pairwise_cosine": 0.354506,
+          "n": 41775,
+          "n_used": 5000,
+          "degenerate": false
+        },
+        "2024": {
+          "cluster_entropy": 3.43819,
+          "effective_dimensionality": 44.6775,
+          "mean_pairwise_cosine": 0.354761,
+          "n": 45875,
+          "n_used": 5000,
+          "degenerate": false
+        }
+      },
+      "canonical": {
+        "reference_canonicity": [
+          {
+            "year": 1970,
+            "n_papers": 515,
+            "n_ref_edges": 1904,
+            "n_distinct_targets": 1880,
+            "ref_gini": 0.012522349365278185,
+            "ref_top_k_share": 0.11134453781512606,
+            "canon_spearman_d5": -0.7337710335054266,
+            "canon_spearman_d1": -0.6701385027586698
+          },
+          {
+            "year": 1971,
+            "n_papers": 489,
+            "n_ref_edges": 1537,
+            "n_distinct_targets": 1494,
+            "ref_gini": 0.02746313817403645,
+            "ref_top_k_share": 0.12556929082628496,
+            "canon_spearman_d5": -0.7352557328065433,
+            "canon_spearman_d1": -0.697160063415815
+          },
+          {
+            "year": 1972,
+            "n_papers": 519,
+            "n_ref_edges": 1689,
+            "n_distinct_targets": 1666,
+            "ref_gini": 0.013429528116752909,
+            "ref_top_k_share": 0.11249259917110717,
+            "canon_spearman_d5": -0.7595918742812336,
+            "canon_spearman_d1": -0.6795554150434006
+          },
+          {
+            "year": 1973,
+            "n_papers": 574,
+            "n_ref_edges": 1938,
+            "n_distinct_targets": 1893,
+            "ref_gini": 0.0228826315189794,
+            "ref_top_k_share": 0.12125902992776058,
+            "canon_spearman_d5": -0.7793095424959181,
+            "canon_spearman_d1": -0.7108271215312838
+          },
+          {
+            "year": 1974,
+            "n_papers": 635,
+            "n_ref_edges": 1750,
+            "n_distinct_targets": 1710,
+            "ref_gini": 0.022444110275689377,
+            "ref_top_k_share": 0.12057142857142857,
+            "canon_spearman_d5": -0.7714055322416113,
+            "canon_spearman_d1": -0.7674148876647758
+          },
+          {
+            "year": 1975,
+            "n_papers": 658,
+            "n_ref_edges": 2200,
+            "n_distinct_targets": 2136,
+            "ref_gini": 0.028464419475655367,
+            "ref_top_k_share": 0.12636363636363637,
+            "canon_spearman_d5": -0.7107047601121582,
+            "canon_spearman_d1": -0.6476885213664628
+          },
+          {
+            "year": 1976,
+            "n_papers": 712,
+            "n_ref_edges": 2543,
+            "n_distinct_targets": 2496,
+            "ref_gini": 0.018227985067102326,
+            "ref_top_k_share": 0.11679119150609517,
+            "canon_spearman_d5": -0.7080711787838528,
+            "canon_spearman_d1": -0.6935937028241058
+          },
+          {
+            "year": 1977,
+            "n_papers": 806,
+            "n_ref_edges": 3540,
+            "n_distinct_targets": 3440,
+            "ref_gini": 0.027661936670608345,
+            "ref_top_k_share": 0.12542372881355932,
+            "canon_spearman_d5": -0.6814109519909989,
+            "canon_spearman_d1": -0.7449385833138746
+          },
+          {
+            "year": 1978,
+            "n_papers": 810,
+            "n_ref_edges": 3183,
+            "n_distinct_targets": 3100,
+            "ref_gini": 0.025616024647066693,
+            "ref_top_k_share": 0.1234684260131951,
+            "canon_spearman_d5": -0.687653452145863,
+            "canon_spearman_d1": -0.6045957942557656
+          },
+          {
+            "year": 1979,
+            "n_papers": 846,
+            "n_ref_edges": 3680,
+            "n_distinct_targets": 3581,
+            "ref_gini": 0.026445582361011688,
+            "ref_top_k_share": 0.12445652173913044,
+            "canon_spearman_d5": -0.5868252247034768,
+            "canon_spearman_d1": -0.6476547483126817
+          },
+          {
+            "year": 1980,
+            "n_papers": 908,
+            "n_ref_edges": 4265,
+            "n_distinct_targets": 4129,
+            "ref_gini": 0.031166282466652317,
+            "ref_top_k_share": 0.1287221570926143,
+            "canon_spearman_d5": -0.6917929189865917,
+            "canon_spearman_d1": -0.5968865766763838
+          },
+          {
+            "year": 1981,
+            "n_papers": 894,
+            "n_ref_edges": 4263,
+            "n_distinct_targets": 4134,
+            "ref_gini": 0.029638530753876013,
+            "ref_top_k_share": 0.12737508796622096,
+            "canon_spearman_d5": -0.7271532144427282,
+            "canon_spearman_d1": -0.5592710611679719
+          },
+          {
+            "year": 1982,
+            "n_papers": 1026,
+            "n_ref_edges": 4876,
+            "n_distinct_targets": 4690,
+            "ref_gini": 0.036976899167586286,
+            "ref_top_k_share": 0.13433141919606234,
+            "canon_spearman_d5": -0.6798267128178123,
+            "canon_spearman_d1": -0.6662591567350404
+          },
+          {
+            "year": 1983,
+            "n_papers": 1090,
+            "n_ref_edges": 5440,
+            "n_distinct_targets": 5268,
+            "ref_gini": 0.03093113526731872,
+            "ref_top_k_share": 0.12849264705882352,
+            "canon_spearman_d5": -0.6427579238108441,
+            "canon_spearman_d1": -0.5079591112756368
+          },
+          {
+            "year": 1984,
+            "n_papers": 1137,
+            "n_ref_edges": 6180,
+            "n_distinct_targets": 5962,
+            "ref_gini": 0.03448398649917661,
+            "ref_top_k_share": 0.13187702265372167,
+            "canon_spearman_d5": -0.5873499895203117,
+            "canon_spearman_d1": -0.5690291874166429
+          },
+          {
+            "year": 1985,
+            "n_papers": 1193,
+            "n_ref_edges": 6335,
+            "n_distinct_targets": 6115,
+            "ref_gini": 0.03392813742908385,
+            "ref_top_k_share": 0.1313338595106551,
+            "canon_spearman_d5": -0.6036659982558275,
+            "canon_spearman_d1": -0.637861355958383
+          },
+          {
+            "year": 1986,
+            "n_papers": 1392,
+            "n_ref_edges": 7556,
+            "n_distinct_targets": 7226,
+            "ref_gini": 0.042417886295840423,
+            "ref_top_k_share": 0.13935944944415035,
+            "canon_spearman_d5": -0.5543982954319595,
+            "canon_spearman_d1": -0.5190300785304461
+          },
+          {
+            "year": 1987,
+            "n_papers": 1467,
+            "n_ref_edges": 8339,
+            "n_distinct_targets": 8019,
+            "ref_gini": 0.03744697900227689,
+            "ref_top_k_share": 0.13454850701522963,
+            "canon_spearman_d5": -0.5093435454723911,
+            "canon_spearman_d1": -0.507979392430219
+          },
+          {
+            "year": 1988,
+            "n_papers": 1646,
+            "n_ref_edges": 9924,
+            "n_distinct_targets": 9413,
+            "ref_gini": 0.049914439509741726,
+            "ref_top_k_share": 0.14641273679967756,
+            "canon_spearman_d5": -0.36294884478913764,
+            "canon_spearman_d1": -0.27784784901482235
+          },
+          {
+            "year": 1989,
+            "n_papers": 1925,
+            "n_ref_edges": 12588,
+            "n_distinct_targets": 11839,
+            "ref_gini": 0.057453280405229235,
+            "ref_top_k_share": 0.15355894502700984,
+            "canon_spearman_d5": -0.4796155479598733,
+            "canon_spearman_d1": -0.2386800710313105
+          },
+          {
+            "year": 1990,
+            "n_papers": 2130,
+            "n_ref_edges": 12025,
+            "n_distinct_targets": 11300,
+            "ref_gini": 0.0583097087557265,
+            "ref_top_k_share": 0.15426195426195427,
+            "canon_spearman_d5": -0.3022226841214851,
+            "canon_spearman_d1": -0.09649270345242543
+          },
+          {
+            "year": 1991,
+            "n_papers": 2289,
+            "n_ref_edges": 15252,
+            "n_distinct_targets": 14301,
+            "ref_gini": 0.060042036164760226,
+            "ref_top_k_share": 0.15617623918174667,
+            "canon_spearman_d5": -0.18868714992073618,
+            "canon_spearman_d1": -0.19262409750965434
+          },
+          {
+            "year": 1992,
+            "n_papers": 2660,
+            "n_ref_edges": 17204,
+            "n_distinct_targets": 15993,
+            "ref_gini": 0.06736244595966778,
+            "ref_top_k_share": 0.16339223436410139,
+            "canon_spearman_d5": -0.3448192890296926,
+            "canon_spearman_d1": -0.324533918721752
+          },
+          {
+            "year": 1993,
+            "n_papers": 2722,
+            "n_ref_edges": 17669,
+            "n_distinct_targets": 16567,
+            "ref_gini": 0.060089909849478707,
+            "ref_top_k_share": 0.15614918784311507,
+            "canon_spearman_d5": -0.36433442667321403,
+            "canon_spearman_d1": -0.2019884654155104
+          },
+          {
+            "year": 1994,
+            "n_papers": 3033,
+            "n_ref_edges": 19781,
+            "n_distinct_targets": 18390,
+            "ref_gini": 0.06732384922129508,
+            "ref_top_k_share": 0.16328800363985643,
+            "canon_spearman_d5": -0.28148422940673895,
+            "canon_spearman_d1": -0.27088262074974234
+          },
+          {
+            "year": 1995,
+            "n_papers": 3336,
+            "n_ref_edges": 25316,
+            "n_distinct_targets": 21968,
+            "ref_gini": 0.12638178766351071,
+            "ref_top_k_share": 0.21903144256596618,
+            "canon_spearman_d5": -0.4358986566131156,
+            "canon_spearman_d1": -0.20971375819135518
+          },
+          {
+            "year": 1996,
+            "n_papers": 3566,
+            "n_ref_edges": 24561,
+            "n_distinct_targets": 22701,
+            "ref_gini": 0.07274988478758315,
+            "ref_top_k_share": 0.16819347746427263,
+            "canon_spearman_d5": -0.3872754714448217,
+            "canon_spearman_d1": -0.14926649827979052
+          },
+          {
+            "year": 1997,
+            "n_papers": 3758,
+            "n_ref_edges": 23146,
+            "n_distinct_targets": 21396,
+            "ref_gini": 0.07228403515980908,
+            "ref_top_k_share": 0.1680635963017368,
+            "canon_spearman_d5": -0.10672097484044886,
+            "canon_spearman_d1": -0.052218555888146806
+          },
+          {
+            "year": 1998,
+            "n_papers": 4008,
+            "n_ref_edges": 26381,
+            "n_distinct_targets": 24316,
+            "ref_gini": 0.07515955483696501,
+            "ref_top_k_share": 0.17046359122095447,
+            "canon_spearman_d5": -0.3336098795117005,
+            "canon_spearman_d1": -0.02367036768257782
+          },
+          {
+            "year": 1999,
+            "n_papers": 4595,
+            "n_ref_edges": 31847,
+            "n_distinct_targets": 29101,
+            "ref_gini": 0.08243525684970687,
+            "ref_top_k_share": 0.1776305460482934,
+            "canon_spearman_d5": -0.2768053412239717,
+            "canon_spearman_d1": 0.04910085536324217
+          },
+          {
+            "year": 2000,
+            "n_papers": 5000,
+            "n_ref_edges": 34218,
+            "n_distinct_targets": 31503,
+            "ref_gini": 0.07611166018964766,
+            "ref_top_k_share": 0.17143024139341867,
+            "canon_spearman_d5": -0.13122884621156794,
+            "canon_spearman_d1": -0.08096103118054426
+          },
+          {
+            "year": 2001,
+            "n_papers": 5000,
+            "n_ref_edges": 35271,
+            "n_distinct_targets": 31961,
+            "ref_gini": 0.08874913753718783,
+            "ref_top_k_share": 0.18448583822403675,
+            "canon_spearman_d5": -0.27994191082447833,
+            "canon_spearman_d1": -0.18473357622579425
+          },
+          {
+            "year": 2002,
+            "n_papers": 5000,
+            "n_ref_edges": 41714,
+            "n_distinct_targets": 37055,
+            "ref_gini": 0.10620430282280147,
+            "ref_top_k_share": 0.20053219542599607,
+            "canon_spearman_d5": -0.35405690691640346,
+            "canon_spearman_d1": -0.1272084587667063
+          },
+          {
+            "year": 2003,
+            "n_papers": 5000,
+            "n_ref_edges": 40838,
+            "n_distinct_targets": 36966,
+            "ref_gini": 0.09052725162220376,
+            "ref_top_k_share": 0.18534208335373917,
+            "canon_spearman_d5": -0.2471667525459729,
+            "canon_spearman_d1": -0.22290521274578007
+          },
+          {
+            "year": 2004,
+            "n_papers": 5000,
+            "n_ref_edges": 42502,
+            "n_distinct_targets": 38013,
+            "ref_gini": 0.09952320809666104,
+            "ref_top_k_share": 0.19507317302715166,
+            "canon_spearman_d5": -0.2935459334222436,
+            "canon_spearman_d1": 0.1282964241719722
+          },
+          {
+            "year": 2005,
+            "n_papers": 5000,
+            "n_ref_edges": 42162,
+            "n_distinct_targets": 38332,
+            "ref_gini": 0.08703105941556855,
+            "ref_top_k_share": 0.18177505810919786,
+            "canon_spearman_d5": -0.29290442862478056,
+            "canon_spearman_d1": 0.03454871483766739
+          },
+          {
+            "year": 2006,
+            "n_papers": 5000,
+            "n_ref_edges": 47012,
+            "n_distinct_targets": 42943,
+            "ref_gini": 0.08303015091987276,
+            "ref_top_k_share": 0.17791202246235005,
+            "canon_spearman_d5": -0.397413276428361,
+            "canon_spearman_d1": -0.0813222997582277
+          },
+          {
+            "year": 2007,
+            "n_papers": 5000,
+            "n_ref_edges": 45245,
+            "n_distinct_targets": 41544,
+            "ref_gini": 0.07880454792027414,
+            "ref_top_k_share": 0.17363244557409657,
+            "canon_spearman_d5": -0.21415162702302742,
+            "canon_spearman_d1": 0.05721632355664001
+          },
+          {
+            "year": 2008,
+            "n_papers": 5000,
+            "n_ref_edges": 38662,
+            "n_distinct_targets": 35918,
+            "ref_gini": 0.06860291812062891,
+            "ref_top_k_share": 0.16388184780921836,
+            "canon_spearman_d5": -0.34666653848502893,
+            "canon_spearman_d1": -0.06472280523364533
+          },
+          {
+            "year": 2009,
+            "n_papers": 5000,
+            "n_ref_edges": 47421,
+            "n_distinct_targets": 43773,
+            "ref_gini": 0.07425384635118282,
+            "ref_top_k_share": 0.16924991037725903,
+            "canon_spearman_d5": -0.27200085598000723,
+            "canon_spearman_d1": 0.01709733966451412
+          },
+          {
+            "year": 2010,
+            "n_papers": 5000,
+            "n_ref_edges": 48233,
+            "n_distinct_targets": 44676,
+            "ref_gini": 0.07129272930096686,
+            "ref_top_k_share": 0.16637986440818528,
+            "canon_spearman_d5": -0.09392560468771012,
+            "canon_spearman_d1": -0.07552683176656555
+          },
+          {
+            "year": 2011,
+            "n_papers": 5000,
+            "n_ref_edges": 51622,
+            "n_distinct_targets": 48316,
+            "ref_gini": 0.06214420588204095,
+            "ref_top_k_share": 0.1576459648986866,
+            "canon_spearman_d5": -0.3973647974106966,
+            "canon_spearman_d1": -0.07097332065761203
+          },
+          {
+            "year": 2012,
+            "n_papers": 5000,
+            "n_ref_edges": 54326,
+            "n_distinct_targets": 50895,
+            "ref_gini": 0.061182523800664246,
+            "ref_top_k_share": 0.15684939071531126,
+            "canon_spearman_d5": -0.4703049415335381,
+            "canon_spearman_d1": -0.023853471974016344
+          },
+          {
+            "year": 2013,
+            "n_papers": 5000,
+            "n_ref_edges": 53807,
+            "n_distinct_targets": 50308,
+            "ref_gini": 0.06304908451174773,
+            "ref_top_k_share": 0.15852955935101382,
+            "canon_spearman_d5": -0.5346172794923711,
+            "canon_spearman_d1": 0.12294113921323652
+          },
+          {
+            "year": 2014,
+            "n_papers": 5000,
+            "n_ref_edges": 58071,
+            "n_distinct_targets": 54439,
+            "ref_gini": 0.06064138501066352,
+            "ref_top_k_share": 0.15629143634516368,
+            "canon_spearman_d5": -0.6132774671475003,
+            "canon_spearman_d1": 0.07170897022898749
+          },
+          {
+            "year": 2015,
+            "n_papers": 5000,
+            "n_ref_edges": 58988,
+            "n_distinct_targets": 55409,
+            "ref_gini": 0.0588807895150103,
+            "ref_top_k_share": 0.15460771682376076,
+            "canon_spearman_d5": -0.5846777044679027,
+            "canon_spearman_d1": -0.10499550902627264
+          },
+          {
+            "year": 2016,
+            "n_papers": 5000,
+            "n_ref_edges": 62843,
+            "n_distinct_targets": 58885,
+            "ref_gini": 0.06123707884371643,
+            "ref_top_k_share": 0.15669207389844533,
+            "canon_spearman_d5": -0.311127938189904,
+            "canon_spearman_d1": 0.2593433422736091
+          },
+          {
+            "year": 2017,
+            "n_papers": 5000,
+            "n_ref_edges": 76807,
+            "n_distinct_targets": 71409,
+            "ref_gini": 0.06820772465548575,
+            "ref_top_k_share": 0.16325334930409988,
+            "canon_spearman_d5": -0.1695424770102696,
+            "canon_spearman_d1": 0.29852307289335656
+          },
+          {
+            "year": 2018,
+            "n_papers": 5000,
+            "n_ref_edges": 81538,
+            "n_distinct_targets": 75273,
+            "ref_gini": 0.07449693274525648,
+            "ref_top_k_share": 0.169160391473914,
+            "canon_spearman_d5": -0.06424727566908058,
+            "canon_spearman_d1": 0.5442698014999118
+          },
+          {
+            "year": 2019,
+            "n_papers": 5000,
+            "n_ref_edges": 87585,
+            "n_distinct_targets": 79938,
+            "ref_gini": 0.08475275980033126,
+            "ref_top_k_share": 0.17858080721584746,
+            "canon_spearman_d5": -0.08249903595246802,
+            "canon_spearman_d1": 0.6685748568826992
+          },
+          {
+            "year": 2020,
+            "n_papers": 5000,
+            "n_ref_edges": 97808,
+            "n_distinct_targets": 88865,
+            "ref_gini": 0.08875845680741667,
+            "ref_top_k_share": 0.18229592671356126,
+            "canon_spearman_d5": null,
+            "canon_spearman_d1": 0.7328670060118336
+          },
+          {
+            "year": 2021,
+            "n_papers": 5000,
+            "n_ref_edges": 108419,
+            "n_distinct_targets": 98300,
+            "ref_gini": 0.09060015494876006,
+            "ref_top_k_share": 0.18399911454634335,
+            "canon_spearman_d5": null,
+            "canon_spearman_d1": 0.4530691922328633
+          },
+          {
+            "year": 2022,
+            "n_papers": 5000,
+            "n_ref_edges": 98355,
+            "n_distinct_targets": 91404,
+            "ref_gini": 0.06890442156654952,
+            "ref_top_k_share": 0.1636114076559402,
+            "canon_spearman_d5": null,
+            "canon_spearman_d1": 0.5283165563567573
+          },
+          {
+            "year": 2023,
+            "n_papers": 5000,
+            "n_ref_edges": 99210,
+            "n_distinct_targets": 92396,
+            "ref_gini": 0.0669621744759048,
+            "ref_top_k_share": 0.1618183650841649,
+            "canon_spearman_d5": null,
+            "canon_spearman_d1": 0.555405132549951
+          },
+          {
+            "year": 2024,
+            "n_papers": 5000,
+            "n_ref_edges": 85135,
+            "n_distinct_targets": 79889,
+            "ref_gini": 0.060253958272429964,
+            "ref_top_k_share": 0.15545897691901098,
+            "canon_spearman_d5": null,
+            "canon_spearman_d1": null
+          }
+        ],
+        "age_restricted": {
+          "3": [
+            {
+              "year": 1970,
+              "n": 515,
+              "gini": 0.9264638901227515,
+              "top_k_share": 0.883442265795207
+            },
+            {
+              "year": 1971,
+              "n": 489,
+              "gini": 0.8508747568103097,
+              "top_k_share": 0.7418782176460146
+            },
+            {
+              "year": 1972,
+              "n": 519,
+              "gini": 0.88715587116564,
+              "top_k_share": 0.819295823265447
+            },
+            {
+              "year": 1973,
+              "n": 574,
+              "gini": 0.9062306834310023,
+              "top_k_share": 0.8535183349851337
+            },
+            {
+              "year": 1974,
+              "n": 635,
+              "gini": 0.9488719763604838,
+              "top_k_share": 0.9283235678935093
+            },
+            {
+              "year": 1975,
+              "n": 658,
+              "gini": 0.952571629581098,
+              "top_k_share": 0.9286337390437419
+            },
+            {
+              "year": 1976,
+              "n": 712,
+              "gini": 0.8869672065564027,
+              "top_k_share": 0.817090539165819
+            },
+            {
+              "year": 1977,
+              "n": 806,
+              "gini": 0.9105248413576794,
+              "top_k_share": 0.8623098800544083
+            },
+            {
+              "year": 1978,
+              "n": 810,
+              "gini": 0.9056874600502234,
+              "top_k_share": 0.847834234620121
+            },
+            {
+              "year": 1979,
+              "n": 846,
+              "gini": 0.9087245386143301,
+              "top_k_share": 0.864903268116734
+            },
+            {
+              "year": 1980,
+              "n": 908,
+              "gini": 0.9197098553225771,
+              "top_k_share": 0.8781264007171672
+            },
+            {
+              "year": 1981,
+              "n": 894,
+              "gini": 0.9040417536947702,
+              "top_k_share": 0.8531729572791373
+            },
+            {
+              "year": 1982,
+              "n": 1026,
+              "gini": 0.9008691677931209,
+              "top_k_share": 0.8467611491951013
+            },
+            {
+              "year": 1983,
+              "n": 1090,
+              "gini": 0.9107017998990756,
+              "top_k_share": 0.8591414524697265
+            },
+            {
+              "year": 1984,
+              "n": 1137,
+              "gini": 0.8952357139817777,
+              "top_k_share": 0.8344262295081967
+            },
+            {
+              "year": 1985,
+              "n": 1193,
+              "gini": 0.8604501226014718,
+              "top_k_share": 0.7787296090403718
+            },
+            {
+              "year": 1986,
+              "n": 1392,
+              "gini": 0.8780580287602275,
+              "top_k_share": 0.7992802489949423
+            },
+            {
+              "year": 1987,
+              "n": 1467,
+              "gini": 0.9114171777569686,
+              "top_k_share": 0.8572526318485695
+            },
+            {
+              "year": 1988,
+              "n": 1646,
+              "gini": 0.8771837822739601,
+              "top_k_share": 0.8036256915045581
+            },
+            {
+              "year": 1989,
+              "n": 1925,
+              "gini": 0.8857468258584533,
+              "top_k_share": 0.8174286769996694
+            },
+            {
+              "year": 1990,
+              "n": 2130,
+              "gini": 0.8716869415117221,
+              "top_k_share": 0.7944532488114104
+            },
+            {
+              "year": 1991,
+              "n": 2289,
+              "gini": 0.8852850573037536,
+              "top_k_share": 0.8171222609603692
+            },
+            {
+              "year": 1992,
+              "n": 2660,
+              "gini": 0.8863585608123361,
+              "top_k_share": 0.8148306023973129
+            },
+            {
+              "year": 1993,
+              "n": 2722,
+              "gini": 0.8709158869190965,
+              "top_k_share": 0.7879281379641375
+            },
+            {
+              "year": 1994,
+              "n": 3033,
+              "gini": 0.8672563931565898,
+              "top_k_share": 0.7744083564550351
+            },
+            {
+              "year": 1995,
+              "n": 3336,
+              "gini": 0.8972708900397317,
+              "top_k_share": 0.8345202105027433
+            },
+            {
+              "year": 1996,
+              "n": 3566,
+              "gini": 0.900136289868525,
+              "top_k_share": 0.8404771926942702
+            },
+            {
+              "year": 1997,
+              "n": 3758,
+              "gini": 0.8854123209822047,
+              "top_k_share": 0.8145739536434884
+            },
+            {
+              "year": 1998,
+              "n": 4008,
+              "gini": 0.9071323241208389,
+              "top_k_share": 0.8529745965402983
+            },
+            {
+              "year": 1999,
+              "n": 4595,
+              "gini": 0.8915274575606431,
+              "top_k_share": 0.82284026958881
+            },
+            {
+              "year": 2000,
+              "n": 5285,
+              "gini": 0.8907074479725929,
+              "top_k_share": 0.8192830278182496
+            },
+            {
+              "year": 2001,
+              "n": 5674,
+              "gini": 0.902220563508114,
+              "top_k_share": 0.843543000607922
+            },
+            {
+              "year": 2002,
+              "n": 15572,
+              "gini": 0.8506881967779729,
+              "top_k_share": 0.7624033122123844
+            },
+            {
+              "year": 2003,
+              "n": 11763,
+              "gini": 0.897448065388162,
+              "top_k_share": 0.8347811548163387
+            },
+            {
+              "year": 2004,
+              "n": 11740,
+              "gini": 0.8779533801806665,
+              "top_k_share": 0.7996182408426568
+            },
+            {
+              "year": 2005,
+              "n": 13888,
+              "gini": 0.8798581272446815,
+              "top_k_share": 0.8007090241365402
+            },
+            {
+              "year": 2006,
+              "n": 15963,
+              "gini": 0.86322733559613,
+              "top_k_share": 0.7742263919366237
+            },
+            {
+              "year": 2007,
+              "n": 17604,
+              "gini": 0.8990803812366559,
+              "top_k_share": 0.8328289000308371
+            },
+            {
+              "year": 2008,
+              "n": 22772,
+              "gini": 0.8957282521544008,
+              "top_k_share": 0.8267537734818035
+            },
+            {
+              "year": 2009,
+              "n": 20307,
+              "gini": 0.8751589262656547,
+              "top_k_share": 0.792640765901893
+            },
+            {
+              "year": 2010,
+              "n": 22530,
+              "gini": 0.8799297191240594,
+              "top_k_share": 0.801150226559777
+            },
+            {
+              "year": 2011,
+              "n": 23021,
+              "gini": 0.8798811110482292,
+              "top_k_share": 0.7999059154692562
+            },
+            {
+              "year": 2012,
+              "n": 23652,
+              "gini": 0.8671260210637091,
+              "top_k_share": 0.777807651375119
+            },
+            {
+              "year": 2013,
+              "n": 26685,
+              "gini": 0.8723682888968278,
+              "top_k_share": 0.7838323824365684
+            },
+            {
+              "year": 2014,
+              "n": 26793,
+              "gini": 0.8781056318816858,
+              "top_k_share": 0.793036498484261
+            },
+            {
+              "year": 2015,
+              "n": 28310,
+              "gini": 0.8668070382169384,
+              "top_k_share": 0.7738617049825566
+            },
+            {
+              "year": 2016,
+              "n": 27542,
+              "gini": 0.8608895367054146,
+              "top_k_share": 0.7622845440954695
+            },
+            {
+              "year": 2017,
+              "n": 24919,
+              "gini": 0.8670933942869858,
+              "top_k_share": 0.7815396413025579
+            },
+            {
+              "year": 2018,
+              "n": 27808,
+              "gini": 0.8451420962929235,
+              "top_k_share": 0.7450352681682763
+            },
+            {
+              "year": 2019,
+              "n": 30350,
+              "gini": 0.8274692778157833,
+              "top_k_share": 0.7148852056995476
+            },
+            {
+              "year": 2020,
+              "n": 32749,
+              "gini": 0.8261014931863864,
+              "top_k_share": 0.7123574592887321
+            },
+            {
+              "year": 2021,
+              "n": 35404,
+              "gini": 0.8255638358088386,
+              "top_k_share": 0.7090219696376301
+            },
+            {
+              "year": 2022,
+              "n": 36401,
+              "gini": 0.8032495975077047,
+              "top_k_share": 0.6700549789852279
+            },
+            {
+              "year": 2023,
+              "n": 41775,
+              "gini": 0.8142759360044598,
+              "top_k_share": 0.6827300510621012
+            }
+          ],
+          "5": [
+            {
+              "year": 1970,
+              "n": 515,
+              "gini": 0.9264638901227515,
+              "top_k_share": 0.883442265795207
+            },
+            {
+              "year": 1971,
+              "n": 489,
+              "gini": 0.8508747568103097,
+              "top_k_share": 0.7418782176460146
+            },
+            {
+              "year": 1972,
+              "n": 519,
+              "gini": 0.88715587116564,
+              "top_k_share": 0.819295823265447
+            },
+            {
+              "year": 1973,
+              "n": 574,
+              "gini": 0.9062306834310023,
+              "top_k_share": 0.8535183349851337
+            },
+            {
+              "year": 1974,
+              "n": 635,
+              "gini": 0.9488719763604838,
+              "top_k_share": 0.9283235678935093
+            },
+            {
+              "year": 1975,
+              "n": 658,
+              "gini": 0.952571629581098,
+              "top_k_share": 0.9286337390437419
+            },
+            {
+              "year": 1976,
+              "n": 712,
+              "gini": 0.8869672065564027,
+              "top_k_share": 0.817090539165819
+            },
+            {
+              "year": 1977,
+              "n": 806,
+              "gini": 0.9105248413576794,
+              "top_k_share": 0.8623098800544083
+            },
+            {
+              "year": 1978,
+              "n": 810,
+              "gini": 0.9056874600502234,
+              "top_k_share": 0.847834234620121
+            },
+            {
+              "year": 1979,
+              "n": 846,
+              "gini": 0.9087245386143301,
+              "top_k_share": 0.864903268116734
+            },
+            {
+              "year": 1980,
+              "n": 908,
+              "gini": 0.9197098553225771,
+              "top_k_share": 0.8781264007171672
+            },
+            {
+              "year": 1981,
+              "n": 894,
+              "gini": 0.9040417536947702,
+              "top_k_share": 0.8531729572791373
+            },
+            {
+              "year": 1982,
+              "n": 1026,
+              "gini": 0.9008691677931209,
+              "top_k_share": 0.8467611491951013
+            },
+            {
+              "year": 1983,
+              "n": 1090,
+              "gini": 0.9107017998990756,
+              "top_k_share": 0.8591414524697265
+            },
+            {
+              "year": 1984,
+              "n": 1137,
+              "gini": 0.8952357139817777,
+              "top_k_share": 0.8344262295081967
+            },
+            {
+              "year": 1985,
+              "n": 1193,
+              "gini": 0.8604501226014718,
+              "top_k_share": 0.7787296090403718
+            },
+            {
+              "year": 1986,
+              "n": 1392,
+              "gini": 0.8780580287602275,
+              "top_k_share": 0.7992802489949423
+            },
+            {
+              "year": 1987,
+              "n": 1467,
+              "gini": 0.9114171777569686,
+              "top_k_share": 0.8572526318485695
+            },
+            {
+              "year": 1988,
+              "n": 1646,
+              "gini": 0.8771837822739601,
+              "top_k_share": 0.8036256915045581
+            },
+            {
+              "year": 1989,
+              "n": 1925,
+              "gini": 0.8857468258584533,
+              "top_k_share": 0.8174286769996694
+            },
+            {
+              "year": 1990,
+              "n": 2130,
+              "gini": 0.8716869415117221,
+              "top_k_share": 0.7944532488114104
+            },
+            {
+              "year": 1991,
+              "n": 2289,
+              "gini": 0.8852850573037536,
+              "top_k_share": 0.8171222609603692
+            },
+            {
+              "year": 1992,
+              "n": 2660,
+              "gini": 0.8863585608123361,
+              "top_k_share": 0.8148306023973129
+            },
+            {
+              "year": 1993,
+              "n": 2722,
+              "gini": 0.8709158869190965,
+              "top_k_share": 0.7879281379641375
+            },
+            {
+              "year": 1994,
+              "n": 3033,
+              "gini": 0.8672563931565898,
+              "top_k_share": 0.7744083564550351
+            },
+            {
+              "year": 1995,
+              "n": 3336,
+              "gini": 0.8972708900397317,
+              "top_k_share": 0.8345202105027433
+            },
+            {
+              "year": 1996,
+              "n": 3566,
+              "gini": 0.900136289868525,
+              "top_k_share": 0.8404771926942702
+            },
+            {
+              "year": 1997,
+              "n": 3758,
+              "gini": 0.8854123209822047,
+              "top_k_share": 0.8145739536434884
+            },
+            {
+              "year": 1998,
+              "n": 4008,
+              "gini": 0.9071323241208389,
+              "top_k_share": 0.8529745965402983
+            },
+            {
+              "year": 1999,
+              "n": 4595,
+              "gini": 0.8915274575606431,
+              "top_k_share": 0.82284026958881
+            },
+            {
+              "year": 2000,
+              "n": 5285,
+              "gini": 0.8907074479725929,
+              "top_k_share": 0.8192830278182496
+            },
+            {
+              "year": 2001,
+              "n": 5674,
+              "gini": 0.902220563508114,
+              "top_k_share": 0.843543000607922
+            },
+            {
+              "year": 2002,
+              "n": 15572,
+              "gini": 0.8506881967779729,
+              "top_k_share": 0.7624033122123844
+            },
+            {
+              "year": 2003,
+              "n": 11763,
+              "gini": 0.897448065388162,
+              "top_k_share": 0.8347811548163387
+            },
+            {
+              "year": 2004,
+              "n": 11740,
+              "gini": 0.8779533801806665,
+              "top_k_share": 0.7996182408426568
+            },
+            {
+              "year": 2005,
+              "n": 13888,
+              "gini": 0.8798581272446815,
+              "top_k_share": 0.8007090241365402
+            },
+            {
+              "year": 2006,
+              "n": 15963,
+              "gini": 0.86322733559613,
+              "top_k_share": 0.7742263919366237
+            },
+            {
+              "year": 2007,
+              "n": 17604,
+              "gini": 0.8990803812366559,
+              "top_k_share": 0.8328289000308371
+            },
+            {
+              "year": 2008,
+              "n": 22772,
+              "gini": 0.8957282521544008,
+              "top_k_share": 0.8267537734818035
+            },
+            {
+              "year": 2009,
+              "n": 20307,
+              "gini": 0.8751589262656547,
+              "top_k_share": 0.792640765901893
+            },
+            {
+              "year": 2010,
+              "n": 22530,
+              "gini": 0.8799297191240594,
+              "top_k_share": 0.801150226559777
+            },
+            {
+              "year": 2011,
+              "n": 23021,
+              "gini": 0.8798811110482292,
+              "top_k_share": 0.7999059154692562
+            },
+            {
+              "year": 2012,
+              "n": 23652,
+              "gini": 0.8671260210637091,
+              "top_k_share": 0.777807651375119
+            },
+            {
+              "year": 2013,
+              "n": 26685,
+              "gini": 0.8723682888968278,
+              "top_k_share": 0.7838323824365684
+            },
+            {
+              "year": 2014,
+              "n": 26793,
+              "gini": 0.8781056318816858,
+              "top_k_share": 0.793036498484261
+            },
+            {
+              "year": 2015,
+              "n": 28310,
+              "gini": 0.8668070382169384,
+              "top_k_share": 0.7738617049825566
+            },
+            {
+              "year": 2016,
+              "n": 27542,
+              "gini": 0.8608895367054146,
+              "top_k_share": 0.7622845440954695
+            },
+            {
+              "year": 2017,
+              "n": 24919,
+              "gini": 0.8670933942869858,
+              "top_k_share": 0.7815396413025579
+            },
+            {
+              "year": 2018,
+              "n": 27808,
+              "gini": 0.8451420962929235,
+              "top_k_share": 0.7450352681682763
+            },
+            {
+              "year": 2019,
+              "n": 30350,
+              "gini": 0.8274692778157833,
+              "top_k_share": 0.7148852056995476
+            },
+            {
+              "year": 2020,
+              "n": 32749,
+              "gini": 0.8261014931863864,
+              "top_k_share": 0.7123574592887321
+            },
+            {
+              "year": 2021,
+              "n": 35404,
+              "gini": 0.8255638358088386,
+              "top_k_share": 0.7090219696376301
+            }
+          ],
+          "10": [
+            {
+              "year": 1970,
+              "n": 515,
+              "gini": 0.9264638901227515,
+              "top_k_share": 0.883442265795207
+            },
+            {
+              "year": 1971,
+              "n": 489,
+              "gini": 0.8508747568103097,
+              "top_k_share": 0.7418782176460146
+            },
+            {
+              "year": 1972,
+              "n": 519,
+              "gini": 0.88715587116564,
+              "top_k_share": 0.819295823265447
+            },
+            {
+              "year": 1973,
+              "n": 574,
+              "gini": 0.9062306834310023,
+              "top_k_share": 0.8535183349851337
+            },
+            {
+              "year": 1974,
+              "n": 635,
+              "gini": 0.9488719763604838,
+              "top_k_share": 0.9283235678935093
+            },
+            {
+              "year": 1975,
+              "n": 658,
+              "gini": 0.952571629581098,
+              "top_k_share": 0.9286337390437419
+            },
+            {
+              "year": 1976,
+              "n": 712,
+              "gini": 0.8869672065564027,
+              "top_k_share": 0.817090539165819
+            },
+            {
+              "year": 1977,
+              "n": 806,
+              "gini": 0.9105248413576794,
+              "top_k_share": 0.8623098800544083
+            },
+            {
+              "year": 1978,
+              "n": 810,
+              "gini": 0.9056874600502234,
+              "top_k_share": 0.847834234620121
+            },
+            {
+              "year": 1979,
+              "n": 846,
+              "gini": 0.9087245386143301,
+              "top_k_share": 0.864903268116734
+            },
+            {
+              "year": 1980,
+              "n": 908,
+              "gini": 0.9197098553225771,
+              "top_k_share": 0.8781264007171672
+            },
+            {
+              "year": 1981,
+              "n": 894,
+              "gini": 0.9040417536947702,
+              "top_k_share": 0.8531729572791373
+            },
+            {
+              "year": 1982,
+              "n": 1026,
+              "gini": 0.9008691677931209,
+              "top_k_share": 0.8467611491951013
+            },
+            {
+              "year": 1983,
+              "n": 1090,
+              "gini": 0.9107017998990756,
+              "top_k_share": 0.8591414524697265
+            },
+            {
+              "year": 1984,
+              "n": 1137,
+              "gini": 0.8952357139817777,
+              "top_k_share": 0.8344262295081967
+            },
+            {
+              "year": 1985,
+              "n": 1193,
+              "gini": 0.8604501226014718,
+              "top_k_share": 0.7787296090403718
+            },
+            {
+              "year": 1986,
+              "n": 1392,
+              "gini": 0.8780580287602275,
+              "top_k_share": 0.7992802489949423
+            },
+            {
+              "year": 1987,
+              "n": 1467,
+              "gini": 0.9114171777569686,
+              "top_k_share": 0.8572526318485695
+            },
+            {
+              "year": 1988,
+              "n": 1646,
+              "gini": 0.8771837822739601,
+              "top_k_share": 0.8036256915045581
+            },
+            {
+              "year": 1989,
+              "n": 1925,
+              "gini": 0.8857468258584533,
+              "top_k_share": 0.8174286769996694
+            },
+            {
+              "year": 1990,
+              "n": 2130,
+              "gini": 0.8716869415117221,
+              "top_k_share": 0.7944532488114104
+            },
+            {
+              "year": 1991,
+              "n": 2289,
+              "gini": 0.8852850573037536,
+              "top_k_share": 0.8171222609603692
+            },
+            {
+              "year": 1992,
+              "n": 2660,
+              "gini": 0.8863585608123361,
+              "top_k_share": 0.8148306023973129
+            },
+            {
+              "year": 1993,
+              "n": 2722,
+              "gini": 0.8709158869190965,
+              "top_k_share": 0.7879281379641375
+            },
+            {
+              "year": 1994,
+              "n": 3033,
+              "gini": 0.8672563931565898,
+              "top_k_share": 0.7744083564550351
+            },
+            {
+              "year": 1995,
+              "n": 3336,
+              "gini": 0.8972708900397317,
+              "top_k_share": 0.8345202105027433
+            },
+            {
+              "year": 1996,
+              "n": 3566,
+              "gini": 0.900136289868525,
+              "top_k_share": 0.8404771926942702
+            },
+            {
+              "year": 1997,
+              "n": 3758,
+              "gini": 0.8854123209822047,
+              "top_k_share": 0.8145739536434884
+            },
+            {
+              "year": 1998,
+              "n": 4008,
+              "gini": 0.9071323241208389,
+              "top_k_share": 0.8529745965402983
+            },
+            {
+              "year": 1999,
+              "n": 4595,
+              "gini": 0.8915274575606431,
+              "top_k_share": 0.82284026958881
+            },
+            {
+              "year": 2000,
+              "n": 5285,
+              "gini": 0.8907074479725929,
+              "top_k_share": 0.8192830278182496
+            },
+            {
+              "year": 2001,
+              "n": 5674,
+              "gini": 0.902220563508114,
+              "top_k_share": 0.843543000607922
+            },
+            {
+              "year": 2002,
+              "n": 15572,
+              "gini": 0.8506881967779729,
+              "top_k_share": 0.7624033122123844
+            },
+            {
+              "year": 2003,
+              "n": 11763,
+              "gini": 0.897448065388162,
+              "top_k_share": 0.8347811548163387
+            },
+            {
+              "year": 2004,
+              "n": 11740,
+              "gini": 0.8779533801806665,
+              "top_k_share": 0.7996182408426568
+            },
+            {
+              "year": 2005,
+              "n": 13888,
+              "gini": 0.8798581272446815,
+              "top_k_share": 0.8007090241365402
+            },
+            {
+              "year": 2006,
+              "n": 15963,
+              "gini": 0.86322733559613,
+              "top_k_share": 0.7742263919366237
+            },
+            {
+              "year": 2007,
+              "n": 17604,
+              "gini": 0.8990803812366559,
+              "top_k_share": 0.8328289000308371
+            },
+            {
+              "year": 2008,
+              "n": 22772,
+              "gini": 0.8957282521544008,
+              "top_k_share": 0.8267537734818035
+            },
+            {
+              "year": 2009,
+              "n": 20307,
+              "gini": 0.8751589262656547,
+              "top_k_share": 0.792640765901893
+            },
+            {
+              "year": 2010,
+              "n": 22530,
+              "gini": 0.8799297191240594,
+              "top_k_share": 0.801150226559777
+            },
+            {
+              "year": 2011,
+              "n": 23021,
+              "gini": 0.8798811110482292,
+              "top_k_share": 0.7999059154692562
+            },
+            {
+              "year": 2012,
+              "n": 23652,
+              "gini": 0.8671260210637091,
+              "top_k_share": 0.777807651375119
+            },
+            {
+              "year": 2013,
+              "n": 26685,
+              "gini": 0.8723682888968278,
+              "top_k_share": 0.7838323824365684
+            },
+            {
+              "year": 2014,
+              "n": 26793,
+              "gini": 0.8781056318816858,
+              "top_k_share": 0.793036498484261
+            },
+            {
+              "year": 2015,
+              "n": 28310,
+              "gini": 0.8668070382169384,
+              "top_k_share": 0.7738617049825566
+            },
+            {
+              "year": 2016,
+              "n": 27542,
+              "gini": 0.8608895367054146,
+              "top_k_share": 0.7622845440954695
+            }
+          ]
+        }
+      }
+    },
+    "physics": {
+      "semantic": {
+        "1970": {
+          "cluster_entropy": 3.01793,
+          "effective_dimensionality": 32.2139,
+          "mean_pairwise_cosine": 0.229254,
+          "n": 610,
+          "n_used": 610,
+          "degenerate": true
+        },
+        "1971": {
+          "cluster_entropy": 2.82428,
+          "effective_dimensionality": 32.7633,
+          "mean_pairwise_cosine": 0.215896,
+          "n": 633,
+          "n_used": 633,
+          "degenerate": true
+        },
+        "1972": {
+          "cluster_entropy": 2.92399,
+          "effective_dimensionality": 33.2131,
+          "mean_pairwise_cosine": 0.22256,
+          "n": 643,
+          "n_used": 643,
+          "degenerate": true
+        },
+        "1973": {
+          "cluster_entropy": 2.91771,
+          "effective_dimensionality": 34.3711,
+          "mean_pairwise_cosine": 0.22306,
+          "n": 699,
+          "n_used": 699,
+          "degenerate": true
+        },
+        "1974": {
+          "cluster_entropy": 2.89428,
+          "effective_dimensionality": 33.209,
+          "mean_pairwise_cosine": 0.22347,
+          "n": 727,
+          "n_used": 727,
+          "degenerate": true
+        },
+        "1975": {
+          "cluster_entropy": 2.85359,
+          "effective_dimensionality": 33.0618,
+          "mean_pairwise_cosine": 0.217453,
+          "n": 799,
+          "n_used": 799,
+          "degenerate": false
+        },
+        "1976": {
+          "cluster_entropy": 2.87168,
+          "effective_dimensionality": 31.8342,
+          "mean_pairwise_cosine": 0.219514,
+          "n": 795,
+          "n_used": 795,
+          "degenerate": false
+        },
+        "1977": {
+          "cluster_entropy": 2.86442,
+          "effective_dimensionality": 33.1836,
+          "mean_pairwise_cosine": 0.222406,
+          "n": 779,
+          "n_used": 779,
+          "degenerate": false
+        },
+        "1978": {
+          "cluster_entropy": 2.85249,
+          "effective_dimensionality": 33.2856,
+          "mean_pairwise_cosine": 0.21822,
+          "n": 836,
+          "n_used": 836,
+          "degenerate": false
+        },
+        "1979": {
+          "cluster_entropy": 2.86758,
+          "effective_dimensionality": 34.1972,
+          "mean_pairwise_cosine": 0.223293,
+          "n": 841,
+          "n_used": 841,
+          "degenerate": false
+        },
+        "1980": {
+          "cluster_entropy": 2.85032,
+          "effective_dimensionality": 33.4741,
+          "mean_pairwise_cosine": 0.222466,
+          "n": 943,
+          "n_used": 943,
+          "degenerate": false
+        },
+        "1981": {
+          "cluster_entropy": 2.90804,
+          "effective_dimensionality": 33.4359,
+          "mean_pairwise_cosine": 0.223432,
+          "n": 933,
+          "n_used": 933,
+          "degenerate": false
+        },
+        "1982": {
+          "cluster_entropy": 2.8567,
+          "effective_dimensionality": 33.7457,
+          "mean_pairwise_cosine": 0.224855,
+          "n": 914,
+          "n_used": 914,
+          "degenerate": false
+        },
+        "1983": {
+          "cluster_entropy": 2.88694,
+          "effective_dimensionality": 34.0884,
+          "mean_pairwise_cosine": 0.225757,
+          "n": 981,
+          "n_used": 981,
+          "degenerate": false
+        },
+        "1984": {
+          "cluster_entropy": 2.95046,
+          "effective_dimensionality": 34.2737,
+          "mean_pairwise_cosine": 0.230875,
+          "n": 974,
+          "n_used": 974,
+          "degenerate": false
+        },
+        "1985": {
+          "cluster_entropy": 2.9485,
+          "effective_dimensionality": 35.3762,
+          "mean_pairwise_cosine": 0.228518,
+          "n": 1142,
+          "n_used": 1142,
+          "degenerate": false
+        },
+        "1986": {
+          "cluster_entropy": 2.9812,
+          "effective_dimensionality": 35.1041,
+          "mean_pairwise_cosine": 0.231673,
+          "n": 1182,
+          "n_used": 1182,
+          "degenerate": false
+        },
+        "1987": {
+          "cluster_entropy": 2.92973,
+          "effective_dimensionality": 35.3291,
+          "mean_pairwise_cosine": 0.230273,
+          "n": 1308,
+          "n_used": 1308,
+          "degenerate": false
+        },
+        "1988": {
+          "cluster_entropy": 2.94167,
+          "effective_dimensionality": 35.2026,
+          "mean_pairwise_cosine": 0.231333,
+          "n": 1352,
+          "n_used": 1352,
+          "degenerate": false
+        },
+        "1989": {
+          "cluster_entropy": 2.97279,
+          "effective_dimensionality": 35.2709,
+          "mean_pairwise_cosine": 0.234566,
+          "n": 1457,
+          "n_used": 1457,
+          "degenerate": false
+        },
+        "1990": {
+          "cluster_entropy": 3.02261,
+          "effective_dimensionality": 35.6028,
+          "mean_pairwise_cosine": 0.24057,
+          "n": 1557,
+          "n_used": 1557,
+          "degenerate": false
+        },
+        "1991": {
+          "cluster_entropy": 2.9902,
+          "effective_dimensionality": 34.6056,
+          "mean_pairwise_cosine": 0.239116,
+          "n": 1667,
+          "n_used": 1667,
+          "degenerate": false
+        },
+        "1992": {
+          "cluster_entropy": 2.98577,
+          "effective_dimensionality": 33.8667,
+          "mean_pairwise_cosine": 0.237178,
+          "n": 1954,
+          "n_used": 1954,
+          "degenerate": false
+        },
+        "1993": {
+          "cluster_entropy": 2.92438,
+          "effective_dimensionality": 33.1886,
+          "mean_pairwise_cosine": 0.235262,
+          "n": 2240,
+          "n_used": 2240,
+          "degenerate": false
+        },
+        "1994": {
+          "cluster_entropy": 2.95904,
+          "effective_dimensionality": 33.033,
+          "mean_pairwise_cosine": 0.236612,
+          "n": 2374,
+          "n_used": 2374,
+          "degenerate": false
+        },
+        "1995": {
+          "cluster_entropy": 2.94442,
+          "effective_dimensionality": 31.5463,
+          "mean_pairwise_cosine": 0.237947,
+          "n": 2489,
+          "n_used": 2489,
+          "degenerate": false
+        },
+        "1996": {
+          "cluster_entropy": 2.91438,
+          "effective_dimensionality": 31.9562,
+          "mean_pairwise_cosine": 0.238643,
+          "n": 2834,
+          "n_used": 2834,
+          "degenerate": false
+        },
+        "1997": {
+          "cluster_entropy": 2.91026,
+          "effective_dimensionality": 31.284,
+          "mean_pairwise_cosine": 0.239768,
+          "n": 2934,
+          "n_used": 2934,
+          "degenerate": false
+        },
+        "1998": {
+          "cluster_entropy": 2.91573,
+          "effective_dimensionality": 31.7594,
+          "mean_pairwise_cosine": 0.240266,
+          "n": 3291,
+          "n_used": 3291,
+          "degenerate": false
+        },
+        "1999": {
+          "cluster_entropy": 2.93431,
+          "effective_dimensionality": 31.5068,
+          "mean_pairwise_cosine": 0.243485,
+          "n": 3497,
+          "n_used": 3497,
+          "degenerate": false
+        },
+        "2000": {
+          "cluster_entropy": 2.91177,
+          "effective_dimensionality": 32.2129,
+          "mean_pairwise_cosine": 0.241923,
+          "n": 3610,
+          "n_used": 3610,
+          "degenerate": false
+        },
+        "2001": {
+          "cluster_entropy": 2.90198,
+          "effective_dimensionality": 31.0038,
+          "mean_pairwise_cosine": 0.245321,
+          "n": 3911,
+          "n_used": 3911,
+          "degenerate": false
+        },
+        "2002": {
+          "cluster_entropy": 3.00152,
+          "effective_dimensionality": 32.2259,
+          "mean_pairwise_cosine": 0.251514,
+          "n": 4651,
+          "n_used": 4651,
+          "degenerate": false
+        },
+        "2003": {
+          "cluster_entropy": 2.9854,
+          "effective_dimensionality": 31.9748,
+          "mean_pairwise_cosine": 0.251486,
+          "n": 4760,
+          "n_used": 4760,
+          "degenerate": false
+        },
+        "2004": {
+          "cluster_entropy": 2.9971,
+          "effective_dimensionality": 31.2774,
+          "mean_pairwise_cosine": 0.256206,
+          "n": 4951,
+          "n_used": 4951,
+          "degenerate": false
+        },
+        "2005": {
+          "cluster_entropy": 3.02292,
+          "effective_dimensionality": 31.4817,
+          "mean_pairwise_cosine": 0.257752,
+          "n": 5339,
+          "n_used": 5000,
+          "degenerate": false
+        },
+        "2006": {
+          "cluster_entropy": 3.04972,
+          "effective_dimensionality": 31.1159,
+          "mean_pairwise_cosine": 0.263241,
+          "n": 5869,
+          "n_used": 5000,
+          "degenerate": false
+        },
+        "2007": {
+          "cluster_entropy": 3.07186,
+          "effective_dimensionality": 29.5719,
+          "mean_pairwise_cosine": 0.262897,
+          "n": 6343,
+          "n_used": 5000,
+          "degenerate": false
+        },
+        "2008": {
+          "cluster_entropy": 3.07033,
+          "effective_dimensionality": 29.3625,
+          "mean_pairwise_cosine": 0.267166,
+          "n": 6764,
+          "n_used": 5000,
+          "degenerate": false
+        },
+        "2009": {
+          "cluster_entropy": 3.11888,
+          "effective_dimensionality": 27.9643,
+          "mean_pairwise_cosine": 0.271312,
+          "n": 7173,
+          "n_used": 5000,
+          "degenerate": false
+        },
+        "2010": {
+          "cluster_entropy": 3.11266,
+          "effective_dimensionality": 27.1153,
+          "mean_pairwise_cosine": 0.273888,
+          "n": 7817,
+          "n_used": 5000,
+          "degenerate": false
+        },
+        "2011": {
+          "cluster_entropy": 3.12203,
+          "effective_dimensionality": 26.6863,
+          "mean_pairwise_cosine": 0.274925,
+          "n": 8118,
+          "n_used": 5000,
+          "degenerate": false
+        },
+        "2012": {
+          "cluster_entropy": 3.08666,
+          "effective_dimensionality": 26.0111,
+          "mean_pairwise_cosine": 0.275147,
+          "n": 8994,
+          "n_used": 5000,
+          "degenerate": false
+        },
+        "2013": {
+          "cluster_entropy": 3.07647,
+          "effective_dimensionality": 24.7726,
+          "mean_pairwise_cosine": 0.274529,
+          "n": 9819,
+          "n_used": 5000,
+          "degenerate": false
+        },
+        "2014": {
+          "cluster_entropy": 3.0704,
+          "effective_dimensionality": 23.6608,
+          "mean_pairwise_cosine": 0.277686,
+          "n": 9965,
+          "n_used": 5000,
+          "degenerate": false
+        },
+        "2015": {
+          "cluster_entropy": 3.06987,
+          "effective_dimensionality": 22.8753,
+          "mean_pairwise_cosine": 0.278979,
+          "n": 11054,
+          "n_used": 5000,
+          "degenerate": false
+        },
+        "2016": {
+          "cluster_entropy": 3.00689,
+          "effective_dimensionality": 21.4296,
+          "mean_pairwise_cosine": 0.275984,
+          "n": 12509,
+          "n_used": 5000,
+          "degenerate": false
+        },
+        "2017": {
+          "cluster_entropy": 2.9492,
+          "effective_dimensionality": 19.9477,
+          "mean_pairwise_cosine": 0.276198,
+          "n": 12088,
+          "n_used": 5000,
+          "degenerate": false
+        },
+        "2018": {
+          "cluster_entropy": 2.92207,
+          "effective_dimensionality": 20.7693,
+          "mean_pairwise_cosine": 0.279406,
+          "n": 12135,
+          "n_used": 5000,
+          "degenerate": false
+        },
+        "2019": {
+          "cluster_entropy": 2.9062,
+          "effective_dimensionality": 19.7911,
+          "mean_pairwise_cosine": 0.279378,
+          "n": 12398,
+          "n_used": 5000,
+          "degenerate": false
+        },
+        "2020": {
+          "cluster_entropy": 2.95112,
+          "effective_dimensionality": 20.6043,
+          "mean_pairwise_cosine": 0.281013,
+          "n": 11510,
+          "n_used": 5000,
+          "degenerate": false
+        },
+        "2021": {
+          "cluster_entropy": 2.93792,
+          "effective_dimensionality": 20.8756,
+          "mean_pairwise_cosine": 0.282144,
+          "n": 11287,
+          "n_used": 5000,
+          "degenerate": false
+        },
+        "2022": {
+          "cluster_entropy": 2.9212,
+          "effective_dimensionality": 19.9727,
+          "mean_pairwise_cosine": 0.282996,
+          "n": 11189,
+          "n_used": 5000,
+          "degenerate": false
+        },
+        "2023": {
+          "cluster_entropy": 2.93201,
+          "effective_dimensionality": 20.5718,
+          "mean_pairwise_cosine": 0.28172,
+          "n": 11787,
+          "n_used": 5000,
+          "degenerate": false
+        },
+        "2024": {
+          "cluster_entropy": 3.05901,
+          "effective_dimensionality": 23.7317,
+          "mean_pairwise_cosine": 0.282415,
+          "n": 9384,
+          "n_used": 5000,
+          "degenerate": false
+        }
+      },
+      "canonical": {
+        "reference_canonicity": [
+          {
+            "year": 1970,
+            "n_papers": 610,
+            "n_ref_edges": 5488,
+            "n_distinct_targets": 5234,
+            "ref_gini": 0.044634710699608116,
+            "ref_top_k_share": 0.14176384839650147,
+            "canon_spearman_d5": -0.694953873824178,
+            "canon_spearman_d1": -0.5309100501508918
+          },
+          {
+            "year": 1971,
+            "n_papers": 633,
+            "n_ref_edges": 5083,
+            "n_distinct_targets": 4862,
+            "ref_gini": 0.04193647483853602,
+            "ref_top_k_share": 0.13928782215227228,
+            "canon_spearman_d5": -0.6271752701227261,
+            "canon_spearman_d1": -0.5832058720041042
+          },
+          {
+            "year": 1972,
+            "n_papers": 643,
+            "n_ref_edges": 5143,
+            "n_distinct_targets": 4912,
+            "ref_gini": 0.043401430805351415,
+            "ref_top_k_share": 0.14057942834921253,
+            "canon_spearman_d5": -0.6935573111183403,
+            "canon_spearman_d1": -0.5264118535214608
+          },
+          {
+            "year": 1973,
+            "n_papers": 699,
+            "n_ref_edges": 5994,
+            "n_distinct_targets": 5667,
+            "ref_gini": 0.05217599223834157,
+            "ref_top_k_share": 0.14914914914914915,
+            "canon_spearman_d5": -0.6545775822264248,
+            "canon_spearman_d1": -0.5504826722336987
+          },
+          {
+            "year": 1974,
+            "n_papers": 727,
+            "n_ref_edges": 5516,
+            "n_distinct_targets": 5278,
+            "ref_gini": 0.04175259488329908,
+            "ref_top_k_share": 0.13886874546773023,
+            "canon_spearman_d5": -0.6724573852887801,
+            "canon_spearman_d1": -0.6256291498713318
+          },
+          {
+            "year": 1975,
+            "n_papers": 799,
+            "n_ref_edges": 6275,
+            "n_distinct_targets": 5971,
+            "ref_gini": 0.04687175264775756,
+            "ref_top_k_share": 0.1437450199203187,
+            "canon_spearman_d5": -0.5547946932081853,
+            "canon_spearman_d1": -0.3831785613652818
+          },
+          {
+            "year": 1976,
+            "n_papers": 795,
+            "n_ref_edges": 5914,
+            "n_distinct_targets": 5649,
+            "ref_gini": 0.04332339385323114,
+            "ref_top_k_share": 0.1403449442002029,
+            "canon_spearman_d5": -0.5887274065032246,
+            "canon_spearman_d1": -0.5590053192360205
+          },
+          {
+            "year": 1977,
+            "n_papers": 779,
+            "n_ref_edges": 6209,
+            "n_distinct_targets": 5892,
+            "ref_gini": 0.04923630994886552,
+            "ref_top_k_share": 0.14607827347398938,
+            "canon_spearman_d5": -0.5466739805951155,
+            "canon_spearman_d1": -0.5394910690185133
+          },
+          {
+            "year": 1978,
+            "n_papers": 836,
+            "n_ref_edges": 7000,
+            "n_distinct_targets": 6706,
+            "ref_gini": 0.04065493587831792,
+            "ref_top_k_share": 0.13785714285714284,
+            "canon_spearman_d5": -0.6023455168970927,
+            "canon_spearman_d1": -0.6289658496830741
+          },
+          {
+            "year": 1979,
+            "n_papers": 841,
+            "n_ref_edges": 7500,
+            "n_distinct_targets": 7193,
+            "ref_gini": 0.039621076046155945,
+            "ref_top_k_share": 0.13693333333333332,
+            "canon_spearman_d5": -0.5489740944748847,
+            "canon_spearman_d1": -0.37279998972478273
+          },
+          {
+            "year": 1980,
+            "n_papers": 943,
+            "n_ref_edges": 7763,
+            "n_distinct_targets": 7460,
+            "ref_gini": 0.037847592156234455,
+            "ref_top_k_share": 0.13512817209841557,
+            "canon_spearman_d5": -0.6118727536270415,
+            "canon_spearman_d1": -0.4844801991274419
+          },
+          {
+            "year": 1981,
+            "n_papers": 933,
+            "n_ref_edges": 7888,
+            "n_distinct_targets": 7520,
+            "ref_gini": 0.04488541037287974,
+            "ref_top_k_share": 0.14198782961460446,
+            "canon_spearman_d5": -0.6320173950162312,
+            "canon_spearman_d1": -0.5337266824995053
+          },
+          {
+            "year": 1982,
+            "n_papers": 914,
+            "n_ref_edges": 8176,
+            "n_distinct_targets": 7816,
+            "ref_gini": 0.04257624482470601,
+            "ref_top_k_share": 0.1396771037181996,
+            "canon_spearman_d5": -0.6372032470341177,
+            "canon_spearman_d1": -0.6287316687986573
+          },
+          {
+            "year": 1983,
+            "n_papers": 981,
+            "n_ref_edges": 8227,
+            "n_distinct_targets": 7889,
+            "ref_gini": 0.03971606588393417,
+            "ref_top_k_share": 0.1369879664519266,
+            "canon_spearman_d5": -0.6249609986454437,
+            "canon_spearman_d1": -0.5832250152106296
+          },
+          {
+            "year": 1984,
+            "n_papers": 974,
+            "n_ref_edges": 7850,
+            "n_distinct_targets": 7564,
+            "ref_gini": 0.03531697245079779,
+            "ref_top_k_share": 0.13286624203821656,
+            "canon_spearman_d5": -0.5859051357452598,
+            "canon_spearman_d1": -0.6176701927931567
+          },
+          {
+            "year": 1985,
+            "n_papers": 1142,
+            "n_ref_edges": 9963,
+            "n_distinct_targets": 9557,
+            "ref_gini": 0.039449762383873654,
+            "ref_top_k_share": 0.13670581150255948,
+            "canon_spearman_d5": -0.6338169172136406,
+            "canon_spearman_d1": -0.5369590995891873
+          },
+          {
+            "year": 1986,
+            "n_papers": 1182,
+            "n_ref_edges": 11049,
+            "n_distinct_targets": 10498,
+            "ref_gini": 0.04799203140909181,
+            "ref_top_k_share": 0.1448999909494072,
+            "canon_spearman_d5": -0.5322557140428382,
+            "canon_spearman_d1": -0.513462159907605
+          },
+          {
+            "year": 1987,
+            "n_papers": 1308,
+            "n_ref_edges": 12290,
+            "n_distinct_targets": 11610,
+            "ref_gini": 0.05320216502005426,
+            "ref_top_k_share": 0.1497965825874695,
+            "canon_spearman_d5": -0.4311397650676987,
+            "canon_spearman_d1": -0.16795211813381938
+          },
+          {
+            "year": 1988,
+            "n_papers": 1352,
+            "n_ref_edges": 13469,
+            "n_distinct_targets": 12690,
+            "ref_gini": 0.05553087757598352,
+            "ref_top_k_share": 0.15205286212784913,
+            "canon_spearman_d5": -0.44147207373285496,
+            "canon_spearman_d1": -0.20658932044562037
+          },
+          {
+            "year": 1989,
+            "n_papers": 1457,
+            "n_ref_edges": 14064,
+            "n_distinct_targets": 13197,
+            "ref_gini": 0.05895054017775436,
+            "ref_top_k_share": 0.15550341296928327,
+            "canon_spearman_d5": -0.48177900747707053,
+            "canon_spearman_d1": -0.26787285714480347
+          },
+          {
+            "year": 1990,
+            "n_papers": 1557,
+            "n_ref_edges": 13263,
+            "n_distinct_targets": 12566,
+            "ref_gini": 0.05049738796630976,
+            "ref_top_k_share": 0.14732715072004826,
+            "canon_spearman_d5": -0.5882754961237194,
+            "canon_spearman_d1": -0.42879371910747094
+          },
+          {
+            "year": 1991,
+            "n_papers": 1667,
+            "n_ref_edges": 16164,
+            "n_distinct_targets": 15089,
+            "ref_gini": 0.06340780247869904,
+            "ref_top_k_share": 0.15986142044048504,
+            "canon_spearman_d5": -0.6151994034963211,
+            "canon_spearman_d1": -0.4727078840558349
+          },
+          {
+            "year": 1992,
+            "n_papers": 1954,
+            "n_ref_edges": 15713,
+            "n_distinct_targets": 14782,
+            "ref_gini": 0.05680632735155666,
+            "ref_top_k_share": 0.15337618532425382,
+            "canon_spearman_d5": -0.4491713547700211,
+            "canon_spearman_d1": -0.45474963944891444
+          },
+          {
+            "year": 1993,
+            "n_papers": 2240,
+            "n_ref_edges": 19522,
+            "n_distinct_targets": 18085,
+            "ref_gini": 0.06971635638908436,
+            "ref_top_k_share": 0.16627394734146092,
+            "canon_spearman_d5": -0.5294082948988095,
+            "canon_spearman_d1": -0.43634443234163023
+          },
+          {
+            "year": 1994,
+            "n_papers": 2374,
+            "n_ref_edges": 19731,
+            "n_distinct_targets": 18372,
+            "ref_gini": 0.06551510202822342,
+            "ref_top_k_share": 0.16202929400435861,
+            "canon_spearman_d5": -0.5003963248013258,
+            "canon_spearman_d1": -0.6108944127290348
+          },
+          {
+            "year": 1995,
+            "n_papers": 2489,
+            "n_ref_edges": 21022,
+            "n_distinct_targets": 19442,
+            "ref_gini": 0.07145330361652968,
+            "ref_top_k_share": 0.1676814765483779,
+            "canon_spearman_d5": -0.5698766568779167,
+            "canon_spearman_d1": -0.42938393407506753
+          },
+          {
+            "year": 1996,
+            "n_papers": 2834,
+            "n_ref_edges": 22309,
+            "n_distinct_targets": 20851,
+            "ref_gini": 0.06243381716119334,
+            "ref_top_k_share": 0.15885965305482092,
+            "canon_spearman_d5": -0.6207509134352982,
+            "canon_spearman_d1": -0.32891920812108716
+          },
+          {
+            "year": 1997,
+            "n_papers": 2934,
+            "n_ref_edges": 24839,
+            "n_distinct_targets": 22989,
+            "ref_gini": 0.07096138209629799,
+            "ref_top_k_share": 0.1670357099722211,
+            "canon_spearman_d5": -0.45258682951632717,
+            "canon_spearman_d1": -0.19478905974701288
+          },
+          {
+            "year": 1998,
+            "n_papers": 3291,
+            "n_ref_edges": 28732,
+            "n_distinct_targets": 26345,
+            "ref_gini": 0.0783078268851769,
+            "ref_top_k_share": 0.17478769316441597,
+            "canon_spearman_d5": -0.5534495683503203,
+            "canon_spearman_d1": -0.35795281868353046
+          },
+          {
+            "year": 1999,
+            "n_papers": 3497,
+            "n_ref_edges": 32043,
+            "n_distinct_targets": 29373,
+            "ref_gini": 0.07870891164392702,
+            "ref_top_k_share": 0.17501482383047778,
+            "canon_spearman_d5": -0.4835247134311632,
+            "canon_spearman_d1": -0.33601705235776513
+          },
+          {
+            "year": 2000,
+            "n_papers": 3610,
+            "n_ref_edges": 32400,
+            "n_distinct_targets": 29658,
+            "ref_gini": 0.07982608527335078,
+            "ref_top_k_share": 0.17617283950617285,
+            "canon_spearman_d5": -0.45575667097746375,
+            "canon_spearman_d1": -0.3916598269736051
+          },
+          {
+            "year": 2001,
+            "n_papers": 3911,
+            "n_ref_edges": 41084,
+            "n_distinct_targets": 37135,
+            "ref_gini": 0.09051980017963968,
+            "ref_top_k_share": 0.18652029987343005,
+            "canon_spearman_d5": -0.38280633339597764,
+            "canon_spearman_d1": -0.04829433924503177
+          },
+          {
+            "year": 2002,
+            "n_papers": 4651,
+            "n_ref_edges": 45689,
+            "n_distinct_targets": 41197,
+            "ref_gini": 0.09224979180804582,
+            "ref_top_k_share": 0.18849175950447591,
+            "canon_spearman_d5": -0.35366130948361363,
+            "canon_spearman_d1": -0.15755452148733004
+          },
+          {
+            "year": 2003,
+            "n_papers": 4760,
+            "n_ref_edges": 49015,
+            "n_distinct_targets": 43830,
+            "ref_gini": 0.09913467102047235,
+            "ref_top_k_share": 0.19520554932163622,
+            "canon_spearman_d5": -0.2872431845219898,
+            "canon_spearman_d1": 0.05638163582736224
+          },
+          {
+            "year": 2004,
+            "n_papers": 4951,
+            "n_ref_edges": 52800,
+            "n_distinct_targets": 47154,
+            "ref_gini": 0.10048467963127905,
+            "ref_top_k_share": 0.19625,
+            "canon_spearman_d5": -0.3005150811433695,
+            "canon_spearman_d1": -0.1116703970105113
+          },
+          {
+            "year": 2005,
+            "n_papers": 5000,
+            "n_ref_edges": 55991,
+            "n_distinct_targets": 50122,
+            "ref_gini": 0.09850118521081641,
+            "ref_top_k_share": 0.19435266382097122,
+            "canon_spearman_d5": -0.30643753514279554,
+            "canon_spearman_d1": 0.23989946218786953
+          },
+          {
+            "year": 2006,
+            "n_papers": 5000,
+            "n_ref_edges": 52270,
+            "n_distinct_targets": 47313,
+            "ref_gini": 0.08981559620470514,
+            "ref_top_k_share": 0.18536445379758945,
+            "canon_spearman_d5": -0.2909139056710956,
+            "canon_spearman_d1": -0.03998133373674919
+          },
+          {
+            "year": 2007,
+            "n_papers": 5000,
+            "n_ref_edges": 50761,
+            "n_distinct_targets": 45348,
+            "ref_gini": 0.10009998662727804,
+            "ref_top_k_share": 0.19597722661098088,
+            "canon_spearman_d5": -0.4106776417563627,
+            "canon_spearman_d1": -0.006713473706586705
+          },
+          {
+            "year": 2008,
+            "n_papers": 5000,
+            "n_ref_edges": 56370,
+            "n_distinct_targets": 50324,
+            "ref_gini": 0.10106776387747862,
+            "ref_top_k_share": 0.19654071314529004,
+            "canon_spearman_d5": -0.2880724818145406,
+            "canon_spearman_d1": -0.06015966329725587
+          },
+          {
+            "year": 2009,
+            "n_papers": 5000,
+            "n_ref_edges": 58546,
+            "n_distinct_targets": 52036,
+            "ref_gini": 0.10448580533173035,
+            "ref_top_k_share": 0.20008198681378744,
+            "canon_spearman_d5": -0.4589994990662929,
+            "canon_spearman_d1": 0.1819536165407604
+          },
+          {
+            "year": 2010,
+            "n_papers": 5000,
+            "n_ref_edges": 56829,
+            "n_distinct_targets": 51494,
+            "ref_gini": 0.08873755458128274,
+            "ref_top_k_share": 0.1845008710341551,
+            "canon_spearman_d5": -0.3704133395201702,
+            "canon_spearman_d1": 0.14030693402658717
+          },
+          {
+            "year": 2011,
+            "n_papers": 5000,
+            "n_ref_edges": 55587,
+            "n_distinct_targets": 50504,
+            "ref_gini": 0.08658713119744421,
+            "ref_top_k_share": 0.18230881321172215,
+            "canon_spearman_d5": -0.4106648793673312,
+            "canon_spearman_d1": 0.027114808791226352
+          },
+          {
+            "year": 2012,
+            "n_papers": 5000,
+            "n_ref_edges": 57135,
+            "n_distinct_targets": 52120,
+            "ref_gini": 0.08322251374990008,
+            "ref_top_k_share": 0.17899711210291416,
+            "canon_spearman_d5": -0.29037165914379276,
+            "canon_spearman_d1": 0.07414397796960638
+          },
+          {
+            "year": 2013,
+            "n_papers": 5000,
+            "n_ref_edges": 55614,
+            "n_distinct_targets": 50681,
+            "ref_gini": 0.08425254293933815,
+            "ref_top_k_share": 0.17984680116517424,
+            "canon_spearman_d5": -0.2730021694746541,
+            "canon_spearman_d1": 0.14508041286145412
+          },
+          {
+            "year": 2014,
+            "n_papers": 5000,
+            "n_ref_edges": 62299,
+            "n_distinct_targets": 56274,
+            "ref_gini": 0.09157041068813432,
+            "ref_top_k_share": 0.18704955135716464,
+            "canon_spearman_d5": -0.5073721624039255,
+            "canon_spearman_d1": 0.1218960263909686
+          },
+          {
+            "year": 2015,
+            "n_papers": 5000,
+            "n_ref_edges": 59554,
+            "n_distinct_targets": 54497,
+            "ref_gini": 0.0809739457697014,
+            "ref_top_k_share": 0.17642811565973737,
+            "canon_spearman_d5": -0.33698259276592724,
+            "canon_spearman_d1": 0.08005663664350376
+          },
+          {
+            "year": 2016,
+            "n_papers": 5000,
+            "n_ref_edges": 59248,
+            "n_distinct_targets": 54116,
+            "ref_gini": 0.08241930505472217,
+            "ref_top_k_share": 0.17796381312449366,
+            "canon_spearman_d5": -0.4768903705049056,
+            "canon_spearman_d1": 0.14905821516940593
+          },
+          {
+            "year": 2017,
+            "n_papers": 5000,
+            "n_ref_edges": 62209,
+            "n_distinct_targets": 56748,
+            "ref_gini": 0.08344136236145894,
+            "ref_top_k_share": 0.1790094680833963,
+            "canon_spearman_d5": -0.33566891662665926,
+            "canon_spearman_d1": -0.027635126163421255
+          },
+          {
+            "year": 2018,
+            "n_papers": 5000,
+            "n_ref_edges": 62992,
+            "n_distinct_targets": 57597,
+            "ref_gini": 0.08182584834447582,
+            "ref_top_k_share": 0.17708597917195834,
+            "canon_spearman_d5": -0.3926290146926774,
+            "canon_spearman_d1": 0.03693670095566931
+          },
+          {
+            "year": 2019,
+            "n_papers": 5000,
+            "n_ref_edges": 72761,
+            "n_distinct_targets": 66165,
+            "ref_gini": 0.08607989424787887,
+            "ref_top_k_share": 0.18159453553414603,
+            "canon_spearman_d5": -0.30750496570400115,
+            "canon_spearman_d1": 0.4286580551265229
+          },
+          {
+            "year": 2020,
+            "n_papers": 5000,
+            "n_ref_edges": 85857,
+            "n_distinct_targets": 77592,
+            "ref_gini": 0.0912693069882684,
+            "ref_top_k_share": 0.1866475651373796,
+            "canon_spearman_d5": null,
+            "canon_spearman_d1": 0.05995360155420916
+          },
+          {
+            "year": 2021,
+            "n_papers": 5000,
+            "n_ref_edges": 98985,
+            "n_distinct_targets": 90049,
+            "ref_gini": 0.08581905932102418,
+            "ref_top_k_share": 0.18124968429560034,
+            "canon_spearman_d5": null,
+            "canon_spearman_d1": 0.33930654714984315
+          },
+          {
+            "year": 2022,
+            "n_papers": 5000,
+            "n_ref_edges": 96201,
+            "n_distinct_targets": 87326,
+            "ref_gini": 0.08779967484441698,
+            "ref_top_k_share": 0.18303344040082745,
+            "canon_spearman_d5": null,
+            "canon_spearman_d1": 0.38889801592313
+          },
+          {
+            "year": 2023,
+            "n_papers": 5000,
+            "n_ref_edges": 102666,
+            "n_distinct_targets": 92433,
+            "ref_gini": 0.09483642311188256,
+            "ref_top_k_share": 0.1897122708589017,
+            "canon_spearman_d5": null,
+            "canon_spearman_d1": 0.37557458297214835
+          },
+          {
+            "year": 2024,
+            "n_papers": 5000,
+            "n_ref_edges": 99144,
+            "n_distinct_targets": 88617,
+            "ref_gini": 0.1003448009380099,
+            "ref_top_k_share": 0.19556402808036796,
+            "canon_spearman_d5": null,
+            "canon_spearman_d1": null
+          }
+        ],
+        "age_restricted": {
+          "3": [
+            {
+              "year": 1970,
+              "n": 610,
+              "gini": 0.8025943176674895,
+              "top_k_share": 0.6856275700019581
+            },
+            {
+              "year": 1971,
+              "n": 633,
+              "gini": 0.7930924688422047,
+              "top_k_share": 0.664362336114422
+            },
+            {
+              "year": 1972,
+              "n": 643,
+              "gini": 0.7790943559764683,
+              "top_k_share": 0.6406386261487892
+            },
+            {
+              "year": 1973,
+              "n": 699,
+              "gini": 0.7757627530964442,
+              "top_k_share": 0.6344313063063063
+            },
+            {
+              "year": 1974,
+              "n": 727,
+              "gini": 0.8139352126322088,
+              "top_k_share": 0.711048707272199
+            },
+            {
+              "year": 1975,
+              "n": 799,
+              "gini": 0.8210006419493843,
+              "top_k_share": 0.7126460424551588
+            },
+            {
+              "year": 1976,
+              "n": 795,
+              "gini": 0.8145997508293181,
+              "top_k_share": 0.6961515513126492
+            },
+            {
+              "year": 1977,
+              "n": 779,
+              "gini": 0.8179421052798923,
+              "top_k_share": 0.7100769130491461
+            },
+            {
+              "year": 1978,
+              "n": 836,
+              "gini": 0.7895469585986852,
+              "top_k_share": 0.6515314347125202
+            },
+            {
+              "year": 1979,
+              "n": 841,
+              "gini": 0.7790237043534087,
+              "top_k_share": 0.62856463878327
+            },
+            {
+              "year": 1980,
+              "n": 943,
+              "gini": 0.8533278030935079,
+              "top_k_share": 0.7569368108990373
+            },
+            {
+              "year": 1981,
+              "n": 933,
+              "gini": 0.8119356905941617,
+              "top_k_share": 0.6875554241797222
+            },
+            {
+              "year": 1982,
+              "n": 914,
+              "gini": 0.8211521228417189,
+              "top_k_share": 0.7068367821021407
+            },
+            {
+              "year": 1983,
+              "n": 981,
+              "gini": 0.7905061259772572,
+              "top_k_share": 0.6504700280795995
+            },
+            {
+              "year": 1984,
+              "n": 974,
+              "gini": 0.8053488971228049,
+              "top_k_share": 0.668349970640047
+            },
+            {
+              "year": 1985,
+              "n": 1142,
+              "gini": 0.8254866993196432,
+              "top_k_share": 0.7121061736097326
+            },
+            {
+              "year": 1986,
+              "n": 1182,
+              "gini": 0.8197668761640142,
+              "top_k_share": 0.7041577189214985
+            },
+            {
+              "year": 1987,
+              "n": 1308,
+              "gini": 0.8502986756416975,
+              "top_k_share": 0.7459937813920114
+            },
+            {
+              "year": 1988,
+              "n": 1352,
+              "gini": 0.7940612552581781,
+              "top_k_share": 0.6618910323098416
+            },
+            {
+              "year": 1989,
+              "n": 1457,
+              "gini": 0.8174588001258036,
+              "top_k_share": 0.6926354401805869
+            },
+            {
+              "year": 1990,
+              "n": 1557,
+              "gini": 0.812592878573585,
+              "top_k_share": 0.6798257629718919
+            },
+            {
+              "year": 1991,
+              "n": 1667,
+              "gini": 0.7732544017226186,
+              "top_k_share": 0.6132662770150876
+            },
+            {
+              "year": 1992,
+              "n": 1954,
+              "gini": 0.8152281628553797,
+              "top_k_share": 0.6851825237137108
+            },
+            {
+              "year": 1993,
+              "n": 2240,
+              "gini": 0.8404570063081775,
+              "top_k_share": 0.7253634894991923
+            },
+            {
+              "year": 1994,
+              "n": 2374,
+              "gini": 0.8296216973745756,
+              "top_k_share": 0.7052590723850184
+            },
+            {
+              "year": 1995,
+              "n": 2489,
+              "gini": 0.858522957268451,
+              "top_k_share": 0.7479061451112017
+            },
+            {
+              "year": 1996,
+              "n": 2834,
+              "gini": 0.8520656306785841,
+              "top_k_share": 0.7308215560428304
+            },
+            {
+              "year": 1997,
+              "n": 2934,
+              "gini": 0.8470419978376402,
+              "top_k_share": 0.7237893747061589
+            },
+            {
+              "year": 1998,
+              "n": 3291,
+              "gini": 0.8527391670907765,
+              "top_k_share": 0.7341831763559598
+            },
+            {
+              "year": 1999,
+              "n": 3497,
+              "gini": 0.8865508601434131,
+              "top_k_share": 0.798571071933808
+            },
+            {
+              "year": 2000,
+              "n": 3610,
+              "gini": 0.8720275203302428,
+              "top_k_share": 0.7740265245564101
+            },
+            {
+              "year": 2001,
+              "n": 3911,
+              "gini": 0.867342722660498,
+              "top_k_share": 0.7624324680458558
+            },
+            {
+              "year": 2002,
+              "n": 4651,
+              "gini": 0.8613684677862521,
+              "top_k_share": 0.7552648167444972
+            },
+            {
+              "year": 2003,
+              "n": 4760,
+              "gini": 0.8707857757408715,
+              "top_k_share": 0.7726129254881008
+            },
+            {
+              "year": 2004,
+              "n": 4951,
+              "gini": 0.8671227850452685,
+              "top_k_share": 0.7605839416058394
+            },
+            {
+              "year": 2005,
+              "n": 5339,
+              "gini": 0.8703366843026532,
+              "top_k_share": 0.7676391110130701
+            },
+            {
+              "year": 2006,
+              "n": 5869,
+              "gini": 0.8790456675044964,
+              "top_k_share": 0.7882074609124988
+            },
+            {
+              "year": 2007,
+              "n": 6343,
+              "gini": 0.8832242665162502,
+              "top_k_share": 0.7960741013372592
+            },
+            {
+              "year": 2008,
+              "n": 6764,
+              "gini": 0.8764450871071847,
+              "top_k_share": 0.7803744751153026
+            },
+            {
+              "year": 2009,
+              "n": 7173,
+              "gini": 0.882360061584645,
+              "top_k_share": 0.7927671443685679
+            },
+            {
+              "year": 2010,
+              "n": 7817,
+              "gini": 0.8861951526610559,
+              "top_k_share": 0.8006745835039548
+            },
+            {
+              "year": 2011,
+              "n": 8118,
+              "gini": 0.9067868036591675,
+              "top_k_share": 0.8409644786185356
+            },
+            {
+              "year": 2012,
+              "n": 8994,
+              "gini": 0.8906318609967983,
+              "top_k_share": 0.8129482154769847
+            },
+            {
+              "year": 2013,
+              "n": 9819,
+              "gini": 0.8999522007692573,
+              "top_k_share": 0.8337406005180859
+            },
+            {
+              "year": 2014,
+              "n": 9965,
+              "gini": 0.8875141084347025,
+              "top_k_share": 0.8035700972404171
+            },
+            {
+              "year": 2015,
+              "n": 11054,
+              "gini": 0.891834301196436,
+              "top_k_share": 0.8187195241947828
+            },
+            {
+              "year": 2016,
+              "n": 12509,
+              "gini": 0.8944103848430809,
+              "top_k_share": 0.8215129248130166
+            },
+            {
+              "year": 2017,
+              "n": 12088,
+              "gini": 0.8948227330673102,
+              "top_k_share": 0.8160607644487939
+            },
+            {
+              "year": 2018,
+              "n": 12135,
+              "gini": 0.8900253706090173,
+              "top_k_share": 0.8080243161094225
+            },
+            {
+              "year": 2019,
+              "n": 12398,
+              "gini": 0.8768738045406808,
+              "top_k_share": 0.7836755939471304
+            },
+            {
+              "year": 2020,
+              "n": 11510,
+              "gini": 0.862134917957341,
+              "top_k_share": 0.754553418496097
+            },
+            {
+              "year": 2021,
+              "n": 11287,
+              "gini": 0.8428088957413145,
+              "top_k_share": 0.7173655331255927
+            },
+            {
+              "year": 2022,
+              "n": 11189,
+              "gini": 0.835951002283464,
+              "top_k_share": 0.7076786899756583
+            },
+            {
+              "year": 2023,
+              "n": 11787,
+              "gini": 0.8506344206477112,
+              "top_k_share": 0.7279793457661567
+            }
+          ],
+          "5": [
+            {
+              "year": 1970,
+              "n": 610,
+              "gini": 0.8025943176674895,
+              "top_k_share": 0.6856275700019581
+            },
+            {
+              "year": 1971,
+              "n": 633,
+              "gini": 0.7930924688422047,
+              "top_k_share": 0.664362336114422
+            },
+            {
+              "year": 1972,
+              "n": 643,
+              "gini": 0.7790943559764683,
+              "top_k_share": 0.6406386261487892
+            },
+            {
+              "year": 1973,
+              "n": 699,
+              "gini": 0.7757627530964442,
+              "top_k_share": 0.6344313063063063
+            },
+            {
+              "year": 1974,
+              "n": 727,
+              "gini": 0.8139352126322088,
+              "top_k_share": 0.711048707272199
+            },
+            {
+              "year": 1975,
+              "n": 799,
+              "gini": 0.8210006419493843,
+              "top_k_share": 0.7126460424551588
+            },
+            {
+              "year": 1976,
+              "n": 795,
+              "gini": 0.8145997508293181,
+              "top_k_share": 0.6961515513126492
+            },
+            {
+              "year": 1977,
+              "n": 779,
+              "gini": 0.8179421052798923,
+              "top_k_share": 0.7100769130491461
+            },
+            {
+              "year": 1978,
+              "n": 836,
+              "gini": 0.7895469585986852,
+              "top_k_share": 0.6515314347125202
+            },
+            {
+              "year": 1979,
+              "n": 841,
+              "gini": 0.7790237043534087,
+              "top_k_share": 0.62856463878327
+            },
+            {
+              "year": 1980,
+              "n": 943,
+              "gini": 0.8533278030935079,
+              "top_k_share": 0.7569368108990373
+            },
+            {
+              "year": 1981,
+              "n": 933,
+              "gini": 0.8119356905941617,
+              "top_k_share": 0.6875554241797222
+            },
+            {
+              "year": 1982,
+              "n": 914,
+              "gini": 0.8211521228417189,
+              "top_k_share": 0.7068367821021407
+            },
+            {
+              "year": 1983,
+              "n": 981,
+              "gini": 0.7905061259772572,
+              "top_k_share": 0.6504700280795995
+            },
+            {
+              "year": 1984,
+              "n": 974,
+              "gini": 0.8053488971228049,
+              "top_k_share": 0.668349970640047
+            },
+            {
+              "year": 1985,
+              "n": 1142,
+              "gini": 0.8254866993196432,
+              "top_k_share": 0.7121061736097326
+            },
+            {
+              "year": 1986,
+              "n": 1182,
+              "gini": 0.8197668761640142,
+              "top_k_share": 0.7041577189214985
+            },
+            {
+              "year": 1987,
+              "n": 1308,
+              "gini": 0.8502986756416975,
+              "top_k_share": 0.7459937813920114
+            },
+            {
+              "year": 1988,
+              "n": 1352,
+              "gini": 0.7940612552581781,
+              "top_k_share": 0.6618910323098416
+            },
+            {
+              "year": 1989,
+              "n": 1457,
+              "gini": 0.8174588001258036,
+              "top_k_share": 0.6926354401805869
+            },
+            {
+              "year": 1990,
+              "n": 1557,
+              "gini": 0.812592878573585,
+              "top_k_share": 0.6798257629718919
+            },
+            {
+              "year": 1991,
+              "n": 1667,
+              "gini": 0.7732544017226186,
+              "top_k_share": 0.6132662770150876
+            },
+            {
+              "year": 1992,
+              "n": 1954,
+              "gini": 0.8152281628553797,
+              "top_k_share": 0.6851825237137108
+            },
+            {
+              "year": 1993,
+              "n": 2240,
+              "gini": 0.8404570063081775,
+              "top_k_share": 0.7253634894991923
+            },
+            {
+              "year": 1994,
+              "n": 2374,
+              "gini": 0.8296216973745756,
+              "top_k_share": 0.7052590723850184
+            },
+            {
+              "year": 1995,
+              "n": 2489,
+              "gini": 0.858522957268451,
+              "top_k_share": 0.7479061451112017
+            },
+            {
+              "year": 1996,
+              "n": 2834,
+              "gini": 0.8520656306785841,
+              "top_k_share": 0.7308215560428304
+            },
+            {
+              "year": 1997,
+              "n": 2934,
+              "gini": 0.8470419978376402,
+              "top_k_share": 0.7237893747061589
+            },
+            {
+              "year": 1998,
+              "n": 3291,
+              "gini": 0.8527391670907765,
+              "top_k_share": 0.7341831763559598
+            },
+            {
+              "year": 1999,
+              "n": 3497,
+              "gini": 0.8865508601434131,
+              "top_k_share": 0.798571071933808
+            },
+            {
+              "year": 2000,
+              "n": 3610,
+              "gini": 0.8720275203302428,
+              "top_k_share": 0.7740265245564101
+            },
+            {
+              "year": 2001,
+              "n": 3911,
+              "gini": 0.867342722660498,
+              "top_k_share": 0.7624324680458558
+            },
+            {
+              "year": 2002,
+              "n": 4651,
+              "gini": 0.8613684677862521,
+              "top_k_share": 0.7552648167444972
+            },
+            {
+              "year": 2003,
+              "n": 4760,
+              "gini": 0.8707857757408715,
+              "top_k_share": 0.7726129254881008
+            },
+            {
+              "year": 2004,
+              "n": 4951,
+              "gini": 0.8671227850452685,
+              "top_k_share": 0.7605839416058394
+            },
+            {
+              "year": 2005,
+              "n": 5339,
+              "gini": 0.8703366843026532,
+              "top_k_share": 0.7676391110130701
+            },
+            {
+              "year": 2006,
+              "n": 5869,
+              "gini": 0.8790456675044964,
+              "top_k_share": 0.7882074609124988
+            },
+            {
+              "year": 2007,
+              "n": 6343,
+              "gini": 0.8832242665162502,
+              "top_k_share": 0.7960741013372592
+            },
+            {
+              "year": 2008,
+              "n": 6764,
+              "gini": 0.8764450871071847,
+              "top_k_share": 0.7803744751153026
+            },
+            {
+              "year": 2009,
+              "n": 7173,
+              "gini": 0.882360061584645,
+              "top_k_share": 0.7927671443685679
+            },
+            {
+              "year": 2010,
+              "n": 7817,
+              "gini": 0.8861951526610559,
+              "top_k_share": 0.8006745835039548
+            },
+            {
+              "year": 2011,
+              "n": 8118,
+              "gini": 0.9067868036591675,
+              "top_k_share": 0.8409644786185356
+            },
+            {
+              "year": 2012,
+              "n": 8994,
+              "gini": 0.8906318609967983,
+              "top_k_share": 0.8129482154769847
+            },
+            {
+              "year": 2013,
+              "n": 9819,
+              "gini": 0.8999522007692573,
+              "top_k_share": 0.8337406005180859
+            },
+            {
+              "year": 2014,
+              "n": 9965,
+              "gini": 0.8875141084347025,
+              "top_k_share": 0.8035700972404171
+            },
+            {
+              "year": 2015,
+              "n": 11054,
+              "gini": 0.891834301196436,
+              "top_k_share": 0.8187195241947828
+            },
+            {
+              "year": 2016,
+              "n": 12509,
+              "gini": 0.8944103848430809,
+              "top_k_share": 0.8215129248130166
+            },
+            {
+              "year": 2017,
+              "n": 12088,
+              "gini": 0.8948227330673102,
+              "top_k_share": 0.8160607644487939
+            },
+            {
+              "year": 2018,
+              "n": 12135,
+              "gini": 0.8900253706090173,
+              "top_k_share": 0.8080243161094225
+            },
+            {
+              "year": 2019,
+              "n": 12398,
+              "gini": 0.8768738045406808,
+              "top_k_share": 0.7836755939471304
+            },
+            {
+              "year": 2020,
+              "n": 11510,
+              "gini": 0.862134917957341,
+              "top_k_share": 0.754553418496097
+            },
+            {
+              "year": 2021,
+              "n": 11287,
+              "gini": 0.8428088957413145,
+              "top_k_share": 0.7173655331255927
+            }
+          ],
+          "10": [
+            {
+              "year": 1970,
+              "n": 610,
+              "gini": 0.8025943176674895,
+              "top_k_share": 0.6856275700019581
+            },
+            {
+              "year": 1971,
+              "n": 633,
+              "gini": 0.7930924688422047,
+              "top_k_share": 0.664362336114422
+            },
+            {
+              "year": 1972,
+              "n": 643,
+              "gini": 0.7790943559764683,
+              "top_k_share": 0.6406386261487892
+            },
+            {
+              "year": 1973,
+              "n": 699,
+              "gini": 0.7757627530964442,
+              "top_k_share": 0.6344313063063063
+            },
+            {
+              "year": 1974,
+              "n": 727,
+              "gini": 0.8139352126322088,
+              "top_k_share": 0.711048707272199
+            },
+            {
+              "year": 1975,
+              "n": 799,
+              "gini": 0.8210006419493843,
+              "top_k_share": 0.7126460424551588
+            },
+            {
+              "year": 1976,
+              "n": 795,
+              "gini": 0.8145997508293181,
+              "top_k_share": 0.6961515513126492
+            },
+            {
+              "year": 1977,
+              "n": 779,
+              "gini": 0.8179421052798923,
+              "top_k_share": 0.7100769130491461
+            },
+            {
+              "year": 1978,
+              "n": 836,
+              "gini": 0.7895469585986852,
+              "top_k_share": 0.6515314347125202
+            },
+            {
+              "year": 1979,
+              "n": 841,
+              "gini": 0.7790237043534087,
+              "top_k_share": 0.62856463878327
+            },
+            {
+              "year": 1980,
+              "n": 943,
+              "gini": 0.8533278030935079,
+              "top_k_share": 0.7569368108990373
+            },
+            {
+              "year": 1981,
+              "n": 933,
+              "gini": 0.8119356905941617,
+              "top_k_share": 0.6875554241797222
+            },
+            {
+              "year": 1982,
+              "n": 914,
+              "gini": 0.8211521228417189,
+              "top_k_share": 0.7068367821021407
+            },
+            {
+              "year": 1983,
+              "n": 981,
+              "gini": 0.7905061259772572,
+              "top_k_share": 0.6504700280795995
+            },
+            {
+              "year": 1984,
+              "n": 974,
+              "gini": 0.8053488971228049,
+              "top_k_share": 0.668349970640047
+            },
+            {
+              "year": 1985,
+              "n": 1142,
+              "gini": 0.8254866993196432,
+              "top_k_share": 0.7121061736097326
+            },
+            {
+              "year": 1986,
+              "n": 1182,
+              "gini": 0.8197668761640142,
+              "top_k_share": 0.7041577189214985
+            },
+            {
+              "year": 1987,
+              "n": 1308,
+              "gini": 0.8502986756416975,
+              "top_k_share": 0.7459937813920114
+            },
+            {
+              "year": 1988,
+              "n": 1352,
+              "gini": 0.7940612552581781,
+              "top_k_share": 0.6618910323098416
+            },
+            {
+              "year": 1989,
+              "n": 1457,
+              "gini": 0.8174588001258036,
+              "top_k_share": 0.6926354401805869
+            },
+            {
+              "year": 1990,
+              "n": 1557,
+              "gini": 0.812592878573585,
+              "top_k_share": 0.6798257629718919
+            },
+            {
+              "year": 1991,
+              "n": 1667,
+              "gini": 0.7732544017226186,
+              "top_k_share": 0.6132662770150876
+            },
+            {
+              "year": 1992,
+              "n": 1954,
+              "gini": 0.8152281628553797,
+              "top_k_share": 0.6851825237137108
+            },
+            {
+              "year": 1993,
+              "n": 2240,
+              "gini": 0.8404570063081775,
+              "top_k_share": 0.7253634894991923
+            },
+            {
+              "year": 1994,
+              "n": 2374,
+              "gini": 0.8296216973745756,
+              "top_k_share": 0.7052590723850184
+            },
+            {
+              "year": 1995,
+              "n": 2489,
+              "gini": 0.858522957268451,
+              "top_k_share": 0.7479061451112017
+            },
+            {
+              "year": 1996,
+              "n": 2834,
+              "gini": 0.8520656306785841,
+              "top_k_share": 0.7308215560428304
+            },
+            {
+              "year": 1997,
+              "n": 2934,
+              "gini": 0.8470419978376402,
+              "top_k_share": 0.7237893747061589
+            },
+            {
+              "year": 1998,
+              "n": 3291,
+              "gini": 0.8527391670907765,
+              "top_k_share": 0.7341831763559598
+            },
+            {
+              "year": 1999,
+              "n": 3497,
+              "gini": 0.8865508601434131,
+              "top_k_share": 0.798571071933808
+            },
+            {
+              "year": 2000,
+              "n": 3610,
+              "gini": 0.8720275203302428,
+              "top_k_share": 0.7740265245564101
+            },
+            {
+              "year": 2001,
+              "n": 3911,
+              "gini": 0.867342722660498,
+              "top_k_share": 0.7624324680458558
+            },
+            {
+              "year": 2002,
+              "n": 4651,
+              "gini": 0.8613684677862521,
+              "top_k_share": 0.7552648167444972
+            },
+            {
+              "year": 2003,
+              "n": 4760,
+              "gini": 0.8707857757408715,
+              "top_k_share": 0.7726129254881008
+            },
+            {
+              "year": 2004,
+              "n": 4951,
+              "gini": 0.8671227850452685,
+              "top_k_share": 0.7605839416058394
+            },
+            {
+              "year": 2005,
+              "n": 5339,
+              "gini": 0.8703366843026532,
+              "top_k_share": 0.7676391110130701
+            },
+            {
+              "year": 2006,
+              "n": 5869,
+              "gini": 0.8790456675044964,
+              "top_k_share": 0.7882074609124988
+            },
+            {
+              "year": 2007,
+              "n": 6343,
+              "gini": 0.8832242665162502,
+              "top_k_share": 0.7960741013372592
+            },
+            {
+              "year": 2008,
+              "n": 6764,
+              "gini": 0.8764450871071847,
+              "top_k_share": 0.7803744751153026
+            },
+            {
+              "year": 2009,
+              "n": 7173,
+              "gini": 0.882360061584645,
+              "top_k_share": 0.7927671443685679
+            },
+            {
+              "year": 2010,
+              "n": 7817,
+              "gini": 0.8861951526610559,
+              "top_k_share": 0.8006745835039548
+            },
+            {
+              "year": 2011,
+              "n": 8118,
+              "gini": 0.9067868036591675,
+              "top_k_share": 0.8409644786185356
+            },
+            {
+              "year": 2012,
+              "n": 8994,
+              "gini": 0.8906318609967983,
+              "top_k_share": 0.8129482154769847
+            },
+            {
+              "year": 2013,
+              "n": 9819,
+              "gini": 0.8999522007692573,
+              "top_k_share": 0.8337406005180859
+            },
+            {
+              "year": 2014,
+              "n": 9965,
+              "gini": 0.8875141084347025,
+              "top_k_share": 0.8035700972404171
+            },
+            {
+              "year": 2015,
+              "n": 11054,
+              "gini": 0.891834301196436,
+              "top_k_share": 0.8187195241947828
+            },
+            {
+              "year": 2016,
+              "n": 12509,
+              "gini": 0.8944103848430809,
+              "top_k_share": 0.8215129248130166
+            }
+          ]
+        }
+      }
+    }
+  }
+}
