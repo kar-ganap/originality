@@ -1,0 +1,53 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "whitespace3"
+version = "0.0.0"
+description = "Reconciling population-complexity (Henrich) and small-team-disruption (Wu-Wang-Evans) via a minimal ABM decomposing cumulative complexity C and per-capita variance V"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=1.24,<2",
+    "scipy>=1.11",
+    "networkx>=3.2",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.3",
+    "mypy>=1.8",
+]
+# Optional: parallel parameter sweeps for the phase diagram (Phase 1+).
+sweep = [
+    "modal>=1.2",
+]
+# Optional: figures (phase diagram, crossover, C/V surfaces).
+plot = [
+    "matplotlib>=3.7",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/whitespace3"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["slow: long-running sweeps / replication runs (deselected by default)"]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+
+[[tool.mypy.overrides]]
+module = ["scipy.*", "networkx.*", "matplotlib.*"]
+ignore_missing_imports = true
