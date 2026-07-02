@@ -1,0 +1,22 @@
+SPECTER2 3rd-family verification (Phase 2.3)
+
+1. Proximity adapter ACTIVE (Modal check): adapter_materially_active=true
+   (on-vs-off embeddings differ; on-norm 22.2 ≈ production 22.05).
+
+2. Drift check — SPECTER2 mean per-subfield semantic trend does NOT attenuate
+   when dropping early (drift-prone) years, so the reversal is NOT a pre-1990
+   artifact:
+       window     SciNCL mean   SPECTER2 mean   SPECTER2 frac>0
+     1970-2023      +2.27σ         -1.35σ           0.23
+     1990-2023      +2.18σ         -1.45σ           0.20
+     2000-2023      +2.06σ         -1.56σ           0.16
+
+3. Ill-conditioned-σ caught: the per-subfield MEAN σ (-1.35σ) is inflated by
+   near-flat SPECTER2 CS series (e.g. AI mpc 0.185->0.180, range 0.008 →
+   amplified sign-unstable σ). The AGGREGATE whole-field trend (more data/year,
+   no ill-conditioning) is the honest measure — see aggregate-3family.json:
+     CS:      SciNCL +22.6%  Qwen3 +6.6%   SPECTER2 +3.4%  (ALL up, sig)
+     Physics: SciNCL +23.7%  Qwen3 +10.5%  SPECTER2 -10.2% (SPECTER2 down, sig)
+   => "frontier widens" holds on all 3 families in CS; SPECTER2 reverses only
+      in Physics (its most canon-concentrated field). Reframing refined, not
+      overturned.

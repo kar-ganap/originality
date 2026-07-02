@@ -11,16 +11,20 @@ claim is disconfirmed — a successful null.
 
 ## Current State
 
-- **Current Stage:** Stage 2 — Walk **(Phase 2.2 COMPLETE — the pre-registered
-  test is run).** Stage 1 CLOSED. **Headline: Claim #13 robustly DISCONFIRMED
-  (successful null), reframed as "the citation canon concentrates while the
-  semantic frontier + authorship diversify."** The pre-registered ratio
-  estimator returned a "divergence" that was a demographic-denominator confound;
-  raw absolute trends + a full robustness stack (Qwen3 swap, K-sweep, clean
-  subset) show no robust semantic decline, and an independent correctness
-  battery verifies the pipeline. See `docs/phases/phase-2.2-retro.md`. **To
-  fully wrap up WS2:** subfield mechanism test (the pre-registered "single most
-  important analysis"), publication-grade figures, paper draft.
+- **Current Stage:** Stage 2 → 3 **(Phase 2.3 COMPLETE — the subfield mechanism
+  test, the pre-registered "single most important analysis," is run).** Stage 1
+  CLOSED. **Headline: Claim #13 robustly DISCONFIRMED (successful null), reframed
+  as "the citation canon concentrates while the semantic frontier + authorship
+  diversify" (Phase 2.2) — and there is NO robust localized mechanism (Phase
+  2.3): canon-concentrated subfields do NOT robustly diverge more (γ₁'s sign is
+  embedding-determined across a 6-spec grid), so concentration and
+  frontier/authorship diversity are independent.** A 3rd embedding family
+  (SPECTER2) refined the reframing: "frontier widens" holds on all 3 families in
+  CS; only the citation-tuned SPECTER2 reverses it in Physics (its most
+  canon-concentrated field) — "the topical frontier widens while citation-geometry
+  narrows where the canon concentrates." See `docs/phases/phase-2.3-retro.md`,
+  `docs/phases/phase-2.2-retro.md`. **To fully wrap up WS2:** publication-grade
+  figures, paper draft.
 - **Phase 0.1 (Foundation scoping):** COMPLETE. See
   `docs/phases/phase-0.1-retro.md`.
 - **Phase 0.2 (Pre-registration + Stage-1 prereqs):** COMPLETE
@@ -76,6 +80,23 @@ claim is disconfirmed — a successful null.
   `reference_canonicity`, `build_joint_plurality_series`, `permutation_slope_test`,
   `standardized_effect`, `residual_trend`. Amendments PA-1/2/3 in
   `phase-2.0-plan.md` §5. See `docs/phases/phase-2.2-retro.md`.
+- **Phase 2.3 (the subfield mechanism test — the pre-registered "single most
+  important analysis"):** COMPLETE 2026-07-01. **NO robust localized mechanism.**
+  Regressed `divergence_magnitude = demographic_sd − semantic_sd` (absolute, not
+  the confounded ratio) on subfield canon-concentration, controlling for log
+  size, over a **6-spec grid** ({SciNCL, Qwen3, SPECTER2} × {OpenAlex level-1
+  sub-concepts, K=50 clusters}). γ₁'s **sign is embedding-determined** (the
+  significant specs contradict each other) → canon-concentration does not
+  robustly predict divergence; concentration and frontier/authorship diversity
+  are **independent** (the reframing holds). SPECTER2 (pre-committed Stage-3 3rd
+  family; fresh 1M Modal embed ~$3 via a server-side volume-write path) **refuted
+  a SciNCL-only Physics wrinkle** and, via an "escalate but verify first" pass,
+  **refined** the aggregate reframing: "frontier widens" holds on all 3 families
+  in CS (SPECTER2 +3.4%); only the citation-tuned SPECTER2 reverses in Physics
+  (−10.2%) — its most canon-concentrated field. The per-subfield SPECTER2 −1.35σ
+  was an ill-conditioned-σ artifact (near-flat CS series); adapter confirmed
+  active; not drift. New src: `subfield_divergence` (FWL permutation γ₁ + VIF +
+  standardized). See `docs/phases/phase-2.3-retro.md`.
 - **Methodology locks** (per `docs/phases/phase-0.2-plan.md` +
   Phase 0.2 retro):
   - **§0 analytical population**: score≥0.3 + has_abstract +
@@ -98,18 +119,19 @@ claim is disconfirmed — a successful null.
   (sample-based per-region bias estimation, not direct labeling) →
   §9e-style correction; country from affiliations; reusable
   per-region bias kernel `experiments/phase-1.3/v3-confusion-matrix.json`.
-- **Next — wrap up WS2 (Stage 2→3 close-out):** the pre-registered test is
-  run; to complete the study: **(1) the subfield mechanism test** — do
-  canon-concentrated subfields show more demographic-semantic divergence? (the
-  conceptual doc's "single most important analysis"; the last place a localized
-  signal could live + the direct test of the reframing); **(2) publication-grade
-  figures** (trim the incomplete final year; polish the 3-panel + residual +
-  cross-field + subfield-decomposition); **(3) the paper draft** — thesis:
-  "canon concentrates while the frontier diversifies, and the naive decoupling
-  test manufactures the opposite." Optional robustness: Genderize-augmented
-  demographic substrate; SPECTER2 third embedding family. **WS3 (theory) is
-  queued AFTER WS2 wraps** (user-locked 2026-07-01); the WS2→WS3 bridge (a
-  per-capita-V extension) is noted in `docs/phases/phase-2.2-retro.md`.
+- **Next — wrap up WS2 (Stage 2→3 close-out):** both the pre-registered
+  divergence test (Phase 2.2) AND the subfield mechanism test (Phase 2.3, incl.
+  the SPECTER2 3rd family) are run. Remaining to complete the study: **(1)
+  publication-grade figures** (trim the incomplete final year; polish the 3-panel
+  + cross-field + subfield-decomposition + a 3-family aggregate panel showing the
+  CS-agreement / Physics-citation-vs-topical split); **(2) the paper draft** —
+  thesis: "the canon concentrates while the topical frontier diversifies (and
+  citation-geometry narrows where the canon is strongest); the naive decoupling
+  test manufactures the opposite, and there is no robust localized mechanism."
+  Optional robustness: Genderize-augmented demographic substrate. **WS3 (theory)
+  is queued AFTER WS2 wraps** (user-locked 2026-07-01); the WS2→WS3 bridge (a
+  per-capita-V extension) is noted in `docs/phases/phase-2.2-retro.md`, sharpened
+  by Phase 2.3 (mechanism-space narrowed to citation-geometry convergence).
 
 ## Constraints
 
