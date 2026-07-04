@@ -52,7 +52,7 @@ the two traditions individually — and those are classical.
 
 ## Current State
 
-- **Stage:** Phase 0 (substrate on-ramp) — STARTING. Prelude COMPLETE.
+- **Stage:** Phase 0 (substrate on-ramp) — COMPLETE (rung 1 + 2a). Prelude COMPLETE.
 - **Prelude (this session, on branch `ws3`):**
   - `docs/primers/cv-reconciliation-primer.tex` — unambiguous parameters; the
     surviving hypotheses (refined 13-D + 13-H) in the model's language; **Core
@@ -61,14 +61,22 @@ the two traditions individually — and those are classical.
     Core Claim 6 (per-capita structural novelty), reusing WS2 data.
   - `docs/phases/phase-1-abm-core-plan.md` — the ABM Phase plan (5-rung ladder,
     pre-registered hypotheses ↔ Core Claims, Modal sweep design).
-- **Next:** Phase 0 rung 1 — reproduce Henrich 2004 / Powell 2009 (the
-  known-answer harness anchor + substrate fluency).
+- **Phase 0 done (branch `ws3`):** rung 1 (`transmission.py`) reproduces
+  **Henrich 2004** at **Level 3** — it matches Mesoudi's canonical
+  `DemographyModel` (Model 9) published runs and the Δz̄-vs-N crossover at
+  `N*≈616` (α=7, β=1). rung 2a (`concept_base.py`) is *our* per-level concept-base
+  representation (un-bundles transmission from innovation; qualitative
+  maintenance/Tasmania anchor, **not** a published-number reproduction — novel
+  mechanism). Pre-push hook enforces the gates. 14 tests green.
+- **Next:** Phase 1 — innovation → per-capita `V` (rung 2b), then `κ` → the
+  crossover (rung 3).
 
 ## The WS3 arc (four phases)
 
 - **Phase 0 — substrate on-ramp.** Read the ~6 core papers; build + validate the
-  **transmission harness** that reproduces the Henrich/Powell critical-population-
-  size result (`src/whitespace3/transmission.py`). This is rung 1 of the ABM plan
+  **transmission harness** that reproduces the **Henrich 2004** critical-population-
+  size result at Level 3 (via Mesoudi's Model 9) (`src/whitespace3/transmission.py`).
+  This is rung 1 of the ABM plan
   and the C-substrate. Deliverable: a validated engine + you can think in the
   substrate. *Your gap is domain knowledge, not method — your portfolio is
   rigorous computational experimentation; this is a ~2-week onboarding.*
@@ -109,7 +117,12 @@ with WS2 (shared utilities graduate to a versioned package with tests).
 3. **Report nulls honestly** — the orthogonality outcome is a full result.
 4. **Trust = independent agreement + placebo,** not "my sim runs": every rung has
    a known-answer anchor (reproduce a published baseline) + a placebo (e.g.
-   `κ=0` must not produce the crossover).
+   `κ=0` must not produce the crossover). **Aim for Level 3** — reproduce a
+   specific published *number* of the same model (not just our own coded formula,
+   and not merely a matching equation). Where the source is analytical-only or the
+   rung is our own construction, document the reason Level 3 is unavailable and use
+   the strongest anchor. Never name a published model we haven't implemented. See
+   `tasks/lessons.md` (2026-07-03) + the `feedback_reproduce_published_numbers` memory.
 5. **Robustness across specifications** is the analog of WS2's ≥2-embedding-
    families rule: ≥3 `κ` specs × ≥3 topologies; the *sign-structure* must be
    invariant.
@@ -130,15 +143,19 @@ with WS2 (shared utilities graduate to a versioned package with tests).
 - Empirical bridge: `docs/primers/v-extension-empirical-spec.tex`.
 - ABM plan: `docs/phases/phase-1-abm-core-plan.md`.
 - Core readings (to build the model — the fuller 30–40 is for the paper's lit
-  review): **Powell–Shennan–Thomas 2009** (the N→complexity ABM to reproduce),
-  **Henrich 2004** (Tasmania / critical population size), **Vaesen et al. 2016**
-  (the robustness critique), **Derex et al. 2013**, **Wu–Wang–Evans 2019**,
-  **Zollman 2007/2010** (network-epistemology ABM template).
+  review): **Henrich 2004** (Tasmania / critical population size — the
+  single-population model reproduced at rungs 1–3), via **Mesoudi, *Simulation
+  Models of Cultural Evolution in R*, Model 9** (`DemographyModel` — the
+  reproducible Level-3 source: concrete parameters + runs, e.g. `N*≈616` at
+  α=7,β=1); **Powell–Shennan–Thomas 2009** (the *metapopulation* N→complexity
+  ABM — the Level-3 target for the later network rung, NOT rungs 1–3);
+  **Vaesen et al. 2016** (the robustness critique), **Derex et al. 2013**,
+  **Wu–Wang–Evans 2019**, **Zollman 2007/2010** (network-epistemology ABM template).
 - Program context: `../docs/program/` (overview, deep-research pathways).
 
 ## Known Gotchas
 
-- **The crossover is the only hard part.** Transmission→`C` (Powell) is classical;
+- **The crossover is the only hard part.** Transmission→`C` (Henrich) is classical;
   the joint `C`–`V` response is emergent. Spend your attention on how `κ` must
   scale for per-capita `V` to flip sign in `N`.
 - **Don't over-fit to WS2.** Keep the reconciliation in the minimal Tier-1 model;

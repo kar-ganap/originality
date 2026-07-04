@@ -68,9 +68,11 @@ Trust in a simulation pipeline comes from **independent agreement** (reproduce a
 known result) + **placebo calibration** (no-signal input → no-signal output) — the
 WS2 "how do we draw trust" lesson, ported to simulation.
 
-- **T1 — known-answer anchor.** The transmission-only harness reproduces
-  Powell–Shennan–Thomas 2009's `N`→complexity loss threshold within tolerance
-  (be aware of the Vaesen 2016 robustness caveat; test the *canonical* regime).
+- **T1 — known-answer anchor (Level 3).** The transmission-only harness reproduces
+  **Henrich 2004** — matching Mesoudi's `DemographyModel` (Model 9) published runs
+  and the Δz̄-vs-N crossover `N* = exp(α/β − γ_E) ≈ 616` (α=7, β=1); be aware of the
+  Vaesen 2016 robustness caveat. (Powell's *metapopulation* is the Level-3 target
+  for the later network rung, not here.)
 - **T2 — metric correctness.** `C(t)`, `V(t)`, canon-concentration `H`, and the
   `V^struct/V^lat` split computed correctly on hand-built states.
 - **T3 — determinism.** Same seed ⇒ byte-identical trajectory (required for the
@@ -90,9 +92,10 @@ These become the permanent (slow-marked) test suite.
 Build bottom-up; each rung is independently checkable and the classical rungs
 have known answers.
 
-1. **Transmission → `C`.** Concept-base agents + redundancy-based acquisition
-   (primer Def. 4.1). **Gate:** T1 (reproduce Powell 2009). *This rung is the
-   substrate-fluency on-ramp — a known-answer target.*
+1. **Transmission → `C`.** rung 1 = the scalar Henrich model (Level-3 anchor);
+   rung 2a = the concept-base representation with per-level `f`/redundancy
+   acquisition (primer Def. 4.1). **Gate:** T1 (reproduce **Henrich 2004** at
+   Level 3, via Mesoudi Model 9). *The substrate-fluency on-ramp.*
 2. **Innovation, `κ=0` → per-capita `V`.** Add the innovation operator (primer
    Def. 4.2) and the persistence-filtered `V` (primer Def. 5.2). **Gate:** T4
    (per-capita `V` flat/rising in `N`).
@@ -174,7 +177,7 @@ Any coverage/sampling caps are `log`ged, never silently applied.
 ## 7. Validation gates + escape triggers
 
 **Gates (pre-registered "done"):**
-1. T1–T5 green; Powell 2009 reproduced (independent-agreement anchor).
+1. T1–T5 green; **Henrich 2004 reproduced at Level 3** (Mesoudi Model 9 numbers).
 2. H3 crossover robust across **≥2 `κ` specs and ≥2 topologies**, estimated with
    seed-CIs.
 3. H4 demonstrated: opposite-sign lever **and** a Pareto selective-isolation
@@ -186,7 +189,7 @@ Any coverage/sampling caps are `log`ged, never silently applied.
 
 **Escape triggers (diagnose before redirecting — the WS2 "diagnose, don't
 mechanically escalate" lesson):**
-- *Powell not reproduced* → harness bug; fix before any downstream claim.
+- *Henrich 2004 not reproduced (Level 3)* → harness bug; fix before any downstream claim.
 - *Crossover only under one `κ` spec* → report as mechanism-specific; pivot the
   paper's thesis toward **orthogonality** (independent gauges, no strict
   trade-off), which is still a full contribution and matches WS2's independence

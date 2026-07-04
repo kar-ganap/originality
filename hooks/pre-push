@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Pre-push gate: block a push unless the active whitespace (WS3) passes
+# ruff + mypy --strict + pytest. One-time install per clone:
+#   git config core.hooksPath hooks
+set -euo pipefail
+root="$(git rev-parse --show-toplevel)"
+ws="$root/whitespace_3"
+if [ -d "$ws" ]; then
+  echo "[pre-push] WS3 gates (ruff, mypy --strict, pytest) ..."
+  make -C "$ws" lint typecheck test
+  echo "[pre-push] WS3 gates passed."
+fi

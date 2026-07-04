@@ -1,13 +1,15 @@
-"""Phase 0 rung 1 — the transmission harness reproduces the Henrich 2004 /
-Powell-Shennan-Thomas 2009 critical-population-size result for cumulative culture.
+"""Rung 1 — the transmission harness reproduces Henrich 2004, verified against the
+paper's equations AND against Mesoudi's canonical ``DemographyModel`` reproduction
+(Simulation Models of Cultural Evolution in R, Model 9), with its specific runs.
 
-The known-answer anchor (trust = independent agreement with a published result):
-with each of ``n`` learners imitating the current frontier skill with a Gumbel
-inference error of location ``mu`` (a mean loss when ``mu<0``) and scale
-``alpha``, the frontier ``z_max`` drifts per generation by exactly
-``mu + alpha*(ln n + gamma_E)``.  Hence there is a critical population size
-``N* = exp(-mu/alpha - gamma_E)`` above which cumulative complexity accumulates
-and below which it is lost (the Tasmania effect).
+Level-2 anchor: our formulas ARE Henrich's Eq (2) ``dz_bar = -alpha + beta(gamma_E
++ ln N)`` and Eq (3) ``N* = exp(alpha/beta - gamma_E)``.
+
+Level-3 anchor (reproduce specific published numbers of the *same* model):
+  * Mesoudi's two stated runs at ``alpha=30, beta=15``: ``N=100`` -> cultural GAIN,
+    ``N=1`` -> cultural LOSS.
+  * Mesoudi's ``DemographyModel2`` at ``alpha=7, beta=1``: the Delta-z-bar-vs-N
+    curve crosses zero at ``N* = exp(7 - gamma_E) ~= 616`` (loss below, gain above).
 """
 
 from __future__ import annotations
@@ -24,65 +26,70 @@ from whitespace3.transmission import (
     run_transmission,
 )
 
-MU, ALPHA = -3.0, 1.0          # N* = exp(3 - gamma_E) ~= 11.28
+
+def test_henrich_eq2_drift_formula() -> None:
+    """Henrich 2004 Eq (2): dz_bar = -alpha + beta*(gamma_E + ln N)."""
+    assert per_gen_drift(1, 30, 15) == pytest.approx(-30 + 15 * EULER_GAMMA)
+    assert per_gen_drift(100, 30, 15) == pytest.approx(
+        -30 + 15 * (math.log(100) + EULER_GAMMA))
 
 
-def test_per_gen_drift_formula() -> None:
-    assert per_gen_drift(1, MU, ALPHA) == pytest.approx(MU + ALPHA * EULER_GAMMA)
-    assert per_gen_drift(10, MU, ALPHA) == pytest.approx(
-        MU + ALPHA * (math.log(10) + EULER_GAMMA))
-
-
-def test_critical_population_size_roundtrip() -> None:
-    nstar = critical_population_size(MU, ALPHA)
-    assert nstar == pytest.approx(math.exp(-MU / ALPHA - EULER_GAMMA))
-    assert nstar == pytest.approx(11.28, abs=0.1)
+def test_henrich_eq3_critical_population_size() -> None:
+    """Henrich 2004 Eq (3): N* = exp(alpha/beta - gamma_E). Mesoudi's alpha=7,
+    beta=1 gives N* ~= 616; the "complex skill" alpha=9, beta=1 gives ~4553."""
+    assert critical_population_size(7, 1) == pytest.approx(math.exp(7 - EULER_GAMMA))
+    assert critical_population_size(7, 1) == pytest.approx(615.7, abs=1.0)
+    assert critical_population_size(9, 1) == pytest.approx(4549.0, abs=5.0)
     # drift evaluated at N* is zero by construction
-    assert per_gen_drift(nstar, MU, ALPHA) == pytest.approx(0.0, abs=1e-9)
+    assert per_gen_drift(round(critical_population_size(7, 1)), 7, 1) == pytest.approx(
+        0.0, abs=1e-3)
 
 
-def test_accumulation_large_N() -> None:
-    """N=50 >> N*: the frontier accumulates over generations."""
-    r = run_transmission(50, MU, ALPHA, generations=200, seed=0)
-    assert r["z_max"][-1] > r["z_max"][0]
+def test_mesoudi_model9_regime_reproduction() -> None:
+    """Mesoudi Model 9's two stated runs (alpha=30, beta=15): N=100 -> gain,
+    N=1 -> loss, and the drift magnitudes match Eq (2)."""
+    d100 = measure_drift(100, 30, 15, 100, range(20))
+    assert d100 > 0                                              # "cultural gain"
+    assert d100 == pytest.approx(per_gen_drift(100, 30, 15), abs=3.0)   # ~ +47.7
+
+    d1 = measure_drift(1, 30, 15, 100, range(20))
+    assert d1 < 0                                               # "cultural loss"
+    assert d1 == pytest.approx(per_gen_drift(1, 30, 15), abs=3.0)       # ~ -21.3
 
 
-def test_loss_small_N_is_tasmania() -> None:
-    """N=4 < N*: the frontier is LOST over generations (net negative drift)."""
-    r = run_transmission(4, MU, ALPHA, generations=200, seed=0)
-    assert r["z_max"][-1] < r["z_max"][0]
-    assert measure_drift(4, MU, ALPHA, 200, range(20)) < 0
+def test_mesoudi_model9_crossover_at_N_star() -> None:
+    """The hard Level-3 number: DemographyModel2(alpha=7, beta=1) crosses
+    Delta-z-bar = 0 at N* ~= 616. Our simulation reproduces the crossover:
+    loss below, gain above, and ~0 at N*."""
+    nstar = critical_population_size(7, 1)
+    assert 610.0 < nstar < 620.0
+    assert measure_drift(300, 7, 1, 200, range(20)) < 0         # below N* -> loss
+    assert measure_drift(1000, 7, 1, 200, range(20)) > 0        # above N* -> gain
+    assert measure_drift(round(nstar), 7, 1, 400, range(40)) == pytest.approx(
+        0.0, abs=0.1)                                           # at N* -> ~0
 
 
 def test_drift_monotone_in_N() -> None:
-    """More minds accumulate complexity faster (drift increasing in N)."""
-    drifts = [measure_drift(n, MU, ALPHA, 200, range(15))
-              for n in (2, 4, 11, 50, 200)]
+    drifts = [measure_drift(n, 7, 1, 200, range(15)) for n in (2, 100, 616, 2000)]
     assert all(drifts[i] < drifts[i + 1] for i in range(len(drifts) - 1))
 
 
-def test_drift_matches_analytic_across_N() -> None:
-    """The known-answer anchor: empirical per-gen drift matches
-    mu + alpha*(ln N + gamma_E) across N (seed-averaged)."""
-    for n in (2, 8, 30, 100):
-        emp = measure_drift(n, MU, ALPHA, 300, range(40))
-        assert emp == pytest.approx(per_gen_drift(n, MU, ALPHA), abs=0.05)
-
-
 def test_determinism() -> None:
-    a = run_transmission(20, MU, ALPHA, 50, seed=7)
-    b = run_transmission(20, MU, ALPHA, 50, seed=7)
+    a = run_transmission(20, 7, 1, 50, seed=7)
+    b = run_transmission(20, 7, 1, 50, seed=7)
     assert a["z_max"] == b["z_max"]
 
 
 def test_input_validation() -> None:
     with pytest.raises(ValueError):
-        run_transmission(0, MU, ALPHA, 10, 0)
+        run_transmission(0, 7, 1, 10, 0)
     with pytest.raises(ValueError):
-        run_transmission(5, MU, 0.0, 10, 0)
+        run_transmission(5, -1, 1, 10, 0)          # alpha must be >= 0
     with pytest.raises(ValueError):
-        run_transmission(5, MU, ALPHA, 0, 0)
+        run_transmission(5, 7, 0.0, 10, 0)         # beta must be > 0
     with pytest.raises(ValueError):
-        per_gen_drift(0, MU, ALPHA)
+        run_transmission(5, 7, 1, 0, 0)
     with pytest.raises(ValueError):
-        critical_population_size(MU, 0.0)
+        per_gen_drift(0, 7, 1)
+    with pytest.raises(ValueError):
+        critical_population_size(7, 0.0)
