@@ -1,0 +1,745 @@
+\documentclass[11pt,letterpaper]{article}
+
+% ── Fonts ─────────────────────────────────────────────────────────
+\usepackage[T1]{fontenc}
+\usepackage{newtxtext}
+\usepackage{amssymb}
+\usepackage{newtxmath}
+\usepackage[scaled=0.85]{inconsolata}
+
+% ── Layout ────────────────────────────────────────────────────────
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\setstretch{1.08}
+\usepackage{parskip}
+\setlength{\parskip}{0.5\baselineskip plus 2pt minus 1pt}
+
+% ── Section headings ──────────────────────────────────────────────
+\usepackage{titlesec}
+\titleformat{\section}{\large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{0.8em}{}
+\titleformat{\subsubsection}{\normalsize\itshape}{\thesubsubsection}{0.8em}{}
+\titlespacing*{\section}{0pt}{1.8ex plus 0.5ex}{0.8ex plus 0.2ex}
+\titlespacing*{\subsection}{0pt}{1.4ex plus 0.3ex}{0.4ex plus 0.1ex}
+
+% ── Math ──────────────────────────────────────────────────────────
+\usepackage{amsmath}
+\usepackage{mathtools}
+\let\openbox\relax  % newtxmath already defines \openbox; let amsthm redefine it
+\usepackage{amsthm}
+
+% ── Tables ────────────────────────────────────────────────────────
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\renewcommand{\arraystretch}{1.15}
+\usepackage{caption}
+\captionsetup{font=small, labelfont=bf, labelsep=period, skip=6pt}
+
+% ── Floats & graphics ─────────────────────────────────────────────
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{placeins}
+
+% ── Lists ─────────────────────────────────────────────────────────
+\usepackage{enumitem}
+\setlist{nosep, leftmargin=1.5em}
+
+% ── Colors & links ────────────────────────────────────────────────
+\usepackage{xcolor}
+\definecolor{linkblue}{HTML}{0B5394}
+\definecolor{citegreen}{HTML}{1B7340}
+\definecolor{urlgray}{HTML}{444444}
+\usepackage[
+  colorlinks=true, linkcolor=linkblue, citecolor=citegreen, urlcolor=urlgray,
+  bookmarksnumbered=true, pdfstartview=FitH,
+]{hyperref}
+\usepackage[noabbrev,capitalise]{cleveref}
+\usepackage{microtype}
+
+% ── Theorem-like environments ─────────────────────────────────────
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{assumption}{Assumption}[section]
+\newtheorem{remark}{Remark}[section]
+\theoremstyle{plain}
+\newtheorem{coreclaim}{Core Claim}
+\newtheorem{wsc}{WS2 Constraint}
+
+% shorthand
+\newcommand{\E}{\mathcal{E}}
+\newcommand{\N}{\mathcal{N}}
+\newcommand{\R}{\mathcal{R}}
+\newcommand{\pre}{\pi}
+\newcommand{\clo}{\Pi}
+\newcommand{\Nat}{\mathbb{N}}
+\newcommand{\Real}{\mathbb{R}}
+\newcommand{\ind}{\mathbf{1}}
+\newcommand{\card}[1]{\lvert #1 \rvert}
+\DeclareMathOperator{\Gini}{Gini}
+
+\title{A Technical Primer for Whitespace 3\\[2pt]
+\large The $C$--$V$ Reconciliation: Parameters, Surviving Hypotheses, and Core Claims\\
+\normalsize (with the constraints imposed by Whitespace 2)}
+\author{Originality Program --- Whitespace 3 Theoretical Reconciliation}
+\date{July 2026}
+
+\begin{document}
+\maketitle
+\tableofcontents
+\clearpage
+
+%==============================================================
+\section{Purpose and how to read this primer}
+%==============================================================
+
+Whitespace 3 (WS3) is a theoretical paper arguing that two empirically robust
+but apparently contradictory traditions are reconciled once they are recognized
+as measuring \emph{distinct} outputs of the same dynamics:
+
+\begin{itemize}[nosep]
+  \item the \textbf{Henrich tradition} (Henrich 2004; Powell--Shennan--Thomas
+  2009; Derex et al.\ 2013): larger, better-connected populations accumulate and
+  preserve more \emph{cumulative complexity}; small isolated groups lose it;
+  \item the \textbf{Wu--Wang--Evans (WWE) tradition} (Wu--Wang--Evans 2019;
+  Lin--Frey--Wu 2023): smaller teams produce more \emph{per-capita disruptive
+  novelty}; larger teams consolidate.
+\end{itemize}
+
+The reconciliation is that the first tradition measures a quantity we call
+$C(t)$ (cumulative complexity) and the second measures a quantity we call $V(t)$
+(per-capita variance generation), and that \emph{$C$ and $V$ need not move
+together---under the same dynamics they can move in opposite directions in
+response to the same intervention} (\texttt{whitespace\_3/docs/conceptual.md},
+\S``The core theoretical move'').
+
+This primer does three things, in order:
+\begin{enumerate}[label=(\alph*),nosep]
+  \item \textbf{Fixes an unambiguous vocabulary} for the minimal agent model:
+  every state object, every control parameter, and the two output measures
+  $C(t),V(t)$ (\S\ref{sec:primitives}--\S\ref{sec:outputs}).
+  \item \textbf{Restates, in that vocabulary, which causal hypotheses survive}
+  the Whitespace 2 (WS2) empirical study---the refined preferential-attachment
+  ossification pathway (13-D) and the endogenous-canon pathway (13-H), against
+  the ruled-out ``cosmetic diversity'' pathway (13-B)---and encodes the WS2
+  findings as constraints the model must satisfy (\S\ref{sec:hypotheses}).
+  \item \textbf{States the core claims WS3 must establish}, in qualitative form
+  but with the \emph{shape} (monotone / threshold / saturating / hump) and
+  \emph{scaling} (in $N,\rho,H$) that must survive the WS2 observations
+  (\S\ref{sec:claims}).
+\end{enumerate}
+
+\begin{remark}[Register]
+WS3's deliverable is \emph{robust sign-structure}, not a fitted functional form.
+Per \texttt{conceptual.md}, ``the paper's value is conceptual clarity, not model
+realism,'' and results must ``hold under multiple specifications of conformity
+pressure $\kappa$'' and multiple network topologies. Accordingly, this primer
+specifies each dynamical operator by its \emph{named functional dependencies and
+required monotonicities}, and treats every explicit closed form as an
+illustrative instance (collected in \S\ref{sec:instantiation}). A ``claim'' below
+is a statement about signs, limits, and scaling laws---not about a particular
+formula.
+\end{remark}
+
+\begin{remark}[What WS2 fixed, and the one thing it did not]\label{rem:ws2role}
+WS2 measured, on $\sim\!900$k CS and Physics papers over 1970--2023, three
+\emph{collective} time series (all rising): demographic diversity, semantic
+(topical) diversity, and canonical concentration. Crucially, WS2 measured
+canonical concentration---the empirical realization of the model's conformity
+\emph{driver}---but it did \textbf{not} measure any \emph{per-capita} novelty
+rate. In the vocabulary below, WS2 pins down collective quantities and the driver
+of $\kappa$, and leaves $V$ (the per-capita output) as the central open measurement.
+This asymmetry structures everything: WS2 constrains the model \emph{through
+$\kappa$ and the collective outputs}, and the model in turn \emph{predicts} $V$.
+\end{remark}
+
+%==============================================================
+\section{Primitives: state objects}\label{sec:primitives}
+%==============================================================
+
+Time is discrete, indexed by generations $t \in \{0,1,2,\dots\}$.
+
+\subsection{Elements, complexity, and prerequisites}
+
+\begin{definition}[Element universe and complexity]
+Let $\E$ be a countable universe of \emph{elements} (cultural / intellectual
+units: concepts, techniques, results). Each $e\in\E$ carries a \emph{complexity
+level} $\ell(e)\in\Nat_{\ge 1}$.
+\end{definition}
+
+\begin{definition}[Prerequisite structure]
+There is an acyclic \emph{prerequisite} relation $\prec$ on $\E$. For $e\in\E$
+write $\pre(e) = \{e' : e' \prec e\}$ for its \emph{direct prerequisites} and
+$\clo(e)$ for its \emph{prerequisite closure} (the transitive downward set). We
+require $\ell(e) = 1 + \max_{e'\in\pre(e)}\ell(e')$ (with $\ell(e)=1$ when
+$\pre(e)=\varnothing$), so level equals depth in the prerequisite DAG. Thus a
+level-$k$ element ``requires possession of prerequisites at complexity $1$
+through $k{-}1$.''
+\end{definition}
+
+\begin{remark}[Two channels of an element: content vs.\ attachment]\label{rem:twochannels}
+Each element $e$ has (i) a \emph{content}---a location in a topic space,
+formalized by a map $\tau(e)$ into a metric ``semantic'' space
+$\mathcal{T}$---and (ii) an \emph{attachment}---its prerequisite set $\pre(e)$,
+i.e.\ \emph{which} prior elements it builds on. This content/attachment split is
+the model-internal image of WS2's \emph{topics vs.\ wiring} distinction and is
+load-bearing throughout (\S\ref{sec:hypotheses}). ``Topical diversity'' will be a
+statistic of $\{\tau(e)\}$; ``canonical concentration'' a statistic of the
+attachment graph $\{\pre(e)\}$.
+\end{remark}
+
+\subsection{Agents, concept bases, and the population repertoire}
+
+\begin{definition}[Concept base and coherence]
+Agent $i\in[N]$ holds a \emph{concept base} $B_i(t)\subseteq\E$. A base is
+\emph{coherent} if it is downward closed: $e\in B_i(t)\Rightarrow
+\pre(e)\subseteq B_i(t)$ (hence $\clo(e)\subseteq B_i(t)$)---one cannot hold an
+element without its foundations. All dynamical operators below are defined to
+preserve coherence.
+\end{definition}
+
+\begin{definition}[Repertoire and loss]
+The \emph{population repertoire} is $\R(t) = \bigcup_{i\in[N]} B_i(t)$. Element
+$e$ is \emph{lost} at $t$ if $e\in\R(t{-}1)\setminus\R(t)$: no agent carries it
+forward, so (absent re-innovation) it is gone permanently. The \emph{carrier
+count} is $M(e,t) = \card{\{i : e\in B_i(t)\}}$.
+\end{definition}
+
+\subsection{Network and subgroups}
+
+\begin{definition}[Interaction network]
+Agents occupy an undirected graph $G(t)=([N],E(t))$ whose edges encode who may
+learn from whom. Write $\N_i(t)$ for the neighborhood of $i$ and
+$d_i(t)=\card{\N_i(t)}$ for its degree. The \emph{local redundancy} of $e$ at $i$
+is $m_i(e,t) = \card{\{j\in\N_i(t) : e\in B_j(t)\}}$ (how many of $i$'s teachers
+hold $e$).
+\end{definition}
+
+\begin{definition}[Subgroups and isolation]
+Agents are partitioned into \emph{groups} $\{\mathcal{G}_1,\dots\}$. For an agent
+$i$ in group $\mathcal{G}$, its \emph{internal fraction} is the share of its edges
+that stay inside $\mathcal{G}$. The \emph{isolation} of a group is the mean
+internal fraction of its members (see $\iota$, \S\ref{sec:params}); $\iota\to 1$
+is a fully insulated group, $\iota\to 0$ a fully integrated one.
+\end{definition}
+
+\subsection{Emergent structures: the canon and the diversity statistics}
+
+These are \emph{derived} from the state (not free parameters); they are exactly
+the objects WS2 measured or that the output measures reference.
+
+\begin{definition}[Canonical weight, canon, and concentration]\label{def:canon}
+The \emph{canonical weight} of $e\in\R(t)$ is its dependency load---the frequency
+with which $e$ appears in the prerequisite closures of currently-held elements,
+\begin{equation}
+  w(e,t) \;=\; \frac{1}{Z_t}\;\card{\big\{(i,e'') : e''\in B_i(t),\ e\in\clo(e'')\big\}},
+  \qquad Z_t \text{ a normalizer},
+\end{equation}
+so a high-$w$ element is a widely load-bearing foundation. The \emph{canon}
+$K_\alpha(t)$ is the top-$\alpha$ fraction of $\R(t)$ by $w$. \emph{Canonical
+concentration} is the inequality of the weight distribution,
+\begin{equation}
+  H(t) \;=\; \Gini\big(\{w(e,t)\}_{e\in\R(t)}\big) \in [0,1],
+\end{equation}
+the model image of WS2's \emph{reference-canonicity Gini}. (Chu--Evans-style
+top-$N$ rank stability across years is an equivalent monotone summary.)
+\end{definition}
+
+\begin{definition}[Topical breadth and demographic diversity]\label{def:breadth}
+\emph{Topical breadth} is a diversity functional of the repertoire's contents,
+$W(t) = \mathrm{Div}\big(\{\tau(e) : e\in\R(t)\}\big)$ (e.g.\ effective number of
+content clusters, or embedding-variance)---the model image of WS2's rising
+\emph{semantic/topical diversity}. Agents carry \emph{priors}
+$\theta_i\in\Theta$ (initial concept bases / heuristics); their diversity
+$\theta=\mathrm{Div}(\{\theta_i\})$ is the model's \emph{demographic-plurality}
+input, with realized diversity $D(t)$. In WS3, $\theta$ is an \emph{input}
+dimension, not a core $C$--$V$ driver (see Constraint~\ref{wsc:indep}).
+\end{definition}
+
+%==============================================================
+\section{Parameters (control knobs)}\label{sec:params}
+%==============================================================
+
+Table~\ref{tab:params} lists every control parameter unambiguously. A parameter
+is a quantity the modeler sets; it is distinct from \emph{state} (\S\ref{sec:primitives})
+and from \emph{outputs} (\S\ref{sec:outputs}).
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{@{}l l l p{6.9cm}@{}}
+\toprule
+Symbol & Name & Domain & Meaning \\
+\midrule
+$N$ & population size & $\Nat_{\ge 1}$ & number of agents (fixed, or a control we vary/compare across) \\
+$\rho$ & network density & $[0,N{-}1]$ & mean degree (edges per agent); density fraction $=\rho/(N{-}1)$ \\
+$f$ & transmission fidelity & $[0,1]$ & per-teaching-event probability of successful acquisition \\
+$\varepsilon$ & base innovation rate & $[0,1]$ & per-agent, per-generation propensity to attempt a novelty \\
+$b$ & vertical share & $[0,1]$ & fraction of attempted innovations that are \emph{depth-extending} (vs.\ lateral) \\
+$\iota$ & isolation & $[0,1]$ & mean internal-edge fraction of a subgroup ($1$ = insulated) \\
+$k$ & persistence filter & $\Nat_{\ge 1}$ & generations a novelty must survive to count in $V$ (ephemera filter) \\
+$\theta$ & prior heterogeneity & $\Real_{\ge 0}$ & diversity of agent priors --- the \emph{demographic-plurality} input \\
+$\kappa(\cdot)$ & conformity pressure & (a function) & local drag against novelty; \emph{the load-bearing object} (\S\ref{sec:kappa}) \\
+$g(\cdot)$ & suppression map & $[0,\infty)\!\to\![0,1]$ & how $\kappa$ throttles the realized innovation rate; $g\downarrow$, $g(0){=}1$ \\
+\bottomrule
+\end{tabular}
+\caption{The control parameters of the WS3 model. $\kappa$ and $g$ are
+\emph{functions} (not scalars); their specification is the crux
+(\S\ref{sec:kappa}, Core Claim~\ref{cc:wwe}).}
+\label{tab:params}
+\end{table}
+
+\begin{remark}[The Henrich axes vs.\ the WWE axis]
+$N,\rho,f$ are the \emph{preservation} axes---they govern how reliably deep
+structure is transmitted, and feed $C$ directly and monotonically. $\iota$ is the
+\emph{insulation} axis (Claim \#17's structure). $\kappa,g$ are the
+\emph{conformity} apparatus---the only machinery that can make per-capita novelty
+\emph{fall} as the population grows, and hence the only machinery that creates
+any tension between $C$ and $V$ (\S\ref{sec:kappa}).
+\end{remark}
+
+%==============================================================
+\section{Dynamics: the generational update}\label{sec:dynamics}
+%==============================================================
+
+Each generation, every agent applies two operators---\emph{transmission} then
+\emph{innovation}---each defined to preserve coherence.
+
+\subsection{Transmission (acquisition of existing elements)}
+
+\begin{definition}[Acquisition]\label{def:acquire}
+Agent $i$ acquires an element $e$ held by at least one neighbor with probability
+governed by fidelity $f$ and local redundancy $m_i(e,t)$:
+\begin{equation}\label{eq:acquire}
+  a_i(e,t) \;=\;
+  \begin{cases}
+    1 - (1-f)^{\,m_i(e,t)}, & \text{if } \pre(e)\subseteq B_i(t{+}1)
+      \text{ (prerequisites present)},\\[2pt]
+    0, & \text{otherwise.}
+  \end{cases}
+\end{equation}
+Equation~\eqref{eq:acquire} is the model of Henrich--Powell transmission: an
+element with high redundancy ($m$ large) around a learner is almost surely
+acquired; an element held by a single low-fidelity teacher is often dropped; an
+element held by \emph{no} neighbor cannot be acquired, and one held by nobody in
+$\R$ is lost. \emph{Only the monotonicities matter}: $a_i$ increasing in $f$ and
+in $m_i$, with $a_i\to 0$ as $m_i\to 0$; \eqref{eq:acquire} is one admissible form.
+\end{definition}
+
+\subsection{Innovation (generation of novel elements)}
+
+\begin{definition}[Innovation attempt]\label{def:innovate}
+With probability $\varepsilon\,g\!\big(\kappa_i(t)\big)$ (the base rate throttled
+by conformity, \S\ref{sec:kappa}), agent $i$ generates a novel element $e'$:
+\begin{itemize}[nosep]
+  \item \textbf{Lateral} (prob.\ $1{-}b$): a new element at an existing level
+  $k$, given $i$ holds level-$k$ material. Adds \emph{breadth} to the repertoire's
+  content $\{\tau(\cdot)\}$.
+  \item \textbf{Vertical} (prob.\ $b$): an extension to level $k{+}1$, requiring
+  $i$ to already hold a complete level-$k$ prerequisite chain. Adds \emph{depth}.
+\end{itemize}
+The new element is created with an \emph{attachment} $\pre(e')\subseteq B_i(t)$
+drawn from what $i$ holds. Define its \emph{canon-alignment}
+\begin{equation}\label{eq:align}
+  \gamma(e',t) \;=\; \frac{\card{\pre(e')\cap K_\alpha(t)}}{\card{\pre(e')}}\in[0,1],
+\end{equation}
+the share of its antecedents that are canonical. A \emph{structurally deviant}
+innovation is one with low $\gamma$ (it builds on non-canonical foundations); a
+\emph{canon-aligned} innovation has high $\gamma$.
+\end{definition}
+
+\subsection{Conformity pressure $\kappa$: the crux}\label{sec:kappa}
+
+$\kappa_i(t)\ge 0$ is the local drag against \emph{deviating}. It enters only
+through the suppression map $g$ (decreasing, $g(0)=1$, $g(\infty)=0$), and---this
+is the essential modeling commitment---\textbf{it acts on the attachment channel}:
+it suppresses \emph{structurally deviant} (low-$\gamma$) innovation while leaving
+canon-aligned and purely lateral/content novelty comparatively free. Formally the
+realized rate of low-$\gamma$ novelty carries the factor $g(\kappa_i)$, whereas
+content placement $\tau(\cdot)$ is (to first order) ungoverned by $\kappa$.
+
+\begin{definition}[Candidate mechanisms for $\kappa$]\label{def:kappamech}
+Following \texttt{conceptual.md}, $\kappa_i(t)$ is specified by one of (at least)
+three mechanisms, each an increasing function of a local ``visible agreement'':
+\begin{align}
+  \text{(VC) visible consensus:}\quad
+    &\kappa^{\mathrm{VC}}_i(t) = \phi\!\left(\tfrac{\max_e m_i(e,t)}{d_i(t)}\right),\\
+  \text{(AC) attention competition:}\quad
+    &\kappa^{\mathrm{AC}}_i(t) = \psi\big(N,\ \text{recognition skew}\big),\\
+  \text{(CD) canon deviation:}\quad
+    &\kappa^{\mathrm{CD}}_i(t) = \chi\big(H(t)\big)\cdot\big(1-\bar\gamma_i(t)\big),
+\end{align}
+with $\phi,\psi,\chi$ increasing. Mechanism (CD) is the one WS2 makes empirically
+privileged (\S\ref{sec:hypotheses}): its driver is the measured canonical
+concentration $H(t)$.
+\end{definition}
+
+\begin{assumption}[Conformity scaling requirement --- the hard constraint]\label{ass:scaling}
+Whatever the mechanism, the population-mean conformity pressure must rise with
+scale:
+\begin{equation}\label{eq:kscale}
+  \frac{\partial \bar\kappa}{\partial N} > 0, \qquad
+  \frac{\partial \bar\kappa}{\partial \rho} > 0, \qquad
+  \frac{\partial \bar\kappa}{\partial H} > 0,
+\end{equation}
+and strongly enough that per-capita novelty is \emph{decreasing} in $N$ beyond a
+threshold (Core Claim~\ref{cc:wwe}). This is non-negotiable: with $\kappa\equiv 0$
+the model gives per-capita novelty flat or increasing in $N$, contradicting WWE
+and dissolving the reconciliation. \emph{$\kappa$'s scaling is the mechanism that
+creates the $C$--$V$ tension; everything else preserves or generates without
+opposition.}
+\end{assumption}
+
+\begin{definition}[Generational update]
+$B_i(t{+}1)$ is the coherent closure of
+$\big[\text{retained}(B_i(t))\big]\cup\big[\text{acquired via
+\eqref{eq:acquire}}\big]\cup\big[\text{innovated via \ref{def:innovate}}\big]$.
+The canonical Henrich boundary case (generational replacement) sets
+$\text{retained}=\varnothing$, so every element must be \emph{re-acquired} each
+generation or be lost; a memory variant retains with a per-element decay. Results
+are required to be robust to this choice.
+\end{definition}
+
+%==============================================================
+\section{Output measures: $C(t)$ and $V(t)$}\label{sec:outputs}
+%==============================================================
+
+\subsection{Cumulative complexity $C(t)$ --- a stock of depth}
+
+\begin{definition}[$C(t)$]\label{def:C}
+Let $c_i(t) = \max\{\ell(e) : e\in B_i(t)\}$ be agent $i$'s supportable depth
+(coherence guarantees its full prerequisite chain is present). Then
+\begin{equation}
+  C(t) = \max_{i\in[N]} c_i(t) \quad(\text{population max}), \qquad
+  \bar C(t) = \tfrac1N\textstyle\sum_i c_i(t)\quad(\text{mean-agent-max}),
+\end{equation}
+with the \emph{reproducible-frontier} variant
+$C_{\R}(t)=\max\{\ell(e): e\in\R(t),\ \clo(e)\subseteq\R(t)\}$ when depth may be
+jointly, rather than individually, held.
+\end{definition}
+
+$C$ is a \textbf{stock}, a \textbf{depth}, and a \textbf{collective} property. It
+is evaluated at a single time slice; it counts \emph{preserved} structure whether
+or not anything new was made this generation; and its persistence is protected by
+\emph{redundancy}---an element's whole chain must remain jointly reproducible, so
+$C$ is stabilized by large $N$, dense $\rho$, and high $f$, and is stochastically
+lost below a critical redundancy (the Tasmania mechanism). $C$ is \emph{not}
+novelty and \emph{not} per-capita.
+
+\subsection{Per-capita variance generation $V(t)$ --- a flow of persisting deviation}
+
+\begin{definition}[$V(t)$]\label{def:V}
+Let $\Delta(t) = \R(t)\setminus\bigcup_{s<t}\R(s)$ be the elements appearing for
+the \emph{first time} at $t$. Apply the persistence filter: $e\in\Delta(t)$
+\emph{counts} iff it survives at least $k$ generations, $e\in\R(t')$ for all
+$t'\in[t,t{+}k]$; write $\Delta^{(k)}(t)$ for the survivors. Then
+\begin{equation}
+  V(t) \;=\; \frac{\card{\Delta^{(k)}(t)}}{N}.
+\end{equation}
+\end{definition}
+
+$V$ is a \textbf{flow}, it is \textbf{per-capita}, and it is filtered for
+\textbf{persistence}. Two gates matter: novelty (never previously instantiated)
+\emph{and} survival $\ge k$ generations (a one-off deviation nobody adopts is
+noise, not variance generation---the model's image of ``disruption that stuck'').
+Because $V$ looks $k$ generations ahead, it is a lagged/retrospective measure.
+
+\begin{definition}[Structural / lateral decomposition of $V$]\label{def:Vsplit}
+Partition the survivors by attachment novelty (via $\gamma$,
+Eq.~\eqref{eq:align}) into \emph{structurally deviant} (low-$\gamma$) and
+\emph{canon-aligned/lateral} (high-$\gamma$ or purely content-novel) sets, giving
+\begin{equation}
+  V(t) = V^{\mathrm{struct}}(t) + V^{\mathrm{lat}}(t).
+\end{equation}
+By construction (\S\ref{sec:kappa}) conformity $\kappa$ suppresses
+$V^{\mathrm{struct}}$; $V^{\mathrm{lat}}$ and the collective breadth $W$ are
+comparatively free of it. This split is the model's handle on WS2's
+topics-vs-wiring result.
+\end{definition}
+
+\begin{remark}[Why $C$ and $V$ are different animals]
+$C$ is a stock of \emph{depth}; $V$ is a flow of \emph{per-capita persisting
+deviation}. Different types, on different quantities, evaluated over different
+horizons (a slice vs.\ an interval). Nothing forces them to co-move---which is the
+whole point. Note also that WS2's rising \emph{topical breadth} $W$ is a
+\emph{collective} statistic (a cousin of $C$, on the collective side), \emph{not}
+$V^{\mathrm{lat}}$: $W$ can rise on the strength of $N$ growing even while
+per-capita lateral novelty $V^{\mathrm{lat}}$ is flat or falling.
+\end{remark}
+
+%==============================================================
+\section{Which hypotheses survive, in this language}\label{sec:hypotheses}
+%==============================================================
+
+\subsection{What WS2 fixed}
+
+Table~\ref{tab:ws2fixed} places each WS2 measurement on the ledger. The pattern
+is: \emph{collective} series and the conformity \emph{driver} are pinned;
+\emph{per-capita} novelty is unmeasured.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{@{}lllc@{}}
+\toprule
+WS2 quantity & Symbol & Ledger side & WS2 finding \\
+\midrule
+demographic diversity & $D(t)$ & input ($\theta$) & rising \\
+semantic / topical diversity & $W(t)$ & collective ($C$-family, breadth) & rising \\
+canonical concentration & $H(t)$ & driver of $\kappa^{\mathrm{CD}}$ & rising (endogenous) \\
+\emph{cumulative depth} & $C(t)$ & collective ($C$-family, depth) & \emph{not measured} \\
+\emph{per-capita novelty} & $V(t),V^{\mathrm{struct}},V^{\mathrm{lat}}$ & per-capita & \emph{not measured} \\
+\bottomrule
+\end{tabular}
+\caption{WS2's measurements on the $C$--$V$ ledger. WS2 constrains the model
+\emph{through $\kappa$'s driver $H$ and the collective outputs}; $V$ is the open
+seat (Remark~\ref{rem:ws2role}).}
+\label{tab:ws2fixed}
+\end{table}
+
+\subsection{Pathway verdicts, formalized}
+
+WS2 (Phases 2.2--2.3) adjudicated the eight Claim-\#13 pathways of the program's
+deep-research report. Table~\ref{tab:pathways} restates each verdict in the
+present vocabulary. The survivors are \textbf{13-D (refined)} and \textbf{13-H}.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{@{}p{1.9cm}p{3.8cm}p{6.0cm}p{2.4cm}@{}}
+\toprule
+Pathway & Verbal & Formal correlate & WS2 verdict \\
+\midrule
+13-B & demographic diversification is cosmetic; shared channels flatten output &
+$\kappa$ suppresses lateral/content novelty so $W$ collapses while $D$ high:
+$\partial W/\partial t\le 0$ with $D\uparrow$ & \textbf{ruled out} ($W\uparrow$) \\[2pt]
+13-D & preferential attachment $\Rightarrow$ attention concentration $\Rightarrow$
+ossification & $H(t)$ rises via preferential attachment on the weight $w$;
+\emph{refined}: concentration is in the attachment graph, not in content
+$\{\tau\}$, so $W\uparrow$ alongside $H\uparrow$ & \textbf{confirmed (refined)} \\[2pt]
+13-H & canons bootstrap themselves; homogenization needs no intending actor &
+$H(t)$ rises \emph{endogenously} from the dynamics, no exogenous forcing &
+\textbf{confirmed} \\[2pt]
+13-G & visible consensus suppresses \emph{expression}, preserves \emph{belief}
+(latent/manifest gap) & $V^{\mathrm{struct}}\!\downarrow$ while
+$W,V^{\mathrm{lat}}$ free --- mirrors expression-vs-belief &
+resonant, \emph{untested} \\[2pt]
+13-C & institutional selection rewards tradition & reward-driven rise in
+canon-alignment $\bar\gamma$ & compatible, not tested \\[2pt]
+13-F & measured decline is an estimator artifact & apparent divergence is a
+denominator/index confound & consistent-with (no spurious decline claimed) \\[2pt]
+13-A, 13-E & recommender loops; linguistic asymmetry & no corresponding object in
+the scholarly-citation model & not addressed \\
+\bottomrule
+\end{tabular}
+\caption{Claim-\#13 pathways in the WS3 vocabulary, with WS2 verdicts. Survivors:
+13-D (refined) and 13-H---both statements about how the conformity driver $H$
+grows.}
+\label{tab:pathways}
+\end{table}
+
+\begin{remark}[The survivors are statements about $\kappa$, not about $C$ or $V$]
+Refined 13-D and 13-H do not directly assert anything about the outputs $C,V$.
+They assert how the \emph{driver} $H$ (hence $\kappa^{\mathrm{CD}}$) grows:
+endogenously (13-H) and by preferential attachment on the attachment graph
+(13-D). The model then \emph{derives} the consequences for $C$ and $V$. This is
+exactly why $\kappa$ is the load-bearing object (\S\ref{sec:kappa}): WS2's
+surviving hypotheses are precisely a measurement of $\kappa$'s driver and of the
+channel ($\gamma$, attachment) on which it acts.
+\end{remark}
+
+\subsection{The WS2 findings as constraints on admissible models}
+
+Any WS3 instantiation must additionally satisfy the following---these are not
+free choices but facts WS2 observed.
+
+\begin{wsc}[Endogenous, scale-driven canon (13-H + refined 13-D)]\label{wsc:H}
+$H(t)$ rises \emph{endogenously} with cumulative scale, via preferential
+attachment on the canonical weight $w$: $\partial H/\partial(\text{scale}) > 0$,
+with no exogenous actuator. Consequently mechanism (CD) is \emph{privileged}: it
+must be among the specifications exhibited, and it must reproduce rising $H$ from
+scale alone. \emph{Shape/scaling:} $H$ increasing and concave/saturating in field
+size (Chu--Evans: top-$N$ rank-stability rising from $\sim\!0.25$ toward high
+values as fields grow; WS2: reference-canonicity Gini rising over 1970--2023).
+\end{wsc}
+
+\begin{wsc}[$\kappa$ acts on attachment, not content]\label{wsc:channel}
+Conformity suppresses the structural channel and (to first order) spares the
+content channel: $g(\kappa)$ multiplies the low-$\gamma$ (attachment-deviant)
+innovation rate, while topic placement $\tau(\cdot)$ and lateral breadth are
+free. Consequently the model must be able to produce $W(t)\uparrow$
+\emph{simultaneously} with $V^{\mathrm{struct}}(t)\downarrow$.
+\end{wsc}
+
+\begin{wsc}[No collective collapse --- orthogonality, not strict trade-off]\label{wsc:indep}
+The rise of $H$ must \emph{not} force a collapse of collective breadth:
+$\partial W/\partial H \not< 0$ as a structural law---indeed WS2 found $H\uparrow$
+and $W\uparrow$ jointly, and (Phase 2.3) that a subfield's $H$ does \emph{not}
+predict its demographic--semantic gap. Hence canonical concentration and diversity
+are \emph{independent axes}, and demographic plurality $\theta$ is an
+\emph{orthogonal input}, not a driver of $H$ or a suppressor of $W$. The model's
+reconciliation must therefore be the \emph{orthogonality} form, not a strict
+$C$-vs-$V$ (or $H$-vs-$W$) trade-off.
+\end{wsc}
+
+\begin{wsc}[Differential in canon concentration]\label{wsc:diff}
+Structural suppression is \emph{stronger where $H$ is higher}: $\partial
+V^{\mathrm{struct}}/\partial H < 0$, and the effect scales with $H$. Empirical
+anchor: WS2 found the citation-geometry convergence strongest in Physics (the
+most canon-concentrated field) and absent/reversed in CS under topical
+embeddings---a field-level gradient the model must reproduce.
+\end{wsc}
+
+%==============================================================
+\section{Core claims WS3 must establish}\label{sec:claims}
+%==============================================================
+
+Each claim is stated qualitatively, with the \emph{shape} and \emph{scaling} that
+must survive. ``Establish'' means: derive analytically where tractable, else
+demonstrate numerically, and---decisively---show invariant across
+$\ge\!2$--$3$ specifications of $\kappa$ and multiple network topologies
+(Core Claim~\ref{cc:robust}). Write starred quantities $C^\ast,V^\ast$ for
+long-run / steady-state values.
+
+\begin{coreclaim}[Henrich reproduced: $C$ rises and is redundancy-protected]\label{cc:henrich}
+$C^\ast$ is non-decreasing in the preservation axes over the relevant regime,
+\[
+  \frac{\partial C^\ast}{\partial N}\ge 0,\quad
+  \frac{\partial C^\ast}{\partial \rho}\ge 0,\quad
+  \frac{\partial C^\ast}{\partial f}\ge 0,
+\]
+and small/insulated populations (low $N$, low $\rho$, high $\iota$, low $f$)
+suffer stochastic $C$-loss.
+\emph{Shape:} increasing and \emph{saturating} in $N,\rho,f$; a
+\emph{threshold} collapse below a critical redundancy $m^\ast$ (variance of
+$C$-loss $\uparrow$ as $m\to m^\ast$). \emph{Status:} reproduce a known
+tradition. \emph{Anchor:} Henrich 2004; Powell et al.\ 2009 (Tasmania).
+\end{coreclaim}
+
+\begin{coreclaim}[WWE reproduced: per-capita $V$ falls with scale, \emph{via} $\kappa$]\label{cc:wwe}
+There is a threshold $N^\ast$ beyond which per-capita $V^\ast$ decreases in $N$,
+\[
+  \frac{\partial V^\ast}{\partial N} < 0 \quad (N>N^\ast),
+  \qquad\text{and this \emph{requires}}\qquad
+  \frac{\partial \bar\kappa}{\partial N} > 0 \ \ (\text{Assumption~\ref{ass:scaling}}).
+\]
+\emph{Shape:} per-capita $V$ is \emph{hump-shaped} in $N$ (rising for tiny $N$
+where more minds help, then falling as consensus dominates); the small-team
+advantage is the descending branch. \emph{Scaling:} the decline tracks
+$\bar\kappa(N,\rho,H)$; with $\kappa\equiv 0$, $V^\ast$ is flat/increasing---the
+falsifier of a mis-specified conformity term. \emph{Status:} reproduce a known
+tradition. \emph{Anchor:} Wu--Wang--Evans 2019; Lin--Frey--Wu 2023.
+\end{coreclaim}
+
+\begin{coreclaim}[The reconciliation: same lever, opposite signs (and a non-trivial Pareto set)]\label{cc:reconcile}
+There exist interventions that move $C$ and $V$ in \emph{opposite} directions:
+canonically, density,
+\[
+  \frac{\partial C^\ast}{\partial \rho} > 0
+  \quad\text{while}\quad
+  \frac{\partial V^\ast}{\partial \rho} < 0,
+\]
+(and likewise for $N$). The trade-off is \emph{not strict}: there also exist
+interventions that raise \emph{both}---prototypically \emph{selective isolation},
+raising $\iota$ for a designated innovation subgroup (protecting its $V$) while
+holding global $N,\rho$ for preservation (protecting $C$):
+$\exists$ intervention with $\partial C^\ast>0,\ \partial V^\ast>0$.
+\emph{Shape:} the Jacobian of $(C^\ast,V^\ast)$ over the parameter space has both
+opposite-sign columns (the trade-off) and same-sign columns (the Pareto
+directions); a \emph{phase diagram} partitions $(N,\rho,\kappa\text{-scaling})$
+into $C$-optimal vs.\ $V$-optimal regions. \emph{Status:} the paper's central
+result (weak form: trade-off frequent, not universal). \emph{Anchor:}
+\texttt{conceptual.md} \S``Results to demonstrate.''
+\end{coreclaim}
+
+\begin{coreclaim}[Robustness / shape-invariance]\label{cc:robust}
+Claims~\ref{cc:henrich}--\ref{cc:reconcile} hold under (i) $\ge\!2$--$3$
+specifications of $\kappa$ (VC / AC / CD of Def.~\ref{def:kappamech}) and of the
+suppression map $g$; and (ii) random, small-world, and scale-free topologies. The
+target is the \emph{sign-structure and scaling}, invariant to functional-form
+detail. \emph{Status:} the discipline that makes this a qualitative theorem
+rather than a fitted model.
+\end{coreclaim}
+
+\begin{coreclaim}[WS2-consistency]\label{cc:ws2}
+Admissible instantiations satisfy Constraints~\ref{wsc:H}--\ref{wsc:diff}: (a) the
+CD mechanism is exhibited and yields \emph{endogenous, scale-driven, saturating}
+$H$; (b) $\kappa$ suppresses $V^{\mathrm{struct}}$ while sparing content, so the
+model reproduces $W\!\uparrow$ with $V^{\mathrm{struct}}\!\downarrow$; (c)
+$H\!\uparrow$ does not force $W\!\downarrow$ (orthogonality; $\theta$ an
+orthogonal input); (d) suppression is stronger at higher $H$
+($\partial V^{\mathrm{struct}}/\partial H<0$). \emph{Status:} the empirical
+discipline WS2 imposes---these are observed facts, not modeling latitude.
+\end{coreclaim}
+
+\begin{coreclaim}[The open prediction: what a per-capita-$V$ study should find]\label{cc:open}
+WS2 fixed $D\!\uparrow, W\!\uparrow, H\!\uparrow$ and left $V$ unmeasured. Given
+those measured facts, the model \emph{predicts} (it is not entailed by WS2's
+measured quantities alone, but is entailed by the model \emph{given} WS2's
+measured $\kappa$-behavior):
+\[
+  \frac{dV^{\mathrm{struct}}}{dt} < 0,
+  \quad\text{strongest where } H \text{ is largest (Physics)}, \qquad
+  \frac{dV^{\mathrm{lat}}}{dt}\ \text{need not be negative.}
+\]
+\emph{Shape/scaling:} a per-capita decline in \emph{structurally}-novel output,
+graded by $H$; per-capita \emph{topical} novelty comparatively spared.
+\emph{Status:} the falsifiable seat WS2 left open---measurable by a per-capita-$V$
+extension of WS2 (per-author/team novelty over time, reusing the embeddings and
+authorship data). Confirmation supports the reconciliation on real data;
+disconfirmation ($V^{\mathrm{struct}}$ flat/up despite $H\uparrow$) falsifies the
+CD-mechanism reading.
+\end{coreclaim}
+
+%==============================================================
+\section{Summary ledger}
+%==============================================================
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{@{}p{2.9cm} l p{2.7cm} l p{3.4cm}@{}}
+\toprule
+Quantity & Symbol & Type & WS2 status & Model role \\
+\midrule
+cumulative complexity & $C(t)$ & stock, depth, collective & not measured & Henrich output (CC~\ref{cc:henrich}) \\
+per-capita variance & $V(t)$ & flow, per-capita & not measured & WWE output (CC~\ref{cc:wwe}); open (CC~\ref{cc:open}) \\
+\;\; structural / lateral & $V^{\mathrm{struct}},V^{\mathrm{lat}}$ & flow, per-capita & not measured & $\kappa$ acts on struct (WSC~\ref{wsc:channel}) \\
+topical breadth & $W(t)$ & collective ($C$-family) & \textbf{rising} & must not collapse (WSC~\ref{wsc:indep}) \\
+canonical concentration & $H(t)$ & driver of $\kappa^{\mathrm{CD}}$ & \textbf{rising, endog.} & privileged mechanism (WSC~\ref{wsc:H}) \\
+demographic diversity & $D(t)$ / $\theta$ & input & \textbf{rising} & orthogonal input (WSC~\ref{wsc:indep}) \\
+conformity pressure & $\kappa(\cdot)$ & control (function) & driver measured via $H$ & \emph{the crux} (Ass.~\ref{ass:scaling}) \\
+\bottomrule
+\end{tabular}
+\caption{The full ledger: what each quantity is, whether WS2 pinned it, and its
+role in the WS3 reconciliation.}
+\label{tab:ledger}
+\end{table}
+
+The one-sentence summary: \emph{WS3 must show that a single dynamics---with a
+conformity term $\kappa$ whose mean rises with scale and acts on the attachment
+channel---drives the stock $C$ up (Henrich) while pushing the per-capita flow $V$
+down (WWE), robustly across $\kappa$-specifications, in a way that reproduces
+WS2's measured rise of $H$ and $W$ and predicts the still-unmeasured decline of
+$V^{\mathrm{struct}}$.}
+
+%==============================================================
+\section{A minimal admissible instantiation}\label{sec:instantiation}
+%==============================================================
+
+To show the vocabulary is realizable, one concrete choice (an \emph{instance},
+not a commitment): scale-free $G$ with mean degree $\rho$; acquisition
+\eqref{eq:acquire}; suppression $g(\kappa)=e^{-\kappa}$; mechanism (CD) with
+$\kappa^{\mathrm{CD}}_i = \lambda H(t)\,(1-\bar\gamma_i)$ for a coupling
+$\lambda>0$; canonical weight $w$ as dependency load (Def.~\ref{def:canon});
+persistence filter $k=2$. Preferential attachment---new elements attach
+prerequisites with probability $\propto w$---makes $H(t)$ rise endogenously
+(Constraint~\ref{wsc:H}), which raises $\bar\kappa^{\mathrm{CD}}$, which throttles
+low-$\gamma$ novelty (Constraint~\ref{wsc:channel}), delivering
+$V^{\mathrm{struct}}\!\downarrow$ while lateral placement keeps $W\!\uparrow$
+(Constraint~\ref{wsc:indep}); redundancy from large $N,\rho$ protects $C$
+(Core Claim~\ref{cc:henrich}). Swapping $g$, the $\kappa$-mechanism, and the
+topology, and checking the signs of Table~\ref{tab:ledger} persist, \emph{is}
+Core Claim~\ref{cc:robust}.
+
+\end{document}

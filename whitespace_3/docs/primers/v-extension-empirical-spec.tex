@@ -1,0 +1,499 @@
+\documentclass[11pt,letterpaper]{article}
+
+% ── Fonts ─────────────────────────────────────────────────────────
+\usepackage[T1]{fontenc}
+\usepackage{newtxtext}
+\usepackage{amssymb}
+\usepackage{newtxmath}
+\usepackage[scaled=0.85]{inconsolata}
+
+% ── Layout ────────────────────────────────────────────────────────
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\setstretch{1.08}
+\usepackage{parskip}
+\setlength{\parskip}{0.5\baselineskip plus 2pt minus 1pt}
+
+% ── Section headings ──────────────────────────────────────────────
+\usepackage{titlesec}
+\titleformat{\section}{\large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{0.8em}{}
+\titleformat{\subsubsection}{\normalsize\itshape}{\thesubsubsection}{0.8em}{}
+\titlespacing*{\section}{0pt}{1.8ex plus 0.5ex}{0.8ex plus 0.2ex}
+\titlespacing*{\subsection}{0pt}{1.4ex plus 0.3ex}{0.4ex plus 0.1ex}
+
+% ── Math ──────────────────────────────────────────────────────────
+\usepackage{amsmath}
+\usepackage{mathtools}
+\let\openbox\relax  % newtxmath already defines \openbox; let amsthm redefine it
+\usepackage{amsthm}
+
+% ── Tables ────────────────────────────────────────────────────────
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\renewcommand{\arraystretch}{1.15}
+\usepackage{caption}
+\captionsetup{font=small, labelfont=bf, labelsep=period, skip=6pt}
+
+% ── Floats & graphics ─────────────────────────────────────────────
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{placeins}
+
+% ── Lists ─────────────────────────────────────────────────────────
+\usepackage{enumitem}
+\setlist{nosep, leftmargin=1.5em}
+
+% ── Colors & links ────────────────────────────────────────────────
+\usepackage{xcolor}
+\definecolor{linkblue}{HTML}{0B5394}
+\definecolor{citegreen}{HTML}{1B7340}
+\definecolor{urlgray}{HTML}{444444}
+\usepackage[
+  colorlinks=true, linkcolor=linkblue, citecolor=citegreen, urlcolor=urlgray,
+  bookmarksnumbered=true, pdfstartview=FitH,
+]{hyperref}
+\usepackage[noabbrev,capitalise]{cleveref}
+\usepackage{microtype}
+
+% ── Theorem-like environments ─────────────────────────────────────
+\theoremstyle{definition}
+\newtheorem{estimand}{Estimand}
+\newtheorem{measure}{Measure}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{remark}{Remark}[section]
+\theoremstyle{plain}
+\newtheorem{hypothesis}{Hypothesis}
+\newtheorem{gate}{Gate}
+
+% explicit cref names for the custom theorem types (singular / plural / range)
+\crefname{estimand}{Estimand}{Estimands}
+\crefname{measure}{Measure}{Measures}
+\crefname{hypothesis}{Hypothesis}{Hypotheses}
+\crefname{gate}{Gate}{Gates}
+\crefname{definition}{Definition}{Definitions}
+\crefname{remark}{Remark}{Remarks}
+
+\newcommand{\Vstruct}{V^{\mathrm{struct}}}
+\newcommand{\Vlat}{V^{\mathrm{lat}}}
+\newcommand{\Real}{\mathbb{R}}
+\newcommand{\card}[1]{\lvert #1 \rvert}
+
+\title{\textbf{An Empirical Specification for the $V$-Extension}\\[2pt]
+\large Measuring Per-Capita Structural Novelty to Test Core Claim~6\\
+\normalsize (the companion instrument to the WS3 $C$--$V$ primer)}
+\author{Originality Program --- Whitespace 2 $\to$ Whitespace 3 bridge}
+\date{July 2026}
+
+\begin{document}
+\maketitle
+\tableofcontents
+\clearpage
+
+%==============================================================
+\section{Purpose, placement, and the one-sentence claim}
+%==============================================================
+
+The WS3 primer (\texttt{cv-reconciliation-primer.tex}) defines two output gauges,
+cumulative complexity $C(t)$ and per-capita variance generation $V(t)$, and shows
+that Whitespace~2 (WS2) pinned the collective side ($C$-family breadth $W$,
+canonical concentration $H$, demographic diversity $D$; all rising) but left the
+per-capita gauge $V$ \emph{unmeasured}. \textbf{Core Claim~6} of that primer is
+therefore a prediction rather than a result:
+\begin{quote}
+per-capita \emph{structural} novelty $\Vstruct(t)$ is declining---strongest where
+the canon is most concentrated (Physics)---while per-capita \emph{topical}
+novelty $\Vlat(t)$ need not decline.
+\end{quote}
+This document specifies the empirical instrument that converts Core Claim~6 into
+a falsifiable test, reusing data already in hand.
+
+\paragraph{Placement.} Operationally this is a \textbf{WS2 Phase~2.4} (a
+per-capita extension of the Phase~2.2/2.3 machinery); scientifically it is the
+\textbf{empirical anchor for WS3}. It requires \emph{no new embedding}: the base-1M
+SciNCL, Qwen3, and SPECTER2 vectors, the 1M source corpus (references +
+concepts + authorships), the Phase-1.3 demographic substrate, and the
+reference-canonicity machinery all already exist. Marginal compute is a citation-graph
+inversion and panel regressions---\$0 (one optional robustness pull excepted,
+\S\ref{sec:feasibility}).
+
+\paragraph{The one design principle.} Everything below is built to respect the
+same distinction the theory turns on (primer Remark~2.3): an author's output has
+a \emph{content} channel (what they work on $\to \Vlat$) and an \emph{attachment}
+channel (what they build on / cite $\to \Vstruct$). The instrument must measure
+the two \emph{separately} and per capita, and---per the hard-won WS2 cautions---must
+measure the attachment channel in at least one \emph{embedding-free} way, because
+WS2 showed embedding-based semantic trends are model-dependent.
+
+%==============================================================
+\section{Estimands: from model quantities to observables}\label{sec:estimands}
+%==============================================================
+
+Fix a study window (1970--2023, trimming the incomplete final year). Index papers
+$p$, authors $a$, years $t$; let $T_p$ be paper $p$'s team size (author count) and
+$F(p)$ its field/subfield.
+
+\begin{estimand}[Per-capita structural novelty]\label{est:struct}
+For author $a$ in year-window $t$, $\Vstruct_a(t)$ is the mean over $a$'s papers
+in $t$ of \emph{persisting attachment-deviant novelty}: a paper contributes when
+it (i) builds on non-canonical antecedents (low empirical canon-alignment
+$\hat\gamma$, \S\ref{sec:struct}) and (ii) that move \emph{persists}
+(\S\ref{sec:persist}). Its field-year aggregate $\hat\Vstruct(t)$ is the
+per-capita mean over authors active in $(F,t)$. The estimand of interest is the
+\textbf{trend} $\mathrm{d}\hat\Vstruct/\mathrm{d}t$ and its \textbf{gradient in
+canon concentration} $H$.
+\end{estimand}
+
+\begin{estimand}[Per-capita topical novelty --- the contrast]\label{est:lat}
+$\Vlat_a(t)$ is the analogous quantity built from \emph{content} novelty
+(distance from topical precedent, \S\ref{sec:lat}) rather than attachment
+deviance. Its trend is the \textbf{control contrast}: Core Claim~6 predicts
+$\Vstruct$ falls while $\Vlat$ does not.
+\end{estimand}
+
+\begin{remark}[Why the two must be measured with the right lens]
+WS2 established that \emph{topical} embeddings (SciNCL, Qwen3) track the content
+channel and a \emph{citation-tuned} embedding (SPECTER2) tracks the attachment
+channel. Accordingly $\Vlat$ is measured on SciNCL/Qwen3 and $\Vstruct$ on
+SPECTER2 \emph{and} on embedding-free reference statistics. Using the wrong lens
+would re-run the exact confusion WS2 diagnosed.
+\end{remark}
+
+%==============================================================
+\section{Data inventory (all existing)}
+%==============================================================
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabularx}{\textwidth}{@{}lX@{}}
+\toprule
+Artifact & Contents / role \\
+\midrule
+base-1M vectors (SciNCL, Qwen3, SPECTER2) & $902{,}531\times768$, row-aligned to
+\texttt{metadata.parquet}; SciNCL/Qwen3 $\to\Vlat$, SPECTER2 $\to\Vstruct$
+(embedding arm) \\
+1M source corpus & \texttt{referenced\_works\_json} (attachment / citations),
+\texttt{concepts\_json} (topics, subfields), \texttt{authorships} \\
+demographic substrate (Phase 1.3) & per-author \texttt{author\_id},
+\texttt{min\_year} (career stage), \texttt{primary\_country}, gender; ORCID flags
+for a well-disambiguated subset \\
+canon machinery & \texttt{reference\_canonicity}: per-year reference-target
+frequencies, Gini $H$, top-$N$ set $\to$ the canon $K(t)$ for $\hat\gamma$ \\
+K=50 clusters + subfield maps (Phase 2.3) & data-driven and concept-level
+subfields for the $H$-gradient test \\
+in-sample citation graph & invert \texttt{referenced\_works\_json} across the
+corpus $\to$ time-resolved forward uptake (the persistence filter) \\
+\bottomrule
+\end{tabularx}
+\caption{Inputs. Nothing here requires new embedding or new pulls; the only
+derived object is the in-sample forward-citation graph (an edge inversion).}
+\label{tab:inputs}
+\end{table}
+
+%==============================================================
+\section{Measurement}
+%==============================================================
+
+\subsection{Topical novelty $\to \Vlat$}\label{sec:lat}
+
+\begin{measure}[Distance-to-precedent (content)]\label{meas:lat}
+For paper $p$ published in year $t_p$, field $F$, with topical embedding
+$x_p$ (SciNCL; Qwen3 as robustness), define
+\begin{equation}
+  n^{\mathrm{lat}}(p) \;=\; 1 - \max_{q\in\mathcal{P}(p)} \cos\!\big(x_p, x_q\big),
+  \qquad
+  \mathcal{P}(p) = \{q : t_q < t_p,\ F(q)=F\}\ \text{(precedent set)},
+\end{equation}
+optionally averaged over the $\kappa$-nearest precedents rather than the single
+max (robustness). Higher $=$ more topically novel relative to prior work. For
+tractability $\mathcal{P}(p)$ is a seeded random sample (fixed size) of prior
+in-field papers; report the sample size.
+\end{measure}
+
+\subsection{Structural novelty $\to \Vstruct$ (three operationalizations)}\label{sec:struct}
+
+The attachment channel is measured \emph{three} ways---two embedding-free, one
+embedding---so the headline cannot hinge on any single lens (the WS2 caution).
+
+\begin{measure}[Off-canon reference share --- the empirical $1-\gamma$]\label{meas:offcanon}
+Let $R(p)$ be $p$'s reference set and $K(t_p)$ the canon as of $t_p$ (top-weighted
+works using \emph{only} data up to $t_p$; \S\ref{sec:controls} on leakage). The
+empirical canon-alignment is $\hat\gamma(p) = \card{R(p)\cap K(t_p)}/\card{R(p)}$
+(the estimand of primer Eq.~6), and
+\begin{equation}
+  n^{\mathrm{struct}}_{\mathrm{oc}}(p) \;=\; 1 - \hat\gamma(p)
+  \quad\in[0,1].
+\end{equation}
+This is the most direct image of the model's structural-deviance quantity: how
+much of $p$'s foundation lies off the shared canon.
+\end{measure}
+
+\begin{measure}[Reference atypicality --- novel recombination (Uzzi-style)]\label{meas:atyp}
+For each unordered pair of references $\{u,v\}\subseteq R(p)$, compute the
+$z$-score of their observed co-reference frequency against a degree-preserving
+null (co-reference expected from each work's citation frequency). Summaries per
+paper: the \emph{median} $z$ (conventionality) and the \emph{10th-percentile}
+$z$ (the atypical tail). Structural novelty
+$n^{\mathrm{struct}}_{\mathrm{atyp}}(p)$ is decreasing in median $z$ / increasing
+in a left (atypical) tail. Embedding-free; captures \emph{recombination} novelty
+the off-canon share misses.
+\end{measure}
+
+\begin{measure}[Citation-geometry distance (SPECTER2)]\label{meas:s2}
+With SPECTER2 (citation-tuned) embedding $y_p$, define
+$n^{\mathrm{struct}}_{\mathrm{emb}}(p) = 1 - \max_{q\in\mathcal{P}(p)} \cos(y_p,y_q)$
+exactly as in \cref{meas:lat} but on the attachment-tuned family. This is the
+embedding arm; its agreement or disagreement with the two reference-based
+measures is itself a headline diagnostic.
+\end{measure}
+
+\subsection{The persistence filter --- the ``$\ge k$ generations'' gate}\label{sec:persist}
+
+A novelty counts only if it \emph{sticks} (primer \cref{est:struct}); a one-off
+attachment nobody adopts is churn, not $V$.
+
+\begin{measure}[Uptake-within-window persistence]\label{meas:persist}
+Using the in-sample forward-citation graph, let $u_w(p)$ be $p$'s forward
+citations accrued within a fixed $w$-year post-publication window (e.g.\ $w=5$),
+\emph{age-restricted} so every paper has a full window (drop papers whose window
+extends past the snapshot). Define the persistence weight
+$s(p) = \mathbf{1}[u_w(p) \ge \theta_w]$ or a smooth $s(p) =
+u_w(p)/(u_w(p)+\bar u_w)$, where thresholds/scales are computed \emph{within}
+(field, publication-year) cells to remove field/era base-rate differences.
+\end{measure}
+
+\begin{remark}[Persistence, not the CD-index]
+Per WS3's own pre-commitment (``frame $V$ around any novelty metric, not
+specifically CD-index''), persistence is a robust forward-uptake filter, not a
+disruption index. A CD/disruption variant may be reported as a \emph{secondary}
+column with the Petersen--Holst caveats attached, never as the headline.
+\end{remark}
+
+\subsection{Per-capita aggregation and team size}\label{sec:percap}
+
+\begin{measure}[Per-paper persisting novelty, and per-capita roll-up]\label{meas:rollup}
+Per-paper persisting structural novelty is
+$\nu^{\mathrm{struct}}(p) = n^{\mathrm{struct}}(p)\cdot s(p)$ (analogously for
+lateral). Two per-capita estimands:
+\begin{enumerate}[label=(\roman*)]
+  \item \textbf{Paper-level with team-size control} (primary): analyze
+  $\nu^{\mathrm{struct}}(p)$ with $\log T_p$ as a covariate.
+  \item \textbf{Fractional per-author} (robustness): attribute
+  $\nu^{\mathrm{struct}}(p)/T_p$ to each author, then average within
+  $(a,t)$ to form the author panel $\Vstruct_a(t)$.
+\end{enumerate}
+Because mean team size rose sharply over the window---and larger teams are less
+disruptive per capita (WWE)---team size is both a \emph{confound to control} and
+\emph{part of the mechanism}; \cref{hyp:withinteam} tests whether the decline
+survives \emph{within} team-size strata.
+\end{measure}
+
+%==============================================================
+\section{Estimator and pre-registered hypotheses}\label{sec:hypotheses}
+%==============================================================
+
+The headline estimator is a panel regression of per-paper (or per-author)
+persisting novelty on year, with fixed effects and controls:
+\begin{equation}\label{eq:panel}
+  \nu^{\mathrm{struct}}(p) \;=\; \beta_0 + \beta_1\,t_p
+    + \beta_2 \log T_p + \beta_3\,\log(\text{field volume}_{F,t_p})
+    + \alpha_{a(p)} + \delta_{F} + \varepsilon_p ,
+\end{equation}
+with author fixed effects $\alpha_a$ (within-author identification) and field
+effects $\delta_F$. Inference by \textbf{permutation} (shuffle $t_p$ within
+field) plus the \textbf{absolute} change over the window; \textbf{VIF reported}
+for $(t,\log T,\log\text{volume})$; every headline run repeated for
+\textbf{$\ge 2$ structural measures} (\cref{meas:offcanon,meas:atyp,meas:s2}).
+
+\begin{hypothesis}[Primary: structural novelty declines]\label{hyp:decline}
+$\beta_1 < 0$ for $\nu^{\mathrm{struct}}$, robust across (a) the off-canon share
+and the atypicality measure (embedding-free) \emph{and} the SPECTER2 measure, and
+(b) permutation significance with a non-negligible absolute effect.
+\end{hypothesis}
+
+\begin{hypothesis}[Contrast: topical novelty does not decline]\label{hyp:contrast}
+$\beta_1 \ge 0$ or non-significant for $\nu^{\mathrm{lat}}$ (SciNCL and Qwen3).
+The dimension-specificity ($\Vstruct\!\downarrow$, $\Vlat$ spared) is the
+signature that distinguishes the mechanism from a generic novelty decline.
+\end{hypothesis}
+
+\begin{hypothesis}[Differential in canon concentration]\label{hyp:gradient}
+Interacting year with subfield canon concentration $H_F$ (from Phase 2.3),
+the year$\times H$ coefficient is negative: the structural decline is
+\emph{steeper where the canon is more concentrated} (Physics $>$ CS), matching
+the WS2 aggregate finding.
+\end{hypothesis}
+
+\begin{hypothesis}[Within-team-size robustness]\label{hyp:withinteam}
+$\beta_1<0$ survives \emph{within} team-size strata (and with the fractional
+per-author estimand), so the decline is not merely mechanical team-size growth.
+\end{hypothesis}
+
+\begin{hypothesis}[Mechanism link to $\kappa$]\label{hyp:mech}
+Within author (and within team-size), off-canon reference share falls as the
+subfield canon concentrates: a direct estimate of the model's conformity acting
+on the attachment channel ($\kappa$ suppressing low-$\gamma$ output).
+\end{hypothesis}
+
+\paragraph{Negative controls (pre-registered).} (i) Year-shuffle placebo: the
+trend must vanish. (ii) Random-canon placebo: recompute $\hat\gamma$ against a
+size-matched \emph{random} reference set in place of $K(t)$; the structural trend
+must attenuate to null (confirming it is the \emph{canon} that bites, not
+reference growth). (iii) A pure-noise novelty series must show no trend.
+
+%==============================================================
+\section{Confounds and controls}\label{sec:controls}
+%==============================================================
+
+Each control carries a specific WS2/Phase lesson.
+
+\begin{enumerate}[label=\textbf{C\arabic*.}]
+  \item \textbf{Citation accrual / age.} Forward-uptake persistence is
+  age-confounded (recent papers have less time). Use \emph{fixed $w$-year
+  windows}, age-restrict to papers with a complete window, and trim the incomplete
+  final years---the Phase-1.4/2.2 age-restriction lesson (raw \texttt{cited\_by\_count}
+  is invalid across cohorts).
+  \item \textbf{Ratio $\ne$ control.} Report \emph{absolute} per-capita trends for
+  $\Vstruct$ and $\Vlat$ \emph{separately}; never divide one novelty channel by
+  another (the Phase-2.2 denominator-confound lesson).
+  \item \textbf{$\ge 2$ (here 3) structural measures.} Off-canon share +
+  atypicality (embedding-free) + SPECTER2 (embedding). A decline seen only in the
+  embedding arm is model-specific, not a finding (the SPECTER2/Qwen3 sign-reversal
+  lesson).
+  \item \textbf{Ill-conditioned $\sigma$.} Judge trends by permutation
+  significance \emph{and} absolute magnitude, never a standardized effect on a
+  near-flat series (the Phase-2.3 ill-conditioned-$\sigma$ artifact).
+  \item \textbf{Collinearity.} Year, $\log$ team size, and $\log$ volume all trend
+  together; report VIF and prefer within-stratum comparisons where VIF $\gtrsim 10$
+  (the WS-F unidentifiability lesson).
+  \item \textbf{Canon leakage / endogeneity.} $K(t_p)$ and the atypicality null use
+  \emph{only} data up to $t_p$ (no look-ahead); the canon a paper is scored against
+  is the canon it faced.
+  \item \textbf{Author disambiguation.} Author FEs and career panels are sensitive
+  to OpenAlex split/merge error ($\sim$3\% cross-era mergers, Phase 1.3). Repeat on
+  the \textbf{ORCID-backed, career-length-screened} subset as robustness.
+  \item \textbf{Survivorship / selection.} Long-observed authors are selected; use
+  within-author FEs, entry-cohort controls, and report the estimate on
+  \emph{entrants} separately from incumbents.
+  \item \textbf{Field composition.} CS/Physics mix and subfield entry shift over
+  time; field (and subfield) FEs, plus the per-field decomposition.
+\end{enumerate}
+
+%==============================================================
+\section{Robustness grid}
+%==============================================================
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabularx}{\textwidth}{@{}lX@{}}
+\toprule
+Axis & Settings \\
+\midrule
+structural measure & off-canon share / atypicality / SPECTER2 (all three) \\
+topical measure & SciNCL / Qwen3 \\
+subfield definition & concept level-1 / K=50 clusters (Phase 2.3 pair) \\
+persistence window $w$ & \{3, 5, 10\} years (sweep) \\
+per-capita form & paper-level + $\log T$ control / fractional per-author \\
+disambiguation & full / ORCID-backed subset \\
+field & pooled (field FE) / CS-only / Physics-only \\
+canon depth $\alpha$ & top-$\{1,5,10\}\%$ for $K(t)$ \\
+\bottomrule
+\end{tabularx}
+\caption{The pre-registered robustness grid. The headline (\cref{hyp:decline})
+must hold across the structural-measure and disambiguation axes at minimum; the
+gradient (\cref{hyp:gradient}) is read on the field / subfield axes.}
+\label{tab:robust}
+\end{table}
+
+%==============================================================
+\section{Pre-registered evaluation gates}
+%==============================================================
+
+\begin{gate}[Instrument validity]
+The three structural measures are pairwise positively correlated at the paper
+level (they measure a common construct), and the topical measures track the
+Phase-2.2 aggregate $W$ trend on a re-aggregation check.
+\end{gate}
+\begin{gate}[Negative controls pass]
+Year-shuffle and random-canon placebos return null; the random-canon placebo
+specifically kills the structural trend (isolating the canon as the operative
+object).
+\end{gate}
+\begin{gate}[Headline]
+\cref{hyp:decline} holds (structural decline, $\ge 2$ measures, permutation-sig +
+material magnitude) \emph{and} \cref{hyp:contrast} holds (topical spared).
+Together these confirm Core Claim~6; either failing is reported honestly.
+\end{gate}
+\begin{gate}[Mechanism + gradient]
+\cref{hyp:gradient,hyp:withinteam,hyp:mech} adjudicate whether the decline is
+canon-driven, per-capita-real (not team-size-mechanical), and localized in $H$.
+\end{gate}
+
+\paragraph{Escape hatches (pre-registered).} If author disambiguation is too
+noisy for author FEs even on the ORCID subset, fall back to \emph{team-level}
+(paper) panels with cohort controls (diagnose, don't force the author panel---the
+Phase-1.3 ``diagnose before escalating'' lesson). If the in-sample forward graph
+is too sparse for a $w$-year filter in early decades, widen $w$ or restrict the
+persistence-filtered analysis to the post-1985 window and report the unfiltered
+novelty trend for the full window alongside.
+
+%==============================================================
+\section{Feasibility, cost, and the one data decision}\label{sec:feasibility}
+%==============================================================
+
+All measures derive from existing artifacts (\cref{tab:inputs}); the only new
+object is the in-sample forward-citation graph (invert
+\texttt{referenced\_works\_json} over the corpus---an $O(\text{edges})$ join,
+laptop-scale, \$0). Panel regressions are trivial. \textbf{The one decision:} the
+persistence filter's forward citations. \emph{Primary (pre-registered):} the
+\emph{in-sample} graph---self-contained and \$0, but it undercounts uptake
+(only citations from papers inside the 1M sample) and its coverage may drift with
+sample density, so persistence thresholds are computed within (field, year) cells
+to absorb level shifts. \emph{Optional robustness:} an OpenAlex forward-citation
+pull for complete, time-resolved uptake (a bounded API job) to confirm the
+in-sample trend is not a coverage artifact. Any bounded coverage caps are
+\texttt{log}ged, never silently applied (the no-silent-truncation rule).
+
+%==============================================================
+\section{Interpretation matrix: reading outcomes back onto WS3}
+%==============================================================
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabularx}{\textwidth}{@{}lX@{}}
+\toprule
+Outcome & Reading for WS3 (primer Core Claim~6 / \cref{est:struct}) \\
+\midrule
+$\Vstruct\!\downarrow$, $\Vlat$ spared, gradient in $H$, $\ge 2$ measures agree &
+\textbf{Core Claim~6 confirmed on data.} The $C$--$V$ reconciliation's
+$\kappa$-on-attachment mechanism is empirically instantiated; WS3 leads with a
+measured, not merely modeled, $V$ decline. \\
+$\Vstruct$ flat/up despite $H\!\uparrow$ &
+\textbf{Falsifies the CD-mechanism reading.} Canon concentration does not suppress
+per-capita structural novelty; WS3 must down-weight the canon-deviation $\kappa$
+and privilege another mechanism (visible-consensus / attention). \\
+decline only in the SPECTER2 arm & model-specific, \emph{not} a finding (repeat of
+the WS2 embedding-sensitivity result); report as inconclusive. \\
+decline vanishes within team-size strata & the ``small teams disrupt'' pattern is
+carried by team-size growth, not a within-stratum conformity effect --- a distinct
+(and publishable) refinement of WWE's per-capita story. \\
+\bottomrule
+\end{tabularx}
+\caption{How each outcome feeds back into the WS3 primer. The instrument is
+designed so that \emph{every} outcome is informative for the theory---confirming,
+falsifying, or relocating the operative $\kappa$ mechanism.}
+\label{tab:interp}
+\end{table}
+
+\noindent\textbf{One-sentence summary.} Measure, per author/team and per year,
+how far scientific output strays from the canonical way of building
+(\emph{attachment}, three ways) versus from prior topics (\emph{content}), filter
+for what \emph{persists}, and test whether the former---not the latter---declines
+and does so most where the canon is strongest: the single measurement that turns
+the WS3 primer's Core Claim~6 from a prediction into a result.
+
+\end{document}
