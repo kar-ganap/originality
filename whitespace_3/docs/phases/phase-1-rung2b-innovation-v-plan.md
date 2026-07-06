@@ -10,8 +10,12 @@ Def 5.1 `C`, Def 5.2 `V`, Assumption 4.1 the κ-scaling requirement).
 **Decisions locked (2026-07-06, pre-build):** (1) Representation **A** — explicit
 `agents × elements` matrix now; carrier-count/sparse optimization deferred to
 rung 4 as its own equivalence-tested rung (§2c). (2) V-side anchor — **fetching
-Strimling 2009 (+ optional Kobayashi–Aoki 2012)** to hold T7 at Level 3; build
-proceeds in parallel and T7's tier is finalized when the paper lands (§5a).
+Strimling 2009 (+ optional Kobayashi–Aoki 2012)**; a plan-first prototype
+(2026-07-06) then showed the *well-mixed* flat reduction has **no `N`-independent
+equilibrium** (traits go immortal, repertoire grows linearly), so **the Strimling
+Level-3 anchor is re-sited to rung 4** (bounded role-models). rung 2b's V-side
+discipline is the κ=0 placebo (H2/T4), now prototype-validated (§1a, §5); the
+fetched papers anchor **rung 4**. rung 2b builds T1–T6.
 
 ---
 
@@ -61,6 +65,12 @@ running:
   often ⇒ `V*` **flat-to-rising** in `N`. That is the WWE-*contradicting* baseline
   that motivates `κ`: absent conformity, scale is (weakly) *good* for per-capita
   persisting novelty.
+
+**Prototype-confirmed (2026-07-06, throwaway well-mixed flat model).** `V(late)`
+vs `N∈{3…300}`: at `f=0.15`, `0.05→0.30` (slope `dV/dlogN=+0.054`); at `f=0.30`,
+`0.15→0.30` (`+0.027`); at `f=0.50`, `0.27→0.30` (`+0.006`) — flat-or-rising,
+saturating at `ε=0.3`, **steeper rise at low `f`** exactly as the persistence
+mechanism predicts. H2/T4 holds before we write a line of committed code.
 
 **Falsifier of our own substrate:** if `V*` comes out *decreasing* in `N` at
 `κ=0`, rung 2b has a bug or a hidden crowding term, and no downstream crossover
@@ -172,16 +182,16 @@ Ported from the parent plan's T-series, specialized to rung 2b. Tests first.
   and `C*` is non-decreasing in `f` on a coarse grid.
 - **T6 — input validation.** `ε∈[0,1]`, `b∈[0,1]`, `k≥1`, plus rung-2a's
   `n≥1, c0≥0, f∈[0,1], generations≥1`.
-- **T7 — Strimling breadth anchor (the V-side external check; §5).** In the flat
-  reduction (`b=0`, single level → independent traits under innovation-vs-loss),
-  the equilibrium repertoire size matches Strimling et al. 2009 — at **Level 3**
-  (their reported equilibrium number) if the fetched paper gives one, else at
-  **Level 2** (their closed-form equilibrium equation) with the reason documented.
-  Also confirms the equilibrium is ~independent of `N` (their result, and the
-  breadth-side complement to H2).
+- **T7 — Strimling breadth anchor — RE-SITED TO rung 4 (not built here; §5).** A
+  plan-first prototype (2026-07-06) showed the *well-mixed* flat reduction has **no
+  `N`-independent equilibrium**: with redundancy = global carrier count, a trait
+  seen by all `N` agents is lost only if all `N` fail (`≈(1−f)^{MN}→0`), so traits
+  go immortal and the repertoire grows **linearly**, never to a plateau. Strimling's
+  equilibrium is a *bounded-role-model* result, so its Level-3 anchor lives at
+  **rung 4** (finite degree `ρ` caps redundancy → loss survives at large `N`). rung
+  2b builds **T1–T6**; T7 is documented here only to mark where the anchor went.
 
 These join the permanent (slow-marked where heavy) suite behind the pre-push hook.
-**T7's Level tier is finalized once the paper is in hand (§5a).**
 
 ---
 
@@ -226,17 +236,26 @@ re-run — which is exactly why no drop-in number exists. Given that, we anchor 
   does **not** re-derive eq 9.4 — a "re-bundle to Henrich's number" claim for the
   discrete substrate would be a category error. What rung 2b must not do is regress
   the *qualitative* Henrich behavior; the quantitative anchor stays at its rung.
-- **`V`-side (breadth): Level 3 *candidate* — Strimling et al. 2009.** *Accumulation
-  of independent cultural traits* (Theor. Pop. Biol. 76:77–83) gives a **closed-form
-  equilibrium number of traits** set by innovation rate vs loss rate and (under
-  broad conditions) **~independent of `N`**. A **flat reduction of rung 2b** — `b=0`
-  (lateral only), single level, so elements are independent traits accumulating
-  under innovation-vs-loss — should reproduce that equilibrium. This is a real
-  external anchor for the innovation/breadth channel *and* an independent proof
-  that breadth need not track `N`. **Level 3 is achievable iff the paper reports a
-  specific equilibrium number (or a figure data point) to plug into**; if it gives
-  only the closed form, we match the *equation* (Level 2) at the reduction and
-  document. **→ needs the paper (see §5a).**
+- **`V`-side (well-mixed): the κ=0 placebo IS the discipline; no published Level-3
+  number (documented reason).** A plan-first prototype (2026-07-06) confirmed the
+  well-mixed innovation model gives per-capita `V` **flat-or-rising in `N`,
+  saturating at `ε`** (f=0.15: `V` rises `0.05→0.30`; f=0.50: ~flat `0.27→0.30`;
+  slope `dV/dlogN ≥ 0` throughout) — H2/T4 holds, and the rise is the persistence
+  mechanism of §1a. The *same* prototype showed **no `N`-independent equilibrium**
+  in well-mixing (a trait seen by all `N` is lost only if all fail, `≈(1−f)^{MN}→0`,
+  so traits go immortal and the repertoire grows linearly). Therefore Strimling's
+  *number* cannot anchor the well-mixed rung, and rung 2b's V-side is anchored by
+  the **pre-registered placebo (T4)** — a Level-3 published number is genuinely
+  unavailable here, and the reason is documented (the honest position the scout
+  reached first).
+- **`V`-side (breadth) Level-3 anchor → deferred to rung 4: Strimling et al. 2009.**
+  *Accumulation of independent cultural traits* (Theor. Pop. Biol. 76:77–83) gives a
+  **closed-form equilibrium number of traits** set by innovation-vs-loss and
+  **~independent of `N`**. That independence is a *bounded-role-model* result: with
+  finite degree `ρ` (rung 4), redundancy is capped so traits can still be lost at
+  large `N`, giving a genuine equilibrium. There the flat reduction (`b=0`) should
+  reproduce Strimling's equilibrium — Level 3 if the paper reports a number, else
+  Level 2 (equation) documented. The fetched papers (§5a) anchor **rung 4**.
 - **`V`-side (depth-decline) shape: qualitative, rung 3.** The WWE / Bloom
   per-capita decline is the *shape* rung 2b must be *able* to produce for `V` once
   `κ` is added — it must **not** appear at `κ=0` (that is T4, the placebo). WWE
@@ -250,31 +269,34 @@ re-run — which is exactly why no drop-in number exists. Given that, we anchor 
   same OpenAlex substrate as WS2) — that is the anchor for measuring real-corpus
   `V^struct`, tracked in `docs/primers/v-extension-empirical-spec.tex`.
 
-### 5a. Papers to fetch (the user offered) — to lock the V-side anchor at Level 3
+### 5a. Papers to fetch (the user offered) — the V-side Level-3 anchor, at **rung 4**
 
 1. **Strimling, Sjöstrand, Enquist & Eriksson 2009**, *Accumulation of independent
    cultural traits*, Theoretical Population Biology **76**(2):77–83 — the
-   equilibrium-trait closed form + any reported numeric equilibrium / figure. This
-   is what upgrades the breadth-`V` anchor from Level 2 to Level 3.
+   equilibrium-trait closed form + any reported numeric equilibrium / figure, and
+   its role-model / loss structure (to site the rung-4 reduction correctly).
 2. *(optional)* **Kobayashi & Aoki 2012**, Theor. Pop. Biol. **82**:38–47 — the
-   exact innovation-rate-vs-`N` inequality, for the separability check.
+   exact innovation-rate-vs-`N` (number of role models `n`) inequality; the "`n`
+   role models" framing is itself the reason bounded degree matters (rung 4).
 
-If Strimling is unavailable, the documented fallback is: `C`-side Level 3 (T1
-re-bundling) + the breadth reduction matched at Level 2 (closed-form equation) +
-the pre-registered κ=0 placebo (T4) — stated plainly, no overclaim.
+**rung 2b is settled without the paper:** C-side = un-bundling invariant +
+qualitative Henrich (T1); V-side = the prototype-validated κ=0 placebo (T4). The
+papers are for **rung 4**; the Level-3-vs-Level-2 decision for Strimling is made
+*there*, once we have it in hand and the bounded-role-model reduction is built.
 
 ---
 
 ## 6. Validation gates (rung 2b "done")
 
-1. T1–T7 green; ruff + mypy --strict clean; pre-push hook passes.
-2. `C`-side Level-3 anchor intact under `ε=0` + re-bundling to Mesoudi eq 9.4 (T1)
-   — no regression.
+1. T1–T6 green; ruff + mypy --strict clean; pre-push hook passes.
+2. `C`-side un-bundling invariant intact under `ε=0` + qualitative Henrich (T1) —
+   no regression. (The quantitative `N*≈616` anchor stays at rung 1, unchanged.)
 3. **H2 / T4 met:** per-capita `V*` flat-or-rising in `N` at `κ=0`, by seed-CI
    slope (not two-point).
 4. H1′ met: innovation restores `C`-growth above `c0` (T5).
-5. `V`-side breadth anchor met (T7) — Strimling 2009 equilibrium matched at
-   Level 3 (paper number) or Level 2 (closed form) with the reason documented (§5).
+5. `V`-side anchored by the κ=0 placebo (T4); no published Level-3 number at
+   well-mixing (documented reason, §5). Strimling breadth anchor recorded as
+   deferred to rung 4.
 6. rung-2b retro written (hypothesis → what happened → surprises → carry-forward),
    in `docs/phases/`.
 
