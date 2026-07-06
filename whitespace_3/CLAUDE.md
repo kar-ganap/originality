@@ -52,7 +52,8 @@ the two traditions individually — and those are classical.
 
 ## Current State
 
-- **Stage:** Phase 0 (substrate on-ramp) — COMPLETE (rung 1 + 2a). Prelude COMPLETE.
+- **Stage:** Phase 1 (the ABM core) — **rung 2b COMPLETE** (innovation → per-capita
+  `V`, κ=0). Phase 0 (rung 1 + 2a) + Prelude COMPLETE.
 - **Prelude (this session, on branch `ws3`):**
   - `docs/primers/cv-reconciliation-primer.tex` — unambiguous parameters; the
     surviving hypotheses (refined 13-D + 13-H) in the model's language; **Core
@@ -68,8 +69,20 @@ the two traditions individually — and those are classical.
   representation (un-bundles transmission from innovation; qualitative
   maintenance/Tasmania anchor, **not** a published-number reproduction — novel
   mechanism). Pre-push hook enforces the gates. 14 tests green.
-- **Next:** Phase 1 — innovation → per-capita `V` (rung 2b), then `κ` → the
-  crossover (rung 3).
+- **Phase 1 rung 2b done (branch `ws3-phase-1-innovation-v`):** `innovation.py`
+  adds the innovation operator (primer Def 4.2) on the concept-base substrate
+  (κ=0, well-mixed); instruments `C` (reproducible frontier) and per-capita `V`
+  (persistence-filtered). H1′ (growth restored above `c0`) + H2 (the κ=0 placebo:
+  `V` flat-or-rising in `N`, saturating at `ε`) confirmed; 11 tests (25 total).
+  **Key finding:** well-mixing → unbounded redundancy → **no saturation** (`C`
+  ratchets ballistically `+1`/gen and `f`-independently; traits go immortal,
+  repertoire grows linearly). CC1's saturation + the Strimling breadth anchor are
+  **bounded-degree** phenomena → **rung 4**. See `docs/phases/phase-1-rung2b-retro.md`.
+- **Next:** Phase 1 **rung 3** — add `κ` → find the crossover `λ*` (the load-bearing
+  lemma). **Pre-register the `κ`-scaling + negative controls (random-`κ` must not
+  reproduce the WWE decline) BEFORE building.** rung 3 activates the deferred
+  machinery (canon `H`, `γ`, the `V^struct/V^lat` split; multi-prereq attachment
+  drawn `∝ w`).
 
 ## The WS3 arc (four phases)
 
