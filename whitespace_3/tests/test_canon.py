@@ -141,3 +141,41 @@ def test_input_validation() -> None:
         run(5, 3, 0.5, 0.3, 0.5, 10, 0, weight="bad")
     with pytest.raises(ValueError):
         run(5, 3, 0.5, 0.3, 0.5, 10, 0, const_h=1.5)
+    with pytest.raises(ValueError):
+        run(5, 3, 0.5, 0.3, 0.5, 10, 0, g_map="bad")
+
+
+# ── robustness / sensitivity (slow) ───────────────────────────────────────────
+
+@pytest.mark.slow
+def test_H_rises_robust_across_params() -> None:
+    """The precondition ∂H/∂N > 0 is robust across the core parameters."""
+    for over in ({"f": 0.4}, {"f": 0.6}, {"b": 0.2}, {"b": 0.6}, {"p": 3}):
+        kw = {**MODEL, **over, "generations": 24}
+        ci = crossover_slope([5, 15, 45], 0.0, seeds=range(5), burn_in=12, metric="H",
+                             run_fn=run, **kw)
+        assert ci["point"] > 0.0, f"H should rise with N under {over}: {ci}"
+
+
+@pytest.mark.slow
+def test_crossover_robust_in_valid_regime() -> None:
+    """Where fidelity is adequate, the crossover survives perturbing ε, b, p, and the
+    suppression map g (exp/hyper)."""
+    for over in ({"f": 0.7}, {"epsilon": 0.55}, {"p": 3}, {"g_map": "hyper"}):
+        ci = crossover_slope(NS_CHEAP, 3.0, seeds=range(8), burn_in=BURN, run_fn=run,
+                             **{**MODEL, **over})
+        assert ci["point"] < 0.0, f"crossover should survive {over}: {ci}"
+
+
+@pytest.mark.slow
+def test_crossover_requires_fidelity() -> None:
+    """The honest boundary: the endogenous-H crossover is FIDELITY-GATED. At low f the
+    substrate's persistence-rise (steepest at low f) overwhelms the weak H-rise, so no
+    crossover appears at any λ — unlike rung 3's reduced-form ln N, which was
+    f-robust by construction (the reduced-form masked this f-dependence)."""
+    lo = crossover_slope(NS_CHEAP, 5.0, seeds=range(8), burn_in=BURN, run_fn=run,
+                         **{**MODEL, "f": 0.3})
+    hi = crossover_slope(NS_CHEAP, 3.0, seeds=range(8), burn_in=BURN, run_fn=run,
+                         **{**MODEL, "f": 0.6})
+    assert lo["hi"] >= 0.0, f"low fidelity (f=0.3) should NOT cross over: {lo}"
+    assert hi["hi"] < 0.0, f"adequate fidelity (f=0.6) should cross over: {hi}"

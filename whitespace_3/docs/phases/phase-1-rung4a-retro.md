@@ -12,7 +12,7 @@ endogenous driver; 12 rung-4a tests, 52 total; ruff + mypy strict clean.
 | # | Pre-registered | Verdict |
 |---|---|---|
 | **H1** | Endogenous `H` (closure-weight `Gini`) rises with `N` (WSC 3.1). | **Confirmed.** `H*: 0.80→0.96` over `N=5→200`, slope `+0.043`, CI `>0`. |
-| **H2** | The crossover survives on the *real* `H`: `κ=λ·H` ⇒ `∂V*/∂logN < 0` for `λ>λ*`. | **Confirmed but WEAK.** `λ*≈2`; at `λ=3`, slope `−0.010`, CI `[−0.013,−0.007]`. |
+| **H2** | The crossover survives on the *real* `H`: `κ=λ·H` ⇒ `∂V*/∂logN < 0` for `λ>λ*`. | **Confirmed but WEAK + fidelity-gated** (see Sensitivity). `λ*≈2`, slope `−0.010` (CI `[−0.013,−0.007]`) at `f≥0.5`; **absent at `f=0.3`**. |
 | **H3** | Reconciliation `C*↑ / V*↓` under `κ=λ·H`. | **Confirmed.** At `λ=3`: `C*` slope `>0` (CI `>0`) while `V*` slope `<0`. |
 
 **Controls:** NC0 (κ=0 placebo) `V*` flat-or-rising ✓; **NC-const** (fixed `H`, no
@@ -29,6 +29,33 @@ crossover (slope `~−0.01`, `λ*≈2`). This is the honest, load-bearing result
 *the crossover is real on the WS2-grounded driver, but the reduced-form materially
 overstated its strength.* The reconciliation (`C↑` while `V↓`) is robust either way —
 `C` remains preservation-dominated and unbothered by `κ` (as in rung 3).
+
+## Sensitivity / robustness (added in response to "did we test robustness?")
+
+A one-axis-at-a-time sweep (`f, ε, b, p, g`) around the baseline, with seed-CIs:
+
+- **The precondition `∂H/∂N > 0` is fully robust** — `H` rises with `N` under *every*
+  setting (`+0.019` to `+0.066`).
+- **The crossover survives 8 of 9 settings** (`f=0.7`, `ε∈{0.25,0.55}`, `b∈{0.2,0.6}`,
+  `p=3`, `g=hyper`) — but **fails at low fidelity (`f=0.3`)**: `V*` *rises* with `N` at
+  every `λ` (squeezed between the substrate's persistence-rise at low `λ` and `V→0`
+  flooring at high `λ`; verified up to `λ=20`).
+- **Mechanism (crisp).** The crossover needs the `H`-driven suppression gradient to
+  beat the substrate's own persistence-rise. At `f=0.3` the persistence-rise is
+  *steepest* (`κ=0` `V`-slope `+0.085`, per rung 2b) *and* the `H`-rise is *weakest*
+  (`+0.019`) → suppression loses. At `f=0.6` the persistence-rise is flat (`−0.001`)
+  and `H`-rise strong (`+0.063`) → suppression wins easily.
+
+**The deeper lesson (sharper than "weak").** rung 3's reduced-form `s = ln N` rises
+with `N` *regardless of `f`*, so its crossover was `f`-robust **by construction**. The
+real endogenous `H` *depends on `f`*, so the real crossover is **`f`-gated**. The
+reduced-form overstated not only the crossover's *strength* but its *robustness* — it
+masked the fidelity-dependence. (In the low-`f` regime the model gives `C↑` with
+`V↑` — **orthogonality, not trade-off** — which is itself WS2-consistent, WSC:indep:
+the two reconciliation modes are separated by fidelity.) Captured as
+`test_crossover_requires_fidelity` + `test_H_rises_robust_across_params` +
+`test_crossover_robust_in_valid_regime` (slow), and the `g_map` axis (missing vs
+rung 3) was added to `canon.run`.
 
 ## Surprises / corrections (verify-on-the-real-model, not the prototype)
 
@@ -73,9 +100,11 @@ slope/CI/`λ*` machinery serves both substrates.
 
 ## Validation gates
 
-12 rung-4a tests (determinism; κ=0 placebo; `H` rises; `gini`/`closure`/frontier
+15 rung-4a tests (determinism; κ=0 placebo; `H` rises; `gini`/`closure`/frontier
 correctness + incremental==scratch; the crossover; reconciliation; NC-const +
-spec-robustness; validation). 52 total. ruff + mypy strict clean; pre-push gate green.
+spec-robustness; validation; **3 slow robustness: `H`-rise across params, crossover
+across `ε/b/p/g`, and the fidelity boundary**). 55 total. ruff + mypy strict clean;
+pre-push gate green.
 
 ## Carry-forward
 

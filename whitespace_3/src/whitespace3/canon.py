@@ -33,6 +33,7 @@ from .innovation import suppression, variance_series
 def _validate(
     n: int, c0: int, f: float, epsilon: float, b: float, generations: int,
     persistence: int, lam: float, p: int, weight: str, const_h: float | None,
+    g_map: str,
 ) -> None:
     if n < 1:
         raise ValueError(f"n must be >= 1, got {n}")
@@ -56,6 +57,8 @@ def _validate(
         raise ValueError(f"weight must be 'closure' or 'indegree', got {weight!r}")
     if const_h is not None and not 0.0 <= const_h <= 1.0:
         raise ValueError(f"const_h must be in [0, 1] or None, got {const_h}")
+    if g_map not in ("exp", "hyper"):
+        raise ValueError(f"g_map must be 'exp' or 'hyper', got {g_map!r}")
 
 
 def gini(w: npt.NDArray[np.float64]) -> float:
@@ -125,6 +128,7 @@ def run(
     p: int = 2,
     weight: str = "closure",
     const_h: float | None = None,
+    g_map: str = "exp",
 ) -> dict[str, Any]:
     """Simulate the multi-prereq attachment-graph model with `κ = λ·H(t)` conformity.
 
@@ -133,7 +137,7 @@ def run(
     ``{"C", "V", "H", "R_size", ...params}``; `C`, `H`, `R_size` length
     ``generations+1``; `V` (persistence-filtered) carries ``NaN`` in its last
     ``persistence`` entries. Deterministic given ``seed``."""
-    _validate(n, c0, f, epsilon, b, generations, persistence, lam, p, weight, const_h)
+    _validate(n, c0, f, epsilon, b, generations, persistence, lam, p, weight, const_h, g_map)
     rng = np.random.default_rng(seed)
 
     level: list[int] = [1] * c0
@@ -172,7 +176,7 @@ def run(
         # at a reference value (the no-N-scaling control) instead of the live H(t). ──
         if lam > 0.0:
             h_val = const_h if const_h is not None else h_of()
-            eps_eff = epsilon * suppression(lam * h_val)
+            eps_eff = epsilon * suppression(lam * h_val, g_map)
         else:
             eps_eff = epsilon
 
@@ -245,5 +249,5 @@ def run(
         "level": level,
         "n": n, "c0": c0, "f": f, "epsilon": epsilon, "b": b,
         "persistence": persistence, "generations": generations,
-        "lam": lam, "p": p, "weight": weight,
+        "lam": lam, "p": p, "weight": weight, "g_map": g_map,
     }
