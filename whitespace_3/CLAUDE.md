@@ -52,9 +52,8 @@ the two traditions individually — and those are classical.
 
 ## Current State
 
-- **Stage:** Phase 1 (the ABM core) — **rung 4b COMPLETE** (the channel refinement:
-  targeted `κ` reproduces WS2's `W↑` with `V^struct↓`). rung 4a + 3 + 2b + Phase 0 +
-  Prelude COMPLETE.
+- **Stage:** Phase 1 (the ABM core) — **rung 4c COMPLETE** (bounded role models:
+  Strimling/Enquist at **Level 3**). rung 4b + 4a + 3 + 2b + Phase 0 + Prelude COMPLETE.
 - **Prelude (this session, on branch `ws3`):**
   - `docs/primers/cv-reconciliation-primer.tex` — unambiguous parameters; the
     surviving hypotheses (refined 13-D + 13-H) in the model's language; **Core
@@ -116,10 +115,21 @@ the two traditions individually — and those are classical.
   proper WWE measure is `V^struct`. Two boundaries (baked-in sweep): needs `f≥0.5`
   (fidelity) **and** `α≤0.15` (a tight canon). 10 tests (65 total). See
   `docs/phases/phase-1-rung4b-retro.md`.
-- **Next:** Phase 1 **rung 4c** — network topology (finite degree ⇒ bounded redundancy
-  ⇒ `C` saturation, CC1 + the Strimling breadth anchor becomes matchable; robustness
-  across ER/WS/BA; local heterogeneous `κ`). Then **rung 5** (analytics + phase diagram
-  + Pareto/selective-isolation, CC3/CC4).
+- **Phase 1 rung 4c done (branch `ws3-phase-1-network-topology`):** `roles.py` —
+  bounded-role-model accumulation of independent traits (each agent learns from `n`
+  randomly-sampled models, sub-critical `f·n<1`). **Program's 2nd Level-3 result:**
+  reproduces Strimling 2009 `λ_f=U/(1−β)` incl. the number **0.2** (ε=0.1,f=0.5,n=1),
+  `N`-independent; and Enquist 2010's threshold `p·n>1` (= `f·n=1`). Anchored via the
+  OPEN Lehmann–Aoki–Feldman 2011 (states+attributes Strimling's eq) + Enquist 2010
+  (open primary) — Strimling's own PDF is inaccessible (Henrich→Mesoudi pattern,
+  documented). **Unifying principle:** saturation is a *sub-criticality* phenomenon
+  (`f·n<1`), the mirror of rung 2b's runaway — resolves "well-mixing → no saturation"
+  (it was super-critical transmission, not redundancy). Scope morphed from the naive
+  "spatial network topology" (disconfirmed: traits percolate → no `N`-independence).
+  9 tests (74 total). See `docs/phases/phase-1-rung4c-retro.md`.
+- **Next:** Phase 1 **rung 5** — synthesis: the phase diagram / Pareto / the paper's
+  Results section (CC3/CC4). Open threads (later): memory extension `U/(1−β−r)` (a 2nd
+  Strimling number `1.0`); depth-`C` saturation under sub-criticality.
 
 ## The WS3 arc (four phases)
 
