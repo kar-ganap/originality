@@ -52,8 +52,8 @@ the two traditions individually — and those are classical.
 
 ## Current State
 
-- **Stage:** Phase 1 (the ABM core) — **rung 2b COMPLETE** (innovation → per-capita
-  `V`, κ=0). Phase 0 (rung 1 + 2a) + Prelude COMPLETE.
+- **Stage:** Phase 1 (the ABM core) — **rung 3 COMPLETE** (conformity `κ` → the
+  crossover `λ*`, THE lemma). rung 2b + Phase 0 (rung 1 + 2a) + Prelude COMPLETE.
 - **Prelude (this session, on branch `ws3`):**
   - `docs/primers/cv-reconciliation-primer.tex` — unambiguous parameters; the
     surviving hypotheses (refined 13-D + 13-H) in the model's language; **Core
@@ -78,11 +78,22 @@ the two traditions individually — and those are classical.
   ratchets ballistically `+1`/gen and `f`-independently; traits go immortal,
   repertoire grows linearly). CC1's saturation + the Strimling breadth anchor are
   **bounded-degree** phenomena → **rung 4**. See `docs/phases/phase-1-rung2b-retro.md`.
-- **Next:** Phase 1 **rung 3** — add `κ` → find the crossover `λ*` (the load-bearing
-  lemma). **Pre-register the `κ`-scaling + negative controls (random-`κ` must not
-  reproduce the WWE decline) BEFORE building.** rung 3 activates the deferred
-  machinery (canon `H`, `γ`, the `V^struct/V^lat` split; multi-prereq attachment
-  drawn `∝ w`).
+- **Phase 1 rung 3 done (branch `ws3-phase-1-conformity-crossover`):** `κ` added to
+  the innovation operator (`innovation.run`: `ε·g(κ)`, modes off/scaling/const/
+  fraction); `conformity.py` = the crossover toolkit (slope + seed-bootstrap CI,
+  `λ*` locator). **THE lemma confirmed:** scaling-`κ` flips per-capita `V*` from
+  rising to **falling** in `N` (`λ*≈0.086`), hump-shaped with small-team advantage;
+  **reconciliation** (H4′): `C*↑` while `V*↓` under the same lever (`C*` slope +11
+  while `V*` slope −0.03 at `λ=0.25`) — and it holds *without* `γ`-sparing (`C` is
+  preservation-robust to `κ`). Both negative controls (const-level, VC-fraction)
+  give no crossover ⇒ it's **absolute scale-tracking** consensus that bites;
+  sign-invariant across `g×s` specs. 15 tests (40 total). Honest ceiling: `s≈ln N`
+  is reduced-form → the endogenous-`H` driver is rung 4. See `docs/phases/phase-1-rung3-retro.md`.
+- **Next:** Phase 1 **rung 4 / Tier 2** — replace reduced-form `s≈ln N` with
+  **endogenous `H`** (multi-prereq attachment graph, preferential attachment ⇒ `H`
+  rises; CD mechanism `κ=λ·H·(1−γ̄_i)`, heterogeneous, with the `V^struct/V^lat`
+  split); **bounded degree ⇒ saturation** (CC1 + the Strimling breadth anchor
+  becomes matchable); full robustness grid + phase diagram + Pareto/isolation.
 
 ## The WS3 arc (four phases)
 

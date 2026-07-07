@@ -42,6 +42,7 @@ role-models and is deferred to rung 4.
 
 from __future__ import annotations
 
+import math
 from collections.abc import Sequence
 from typing import Any
 
@@ -50,7 +51,8 @@ import numpy.typing as npt
 
 
 def _validate(
-    n: int, c0: int, f: float, epsilon: float, b: float, generations: int, persistence: int
+    n: int, c0: int, f: float, epsilon: float, b: float, generations: int, persistence: int,
+    lam: float, kappa_mode: str, g_map: str, signal: str, n_ref: int | None,
 ) -> None:
     if n < 1:
         raise ValueError(f"n must be >= 1, got {n}")
@@ -66,6 +68,66 @@ def _validate(
         raise ValueError(f"generations must be >= 1, got {generations}")
     if persistence < 1:
         raise ValueError(f"persistence must be >= 1, got {persistence}")
+    if lam < 0.0:
+        raise ValueError(f"lam must be >= 0, got {lam}")
+    if kappa_mode not in ("off", "scaling", "const", "fraction"):
+        raise ValueError(f"kappa_mode must be off/scaling/const/fraction, got {kappa_mode!r}")
+    if g_map not in ("exp", "hyper"):
+        raise ValueError(f"g_map must be 'exp' or 'hyper', got {g_map!r}")
+    if signal not in ("maxredundancy", "repsize"):
+        raise ValueError(f"signal must be 'maxredundancy' or 'repsize', got {signal!r}")
+    if kappa_mode == "const" and (n_ref is None or n_ref < 1):
+        raise ValueError(f"kappa_mode='const' requires n_ref >= 1, got {n_ref}")
+
+
+def suppression(kappa: float, g_map: str = "exp") -> float:
+    """Innovation-suppression map ``g(κ)`` (primer §4.3): decreasing, ``g(0)=1``."""
+    if g_map == "exp":
+        return float(math.exp(-kappa))
+    if g_map == "hyper":
+        return 1.0 / (1.0 + kappa)
+    raise ValueError(f"g_map must be 'exp' or 'hyper', got {g_map!r}")
+
+
+def consensus_signal(carriers: npt.NDArray[np.int64], signal: str = "maxredundancy") -> float:
+    """Emergent *absolute* consensus signal ``s(t)`` — rises with ``N`` well-mixed
+    (the canon is backed by ~everyone, so its absolute weight tracks scale).
+
+    ``maxredundancy``: ``ln(1 + carriers of the most-held element)`` (``≈ ln N``).
+    ``repsize``: ``ln(1 + number of live elements)`` (repertoire ``≈ ε·N·t``).
+    A *fraction* (VC-style) would be ``≈1`` and flat — see ``kappa_mode='fraction'``."""
+    if carriers.shape[0] == 0:
+        return 0.0
+    if signal == "repsize":
+        return float(math.log1p(int((carriers > 0).sum())))
+    if signal == "maxredundancy":
+        return float(math.log1p(int(carriers.max())))
+    raise ValueError(f"signal must be 'maxredundancy' or 'repsize', got {signal!r}")
+
+
+def _effective_epsilon(
+    epsilon: float,
+    carriers: npt.NDArray[np.int64],
+    n: int,
+    lam: float,
+    kappa_mode: str,
+    g_map: str,
+    signal: str,
+    n_ref: int | None,
+) -> float:
+    """Realized innovation rate ``ε·g(κ)`` (primer Def 4.2). ``κ`` rises with ``N``
+    under ``scaling``; is scale-free under ``const`` (level) / ``fraction`` (VC)."""
+    if kappa_mode == "off" or lam == 0.0:
+        return epsilon
+    if kappa_mode == "const":
+        assert n_ref is not None  # guaranteed by _validate
+        kappa = lam * math.log1p(n_ref)
+    elif kappa_mode == "fraction":
+        max_m = int(carriers.max()) if carriers.shape[0] else 0
+        kappa = lam * (max_m / n)
+    else:  # scaling
+        kappa = lam * consensus_signal(carriers, signal)
+    return epsilon * suppression(kappa, g_map)
 
 
 def reproducible_frontier(
@@ -122,15 +184,29 @@ def run(
     generations: int,
     seed: int,
     persistence: int = 1,
+    lam: float = 0.0,
+    kappa_mode: str = "off",
+    g_map: str = "exp",
+    signal: str = "maxredundancy",
+    n_ref: int | None = None,
 ) -> dict[str, Any]:
-    """Simulate ``generations`` of transmission + innovation (``κ=0``) for ``n``
-    well-mixed agents who all start holding the level-``c0`` chain.
+    """Simulate ``generations`` of transmission + innovation for ``n`` well-mixed
+    agents who all start holding the level-``c0`` chain.
+
+    Conformity (rung 3): innovation fires at the realized rate ``ε·g(κ)`` (primer
+    Def 4.2). ``kappa_mode`` selects ``κ``'s driver — ``off`` (``κ=0``, the rung-2b
+    baseline; defaults reproduce it byte-for-byte), ``scaling`` (``κ = λ·s(t)`` with
+    the emergent absolute consensus signal, rising with ``N``), ``const``
+    (``κ = λ·ln(1+n_ref)``, level-only), or ``fraction`` (``κ = λ·max_e M / N``,
+    scale-free VC-style). ``g_map`` is the suppression map, ``signal`` the ``s(t)``
+    form (see ``consensus_signal``).
 
     Returns ``{"C", "V", "R_size", ...params}`` where ``C`` and ``R_size`` have
     length ``generations+1`` and ``V`` (length ``generations+1``) carries ``NaN``
     in its last ``persistence`` entries. Deterministic given ``seed``.
     """
-    _validate(n, c0, f, epsilon, b, generations, persistence)
+    _validate(n, c0, f, epsilon, b, generations, persistence,
+              lam, kappa_mode, g_map, signal, n_ref)
     rng = np.random.default_rng(seed)
 
     # Element registry: the initial level-c0 chain (element j has level j+1, parent j-1).
@@ -170,8 +246,14 @@ def run(
                     new_base[:, idx] = hit & new_base[:, parent_arr[idx]]
             base = new_base
 
-        # ── innovation (κ=0 ⇒ rate ε; each event mints a fresh element) ──
-        innovators = np.where(rng.random(n) < epsilon)[0]
+        # ── innovation: realized rate ε·g(κ); each event mints a fresh element ──
+        # s(t) uses the post-transmission carrier counts; κ=off ⇒ ε_eff==ε ⇒ the
+        # RNG draw below is identical to rung 2b (the byte-exact regression guard).
+        carriers_now = base.sum(axis=0)
+        eps_eff = _effective_epsilon(
+            epsilon, carriers_now, n, lam, kappa_mode, g_map, signal, n_ref
+        )
+        innovators = np.where(rng.random(n) < eps_eff)[0]
         new_levels: list[int] = []
         new_parents: list[int] = []
         new_owners: list[int] = []
@@ -228,6 +310,8 @@ def run(
         "b": b,
         "persistence": persistence,
         "generations": generations,
+        "lam": lam,
+        "kappa_mode": kappa_mode,
     }
 
 
