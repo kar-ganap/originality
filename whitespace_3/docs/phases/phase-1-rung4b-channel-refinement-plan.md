@@ -32,26 +32,36 @@ phase diagram + Pareto/selective-isolation + analytics (rung 5).
 Prototype numbers from `scratchpad/verify_channel.py` (2026-07-07) at `λ=3`; the build
 re-establishes on the committed model with seed-CIs + the sensitivity sweep.
 
-| # | Hypothesis | Criterion | Prototype |
-|---|---|---|---|
-| **H1** | **The WS2 signature (headline).** Targeted `κ` ⇒ per-capita `V^struct↓` **while** collective breadth `W↑` (with `N`). | `V^struct` slope CI `<0`; `W` slope `>0` | `V^struct −0.009`, `W +112` (f=0.6) |
-| **H2** | **Targeting spares content (vs uniform).** Targeted `κ` leaves `V^lat` free (`↑`), so `W` rises *much* more than under uniform `κ` (which suppresses breadth too). | targeted `V^lat` slope `>` uniform `V^lat` slope; targeted `W` slope `≫` uniform | targeted `V^lat +0.029, W +112`; uniform `V^lat −0.001, W +24` |
-| **H3** | **Reconciliation intact.** `C*↑` while `V^struct↓` under targeted `κ`. | `C*` slope `≥0`, `V^struct` slope `<0` | `C +3.1` while `V^struct −0.009` |
-| **H4** | **The reframe.** Total per-capita `V` need *not* fall (breadth thrives): the WWE decline is properly `V^struct`, not total-`V`. | total-`V` slope may be `≥0`; the decline lives in `V^struct` | total `V` slope `≈ +0.02` |
-| **H5** | **Fidelity gate persists (deep, not a uniform-`κ` artifact).** `V^struct↓` requires adequate fidelity; at low `f` it is flat. | `V^struct` slope `<0` at `f≥0.5`, `≥0` at `f=0.3` | f=0.3 `+0.0001`; f=0.5 `−0.006`; f=0.7 `−0.013` |
+**Honest decomposition (calibration, 2026-07-07 — corrects the naive "κ ⇒ `V^struct↓`").**
+The `V^struct` *decline with `N`* is partly **endogenous** — it falls even at κ=0
+(canon concentration makes new work increasingly canon-aligned, so the structural
+*fraction* falls with scale). What κ does is (a) crush the structural *level* (~0.22 →
+~0.02, both uniform & targeted), and (b) *under targeting only*, **spare breadth**.
+The *full* WS2 fingerprint — structural novelty low & falling **while** breadth thrives
+— is therefore **unique to targeting** (κ=0 leaves structure high; uniform κ kills
+breadth). Prototype numbers at `λ=3`, `f=0.6`:
 
-### Negative controls (pre-registered)
+| # | Hypothesis | Criterion | Prototype (off / uniform / targeted) |
+|---|---|---|---|
+| **H1** | **The full WS2 signature (headline).** Under **targeted** κ: `W↑` (strong) **while** `V^struct` is suppressed & falling. | `W` slope CI `>0` **and** `V^struct` slope CI `<0` | `V^struct −0.009`, `W +116` |
+| **H2a** | **Targeting spares breadth (vs uniform — the κ-channel effect).** `V^lat`/`W` rise far more under targeted than uniform, which crushes them. | targeted `W` slope `≫` uniform; targeted `V^lat` slope `> 0 ≈` uniform | `W`: +274 / **+25** / **+116**; `V^lat`: +0.014 / **−0.00** / **+0.029** |
+| **H2b** | **κ crushes the structural *level* (vs κ=0).** Both uniform & targeted drop `V^struct` ~10×. | `V^struct*` (targeted) `≪` `V^struct*` (off) | `V^struct*`: **~0.22** / ~0.02 / ~0.02 |
+| **H3** | **Reconciliation intact.** `C*↑` while `V^struct↓` under targeted κ. | `C*` slope CI `≥0`, `V^struct` slope `<0` | `C +3.1` while `V^struct −0.009` |
+| **H4** | **The reframe.** Total per-capita `V` need *not* fall (breadth thrives); the WWE decline is `V^struct`, not total-`V`. | total-`V` slope may be `≥0` | total `V` slope `≈ +0.02` |
+| **H5** | **Fidelity gate (deep, not a uniform-κ artifact).** `V^struct↓` needs `f≥0.5`; flat at `f=0.3`. | `V^struct` slope `<0` at `f≥0.5`, `≥0` at `f=0.3` | f=0.3 `+0.0001`; f=0.5 `−0.006`; f=0.7 `−0.013` |
+
+### Negative controls (pre-registered — the two discriminators)
 
 | # | Control | Must show |
 |---|---|---|
-| **NC0** | κ=0 placebo. | no `V^struct` decline. |
-| **NC-uniform** | `κ=λ·H` (untargeted, `γ`-independent) — same driver, no channel targeting. | `V^lat` **also** suppressed (`W` rises weakly) — isolating that it is *targeting the structural channel* that produces the strong `W↑`-with-`V^struct↓` signature. |
-| **γ non-degeneracy** | the structural-innovation fraction is nonzero (targeting has something to bite). | `frac_struct > 0` (prototype: `0.43→0.04` across `N`). |
+| **NC0** | κ=0 placebo. | `V^struct` stays **high** (not crushed); breadth free — the no-conformity baseline that κ suppresses against. |
+| **NC-uniform** | `κ=λ·H` (untargeted, `γ`-independent) — same driver, no channel targeting. | breadth **collapses** (`W` slope `≪` targeted; `V^lat` flat) — isolating that it is *targeting the structural channel* that yields the full `W↑`-with-`V^struct↓` fingerprint (WSC:indep). |
+| **γ non-degeneracy** | the structural-innovation fraction is nonzero. | `frac_struct > 0` (prototype: `0.43→0.04` across `N`). |
 
-**Honest-null clause.** If targeting does **not** separate the channels (e.g. `V^lat`
-falls too, or `V^struct` doesn't decline where fidelity is adequate), the WSC:channel
-reading fails and is reported — the reconciliation would then be uniform-suppression
-only (rung 4a), not the two-channel WS2 form.
+**Honest-null clause.** If targeting does **not** separate the channels (`V^lat`/`W`
+collapse like uniform, or the targeted `W`-slope is indistinguishable from uniform),
+the WSC:channel reading fails and is reported — the reconciliation would then be
+uniform-suppression only (rung 4a), not the two-channel WS2 form.
 
 ---
 
@@ -81,11 +91,14 @@ New module **`src/whitespace3/channel.py`** (reuses `canon.py`'s `closure_weight
   behaves as the rung-2b/4a null.
 - **T3 — metric correctness** — `K_α` (top-`α` by closure), `γ` on hand-built prereqs,
   and the `V^struct/V^lat` split on hand-built birth-classes; `V^struct+V^lat == V`.
-- **T4 — THE WS2 signature (H1, headline)** — targeted `κ`: `V^struct` slope CI `<0`
-  **and** `W` slope `>0`.
-- **T5 — targeting vs uniform (H2, NC-uniform)** — targeted spares `V^lat` and yields a
-  much larger `W` slope than uniform; uniform suppresses `V^lat` too.
-- **T6 — reconciliation (H3)** — `C*` slope `≥0` while `V^struct` slope `<0`.
+- **T4 — THE WS2 signature (H1, headline)** — targeted `κ`: `W` slope CI `>0`
+  **and** `V^struct` slope CI `<0` (both, together).
+- **T5 — targeting spares breadth vs uniform (H2a, NC-uniform)** — targeted `W` slope
+  `≫` uniform `W` slope; targeted `V^lat` slope `>0` while uniform `V^lat` slope `≈0`.
+- **T5b — κ crushes the structural level vs κ=0 (H2b, NC0)** — `V^struct*` under
+  targeted `≪` `V^struct*` at `mode="off"` (κ suppresses structure; the decline-with-N
+  is partly endogenous, present at κ=0).
+- **T6 — reconciliation (H3)** — `C*` slope CI `≥0` while `V^struct` slope `<0`.
 - **T7 — fidelity gate (H5)** — `V^struct↓` at `f≥0.5`, flat at `f=0.3` (the deep boundary).
 - **T8 — sensitivity sweep (baked in per the standing commitment)** — the signature
   (`V^struct↓`, `W↑`) holds across `ε, b, p, g, α, γ_thresh` (one-axis-at-a-time,
