@@ -52,8 +52,9 @@ the two traditions individually — and those are classical.
 
 ## Current State
 
-- **Stage:** Phase 1 (the ABM core) — **rung 4a COMPLETE** (endogenous canon `H`
-  reproduces the crossover). rung 3 + 2b + Phase 0 (rung 1 + 2a) + Prelude COMPLETE.
+- **Stage:** Phase 1 (the ABM core) — **rung 4b COMPLETE** (the channel refinement:
+  targeted `κ` reproduces WS2's `W↑` with `V^struct↓`). rung 4a + 3 + 2b + Phase 0 +
+  Prelude COMPLETE.
 - **Prelude (this session, on branch `ws3`):**
   - `docs/primers/cv-reconciliation-primer.tex` — unambiguous parameters; the
     surviving hypotheses (refined 13-D + 13-H) in the model's language; **Core
@@ -103,12 +104,22 @@ the two traditions individually — and those are classical.
   Correction (verified pre-build): the "in-degree plateaus" contrast was a pure-PA
   artifact — dynamically in-degree `H` rises too. 12 tests (52 total). See
   `docs/phases/phase-1-rung4a-retro.md`.
-- **Next:** Phase 1 **rung 4b** — the channel refinement (Tier 2 proper): canon-
-  alignment `γ`, heterogeneous `κ_i=λ·H·(1−γ̄_i)`, the `V^struct/V^lat` split → the
-  WS2 signature `W↑` with `V^struct↓` (WSC channel; may also *strengthen* the
-  crossover by concentrating suppression on the structural channel). Then **rung 4c**
-  (network topology ⇒ `C` saturation + Strimling anchor) and **rung 5** (analytics +
-  phase diagram + Pareto/isolation).
+- **Phase 1 rung 4b done (branch `ws3-phase-1-channel-refinement`):** `channel.py` —
+  targeted `κ_eff=λ·H·(1−γ)` (suppress low-canon-alignment `γ` novelty, spare
+  content) on the multi-prereq graph, with the `V^struct/V^lat` split + collective
+  breadth `W`. **Reproduces WS2's two-channel fingerprint:** `W↑` with `V^struct↓`
+  (WSC:channel + WSC:indep orthogonality — breadth doesn't collapse). Honest
+  decomposition: `V^struct`'s *decline* is partly endogenous (present at κ=0, from
+  canon concentration); `κ` crushes its *level* (~0.22→0.02); **targeting** uniquely
+  spares breadth (`W` +116 vs uniform's +25). **Resolves rung 4a's "weak crossover":**
+  it was *total*-`V` diluting a clean structural decline with rising breadth — the
+  proper WWE measure is `V^struct`. Two boundaries (baked-in sweep): needs `f≥0.5`
+  (fidelity) **and** `α≤0.15` (a tight canon). 10 tests (65 total). See
+  `docs/phases/phase-1-rung4b-retro.md`.
+- **Next:** Phase 1 **rung 4c** — network topology (finite degree ⇒ bounded redundancy
+  ⇒ `C` saturation, CC1 + the Strimling breadth anchor becomes matchable; robustness
+  across ER/WS/BA; local heterogeneous `κ`). Then **rung 5** (analytics + phase diagram
+  + Pareto/selective-isolation, CC3/CC4).
 
 ## The WS3 arc (four phases)
 

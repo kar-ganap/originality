@@ -64,8 +64,8 @@ def steady_grid(
     post-burn-in window mean (``NaN`` lookahead tail ignored). ``run_fn`` is the model
     (``innovation.run`` by default; pass ``canon.run`` for the rung-4a substrate) and
     ``run_kw`` forwards its parameters."""
-    if metric not in ("C", "V", "H", "R_size"):
-        raise ValueError(f"metric must be one of C/V/H/R_size, got {metric!r}")
+    if metric not in ("C", "V", "H", "R_size", "Vstruct", "Vlat", "W"):
+        raise ValueError(f"metric must be one of C/V/H/R_size/Vstruct/Vlat/W, got {metric!r}")
     out: dict[int, npt.NDArray[np.float64]] = {}
     for nn in ns:
         vals = [
