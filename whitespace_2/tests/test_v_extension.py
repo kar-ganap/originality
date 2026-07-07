@@ -13,6 +13,7 @@ from whitespace2.v_extension import (
     parse_authorships,
     parse_references,
     persistence_weight,
+    reference_atypicality,
     top_subfield,
 )
 
@@ -121,3 +122,13 @@ def test_panel_year_test() -> None:
     yshuf = rng.permutation(year)
     res0 = panel_year_test(y, yshuf, field, controls=[ctrl], n_perm=500, seed=2)
     assert res0["perm_pvalue"] > 0.05
+
+
+def test_reference_atypicality() -> None:
+    # C,D always co-cited (conventional); A,B each common but co-cited only once (atypical)
+    refs = [["C", "D"]] * 50 + [["A"]] * 30 + [["B"]] * 30 + [["A", "B"]]
+    med, p10 = reference_atypicality(refs, d_min=20, min_pairs=1)
+    assert med[0] > 0        # [C,D]: co-cited far more than expected -> conventional (high z)
+    assert med[-1] < 0       # [A,B]: never co-cited before -> atypical (negative z)
+    assert med[0] > med[-1]
+    assert np.isnan(med[50])  # single-ref paper [A] -> no pairs -> NaN
