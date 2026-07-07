@@ -42,8 +42,8 @@ de-risked the *precondition*; the build re-establishes on the *dynamic* model
 | # | Hypothesis | Criterion | Prototype |
 |---|---|---|---|
 | **H1** | **Endogenous `H` (WSC 3.1).** Closure-weight `H(t)=Gini(w)` rises with `N` (`∂H/∂logN > 0`), concave/saturating. | slope of `H*` on `log N` `> 0` | `H: 0.83→0.96` over `N=5→250` (closure) |
-| **H1-contrast** | **Weight matters.** *In-degree* concentration is scale-*invariant* — the crossover needs the *closure* structure. | `Gini(in-degree)` ≈ flat in `N` | `0.51→0.57` (plateaus) |
-| **H2** | **The crossover on real `H`.** `κ = λ·H(t)` ⇒ ∃ `λ*` s.t. `∂V*/∂logN < 0` for `λ>λ*`; `≥0` at `λ=0`. `λ*` **larger** than rung 3's `ln N` value (H's range is compressed). | slope CI `<0` for `λ≫λ*`; `≥0` at 0 | back-of-envelope `λ*≈1.5` |
+| **H1-robust** | **Crossover robust to the weight (revised — see §1a).** In the *dynamic* model both closure- and in-degree-`H` rise with `N` (the in-degree plateau was a *pure-PA* artifact), so the crossover holds under either weight — spec-robustness, not a knife-edge on closure. | crossover sign holds for `weight ∈ {closure, indegree}` | closure `0.80→0.96`; in-degree `0.75→0.88` (both rise) |
+| **H2** | **The crossover on real `H`.** `κ = λ·H(t)` ⇒ ∃ `λ*` s.t. `∂V*/∂logN < 0` for `λ>λ*`; `≥0` at `λ=0`. Confirmed but **weak** — `λ*≈2` (larger than rung 3's `ln N` value, H's range is compressed near 1) and slope `~−0.01` (vs rung 3's `−0.03`): the reduced-form *overstates* the crossover. | slope CI `<0` for `λ≫λ*`; `≥0` at 0 | λ=3: slope `−0.010`, CI `[−0.013,−0.007]` |
 | **H3** | **Reconciliation.** Under `κ=λ·H`, `∂C*/∂logN ≥ 0` **while** `∂V*/∂logN < 0`. | `C*` slope `≥0`, `V*` slope `<0` | (to establish) |
 
 ### Negative controls (pre-registered)
@@ -51,7 +51,18 @@ de-risked the *precondition*; the build re-establishes on the *dynamic* model
 | # | Control | Must show |
 |---|---|---|
 | **NC0** | κ=0 placebo. | `V*` flat-or-rising in `N` (no crossover) — the rung-2b/3 null on the new substrate. |
-| **NC-weight** | **The killer control:** drive `κ` by *in-degree* concentration `H_in` (scale-invariant) instead of closure `H`. | **no / much weaker crossover** — directly demonstrating that the *dependency-closure* structure is what makes the endogenous mechanism work (not raw citation count). |
+| **NC-const** | **Fixed `H` (no N-scaling):** drive `κ = λ·H_ref` at a fixed reference instead of the live `H(t)`. | **no crossover** (`V*` slope CI `≥0`) — isolates that it is `H` *rising with `N`* that bites, not the suppression level. *(Verified: fixed-`H` slope CI includes 0.)* |
+
+### 1a. Why the pre-registered "NC-weight" control was dropped (plan-first correction)
+
+The prototype showed in-degree Gini *plateaus* while closure Gini rises, suggesting
+"drive `κ` by in-degree ⇒ no crossover" as a killer control. **On the dynamic model
+this does not hold:** in-degree `H` *also* rises with `N` (`0.75→0.88`) — the plateau
+was specific to pure preferential-attachment graph growth, absent the transmission +
+vertical-innovation dynamics. So both weights drive a crossover. That is *reframed as
+spec-robustness* (H1-robust: the crossover holds under either weight), and the clean
+"it's the *scaling* that bites" control becomes **NC-const** (fixed `H`), the direct
+analog of rung 3's constant-`κ` control.
 
 **Honest-null clause.** If the crossover does **not** survive on the real `H` (e.g.
 the `κ`-feedback — suppressing innovation shrinks the graph and *lowers* `H` — cancels
@@ -94,16 +105,17 @@ sweep-scale optimization deferred.
 - **T2 — κ=0 placebo (NC0).** On the multi-prereq substrate, `κ=0` ⇒ per-capita `V*`
   flat-or-rising in `N` (the null the crossover bends; not byte-identical to
   `innovation.py` — different substrate).
-- **T3 — endogenous `H` (H1 + contrast).** `H*` (closure) rises with `N`
-  (slope `>0`); `Gini(in-degree)` is ~flat. Metric correctness of `w` (closure) and
-  `Gini` on hand-built DAGs.
+- **T3 — endogenous `H` (H1).** `H*` (closure) rises with `N` (slope `>0`, seed-CI).
+  Metric correctness of `w` (closure) and `Gini` on hand-built DAGs, and the
+  incremental closure maintenance matches `closure_weights` from scratch.
 - **T4 — reproducible frontier + `V` correctness** on hand-built multi-prereq states
   (coherence over *all* prereqs; the `k`-gen persistence filter).
 - **T5 — THE crossover on real `H` (H2, headline).** `κ=λ·H`: slope of `V*` on
   `log N` is `≥0` at `λ=0` and `<0` for `λ≫λ*` (seed-bootstrap CI); `λ*` located.
 - **T6 — reconciliation (H3).** Under `κ=λ·H`, `C*` slope `≥0` while `V*` slope `<0`.
-- **T7 — NC-weight (the killer control).** `κ` driven by in-degree `H_in` ⇒ no /
-  much weaker crossover than closure `H` (compare slopes at matched `λ`).
+- **T7 — NC-const (fixed-`H`) + spec-robustness.** `κ = λ·H_ref` (no N-scaling) ⇒
+  no crossover (`V*` slope CI `≥0`); and the crossover sign holds under both
+  `weight ∈ {closure, indegree}` (H1-robust).
 - **T8 — input validation** (`p≥1`, `λ≥0`, `weight ∈ {closure,indegree}`, …).
 
 Fast sign-checks gate the pre-push hook; thorough tight-CI variants are `slow`.
@@ -127,9 +139,10 @@ it crosses 0 — never two-point. Absolute `C*`/`V*` separate — never a ratio.
   the model earning its WS2 grounding. Not a Level-3 *number* (absolute Gini values
   differ — our closure-Gini starts high); documented as a shape/direction match.
 - **The crossover remains WS3's novel result** — no published number (Level 3 N/A,
-  documented). Anchors: the `κ=0` placebo, the **NC-weight control** (closure vs
-  in-degree — a strong internal discriminator), and consistency with the rung-3
-  reduced-form crossover (the two mechanisms should agree in sign).
+  documented). Anchors: the `κ=0` placebo, the **NC-const control** (fixed `H` ⇒ no
+  crossover — it is the *scaling* that bites), spec-robustness across the weight, and
+  consistency with the rung-3 reduced-form crossover (both agree in sign; the
+  endogenous one is weaker — the reduced-form overstated it).
 - **Divergence check:** does the endogenous-`H` `λ*` differ from rung 3's `ln N`
   `λ*`? Expected yes (compressed `H` range ⇒ larger `λ*`); reported as characterization.
 
@@ -150,11 +163,13 @@ it crosses 0 — never two-point. Absolute `C*`/`V*` separate — never a ratio.
 
 1. T1–T8 green (fast in the pre-push gate; thorough `slow` under `make test-all`);
    ruff + mypy strict clean; pre-push hook passes.
-2. H1: `H` rises endogenously with `N` (closure); in-degree flat (contrast).
-3. **H2 met:** the crossover survives on real `H`, with a seed-CI `λ*`.
+2. H1: `H` rises endogenously with `N` (closure); crossover robust across
+   `weight ∈ {closure, indegree}` (H1-robust).
+3. **H2 met:** the crossover survives on real `H` (weak but seed-CI `<0`), `λ*` located.
 4. H3 met: reconciliation `C*↑ / V*↓`.
-5. NC0 + NC-weight controls pass.
-6. Anchor status documented (§5); divergence from rung 3's `λ*` characterized.
+5. NC0 (placebo) + NC-const (fixed `H`) controls pass.
+6. Anchor status documented (§5); the crossover characterized as *weaker* than
+   rung 3's reduced-form (the honest divergence).
 7. rung-4a retro written.
 
 ## 8. Non-goals (guardrails)
