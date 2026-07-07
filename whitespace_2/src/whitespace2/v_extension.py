@@ -17,6 +17,7 @@ from __future__ import annotations
 import json
 from collections import Counter
 from collections.abc import Sequence
+from typing import Any
 
 import numpy as np
 import numpy.typing as npt
@@ -176,3 +177,74 @@ def persistence_weight(
     with np.errstate(divide="ignore", invalid="ignore"):
         s = np.where(denom > 0, df["u"].to_numpy() / denom, 0.0)
     return s.astype(np.float64)
+
+
+def panel_year_test(
+    outcome: Sequence[float],
+    year: Sequence[float],
+    field: Sequence[str],
+    controls: Sequence[Sequence[float]] = (),
+    *,
+    n_perm: int = 2000,
+    seed: int = 0,
+    alpha: float = 0.01,
+) -> dict[str, Any]:
+    """Paper-level panel: the partial year coefficient of
+    ``outcome ~ 1 + year + controls + field-FE`` (the spec's primary estimand — e.g.
+    per-paper ``ν^struct`` on year with ``log(team), log(volume)`` controls and field
+    fixed effects). Freedman-Lane permutation **within field** (shuffle reduced-model
+    residuals) gives the null of the partial year coefficient — the correct test when
+    year and controls are collinear (WS2's residual_trend logic, at paper scale via a
+    dot-product permutation). Returns the year coefficient, its permutation p-value, the
+    **absolute change** over the observed span (magnitude, not a standardized effect —
+    the ill-conditioned-σ lesson), the year-vs-controls **VIF**, and ``n``."""
+    y = np.asarray(outcome, dtype=np.float64)
+    yr = np.asarray(year, dtype=np.float64)
+    fld = np.asarray(field)
+    ctrls = [np.asarray(c, dtype=np.float64) for c in controls]
+    mask = ~(np.isnan(y) | np.isnan(yr))
+    for c in ctrls:
+        mask &= ~np.isnan(c)
+    y, yr, fld = y[mask], yr[mask], fld[mask]
+    ctrls = [c[mask] for c in ctrls]
+    n = int(y.size)
+    if n < len(ctrls) + 3 or float(np.ptp(yr)) == 0.0:
+        return {"year_coef": None, "perm_pvalue": None, "abs_change": None,
+                "year_vif": None, "n": n, "significant": False}
+
+    codes, fcode = np.unique(fld, return_inverse=True)
+    dummies = np.eye(len(codes))[fcode][:, 1:] if len(codes) > 1 else np.empty((n, 0))
+    ones = np.ones(n)
+    x_full = np.column_stack([ones, yr, *ctrls, dummies])
+    x_red = np.column_stack([ones, *ctrls, dummies])
+    pinv1 = np.linalg.pinv(x_full)[1]                       # year row of the pseudo-inverse
+    year_coef = float(pinv1 @ y)
+    beta_red, *_ = np.linalg.lstsq(x_red, y, rcond=None)
+    fitted_red = x_red @ beta_red
+    resid = y - fitted_red
+    base = float(pinv1 @ fitted_red)
+
+    b_yr, *_ = np.linalg.lstsq(x_red, yr, rcond=None)       # VIF of year vs the rest
+    ss_res = float(((yr - x_red @ b_yr) ** 2).sum())
+    ss_tot = float(((yr - yr.mean()) ** 2).sum())
+    r2 = 1.0 - ss_res / ss_tot if ss_tot > 0 else 0.0
+    vif = 1.0 / (1.0 - r2) if r2 < 1.0 else float("inf")
+
+    rng = np.random.default_rng(seed)
+    groups = [np.where(fcode == g)[0] for g in range(len(codes))]
+    rp = resid.copy()
+    perm_coefs = np.empty(n_perm, dtype=np.float64)
+    for k in range(n_perm):
+        for gi in groups:
+            rp[gi] = resid[gi][rng.permutation(gi.size)]   # shuffle residuals within field
+        perm_coefs[k] = base + float(pinv1 @ rp)
+    exceed = int(np.sum(np.abs(perm_coefs - base) >= abs(year_coef - base)))
+    perm_p = (1 + exceed) / (n_perm + 1)
+    return {
+        "year_coef": year_coef,
+        "perm_pvalue": float(perm_p),
+        "abs_change": float(year_coef * np.ptp(yr)),
+        "year_vif": float(vif),
+        "n": n,
+        "significant": bool(perm_p < alpha),
+    }

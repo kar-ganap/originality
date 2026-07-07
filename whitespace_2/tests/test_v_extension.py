@@ -9,6 +9,7 @@ import numpy as np
 from whitespace2.v_extension import (
     forward_uptake,
     off_canon_share,
+    panel_year_test,
     parse_authorships,
     parse_references,
     persistence_weight,
@@ -89,7 +90,8 @@ def test_off_canon_share() -> None:
     assert off[-1] == 1.0   # [F1,F2]: both off (a percentile threshold would call these canon)
     assert np.isnan(off_canon_share([2000], [[]], alpha=0.05)[0])   # no refs -> NaN
     # tolerates ndarray refs (a parquet reload yields arrays, not lists)
-    res = off_canon_share([2000, 2000], [np.array(["A", "B"]), np.array([], dtype=object)], alpha=0.5)
+    arr_refs = [np.array(["A", "B"]), np.array([], dtype=object)]
+    res = off_canon_share([2000, 2000], arr_refs, alpha=0.5)
     assert not np.isnan(res[0]) and np.isnan(res[1])
 
 
@@ -100,3 +102,22 @@ def test_persistence_weight() -> None:
     assert abs(s[1] - 2 / 6) < 1e-9
     assert abs(s[2] - 10 / 14) < 1e-9
     assert s[3] == 0.0        # cell (cs,2001): u=[0], ubar=0 -> 0/0 handled as 0
+
+
+def test_panel_year_test() -> None:
+    rng = np.random.default_rng(0)
+    n = 2000
+    year = rng.integers(1970, 2020, n).astype(float)
+    ctrl = rng.normal(0, 1, n)                      # a confound correlated with the outcome
+    field = np.where(rng.random(n) < 0.5, "cs", "physics")
+    fe = np.where(field == "cs", 0.0, 0.3)          # field fixed effect
+    y = -0.01 * (year - 1970) + 0.5 * ctrl + fe + rng.normal(0, 0.1, n)
+    res = panel_year_test(y, year, field, controls=[ctrl], n_perm=500, seed=1)
+    assert res["year_coef"] < 0                     # recovers the negative year slope
+    assert abs(res["year_coef"] - (-0.01)) < 0.003  # ≈ −0.01 net of ctrl + field-FE
+    assert res["perm_pvalue"] < 0.01                # permutation-significant
+    assert res["abs_change"] < 0                    # material negative change over the span
+    # year-shuffle placebo: the trend must vanish
+    yshuf = rng.permutation(year)
+    res0 = panel_year_test(y, yshuf, field, controls=[ctrl], n_perm=500, seed=2)
+    assert res0["perm_pvalue"] > 0.05
