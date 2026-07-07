@@ -8,8 +8,10 @@ import numpy as np
 
 from whitespace2.v_extension import (
     forward_uptake,
+    off_canon_share,
     parse_authorships,
     parse_references,
+    persistence_weight,
     top_subfield,
 )
 
@@ -71,3 +73,30 @@ def test_forward_uptake_ignores_out_of_sample() -> None:
     up2 = forward_uptake(["A"], [2000], [["QQ"]], window=5)  # ref out of sample
     assert up2[0] == 0
     assert isinstance(up2, np.ndarray)
+
+
+def test_off_canon_share() -> None:
+    # head A..E cited 10x each (2000); tail F0..F19 cited 1x each (2000); 25 distinct.
+    years = [2000] * 10 + [2000] * 20 + [2001, 2001, 2001]
+    refs = (
+        [["A", "B", "C", "D", "E"]] * 10
+        + [[f"F{i}"] for i in range(20)]
+        + [["A", "F0"], ["A", "B"], ["F1", "F2"]]
+    )
+    off = off_canon_share(years, refs, alpha=0.2)  # top-20% of 25 = top 5 = the head {A..E}
+    assert off[-3] == 0.5   # [A,F0]: A canon, F0 off
+    assert off[-2] == 0.0   # [A,B]: both canon
+    assert off[-1] == 1.0   # [F1,F2]: both off (a percentile threshold would call these canon)
+    assert np.isnan(off_canon_share([2000], [[]], alpha=0.05)[0])   # no refs -> NaN
+    # tolerates ndarray refs (a parquet reload yields arrays, not lists)
+    res = off_canon_share([2000, 2000], [np.array(["A", "B"]), np.array([], dtype=object)], alpha=0.5)
+    assert not np.isnan(res[0]) and np.isnan(res[1])
+
+
+def test_persistence_weight() -> None:
+    s = persistence_weight(uptake=[0, 2, 10, 0], field=["cs"] * 4, year=[2000, 2000, 2000, 2001])
+    # cell (cs,2000): u=[0,2,10], mean ubar=4 -> s = 0, 2/6, 10/14
+    assert s[0] == 0.0
+    assert abs(s[1] - 2 / 6) < 1e-9
+    assert abs(s[2] - 10 / 14) < 1e-9
+    assert s[3] == 0.0        # cell (cs,2001): u=[0], ubar=0 -> 0/0 handled as 0

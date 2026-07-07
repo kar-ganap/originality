@@ -15,6 +15,7 @@ coverage is time-stable enough not to fabricate a trend, but is logged and contr
 from __future__ import annotations
 
 import json
+from collections import Counter
 from collections.abc import Sequence
 
 import numpy as np
@@ -114,3 +115,64 @@ def forward_uptake(
             if j is not None and 0 <= cy - yr[j] <= window:
                 uptake[j] += 1
     return uptake
+
+
+def off_canon_share(
+    years: Sequence[int],
+    refs: Sequence[Sequence[str]],
+    alpha: float = 0.05,
+) -> npt.NDArray[np.float64]:
+    """Empirical structural deviance ``1 − γ̂`` per paper (primer Eq 6): the share of a
+    paper's references that lie **off** the canon ``K(t_p)``.
+
+    ``K(t)`` = the top-``alpha`` fraction of referenced works by **cumulative**
+    reference count as of year ``t`` (no look-ahead). Processing years in order keeps
+    each paper scored against the canon it faced. Returns ``NaN`` for papers with no
+    references. Higher = more structurally deviant (builds off the shared canon)."""
+    years_arr = np.asarray(years, dtype=np.int64)
+    order_by_year: dict[int, list[int]] = {}
+    per_year_edges: dict[int, Counter[str]] = {}
+    for i, (y, rlist) in enumerate(zip(years_arr, refs, strict=True)):
+        yi = int(y)
+        order_by_year.setdefault(yi, []).append(i)
+        c = per_year_edges.setdefault(yi, Counter())
+        c.update(rlist)
+
+    out = np.full(len(years_arr), np.nan, dtype=np.float64)
+    cum: Counter[str] = Counter()
+    for yi in sorted(per_year_edges):
+        cum.update(per_year_edges[yi])                       # cumulative up to yi
+        counts = np.fromiter(cum.values(), dtype=np.float64, count=len(cum))
+        if counts.size:
+            # canon = the top-alpha fraction of works by RANK (not a count percentile,
+            # which degenerates on the heavy citation tail); thr = the (alpha*D)-th
+            # largest cumulative count; ties at thr are all admitted.
+            rank = max(1, int(np.ceil(alpha * counts.size)))
+            thr = float(np.partition(counts, -rank)[-rank])
+        else:
+            thr = np.inf
+        for i in order_by_year.get(yi, ()):
+            rlist = refs[i]
+            if len(rlist):  # tolerate list or ndarray (parquet reload gives arrays)
+                on = sum(1 for r in rlist if cum.get(r, 0) >= thr)
+                out[i] = 1.0 - on / len(rlist)
+    return out
+
+
+def persistence_weight(
+    uptake: Sequence[int],
+    field: Sequence[str],
+    year: Sequence[int],
+) -> npt.NDArray[np.float64]:
+    """Smooth persistence weight ``s(p) = u / (u + ū_{field,year})`` (the spec's
+    within-cell form): a paper counts more the more its forward uptake exceeds the
+    (field, year) base rate. Robust to the in-sample graph's sparsity — no hard
+    threshold. ``s ∈ [0,1)``; ``0`` when the whole cell is un-cited."""
+    df = pd.DataFrame(
+        {"u": np.asarray(uptake, dtype=np.float64), "f": list(field), "y": list(year)}
+    )
+    ubar = df.groupby(["f", "y"])["u"].transform("mean").to_numpy()
+    denom = df["u"].to_numpy() + ubar
+    with np.errstate(divide="ignore", invalid="ignore"):
+        s = np.where(denom > 0, df["u"].to_numpy() / denom, 0.0)
+    return s.astype(np.float64)
