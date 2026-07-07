@@ -12,13 +12,15 @@ and ``V*`` are reported **absolute and separate**, never a ``C/V`` ratio.
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from typing import Any
 
 import numpy as np
 import numpy.typing as npt
 
 from .innovation import run
+
+RunFn = Callable[..., dict[str, Any]]
 
 
 def logN_slope_ci(
@@ -55,18 +57,19 @@ def steady_grid(
     seeds: Sequence[int],
     burn_in: int,
     metric: str = "V",
+    run_fn: RunFn = run,
     **run_kw: Any,
 ) -> dict[int, npt.NDArray[np.float64]]:
-    """Per-seed steady-state ``metric`` (``"C"`` or ``"V"``) for each ``N``: the
-    post-burn-in window mean (``NaN`` lookahead tail ignored). ``run_kw`` forwards
-    the model parameters (``c0, f, epsilon, b, generations, persistence`` and the
-    ``kappa_mode / g_map / signal / n_ref`` conformity spec) to ``innovation.run``."""
-    if metric not in ("C", "V"):
-        raise ValueError(f"metric must be 'C' or 'V', got {metric!r}")
+    """Per-seed steady-state ``metric`` (``"C"``/``"V"``/``"H"``…) for each ``N``: the
+    post-burn-in window mean (``NaN`` lookahead tail ignored). ``run_fn`` is the model
+    (``innovation.run`` by default; pass ``canon.run`` for the rung-4a substrate) and
+    ``run_kw`` forwards its parameters."""
+    if metric not in ("C", "V", "H", "R_size"):
+        raise ValueError(f"metric must be one of C/V/H/R_size, got {metric!r}")
     out: dict[int, npt.NDArray[np.float64]] = {}
     for nn in ns:
         vals = [
-            float(np.nanmean(np.asarray(run(nn, seed=s, lam=lam, **run_kw)[metric][burn_in:],
+            float(np.nanmean(np.asarray(run_fn(nn, seed=s, lam=lam, **run_kw)[metric][burn_in:],
                                         dtype=float)))
             for s in seeds
         ]
@@ -83,10 +86,12 @@ def crossover_slope(
     metric: str = "V",
     n_boot: int = 400,
     boot_seed: int = 0,
+    run_fn: RunFn = run,
     **run_kw: Any,
 ) -> dict[str, float]:
     """``∂metric*/∂logN`` at conformity-scaling ``lam``, with seed-bootstrap CI."""
-    grid = steady_grid(ns, lam, seeds=seeds, burn_in=burn_in, metric=metric, **run_kw)
+    grid = steady_grid(ns, lam, seeds=seeds, burn_in=burn_in, metric=metric,
+                       run_fn=run_fn, **run_kw)
     return logN_slope_ci(ns, grid, n_boot=n_boot, seed=boot_seed)
 
 
@@ -99,6 +104,7 @@ def locate_lambda_star(
     metric: str = "V",
     n_boot: int = 400,
     boot_seed: int = 0,
+    run_fn: RunFn = run,
     **run_kw: Any,
 ) -> dict[str, Any]:
     """Sweep ``lams``; return each slope CI and ``λ*`` = where the point slope first
@@ -108,7 +114,7 @@ def locate_lambda_star(
     for lam in lams:
         slopes[lam] = crossover_slope(
             ns, lam, seeds=seeds, burn_in=burn_in, metric=metric,
-            n_boot=n_boot, boot_seed=boot_seed, **run_kw,
+            n_boot=n_boot, boot_seed=boot_seed, run_fn=run_fn, **run_kw,
         )
     lam_star: float | None = None
     prev: tuple[float, float] | None = None

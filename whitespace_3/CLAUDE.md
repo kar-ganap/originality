@@ -52,8 +52,8 @@ the two traditions individually — and those are classical.
 
 ## Current State
 
-- **Stage:** Phase 1 (the ABM core) — **rung 3 COMPLETE** (conformity `κ` → the
-  crossover `λ*`, THE lemma). rung 2b + Phase 0 (rung 1 + 2a) + Prelude COMPLETE.
+- **Stage:** Phase 1 (the ABM core) — **rung 4a COMPLETE** (endogenous canon `H`
+  reproduces the crossover). rung 3 + 2b + Phase 0 (rung 1 + 2a) + Prelude COMPLETE.
 - **Prelude (this session, on branch `ws3`):**
   - `docs/primers/cv-reconciliation-primer.tex` — unambiguous parameters; the
     surviving hypotheses (refined 13-D + 13-H) in the model's language; **Core
@@ -89,11 +89,26 @@ the two traditions individually — and those are classical.
   give no crossover ⇒ it's **absolute scale-tracking** consensus that bites;
   sign-invariant across `g×s` specs. 15 tests (40 total). Honest ceiling: `s≈ln N`
   is reduced-form → the endogenous-`H` driver is rung 4. See `docs/phases/phase-1-rung3-retro.md`.
-- **Next:** Phase 1 **rung 4 / Tier 2** — replace reduced-form `s≈ln N` with
-  **endogenous `H`** (multi-prereq attachment graph, preferential attachment ⇒ `H`
-  rises; CD mechanism `κ=λ·H·(1−γ̄_i)`, heterogeneous, with the `V^struct/V^lat`
-  split); **bounded degree ⇒ saturation** (CC1 + the Strimling breadth anchor
-  becomes matchable); full robustness grid + phase diagram + Pareto/isolation.
+- **Phase 1 rung 4a done (branch `ws3-phase-1-endogenous-canon`):** `canon.py` — a
+  **multi-prereq attachment-graph** model with `κ=λ·H(t)`, `H=Gini(closure-weight)`.
+  Replaces rung 3's reduced-form `s≈ln N` with the real endogenous driver. H1
+  (`H` rises with `N`, `0.80→0.96`, WSC 3.1) + H2 (the crossover survives on real
+  `H`) + H3 (reconciliation `C*↑/V*↓`) confirmed. **Headline finding:** the
+  crossover is **real but WEAK** on `H` (slope `~−0.01`, `λ*≈2`) — the reduced-form
+  `ln N` *overstated* it (`−0.03`), because `H` is compressed near 1 — **and
+  fidelity-gated**: a sensitivity sweep found it absent at low `f=0.3` (the substrate's
+  persistence-rise beats the weak `H`-rise); rung 3's `ln N` was `f`-robust *by
+  construction*, masking `H`'s `f`-dependence. Controls: NC0 placebo + NC-const (fixed
+  `H`) ✓; spec-robust across `weight ∈ {closure,indegree}`, `ε/b/p`, `g ∈ {exp,hyper}`.
+  Correction (verified pre-build): the "in-degree plateaus" contrast was a pure-PA
+  artifact — dynamically in-degree `H` rises too. 12 tests (52 total). See
+  `docs/phases/phase-1-rung4a-retro.md`.
+- **Next:** Phase 1 **rung 4b** — the channel refinement (Tier 2 proper): canon-
+  alignment `γ`, heterogeneous `κ_i=λ·H·(1−γ̄_i)`, the `V^struct/V^lat` split → the
+  WS2 signature `W↑` with `V^struct↓` (WSC channel; may also *strengthen* the
+  crossover by concentrating suppression on the structural channel). Then **rung 4c**
+  (network topology ⇒ `C` saturation + Strimling anchor) and **rung 5** (analytics +
+  phase diagram + Pareto/isolation).
 
 ## The WS3 arc (four phases)
 
