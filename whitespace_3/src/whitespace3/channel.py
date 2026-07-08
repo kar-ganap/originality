@@ -15,25 +15,52 @@ the proper measure is `V^struct`, not total `V` (which can rise as breadth thriv
 Substrate = rung 4a's multi-prereq attachment graph (reuses `canon`'s
 `closure_weights`, `gini`, `reproducible_frontier_multi`). ``mode`` selects the
 conformity form: ``off`` (`κ=0`), ``uniform`` (`κ=λ·H`, the NC-uniform control), or
-``targeted`` (`κ=λ·H·(1−γ)`). Well-mixed agents (topology is rung 4c).
+``targeted`` (`κ=λ·H·(1−γ)`). Well-mixed by default; a fixed finite-degree ER/WS/BA
+interaction graph is the ``topology`` option (rung 4e, the `cc:robust` topology pass).
 """
 
 from __future__ import annotations
 
 from typing import Any
 
+import networkx as nx
 import numpy as np
 import numpy.typing as npt
+import scipy.sparse as sp
 
 from .canon import gini, reproducible_frontier_multi
 from .innovation import suppression
+
+_TOPOLOGIES = ("well_mixed", "er", "ws", "ba")
+
+
+def _build_adjacency(topology: str, n: int, mean_degree: int, graph_seed: int) -> Any:
+    """Fixed interaction graph as a CSR adjacency with self-loops; ``None`` for well-mixed
+    (rung 4e). Self-loops make an agent count its own prior holding, matching well-mixed
+    semantics (``base.sum`` includes self). ``er``/``ws``/``ba`` = Erdős–Rényi /
+    Watts–Strogatz / Barabási–Albert at the target mean degree."""
+    if topology == "well_mixed":
+        return None
+    if topology == "er":
+        g = nx.erdos_renyi_graph(n, min(1.0, mean_degree / (n - 1)), seed=graph_seed)
+    elif topology == "ws":
+        k = mean_degree + (mean_degree % 2)                 # watts_strogatz needs even k
+        g = nx.watts_strogatz_graph(n, max(2, k), 0.1, seed=graph_seed)
+    else:                                                   # ba: each node adds m edges
+        g = nx.barabasi_albert_graph(n, max(1, mean_degree // 2), seed=graph_seed)
+    a = nx.to_scipy_sparse_array(g, nodelist=range(n), dtype=float, format="csr")
+    return (a + sp.eye(n, format="csr")).tocsr()
 
 
 def _validate(
     n: int, c0: int, f: float, epsilon: float, b: float, generations: int,
     persistence: int, lam: float, p: int, alpha: float, gamma_thresh: float,
-    mode: str, g_map: str,
+    mode: str, g_map: str, topology: str, mean_degree: int,
 ) -> None:
+    if topology not in _TOPOLOGIES:
+        raise ValueError(f"topology must be one of {_TOPOLOGIES}, got {topology!r}")
+    if topology != "well_mixed" and not 2 <= mean_degree <= n - 1:
+        raise ValueError(f"mean_degree must be in [2, n-1] for a graph, got {mean_degree}")
     if n < 1:
         raise ValueError(f"n must be >= 1, got {n}")
     if c0 < 1:
@@ -110,17 +137,27 @@ def run(
     gamma_thresh: float = 0.5,
     mode: str = "targeted",
     g_map: str = "exp",
+    topology: str = "well_mixed",
+    mean_degree: int = 8,
+    graph_seed: int = 0,
 ) -> dict[str, Any]:
     """Multi-prereq graph with **targeted** conformity. Innovation fires at base rate
     `ε`; each event succeeds with prob `g(κ_eff)`, `κ_eff = λ·H·(1−γ)` (``targeted``),
     `λ·H` (``uniform``), or `0` (``off``). An element is *structural* iff its
     canon-alignment `γ < gamma_thresh`.
 
+    ``topology`` (rung 4e) sets the interaction graph over which transmission spreads:
+    ``well_mixed`` (default, global carriers — byte-identical to the pre-4e model) or a
+    fixed finite-degree ``er``/``ws``/``ba`` graph (neighbour carriers, mean degree
+    ``mean_degree``, built from ``graph_seed``). The κ-signature (`V^struct↓`, `W↑`) is
+    tested for invariance across topologies (Core Claim `cc:robust`).
+
     Returns ``{"C","V","Vstruct","Vlat","H","W","R_size", ...}`` — `W` is collective
-    breadth (repertoire size). Deterministic given ``seed``."""
+    breadth (repertoire size). Deterministic given ``seed`` (and ``graph_seed``)."""
     _validate(n, c0, f, epsilon, b, generations, persistence, lam, p, alpha,
-              gamma_thresh, mode, g_map)
+              gamma_thresh, mode, g_map, topology, mean_degree)
     rng = np.random.default_rng(seed)
+    adjacency = _build_adjacency(topology, n, mean_degree, graph_seed)
 
     level: list[int] = [1] * c0
     prereqs: list[list[int]] = [[] for _ in range(c0)]
@@ -139,10 +176,15 @@ def run(
         e_count = len(level)
         level_arr = np.asarray(level)
 
-        # ── transmission (coherent over all prereqs) ──
-        carriers = base.sum(axis=0)
-        acquire_p = 1.0 - (1.0 - f) ** carriers
-        draws = rng.random((n, e_count)) < acquire_p[None, :]
+        # ── transmission (coherent over all prereqs; neighbour carriers under a topology) ──
+        if adjacency is None:
+            carriers = base.sum(axis=0)                              # well-mixed (global)
+            acquire_p = 1.0 - (1.0 - f) ** carriers
+            draws = rng.random((n, e_count)) < acquire_p[None, :]
+        else:
+            nb: npt.NDArray[np.float64] = np.asarray(
+                adjacency @ base.astype(np.float64), dtype=np.float64)   # (n, e) neighbours
+            draws = rng.random((n, e_count)) < (1.0 - (1.0 - f) ** nb)
         new_base = np.zeros((n, e_count), dtype=bool)
         for e in np.argsort(level_arr, kind="stable"):
             prq = prereqs[e]
@@ -243,4 +285,5 @@ def run(
         "persistence": persistence, "generations": generations,
         "lam": lam, "p": p, "alpha": alpha, "gamma_thresh": gamma_thresh,
         "mode": mode, "g_map": g_map,
+        "topology": topology, "mean_degree": mean_degree, "graph_seed": graph_seed,
     }
