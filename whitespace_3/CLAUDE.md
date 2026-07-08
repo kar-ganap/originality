@@ -169,25 +169,27 @@ the two traditions individually — and those are classical.
   reproduces at the right magnitude (15.6×≈13×). **B/B′** (`bridge_B/Bprime.py`): PARTIAL — the
   sign-structure + microstructure are forced & confirmed (apples-to-apples on the `d_min` subset);
   the ~13× *magnitude* is `bw`-tunable ⇒ consistency, not a tight prediction. **C — the
-  disruption reconciliation (`phase-2-experiment-C-retro.md`): the two-channel decoupling is
-  CONFIRMED on the full 24M-paper citation graph, and our mid-course *adjudication* hypothesis was
-  run to a decisive test and DISCONFIRMED.** C-1/C-1b (model): the PA substrate makes CD *rise*
-  under κ (mis-signs the CD-index — a documented limitation; the model reconciles via `H`↑, not
-  CD↓), and length-inflation *can* flip toy-CD down ⇒ the (later-rejected) length-artifact
-  hypothesis. C-2-full (`cd_data_C2_full.py`, all server-side on Modal `ws2-section0`, 24M pop,
-  46.7% dense, 149.6M edges, `cd_index_csr`): **C-2a-full ✓** Park's decline replicates cleanly
-  (`−0.00086`, tight CI, `0.050→0.013`, all eras); **C-2b-full ✗** it is NOT a reference-length
-  artifact (mediation attenuates only 24% <50% gate; random cap *steepens* it). ⇒ the empirical
-  **decoupling is real on both channels** — CD↓ + `H`↑ (consolidation) ⊥ atyp↑ (fragmentation) —
-  and the C/V model reconciles it via `H` + atyp; Park's CD-decline is independent confirmation.
-  We **confirm Park additively**; the model's CD-sign is a documented PA limitation. `cd_index`
-  vendored WS3→WS2 (pin `282e09f`). **D deferred** (A–C mixed ⇒ the paper is the confirmed
-  decoupling + reconciliation, not a cross-field OOS capstone).
-- **Next:** **the paper.** Both empirical bridges land (fragmentation signature reproduced; the
-  decoupling confirmed at 24M). The arc is whole: two driving claims (WS2 Claim #13, WS3 CC6)
-  honestly disconfirmed into a sharper positive thesis (concentration + fragmentation, orthogonal),
-  three Level-3 anchors, the phase diagram + crossover law, and now a full-scale empirical
-  decoupling. The writeup (`docs/conceptual.md` → paper) is the capstone. Deferred: full N=3000
+  disruption reconciliation (`phase-2-experiment-C-retro.md`): after three successively more-careful
+  tests, the CD-index is LENGTH-ROBUST but OBSERVATION-WINDOW-FRAGILE ⇒ not load-bearing; the
+  two-channel decoupling stands on window-robust `H`↑ + atyp↑.** Arc: C-1/C-1b (model) — the PA
+  substrate mis-signs CD (κ→CD*rise*; the model reconciles via `H`↑ not CD↓), and length-inflation
+  can flip toy-CD ⇒ a length-artifact hypothesis. C-2-full (`cd_data_C2_full.py`, 24M pop on Modal
+  `ws2-section0`, 46.7% dense, `cd_index_csr`, **all-time citations**): the decline replicates
+  (`−0.00087`) and is NOT length-driven (mediation 24%, cap steepens) — read then as "real".
+  **C-2c (`cd_data_C2c_coverage.py`) — decisive:** C-2-full used all-time citations (old focals
+  ~50-yr windows, recent ~6); under a **fixed forward-citation window** (Park's own method) the
+  decline **erases** — `W=5` **+0.00044** (rises `−0.009→+0.012`), `W=10` **+0.00006** (flat);
+  field-growth control 14%, coverage-era uniform. ⇒ the naive all-time decline was an
+  **observation-window artifact**; fixed-window disruption is flat-to-rising, **agreeing with
+  atyp↑**. **Landing:** decoupling = `H`↑ (concentration) ⊥ atyp↑ (fragmentation), both robust; CD →
+  a robustness/discussion subsection engaging the Park debate (window-fragility + consistency), NOT
+  a pillar. We neither confirm nor overturn Park (our within-pop graph ≠ his full WoS). `cd_index`
+  (+`cd_index_csr`, +`window`/`year_min`) vendored WS3→WS2 (pin `282e09f`). **D deferred.**
+- **Next:** **the paper.** The arc is whole: two driving claims (WS2 Claim #13, WS3 CC6) honestly
+  disconfirmed into a sharper positive thesis (concentration + fragmentation, orthogonal), three
+  Level-3 anchors, the phase diagram + crossover law, and a full-scale empirical decoupling on
+  window-robust measures (+ a CD-index window-fragility finding as robustness). The writeup
+  (`docs/conceptual.md` → paper) is the capstone. Deferred: full N=3000
   sweep *if* `channel.run` is vectorised; depth-`C` saturation under sub-criticality; C's
   coverage-artifact prong (out of scope); F2 escape-hatch.
 

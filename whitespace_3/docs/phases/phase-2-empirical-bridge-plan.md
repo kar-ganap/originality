@@ -267,3 +267,19 @@ OpenAlex coverage against ground truth (WoS/Crossref cross-match or hand audit) 
 every CD paper faces. Meeting the window + growth + era controls is the standard the field expects.
 **Evaluation:** the decline is coverage-robust iff window (2) ∧ growth (3) ∧ born-digital hold; any
 failure re-opens the coverage question honestly.
+
+**VERDICT (C-2c, 2026-07-08 — the decline is an OBSERVATION-WINDOW artifact; gate FAILS at window).**
+- **Window (2) — FAILS:** the all-time `−0.00087` **erases** under a fixed forward-citation window
+  (Park's own method): `W=5` slope **+0.00044** (CI `[+0.00037,+0.00052]`, rises `−0.009→+0.012`
+  over 1970–2019), `W=10` **+0.00006** (flat). Old focals had ~50-yr windows the CD-index reads as
+  disruptive; recent focals ~6. This is the culprit.
+- **Growth (3) ✓ small:** field-growth (`log` corpus) control attenuates only 14%. **Coverage-era
+  (1) ✓:** uniform slope across eras. So the artifact is the *window*, not length/growth/coverage.
+- **Fixed-window disruption is flat-to-rising ⇒ AGREES with atyp↑** (WS2 2.4): structural novelty is
+  not declining in our corpus.
+- **Landing (supersedes §9's "decline is real"):** the CD-index is **length-robust but
+  window-FRAGILE** ⇒ **not load-bearing**. The decoupling stands on **`H`↑ (concentration) ⊥ atyp↑
+  (fragmentation)** — window-robust. CD → a robustness/discussion subsection engaging the Park debate
+  (window-fragility + consistency-with-atyp), **not** a pillar. We neither confirm nor overturn Park
+  (our within-pop graph ≠ his full graph). Full arc: `phase-2-experiment-C-retro.md`. Lesson (use a
+  fixed CD window from the start): `tasks/lessons.md`.
