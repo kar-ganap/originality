@@ -52,8 +52,8 @@ the two traditions individually — and those are classical.
 
 ## Current State
 
-- **Stage:** Phase 1 (the ABM core) — **rung 4e COMPLETE** (topology robustness;
-  `cc:robust` now closed). rung 4d + 4c + 4b + 4a + 3 + 2b + Phase 0 + Prelude COMPLETE.
+- **Stage:** **Phase 1 (the ABM core) COMPLETE** — rung 5 (synthesis) done; all five
+  audited Phase-1 items closed. rung 5 + 4e + 4d + 4c + 4b + 4a + 3 + 2b + Phase 0 COMPLETE.
 - **Prelude (this session, on branch `ws3`):**
   - `docs/primers/cv-reconciliation-primer.tex` — unambiguous parameters; the
     surviving hypotheses (refined 13-D + 13-H) in the model's language; **Core
@@ -152,10 +152,22 @@ the two traditions individually — and those are classical.
   on every topology (H3). **Closes `cc:robust`** (κ-specs from rungs 3/4a/4b × topologies).
   Sign-structure invariant, magnitude varies with degree; nothing killed it (even BA hubs).
   7 tests (6 fast + 1 slow; 75 fast total). See `docs/phases/phase-1-rung4e-retro.md`.
-- **Next:** Phase 1 **rung 5** — synthesis: the phase diagram / Pareto / Results (CC3/CC4),
-  now with full `cc:robust` established and **two orthogonal channels** (concentration via
-  `κ`; fragmentation via `τ`, rung 4d) — the program's capstone. Open threads (later): memory
-  extension `U/(1−β−r)`; depth-`C` saturation under sub-criticality; the F2 escape-hatch demo.
+- **Phase 1 rung 5 done — the synthesis capstone (branches `ws3-phase-1-rung5-synthesis`
+  (5a, merged) + `ws3-phase-1-rung5b-closeout` (5b)).** Closed all five audited items:
+  (1) **light analytics** (`analytics.py`) — the crossover law `λ*=d ln P/d ln N`, Henrich
+  carrier-survival, GW anchor `μ=2→0.7968`; (2) **phase diagram** (`experiments/phase-1-rung5/`)
+  — `λ*≈0.09` (matches rung 3), V- vs C-favouring regions + the figure; (3) **Pareto** —
+  selective isolation `ι` (`channel.run`: shielded subgroup `V^struct` high, global `C`
+  pinned) + two-channel orthogonality; (4) **robustness-grid** — memory-with-decay `r` in
+  `roles.py`, the **3rd Level-3 anchor** `λ_f=ε/(1−f·n−r)=1.0`; (5) **at-scale** — a detached
+  Modal sweep (300 cells, N→1500) shows the crossover holds (`λ*` unchanged) — *not* a
+  small-N artifact. Honest: at-scale is the focused `(λ,N)` slice, not the full N=3000 grid
+  (`channel.run` is O(N²) — infeasible; logged). See `docs/phases/phase-1-rung5-retro.md`.
+- **Next:** **Phase 2/3 — the paper.** The arc is whole: two driving claims (WS2 Claim #13,
+  WS3 CC6) honestly disconfirmed into a sharper positive thesis (concentration +
+  fragmentation, orthogonal), three Level-3 anchors, the phase diagram + crossover law. The
+  writeup (`docs/conceptual.md` → paper) is the capstone. Deferred: full N=3000 sweep *if*
+  `channel.run` is vectorised; depth-`C` saturation under sub-criticality; F2 escape-hatch.
 
 ## The WS3 arc (four phases)
 
