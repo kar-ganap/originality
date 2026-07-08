@@ -51,7 +51,7 @@ def main() -> None:
     print("C-1b · is the CD-decline a reference-LENGTH artifact?")
     print("inject length-inflation (kernel fixed); does CD-vs-birth flip −?")
     print("=" * 64)
-    for infl in (0.0, 1.0, 2.0, 4.0):
+    for infl in (0.0, 1.0, 2.0, 4.0, 6.0, 8.0):
         slopes = []
         for s in range(4):
             res = run(120, seed=s, **KW)

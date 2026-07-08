@@ -144,3 +144,51 @@ to the ratio.**
 - Rationale: the guardrail against overfitting is not "refuse structure" but "add the
   independently-motivated structure, pin what an *independent observable* pins (φ), and publish
   the sensitivity to what it does not (`bw`)."
+
+---
+
+## 8. Amendment (2026-07-08) — Experiment C reframed: **adjudicate, don't reconcile**
+
+**C's model-side outcome (C-1, C-1b).**
+- **C-1** (`experiments/phase-2/cd_C.py`) — CD index on the attachment channel (`channel.py`).
+  Under κ, mean CD **rises** (`+0.327→+0.381`, λ:0→1) and rises over birth-time (`+0.0067`) —
+  the OPPOSITE of Park's decline. Not a bug: a correct property of preferential attachment (a
+  hub's citers cite the hub + *other* hubs, not the hub's specific prereqs ⇒ CD↑ as
+  concentration intensifies). The model reproduces canonical concentration as **Gini `H`↑**
+  (rungs 4a/4b), NOT as CD↓ — CD is the wrong operationalization of the κ-channel.
+- **C-1b** (`experiments/phase-2/cd_C1b.py`) — the model holds reference-list length FIXED.
+  Injecting birth-proportional length-inflation (uniform extra refs over earlier elements;
+  attachment kernel untouched) drags the CD-vs-birth slope monotonically `+0.0067 → … → −`
+  (flips at ~×4; ref-lists grew ~3–4× over 1970–2024, so ×4 is in-range). With the real
+  dynamics held fixed, **length-inflation ALONE reproduces a CD-decline.**
+
+**The reframe.** C-1/C-1b land in H-C's pre-registered honest-null branch ("the empirical
+CD-decline is artifactual → fall back"), but with a POSITIVE mechanism. The model **dissociates**
+real concentration (`H`↑, which it reproduces; CD would *rise*) from the empirical CD-**decline**
+(reproducible from length-inflation — the Petersen-Holst-Macher artifact). C moves from *reconcile
+Park (reproduce CD↓)* to **adjudicate Park**: the decline is a reference-length artifact; the real
+signals are **concentration (`H`↑) + fragmentation (atyp↑)**, exactly the two-channel model's
+output. We *mechanistically underpin* the existing critique — we do not discover it.
+
+### C-2 — the data-half (pre-registered)
+On WS2 `panel-2.4.parquet` (CS 1970–2024), CD computed via the SAME vendored `cd_index` on the
+**within-panel** citation graph (invert `refs`). *Boundary caveat:* citations crossing the
+CS-1970-2024 panel are truncated ⇒ within-panel CD (cf. Park's full WoS graph) — stated, not buried.
+
+- **C-2a (go/no-go):** does the decline replicate? CD-vs-year slope within CS. **Gate: slope `<0`,
+  bootstrap CI excluding 0.** If the within-panel graph is too truncated to show a decline → C-2
+  inconclusive on our data; report C-1/C-1b as the mechanistic contribution + fall back to
+  decoupling. *Pre-committed pivot.*
+- **C-2b (the adjudication test):** length-cap control — recompute CD after capping each paper's
+  reference list to the early-era level (removes length-inflation; the mirror of C-1b, which
+  ADDED it). **Gate: the decline attenuates materially toward 0** (≥ ~50%).
+- **C-2c (real signals survive):** the same cap must NOT kill the real signals — concentration
+  (reference-canonicity Gini `H`↑) and atypicality (2.4-style, rising) persist. **Gate: both
+  trend signs unchanged under the cap.**
+- **C-2d (quantitative bridge, nice-to-have):** measure the panel's actual ref-length growth,
+  feed it through the C-1b machinery, compare the model's post-inflation CD-decline *magnitude*
+  to the data's.
+
+**Evaluation (H-C, amended).** The adjudication is EARNED iff **C-2a ∧ C-2b ∧ C-2c**. Any failure
+→ honest fallback to the decoupling paper with the model result as a mechanistic caveat (not a
+debate claim). The within-panel truncation and the shallow model flip are reported, not hidden.
