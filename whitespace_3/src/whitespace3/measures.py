@@ -72,20 +72,27 @@ def reference_atypicality(
     return med, p10
 
 
-def cd_index(prereqs: Sequence[Sequence[int]], min_citers: int = 3) -> npt.NDArray[np.float64]:
+def cd_index(
+    prereqs: Sequence[Sequence[int]],
+    min_citers: int = 3,
+    focals: Sequence[int] | None = None,
+) -> npt.NDArray[np.float64]:
     """Funk–Owen-Smith **consolidation–disruption** index per element (Phase 2 · C, the κ-half).
     For a focal element `e` with references `prereqs[e]` and citers (elements built on `e`):
     `CD = (n_i − n_j)/(n_i + n_j + n_k)`, where `n_i` = citers of `e` that do NOT cite `e`'s
     references (disruptive), `n_j` = citers that DO (consolidating), `n_k` = elements citing
     `e`'s references but not `e`. `CD > 0` disruptive, `CD < 0` consolidating. Per-element
-    (`NaN` if `< min_citers` citers or no references)."""
+    (`NaN` if `< min_citers` citers or no references). `focals` (optional) restricts the
+    computation to those element indices — same arithmetic, for scaling to a large data graph
+    where computing every focal is O(N²); others stay `NaN`. The citer graph is always built
+    from the FULL `prereqs` (so a sampled focal's citers/`n_k` are exact)."""
     e_count = len(prereqs)
     citers: list[list[int]] = [[] for _ in range(e_count)]
     for c in range(e_count):
         for pr in prereqs[c]:
             citers[pr].append(c)
     cd = np.full(e_count, np.nan, dtype=np.float64)
-    for e in range(e_count):
+    for e in (range(e_count) if focals is None else focals):
         refs_e = set(prereqs[e])
         ce = citers[e]
         if not refs_e or len(ce) < min_citers:

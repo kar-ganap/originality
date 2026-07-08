@@ -40,3 +40,6 @@ def test_cd_index() -> None:
     # reverse: 3 consolidating citers + 1 disruptive ⇒ CD < 0.
     consolidating = [[], [0], [1, 0], [1, 0], [1, 0], [1]]
     assert cd_index(consolidating, min_citers=3)[1] < 0
+    # focals subset: same arithmetic on the FULL graph, others NaN (data-scaling path).
+    sub = cd_index(disruptive, min_citers=3, focals=[1])
+    assert sub[1] == cd[1] and np.isnan(sub[0]) and np.isnan(sub[2])
