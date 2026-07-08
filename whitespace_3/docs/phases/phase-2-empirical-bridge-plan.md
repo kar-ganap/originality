@@ -192,3 +192,34 @@ CS-1970-2024 panel are truncated ⇒ within-panel CD (cf. Park's full WoS graph)
 **Evaluation (H-C, amended).** The adjudication is EARNED iff **C-2a ∧ C-2b ∧ C-2c**. Any failure
 → honest fallback to the decoupling paper with the model result as a mechanistic caveat (not a
 debate claim). The within-panel truncation and the shallow model flip are reported, not hidden.
+
+---
+
+## 9. Amendment (2026-07-08) — C-2 escalates to the FULL 24M graph (the truncation is fixable)
+
+**Why.** C-2a/b on the base-1m sample hit the pre-registered truncation limit: the within-panel
+graph is only **1.9%** dense (0.24 in-panel refs/paper), so the length mechanism (which lives in
+the full reference lists) is projected away — the decline replicates (`−0.00266`) but is
+selection-confounded and NOT in-sample decomposable (7% attenuation). The blocker was the 1M/24M
+*sampling*, not the method.
+
+**The fix is cheap because the data already exists.** The phase-1.2 parse retained
+`referenced_works_json` for the full **24M v3 population** (`section0-population-v3.parquet`, 54.8
+GB on Modal Volume `ws2-section0`) — no 639 GB dump re-parse. **Step-0 go/no-go**
+(`cd_density_check.py`, server-side): in-population citation density **46.7%** (25× the sample),
+mean 6.1 in-pop refs/paper, **41% of papers CD-eligible** (≥3 in-pop refs ≈ 10M), usable across
+all eras (pre-1990 27% → 2010+ 43%). Clears the ~30% threshold decisively ⇒ **GO**.
+
+**C-2-full (`cd_data_C2_full.py`, all server-side).** Build the within-population reference graph
+as CSR; compute CD (`cd_index_csr`, scipy-sparse, tested byte-equivalent to `cd_index`) for a
+per-year focal sample (≈2.5K/yr) on:
+- **uncapped** (C-2a-full): does the decline replicate cleanly now that eligibility is 41% across
+  all eras (not the sample's selection-biased 0.85%)? Gate: slope `<0`, bootstrap CI excludes 0.
+- **length-capped** (C-2b-full): refs truncated to the early-era length `cap` (removes
+  length-inflation — the data mirror of C-1b). Gate: decline attenuates ≥ ~50%.
+Whitespace bridge: `cd_index`/`cd_index_csr` vendored WS3→WS2 (pin `282e09f`), operated on the WS2
+Volume; population is all-field (CS+physics per the §0 pull), focal CD uses the full graph
+(Park-style within-field). Residual caveat: even 46.7% < 100%, so some cross-boundary truncation
+remains; our snapshot/field defs won't match Park's CD *magnitude* (trend + attenuation are the
+targets). **The novel contribution (C/V mechanism + two-channel decoupling) does not depend on
+C-2-full — this is a rigor/completeness upgrade of the adjudication's data half.**
