@@ -52,8 +52,8 @@ the two traditions individually — and those are classical.
 
 ## Current State
 
-- **Stage:** Phase 1 (the ABM core) — **rung 4d COMPLETE** (the subfield/content
-  channel: fragmentation). rung 4c + 4b + 4a + 3 + 2b + Phase 0 + Prelude COMPLETE.
+- **Stage:** Phase 1 (the ABM core) — **rung 4e COMPLETE** (topology robustness;
+  `cc:robust` now closed). rung 4d + 4c + 4b + 4a + 3 + 2b + Phase 0 + Prelude COMPLETE.
 - **Prelude (this session, on branch `ws3`):**
   - `docs/primers/cv-reconciliation-primer.tex` — unambiguous parameters; the
     surviving hypotheses (refined 13-D + 13-H) in the model's language; **Core
@@ -142,13 +142,20 @@ the two traditions individually — and those are classical.
   `K=N/m` + separate off-trend `bw`. Scope: **sign-structure + crossover, not the
   scale-confounded Uzzi-z magnitude**; `H2a` Strimling floor retired (within-flat now
   lens-persistence). 9 tests (6 fast + 3 slow; 69 fast total). See
-  `docs/phases/phase-1-rung4d-retro.md`.
-- **Next:** (1) **update the primer** (`cv-reconciliation-primer.tex`): CC6/`cc:open`
-  superseded — `V^struct` *rises* via the content channel, orthogonal to `κ`. (2) Phase 1
-  **rung 5** — synthesis: the phase diagram / Pareto / Results (CC3/CC4), now with two
-  orthogonal channels (concentration + fragmentation). Open threads (later): memory
-  extension `U/(1−β−r)`; depth-`C` saturation under sub-criticality; the F2 escape-hatch
-  demo.
+  `docs/phases/phase-1-rung4d-retro.md`. **Primer updated** (merged): `cc:open`/CC6 marked
+  disconfirmed + the content channel added as the orthogonal driver.
+- **Phase 1 rung 4e done (branch `ws3-phase-1-topology-robustness`):** `channel.run` gains
+  an optional interaction **topology** (`well_mixed` default = **byte-identical**; `er`/`ws`/
+  `ba` = fixed finite-degree graph via `networkx`, neighbour-carriers through a `scipy.sparse`
+  adjacency with self-loops). The κ-signature (`V^struct↓`, `W` spared) is **topology-
+  invariant** across well-mixed/ER/WS/BA, and κ **steepens** the `V^struct`-vs-`logN` decline
+  on every topology (H3). **Closes `cc:robust`** (κ-specs from rungs 3/4a/4b × topologies).
+  Sign-structure invariant, magnitude varies with degree; nothing killed it (even BA hubs).
+  7 tests (6 fast + 1 slow; 75 fast total). See `docs/phases/phase-1-rung4e-retro.md`.
+- **Next:** Phase 1 **rung 5** — synthesis: the phase diagram / Pareto / Results (CC3/CC4),
+  now with full `cc:robust` established and **two orthogonal channels** (concentration via
+  `κ`; fragmentation via `τ`, rung 4d) — the program's capstone. Open threads (later): memory
+  extension `U/(1−β−r)`; depth-`C` saturation under sub-criticality; the F2 escape-hatch demo.
 
 ## The WS3 arc (four phases)
 
