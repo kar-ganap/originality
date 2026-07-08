@@ -68,7 +68,7 @@ def main() -> None:
     q = float(ex["refs"].isin(broad).mean())
 
     # between-subfield DISTINCTIVENESS (the real bw target): how niche-specific are refs?
-    inst_breadth = ex["refs"].map(sf_per_work)                 # per ref-instance: #subfields citing its work
+    inst_breadth = ex["refs"].map(sf_per_work)                 # #subfields per cited work
     niche_specific_ref_share = float((inst_breadth == 1).mean())   # cited by exactly ONE subfield
     mean_ref_breadth = float(inst_breadth.mean())                  # avg #subfields per cited work
     median_ref_breadth = float(inst_breadth.median())
