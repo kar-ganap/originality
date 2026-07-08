@@ -73,6 +73,14 @@ def main() -> None:
     mean_ref_breadth = float(inst_breadth.mean())                  # avg #subfields per cited work
     median_ref_breadth = float(inst_breadth.median())
 
+    # B'-1: niche-specific-share over the ATYPICALITY-relevant subset (heavily-cited works only).
+    # reference_atypicality uses d_min=20 on the full panel; sample ~0.41x → sample d_min ≈ 8.
+    work_deg = ex["refs"].value_counts()
+    heavy = set(work_deg[work_deg >= 8].index)
+    heavy_mask = ex["refs"].isin(heavy)
+    ns_heavy = float((ex.loc[heavy_mask, "refs"].map(sf_per_work) == 1).mean())
+    heavy_ref_frac = float(heavy_mask.mean())
+
     # K(t) — subfield count over time (fragmentation growth), on the full panel
     k_by_year = wr.groupby("year")["subfield"].nunique()
     early = float(k_by_year.loc[k_by_year.index <= 1985].mean())
@@ -92,6 +100,8 @@ def main() -> None:
         "niche_specific_ref_share": niche_specific_ref_share,
         "mean_ref_breadth_subfields": mean_ref_breadth,
         "median_ref_breadth_subfields": median_ref_breadth,
+        "niche_specific_ref_share_dmin": ns_heavy,     # B'-1: heavily-cited (atyp) works
+        "heavy_ref_frac": heavy_ref_frac,
         "n_subfields_total": int(wr["subfield"].nunique()),
         "K_subfields_early_1985": early,
         "K_subfields_late_2015": late,
