@@ -280,6 +280,49 @@ def cd_index(
     return cd
 
 
+def cd_index_csr(
+    indptr: npt.NDArray[np.int64],
+    indices: npt.NDArray[np.int32],
+    min_citers: int = 3,
+    focals: Sequence[int] | None = None,
+    cand_cap: int = 500_000,
+) -> npt.NDArray[np.float64]:
+    """Same CD arithmetic as ``cd_index`` but on a **CSR reference graph** (``indptr``/``indices``:
+    paper ``e``'s references = ``indices[indptr[e]:indptr[e+1]]``), so it scales to the 24M-paper
+    OpenAlex graph without materializing list-of-lists. Citers come from the transposed (CSC) view.
+    For focal ``e``: ``support`` = papers citing any of ``e``'s refs (union of the citer-columns of
+    ``refs_e``); ``n_j`` = ``|support ∩ citers(e)|``; ``n_i = |citers(e)| − n_j``; ``n_k = |support|
+    − n_j − 1`` (``e`` itself cites its refs so it is in ``support`` — the ``−1`` drops it, matching
+    ``cd_index``'s ``− {e}``). A ref cited by ``> cand_cap`` papers is a mega-hub ⇒ ``CD≈0`` ⇒
+    short-circuit to ``0.0`` (bounds cost). Equivalence to ``cd_index`` is asserted in tests."""
+    from scipy.sparse import csr_matrix
+
+    n = int(indptr.shape[0] - 1)
+    rcsr = csr_matrix((np.ones(indices.shape[0], dtype=np.int8), indices, indptr), shape=(n, n))
+    rcsc = rcsr.tocsc()
+    ci, cp = rcsc.indices, rcsc.indptr   # column e ⇒ citers of e (papers citing e)
+    cd = np.full(n, np.nan, dtype=np.float64)
+    for e in (range(n) if focals is None else focals):
+        refs_e = indices[indptr[e]:indptr[e + 1]]
+        if refs_e.size == 0:
+            continue
+        citers_e = ci[cp[e]:cp[e + 1]]
+        if citers_e.size < min_citers:
+            continue
+        cand = np.concatenate([ci[cp[r]:cp[r + 1]] for r in refs_e])
+        if cand.size > cand_cap:
+            cd[e] = 0.0
+            continue
+        support = np.unique(cand)
+        n_j = int(np.intersect1d(support, citers_e, assume_unique=True).size)
+        n_i = int(citers_e.size) - n_j
+        n_k = int(support.size) - n_j - 1
+        denom = n_i + n_j + n_k
+        if denom > 0:
+            cd[e] = (n_i - n_j) / denom
+    return cd
+
+
 def panel_year_test(
     outcome: Sequence[float],
     year: Sequence[float],

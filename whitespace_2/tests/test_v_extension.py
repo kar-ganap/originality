@@ -8,6 +8,7 @@ import numpy as np
 
 from whitespace2.v_extension import (
     cd_index,
+    cd_index_csr,
     forward_uptake,
     off_canon_share,
     panel_year_test,
@@ -148,3 +149,22 @@ def test_cd_index() -> None:
     # focals subset: same arithmetic on the FULL graph, others NaN (data-scaling path).
     sub = cd_index(disruptive, min_citers=3, focals=[1])
     assert sub[1] == cd[1] and np.isnan(sub[0]) and np.isnan(sub[2])
+
+
+def _to_csr(prereqs: list[list[int]]) -> tuple[np.ndarray, np.ndarray]:
+    indptr = np.zeros(len(prereqs) + 1, dtype=np.int64)
+    for i, p in enumerate(prereqs):
+        indptr[i + 1] = indptr[i] + len(p)
+    indices = np.array([x for p in prereqs for x in p], dtype=np.int32)
+    return indptr, indices
+
+
+def test_cd_index_csr_matches_dense() -> None:
+    # the CSR/scipy engine (24M-scale path) must equal the list-of-lists cd_index bit-for-bit.
+    for graph in ([[], [0], [1], [1], [1], [1, 0]],
+                  [[], [0], [1, 0], [1, 0], [1, 0], [1]]):
+        ip, ix = _to_csr(graph)
+        a = cd_index(graph, min_citers=3)
+        b = cd_index_csr(ip, ix, min_citers=3)
+        m = ~np.isnan(a)
+        assert np.allclose(a[m], b[m]) and bool(np.isnan(b[~m]).all())
