@@ -223,3 +223,17 @@ Volume; population is all-field (CS+physics per the §0 pull), focal CD uses the
 remains; our snapshot/field defs won't match Park's CD *magnitude* (trend + attenuation are the
 targets). **The novel contribution (C/V mechanism + two-channel decoupling) does not depend on
 C-2-full — this is a rigor/completeness upgrade of the adjudication's data half.**
+
+**VERDICT (C-2-full, 2026-07-08 — the adjudication is disconfirmed; the decoupling is confirmed).**
+- **C-2a-full ✓:** `CD-vs-year = −0.00086`, CI `[−0.00091, −0.00081]`, monotone `0.050 (1975) →
+  0.013 (2020)` across all eras (137.5K focals). Park's decline **replicates cleanly** on 24M.
+- **C-2b-full ✗ (gate NOT met):** mediation attenuates only **24%** (`−0.00086 → −0.00065`, <50%);
+  random length-cap **steepens** the decline (−78%). The decline is **NOT a reference-length
+  artifact** — it survives length-control ⇒ a **real consolidation signal**.
+- **Landing:** the two-channel **decoupling is confirmed** (CD↓ + `H`↑ consolidation ⊥ atyp↑
+  fragmentation, all real). The C/V model reconciles via `H` + atyp; Park's CD-decline is
+  independent confirmation of consolidation; the model's PA substrate mis-signs the *CD-index*
+  (C-1) — a documented limitation, not a data artifact. We **confirm Park, additively**. C-1b's
+  length-mechanism is real in the toy but overstates length vs the data (24%). Coverage/practice
+  artifact untested (deliberately — out of scope). Full arc: `phase-2-experiment-C-retro.md`.
+- **D deferred** (plan §5): A–C landed mixed ⇒ the paper is the confirmed decoupling + reconciliation.
