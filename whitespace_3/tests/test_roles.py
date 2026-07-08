@@ -20,6 +20,11 @@ def _lf(pop: int, n_models: int, f: float, eps: float, seeds: range = range(6),
     return float(np.mean(steady_state(pop, n_models, f, eps, g, seeds, bi, "per_agent")))
 
 
+def _lf_mem(pop: int, n_models: int, f: float, eps: float, r: float,
+            seeds: range = range(3), g: int = 600, bi: int = 300) -> float:
+    return float(np.mean(steady_state(pop, n_models, f, eps, g, seeds, bi, "per_agent", r=r)))
+
+
 def test_determinism() -> None:
     a = run(50, 3, 0.2, 0.2, 40, seed=1)
     b = run(50, 3, 0.2, 0.2, 40, seed=1)
@@ -44,6 +49,41 @@ def test_closed_form() -> None:
 def test_N_independence() -> None:
     small, large = _lf(50, 2, 0.3, 0.1), _lf(400, 2, 0.3, 0.1)
     assert large / small < 1.4, f"λ_f not N-independent: {small} -> {large}"
+
+
+def test_memory_formula() -> None:
+    """Memory-with-decay (rung 5b): λ_f = ε/(1−f·n−r). r=0 recovers U/(1−β); r shifts the
+    equilibrium up; inf above the critical line f·n+r ≥ 1."""
+    import math
+    assert abs(strimling_lambda_f(0.1, 0.5, 1, 0.0) - 0.2) < 1e-9    # r=0 → U/(1−β)
+    assert abs(strimling_lambda_f(0.1, 0.5, 1, 0.4) - 1.0) < 1e-9   # the 2nd number
+    assert abs(strimling_lambda_f(0.1, 0.3, 2, 0.2) - 0.1 / 0.2) < 1e-9
+    assert strimling_lambda_f(0.1, 0.5, 1, 0.5) == math.inf          # f·n+r = 1 (critical)
+
+
+def test_memory_r0_identity() -> None:
+    """r=0 (default) is byte-identical to the rung-4c model."""
+    a = run(50, 3, 0.5, 0.1, 60, 0)
+    b = run(50, 3, 0.5, 0.1, 60, 0, r=0.0)
+    assert a["per_agent"] == b["per_agent"]
+    assert a["repertoire"] == b["repertoire"]
+
+
+def test_memory_validation() -> None:
+    with pytest.raises(ValueError):
+        run(50, 3, 0.5, 0.1, 20, 0, r=1.5)
+    with pytest.raises(ValueError):
+        run(50, 3, 0.5, 0.1, 20, 0, r=-0.1)
+
+
+@pytest.mark.slow
+def test_strimling_memory_number() -> None:
+    """2nd Strimling Level-3 number: with self-retention r, λ_f = ε/(1−f·n−r) = 1.0 at
+    ε=0.1, f=0.5, n=1, r=0.4 (Lehmann–Aoki–Feldman 2011, eq 3.4/3.5 memory form),
+    N-independent. Slower to converge (near the critical line f·n+r=0.9)."""
+    for pop in (100, 400):
+        val = _lf_mem(pop, 1, 0.5, 0.1, 0.4)
+        assert abs(val - 1.0) < 0.1, f"N={pop}: λ_f={val} != 1.0"
 
 
 def test_enquist_threshold() -> None:
