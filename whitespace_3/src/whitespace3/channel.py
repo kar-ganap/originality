@@ -55,8 +55,10 @@ def _build_adjacency(topology: str, n: int, mean_degree: int, graph_seed: int) -
 def _validate(
     n: int, c0: int, f: float, epsilon: float, b: float, generations: int,
     persistence: int, lam: float, p: int, alpha: float, gamma_thresh: float,
-    mode: str, g_map: str, topology: str, mean_degree: int,
+    mode: str, g_map: str, topology: str, mean_degree: int, isolated_frac: float,
 ) -> None:
+    if not 0.0 <= isolated_frac < 1.0:
+        raise ValueError(f"isolated_frac must be in [0, 1), got {isolated_frac}")
     if topology not in _TOPOLOGIES:
         raise ValueError(f"topology must be one of {_TOPOLOGIES}, got {topology!r}")
     if topology != "well_mixed" and not 2 <= mean_degree <= n - 1:
@@ -122,6 +124,39 @@ def variance_split(
     return vs, vl, vt
 
 
+def variance_split_group(
+    birth: npt.NDArray[np.int64],
+    struct: npt.NDArray[np.bool_],
+    owner_iso: npt.NDArray[np.bool_],
+    r_grid: npt.NDArray[np.bool_],
+    n_iso: int,
+    n_conf: int,
+    k: int,
+) -> tuple[list[float], list[float]]:
+    """Per-capita persisting *structural* novelty split by owner subgroup (selective
+    isolation, rung 5a): ``(V^struct_isolated, V^struct_conformist)`` — surviving structural
+    innovations owned by each subgroup, divided by that subgroup's size. ``NaN`` last ``k``."""
+    generations = int(r_grid.shape[0]) - 1
+    vi: list[float] = []
+    vc: list[float] = []
+    for t in range(generations + 1):
+        if t + k > generations:
+            vi.append(float("nan"))
+            vc.append(float("nan"))
+            continue
+        born = np.where(birth == t)[0]
+        if born.size == 0:
+            vi.append(0.0)
+            vc.append(0.0)
+            continue
+        surv = born[r_grid[t : t + k + 1, born].all(axis=0)]
+        s = struct[surv]
+        iso = owner_iso[surv]
+        vi.append(float(int((s & iso).sum())) / max(n_iso, 1))
+        vc.append(float(int((s & ~iso).sum())) / max(n_conf, 1))
+    return vi, vc
+
+
 def run(
     n: int,
     c0: int,
@@ -140,6 +175,7 @@ def run(
     topology: str = "well_mixed",
     mean_degree: int = 8,
     graph_seed: int = 0,
+    isolated_frac: float = 0.0,
 ) -> dict[str, Any]:
     """Multi-prereq graph with **targeted** conformity. Innovation fires at base rate
     `ε`; each event succeeds with prob `g(κ_eff)`, `κ_eff = λ·H·(1−γ)` (``targeted``),
@@ -152,18 +188,28 @@ def run(
     ``mean_degree``, built from ``graph_seed``). The κ-signature (`V^struct↓`, `W↑`) is
     tested for invariance across topologies (Core Claim `cc:robust`).
 
-    Returns ``{"C","V","Vstruct","Vlat","H","W","R_size", ...}`` — `W` is collective
-    breadth (repertoire size). Deterministic given ``seed`` (and ``graph_seed``)."""
+    ``isolated_frac`` (rung 5a) shields the first ``⌈isolated_frac·n⌉`` agents from κ
+    (`κ_eff=0`) — the primer's *selective isolation*: the shielded subgroup keeps innovating
+    freely (high `V^struct`) while the whole population's redundancy preserves `C`, a concrete
+    Pareto intervention. ``Vstruct_iso``/``Vstruct_conf`` split per-capita structural novelty
+    by subgroup.
+
+    Returns ``{"C","V","Vstruct","Vlat","Vstruct_iso","Vstruct_conf","H","W","R_size", ...}``
+    — `W` is collective breadth (repertoire size). Deterministic given ``seed`` (and
+    ``graph_seed``)."""
     _validate(n, c0, f, epsilon, b, generations, persistence, lam, p, alpha,
-              gamma_thresh, mode, g_map, topology, mean_degree)
+              gamma_thresh, mode, g_map, topology, mean_degree, isolated_frac)
     rng = np.random.default_rng(seed)
     adjacency = _build_adjacency(topology, n, mean_degree, graph_seed)
+    n_iso = int(np.ceil(isolated_frac * n))
+    isolated_mask = np.arange(n) < n_iso              # first n_iso agents shielded from κ (5a)
 
     level: list[int] = [1] * c0
     prereqs: list[list[int]] = [[] for _ in range(c0)]
     ancestors: list[set[int]] = [set() for _ in range(c0)]
     birth: list[int] = [0] * c0
     struct: list[bool] = [False] * c0
+    owner_iso: list[bool] = [False] * c0              # was the innovating agent isolated?
     indeg = np.zeros(c0, dtype=float)
     closure = np.zeros(c0, dtype=float)
     base = np.ones((n, c0), dtype=bool)
@@ -207,6 +253,7 @@ def run(
         new_ancestors: list[set[int]] = []
         new_owners: list[int] = []
         new_struct: list[bool] = []
+        new_iso: list[bool] = []
         for i in innovators:
             held = np.where(base[i])[0]
             if held.size == 0:
@@ -223,7 +270,7 @@ def run(
                 prq_new = [int(c) for c in chosen]
                 lv = 1 + max(level[c] for c in prq_new)
             gamma = (float(np.mean([canon_mask[c] for c in prq_new])) if prq_new else 0.0)
-            if mode == "off" or lam == 0.0:
+            if isolated_mask[i] or mode == "off" or lam == 0.0:   # isolated ⇒ shielded from κ
                 kappa_eff = 0.0
             elif mode == "uniform":
                 kappa_eff = lam * h_now
@@ -239,6 +286,7 @@ def run(
             new_ancestors.append(anc)
             new_owners.append(int(i))
             new_struct.append(gamma < gamma_thresh)
+            new_iso.append(bool(isolated_mask[i]))
 
         add = len(new_levels)
         if add:
@@ -254,6 +302,7 @@ def run(
             prereqs.extend(new_prereqs)
             ancestors.extend(new_ancestors)
             struct.extend(new_struct)
+            owner_iso.extend(new_iso)
             block = np.zeros((n, add), dtype=bool)
             block[new_owners, np.arange(add)] = True
             base = np.hstack([base, block])
@@ -267,9 +316,12 @@ def run(
     r_grid = np.zeros((generations + 1, e_final), dtype=bool)
     for tt, row in enumerate(r_hist):
         r_grid[tt, : row.shape[0]] = row
-    v_struct, v_lat, v_total = variance_split(
-        np.asarray(birth, dtype=np.int64), np.asarray(struct, dtype=bool),
-        r_grid, n, persistence,
+    birth_arr = np.asarray(birth, dtype=np.int64)
+    struct_arr = np.asarray(struct, dtype=bool)
+    v_struct, v_lat, v_total = variance_split(birth_arr, struct_arr, r_grid, n, persistence)
+    v_iso, v_conf = variance_split_group(
+        birth_arr, struct_arr, np.asarray(owner_iso, dtype=bool),
+        r_grid, n_iso, n - n_iso, persistence,
     )
     r_size = [int(row.sum()) for row in r_hist]
 
@@ -278,6 +330,8 @@ def run(
         "V": v_total,
         "Vstruct": v_struct,
         "Vlat": v_lat,
+        "Vstruct_iso": v_iso,       # per-capita structural V of the isolated subgroup (5a)
+        "Vstruct_conf": v_conf,     # per-capita structural V of the conformist majority
         "H": h_traj,
         "W": r_size,          # collective breadth (repertoire size)
         "R_size": r_size,
@@ -286,4 +340,5 @@ def run(
         "lam": lam, "p": p, "alpha": alpha, "gamma_thresh": gamma_thresh,
         "mode": mode, "g_map": g_map,
         "topology": topology, "mean_degree": mean_degree, "graph_seed": graph_seed,
+        "isolated_frac": isolated_frac,
     }
