@@ -312,24 +312,37 @@ Verified signatures (faithful frame, seeded):
   **rises** with field size (`0.79 → 0.83`) *while* novelty rises — concentrates at the
   top, fragments in the middle, exactly the WS2+2.4 picture.
 
-### 9.3 The single bounded-`m` lever (this is what fixes F5 and restores the discipline)
+### 9.3 Bounded-`m` as the `K`-lever — the single-lever form tested and corrected
 
-The prototype's `K`-growth and lens-width were *free inputs* — discipline debt (F5's
-"`K` forced by bounded `m`" was lost). The fix is **one lever**: bounded reach over a
-**growing shared vocabulary**. As the field grows (`E ∝ N`), a fixed `m`-element reach is
-a bandwidth that **shrinks automatically** (`bw ∝ m/E`), niches **tile** the growing space
-(`K ≈ E/m ∝ N/m`), and a single measured `m` drives *both*. This:
-- **satisfies F5 by construction** (`K ∝ N/m`, sub-linear once `m` grows with the corpus);
-- **kills the saturation** the sweep exposed (at *fixed* `bw`, `K`↑ weakens the effect:
-  slope `−0.042 → −0.002` as `K:10→80`; shrinking `bw` with `N` prevents it);
-- **re-pins anti-bolt-on** (`m` measured off-trend; it is *the* free parameter, not `K`
-  or `bw` separately).
+An earlier form of this fix claimed a *single* `m` driving both `K = E/m` **and**
+`bw = β·m/E` (reach shrinking as the vocabulary grows). **Verified before building
+(`verify_boundedm.py`) — and disconfirmed:** that wiring gives the *wrong sign* at every
+`m` (global slope `+0.068 … +0.006`, all positive; `K∝E` held exactly, placebo fine —
+only the sign wiring failed). Cause: shrinking `bw` makes *late* niches concentrate on a
+few late-born (low-degree) elements → repeated, conventional pairings → z *rises* with
+birth. The saturation reading was right that *fixed-`bw` + rising-`K`* weakens; it was
+wrong that *shrinking* `bw` is the cure.
+
+**Corrected wiring (confirmed regime = `verify_recombination.py`):**
+- **F5 via the agent partition.** `m` = **agents per niche**; `K = N/m`, forced by `N`
+  (the original primitive, unchanged). Growing `N` ⇒ growing `K` ⇒ fragmentation;
+  `E/K = m` exactly. Sub-linear once `m` grows with the corpus.
+- **`bw` is a *separate* off-trend parameter** — niche distinctiveness, the crossover
+  lever — pinned from data (how tight subfield reference-norms are), **not** derived from
+  `m`, **not** fit to the trend. Two pinned parameters, both measured; the discipline
+  holds (neither is fit) — it is simply not "one lever."
+- **The shared canon must stay high-degree:** a *stable, persistently-recombined core*
+  (vocabulary grows **slower** than `K`, so foundational elements accumulate degree). A
+  fast-growing vocabulary reintroduces low-degree elements and breaks the sign (the island
+  failure returns). A documented modeling choice, pinned off-trend (foundational-reference
+  share).
 
 **The sign flip is a tunable crossover, not knife-edge** (robustness, Q2): monotone in
 `bw`, sign-change at **`bw* ≈ 0.05`** (`−0.080, −0.039, −0.020, +0.007, +0.016, +0.013`
-across `bw = 0.010…0.160`). This is the `λ*` crossover shape of rung 3/4a — a locatable
-phase boundary, a strength. The rung must **locate `bw*`/`m*`** (reuse
-`conformity.locate_lambda_star`-style logic), not just exhibit one point.
+across `bw = 0.010…0.160`). This is the `λ*` shape of rung 3/4a. The rung **locates the
+crossover** and claims the **sign-structure**, not a parameter-free magnitude match — the
+Uzzi-z is scale-confounded, so a minimal ABM targets sign + crossover (per CC:robust), not
+the empirical `−0.64`.
 
 ### 9.4 Re-anchored forbidden ledger + constraints
 
@@ -339,7 +352,7 @@ phase boundary, a strength. The rung must **locate `bw*`/`m*`** (reuse
 | **F2** (global↓ forbidden) | 🟡 partial — wide-`bw`/K-fixed conventionalise; the shared-lens `η` escape-hatch demo still owed |
 | **F3** (must coexist with `H↑`) | ✅ **verified** — `H_global` `0.79→0.83` while novelty rises |
 | **F4** (within↓ forbidden) | ✅ outcome holds — but **mechanism re-anchored: lens-persistence, NOT the Strimling floor** |
-| **F5** (`K` sub-linear, forced) | ✅ **by construction** once `K`,`bw` are driven by the single bounded-`m` over a growing vocabulary |
+| **F5** (`K` sub-linear, forced) | ✅ via `K = N/m` (agents-per-niche, the original primitive); the `bw = m/E` single-lever form was **disconfirmed** (§9.3) — `bw` is a separate off-trend crossover lever |
 | placebo (K-fixed) | ✅ **demonstrated** (never rises) |
 
 **H2a retired.** The within-flat limb is no longer the Strimling `ε/(1−f·m)` floor (the
