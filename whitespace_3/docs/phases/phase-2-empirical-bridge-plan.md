@@ -106,3 +106,41 @@ ambient coupling. The pinned OpenAlex snapshot date carries over from WS2.
 - **No new dataset** beyond the pinned OpenAlex snapshot (+ the held-out field for D).
 - One phase, one job: **make the theory *predict* the empirics, and reconcile the disruption
   debate — or fail honestly and fall back to the decoupling result.**
+
+---
+
+## 7. Amendment (2026-07-08) — Experiment B′ (principled augmentation, pre-registered)
+
+**B's outcome (H-B honest-null).** The model's `niche_specific_ref_share` is ~0 at every
+`bw` vs the empirical `0.58`, so `bw` is not pinnable by that statistic. Two candidate causes,
+tested in order:
+
+### B′-1 — apples-to-apples re-measurement (does the null survive the `d_min` filter?)
+The `0.58` is over **all** refs (long-tail-dominated), but `reference_atypicality` **excludes**
+works with degree `< d_min` — so the atypicality is measured only on heavily-cited (canonical)
+works, which are largely multi-subfield. Re-measure `niche_specific_ref_share` **over the
+`d_min`-relevant subset** (works with total citation degree `≥ 20`, the atypicality vocab).
+- **H-B′1:** if the `≥d_min` share ≈ the model's (~0 — canonical works are multi-niche), then
+  B's gap was a *long-tail artifact*; the model is **consistent on the relevant subset** →
+  B softens to *consistency-with-the-right-microstructure*, **no augmentation needed**.
+- else the gap is real on the relevant subset → **B′-2**.
+
+### B′-2 (conditional) — the pinned-φ augmentation + the `bw`-sensitivity falsifier
+Add a **niche-private-vocabulary** channel: a fraction φ of a paper's refs go to
+niche-private elements (cited only by that niche, ∝ within-niche popularity), the rest to the
+shared canon (existing lens). This is the data's *second* distinctiveness channel (private
+literatures) the minimal model lacks — **not** a dilution of `bw` (which carries *combination*
+distinctiveness). **Pin φ = the `≥d_min` empirical share; `m`, `K`, `q` off-trend; tune NOTHING
+to the ratio.**
+- **H-B′2 (pre-registered dichotomy — the honesty test):**
+  - predicted ratio **≈ 13× (within ~2×) AND `bw`-INSENSITIVE** (varies `< ~2×` over
+    `bw ∈ [0.02, 0.08]`) ⇒ **FORCED PREDICTION** — φ (pinned) carries it, `bw` is not the free
+    knob. B upgraded.
+  - the ratio **swings with `bw`** (`> ~2×`) ⇒ `bw` was never pinnable from structure; the
+    **honest-null STANDS, sharpened** (the data's fragmentation has a combination-distinctiveness
+    component the minimal model can't pin off-trend).
+- **Non-negotiable:** the `bw`-sensitivity is the **headline**, not buried. Also report
+  sensitivity to the private-pool size `P` (a secondary knob) — if `P` is a free lever too, say so.
+- Rationale: the guardrail against overfitting is not "refuse structure" but "add the
+  independently-motivated structure, pin what an *independent observable* pins (φ), and publish
+  the sensitivity to what it does not (`bw`)."
