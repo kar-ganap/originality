@@ -1,0 +1,19 @@
+{
+  "snapshot": "panel-2.4 (base-1m v3)",
+  "n_papers_with_refs": 486565,
+  "coverage": 0.5449918063756258,
+  "m_ref_len_median": 17.0,
+  "m_ref_len_mean": 24.35573458839004,
+  "m_ref_len_median_substantial": 20.0,
+  "within_subfield_ref_gini_mean": 0.05588796429830596,
+  "within_subfield_ref_gini_wmean": 0.18171620700939425,
+  "n_subfields_scored": 214,
+  "cross_cutting_q": 0.05174149747633322,
+  "niche_specific_ref_share": 0.5844166740840122,
+  "mean_ref_breadth_subfields": 3.180117988873165,
+  "median_ref_breadth_subfields": 1.0,
+  "n_subfields_total": 277,
+  "K_subfields_early_1985": 106.3125,
+  "K_subfields_late_2015": 234.1,
+  "sample": 200000
+}
