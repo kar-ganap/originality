@@ -7,6 +7,7 @@ import json
 import numpy as np
 
 from whitespace2.v_extension import (
+    cd_index,
     forward_uptake,
     off_canon_share,
     panel_year_test,
@@ -132,3 +133,18 @@ def test_reference_atypicality() -> None:
     assert med[-1] < 0       # [A,B]: never co-cited before -> atypical (negative z)
     assert med[0] > med[-1]
     assert np.isnan(med[50])  # single-ref paper [A] -> no pairs -> NaN
+
+
+def test_cd_index() -> None:
+    # vendored from WS3 @ 282e09f: element 1 (cites root 0) cited by 3 papers ignoring its ref
+    # (disruptive) + 1 citing both (consolidating) -> CD > 0.
+    disruptive = [[], [0], [1], [1], [1], [1, 0]]
+    cd = cd_index(disruptive, min_citers=3)
+    assert cd[1] > 0
+    assert np.isnan(cd[0])       # root: no references -> NaN
+    # reverse: 3 consolidating citers + 1 disruptive -> CD < 0.
+    consolidating = [[], [0], [1, 0], [1, 0], [1, 0], [1]]
+    assert cd_index(consolidating, min_citers=3)[1] < 0
+    # focals subset: same arithmetic on the FULL graph, others NaN (data-scaling path).
+    sub = cd_index(disruptive, min_citers=3, focals=[1])
+    assert sub[1] == cd[1] and np.isnan(sub[0]) and np.isnan(sub[2])
