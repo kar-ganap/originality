@@ -168,3 +168,17 @@ def test_cd_index_csr_matches_dense() -> None:
         b = cd_index_csr(ip, ix, min_citers=3)
         m = ~np.isnan(a)
         assert np.allclose(a[m], b[m]) and bool(np.isnan(b[~m]).all())
+
+
+def test_cd_index_csr_window_and_floor() -> None:
+    # focal 1 (yr 2001) is cited by 2,3,4,5 (yrs 2002,2005,2010,2003).
+    graph = [[], [0], [1], [1], [1], [1, 0]]
+    ip, ix = _to_csr(graph)
+    year = np.array([2000, 2001, 2002, 2005, 2010, 2003], dtype=np.int32)
+    base = cd_index_csr(ip, ix, min_citers=3)
+    wide = cd_index_csr(ip, ix, min_citers=3, year=year, window=100)
+    assert np.allclose(base[1], wide[1])          # huge window ⇒ identical to un-windowed
+    narrow = cd_index_csr(ip, ix, min_citers=3, year=year, window=2)
+    assert np.isnan(narrow[1])                    # only 2 citers within 2 yrs of 2001 (<min_citers)
+    floored = cd_index_csr(ip, ix, min_citers=3, year=year, year_min=2004)
+    assert np.isnan(floored[1])                   # only 2 citers with yr≥2004 (<min_citers)
