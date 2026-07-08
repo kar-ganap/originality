@@ -237,3 +237,33 @@ C-2-full — this is a rigor/completeness upgrade of the adjudication's data hal
   length-mechanism is real in the toy but overstates length vs the data (24%). Coverage/practice
   artifact untested (deliberately — out of scope). Full arc: `phase-2-experiment-C-retro.md`.
 - **D deferred** (plan §5): A–C landed mixed ⇒ the paper is the confirmed decoupling + reconciliation.
+
+---
+
+## 10. Amendment (2026-07-08) — C-2c, the coverage battery (the critique's *other* prong)
+
+C-2b-full tested the reference-*length* prong of the CD-critique (not the driver: 24% mediation).
+A **citation-coverage** artifact is distinct. Decomposed into four mechanisms, three testable on
+our 24M graph (`cd_data_C2c_coverage.py`); the fourth is the irreducible external-benchmark limit.
+
+- **Free pre-check (from `cd_full-result.json`) — mechanism 1 (reference-recording completeness):**
+  the CD-vs-year slope is **uniform across coverage regimes** — pre-digital 1970–99 `−0.00083`,
+  born-digital 2000–24 `−0.00093`, 2010–24 `−0.00088`. If old-paper under-coverage manufactured
+  the decline it would flatten post-2000; it does not ⇒ largely disconfirmed already.
+- **Mechanism 2 (observation-window / accumulation asymmetry):** we counted **all-time** citations,
+  so old focals were watched ~50 yrs, recent ~6. **Fixed forward-citation window** `W=5`, `W=10`
+  (Park-standard equal window); focals restricted to `year ≤ max_year − W` (uncensored). Gate:
+  slope `<0`.
+- **Mechanism 3 (field-growth / network size):** corpus grows ⇒ the `n_k` pool grows ⇒ CD↓
+  mechanically. **Control the year-slope for `log(papers published in the focal's year)`.** Gate:
+  slope survives (attenuation `< ~50%`).
+- **Mechanism 4 (citation inflation, edges/paper):** ≈ the reference-length artifact — **done**
+  (C-2b-full).
+- **Rigor confirm — born-digital clean cut:** focals AND citers ≥ 2010 (`year_min=2010`), making
+  mechanism-1 airtight on the citer side too. Gate: slope `<0`.
+
+**Irreducible limit (stated, not hidden):** all four tests are *internal* to OpenAlex; none checks
+OpenAlex coverage against ground truth (WoS/Crossref cross-match or hand audit) — the same limit
+every CD paper faces. Meeting the window + growth + era controls is the standard the field expects.
+**Evaluation:** the decline is coverage-robust iff window (2) ∧ growth (3) ∧ born-digital hold; any
+failure re-opens the coverage question honestly.
