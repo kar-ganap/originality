@@ -33,6 +33,11 @@ than a fitted one.
 
 - **Nothing killed it** — even BA hubs (which concentrate transmission) did not break the
   signature. The honest-null clause was not triggered.
+- **Robust to the graph *draw*, not just simulation noise** (added after review). The first
+  pass varied only the dynamics seed on a *single* graph per topology; a follow-up varied
+  the graph instance too — suppression holds on **every one of 6 independent draws per
+  topology** (min `+0.024`, tight spread), BA included. So it is not an artifact of one
+  lucky graph. Enforced by a slow test sweeping `graph_seed`.
 - **Magnitude varies, sign does not.** Suppression is a touch deeper on ER/WS than
   well-mixed and shallower on BA; the *sign* is invariant, which is exactly the `cc:robust`
   claim (not a magnitude match).

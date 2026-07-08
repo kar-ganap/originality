@@ -14,12 +14,14 @@ GRAPHS = ("er", "ws", "ba")
 ALL = ("well_mixed", *GRAPHS)
 
 
-def _sig(topo: str, mode: str, lam: float, seeds: tuple[int, ...] = (0, 1)) -> tuple[float, float]:
-    """(steady-state V^struct, steady-state W) for a topology, averaged over seeds."""
+def _sig(topo: str, mode: str, lam: float, seeds: tuple[int, ...] = (0, 1),
+         graph_seed: int = 0) -> tuple[float, float]:
+    """(steady-state V^struct, steady-state W) for a topology on a given graph instance
+    (``graph_seed``), averaged over dynamics ``seeds``."""
     vs, ws = [], []
     for s in seeds:
         r = run(80, 5, 0.6, 0.3, 0.5, 45, s, lam=lam, mode=mode, alpha=0.15,
-                topology=topo, mean_degree=8)
+                topology=topo, mean_degree=8, graph_seed=graph_seed)
         vs.append(float(np.nanmean(r["Vstruct"][22:])))
         ws.append(float(np.mean(r["W"][22:])))
     return float(np.mean(vs)), float(np.mean(ws))
@@ -76,6 +78,18 @@ def test_input_validation() -> None:
         run(80, 5, 0.6, 0.3, 0.5, 20, 0, topology="er", mean_degree=1)
     with pytest.raises(ValueError):
         run(80, 5, 0.6, 0.3, 0.5, 20, 0, topology="er", mean_degree=200)
+
+
+@pytest.mark.slow
+def test_signature_robust_to_graph_instance() -> None:
+    # robustness to the random GRAPH DRAW (not just dynamics noise): targeted κ suppresses
+    # V^struct on EVERY one of several independent graph instances per topology — incl. the
+    # BA hub draws (the worry case). Complements test_signature_sign_invariant (one instance).
+    for topo in GRAPHS:
+        for gs in range(4):
+            v_off, _ = _sig(topo, "off", 0.0, graph_seed=gs)
+            v_on, _ = _sig(topo, "targeted", 0.25, graph_seed=gs)
+            assert v_on < v_off, f"{topo} graph_seed={gs}: V^struct not suppressed"
 
 
 @pytest.mark.slow
