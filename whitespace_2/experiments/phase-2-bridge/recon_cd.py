@@ -16,7 +16,8 @@ def main() -> None:
     print(f"year range: {int(d['year'].min())}–{int(d['year'].max())}")
     print(f"paper_id[0] = {d['paper_id'].iloc[0]!r}")
     r0 = d['refs'].iloc[0]
-    print(f"refs[0][:3] = {list(r0[:3]) if r0 is not None else None!r}  (n_refs={d['n_refs'].iloc[0]})")
+    r0s = list(r0[:3]) if r0 is not None else None
+    print(f"refs[0][:3] = {r0s!r}  (n_refs={d['n_refs'].iloc[0]})")
 
     # id-space match: fraction of ref-instances pointing INTO the panel
     ids = set(d['paper_id'].astype(str))
