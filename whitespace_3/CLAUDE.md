@@ -52,8 +52,8 @@ the two traditions individually — and those are classical.
 
 ## Current State
 
-- **Stage:** Phase 1 (the ABM core) — **rung 4c COMPLETE** (bounded role models:
-  Strimling/Enquist at **Level 3**). rung 4b + 4a + 3 + 2b + Phase 0 + Prelude COMPLETE.
+- **Stage:** Phase 1 (the ABM core) — **rung 4d COMPLETE** (the subfield/content
+  channel: fragmentation). rung 4c + 4b + 4a + 3 + 2b + Phase 0 + Prelude COMPLETE.
 - **Prelude (this session, on branch `ws3`):**
   - `docs/primers/cv-reconciliation-primer.tex` — unambiguous parameters; the
     surviving hypotheses (refined 13-D + 13-H) in the model's language; **Core
@@ -127,9 +127,28 @@ the two traditions individually — and those are classical.
   (it was super-critical transmission, not redundancy). Scope morphed from the naive
   "spatial network topology" (disconfirmed: traits percolate → no `N`-independence).
   9 tests (74 total). See `docs/phases/phase-1-rung4c-retro.md`.
-- **Next:** Phase 1 **rung 5** — synthesis: the phase diagram / Pareto / the paper's
-  Results section (CC3/CC4). Open threads (later): memory extension `U/(1−β−r)` (a 2nd
-  Strimling number `1.0`); depth-`C` saturation under sub-criticality.
+- **Phase 1 rung 4d done (branch `ws3-phase-1-subfield-channel`):** `subfield.py` — the
+  **content/`τ` channel**, built because WS2 Phase 2.4 **disconfirmed** Core Claim 6
+  (`cc:open`): per-capita `V^struct` does not decline — it **rises**, cross-subfield.
+  Niches recombine a **shared, growing, high-degree canon** (`K = N/m`, F5 forced);
+  measured the faithful way (one null, atypicality-vs-birth-time): **global structural
+  novelty rises** (`−0.023`, CI excludes 0), **within-niche flat** (`+0.001`), **coexists
+  with `H_global↑`** (`0.94`) — concentrates at the top, fragments in the middle.
+  Fragmentation-driven (K-fixed placebo flat); a **tunable crossover** in niche
+  distinctiveness `bw` (`bw*≈0.05`). **The reconciliation is orthogonality:** `τ`
+  (content, `V^struct↑`) ⊥ `κ` (attachment, `H↑`) — resolves rung 4b's substrate-sign
+  problem. Honest path (4 seeded prototypes): disjoint blocks disconfirmed → shared-canon
+  recombination → bounded-`m` single-lever (`bw=m/E`) disconfirmed pre-build → corrected to
+  `K=N/m` + separate off-trend `bw`. Scope: **sign-structure + crossover, not the
+  scale-confounded Uzzi-z magnitude**; `H2a` Strimling floor retired (within-flat now
+  lens-persistence). 9 tests (6 fast + 3 slow; 69 fast total). See
+  `docs/phases/phase-1-rung4d-retro.md`.
+- **Next:** (1) **update the primer** (`cv-reconciliation-primer.tex`): CC6/`cc:open`
+  superseded — `V^struct` *rises* via the content channel, orthogonal to `κ`. (2) Phase 1
+  **rung 5** — synthesis: the phase diagram / Pareto / Results (CC3/CC4), now with two
+  orthogonal channels (concentration + fragmentation). Open threads (later): memory
+  extension `U/(1−β−r)`; depth-`C` saturation under sub-criticality; the F2 escape-hatch
+  demo.
 
 ## The WS3 arc (four phases)
 
