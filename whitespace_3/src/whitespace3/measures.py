@@ -72,6 +72,36 @@ def reference_atypicality(
     return med, p10
 
 
+def cd_index(prereqs: Sequence[Sequence[int]], min_citers: int = 3) -> npt.NDArray[np.float64]:
+    """Funk–Owen-Smith **consolidation–disruption** index per element (Phase 2 · C, the κ-half).
+    For a focal element `e` with references `prereqs[e]` and citers (elements built on `e`):
+    `CD = (n_i − n_j)/(n_i + n_j + n_k)`, where `n_i` = citers of `e` that do NOT cite `e`'s
+    references (disruptive), `n_j` = citers that DO (consolidating), `n_k` = elements citing
+    `e`'s references but not `e`. `CD > 0` disruptive, `CD < 0` consolidating. Per-element
+    (`NaN` if `< min_citers` citers or no references)."""
+    e_count = len(prereqs)
+    citers: list[list[int]] = [[] for _ in range(e_count)]
+    for c in range(e_count):
+        for pr in prereqs[c]:
+            citers[pr].append(c)
+    cd = np.full(e_count, np.nan, dtype=np.float64)
+    for e in range(e_count):
+        refs_e = set(prereqs[e])
+        ce = citers[e]
+        if not refs_e or len(ce) < min_citers:
+            continue
+        n_j = sum(1 for c in ce if refs_e & set(prereqs[c]))
+        n_i = len(ce) - n_j
+        citing_refs: set[int] = set()
+        for r in refs_e:
+            citing_refs.update(citers[r])
+        n_k = len(citing_refs - set(ce) - {e})
+        denom = n_i + n_j + n_k
+        if denom > 0:
+            cd[e] = (n_i - n_j) / denom
+    return cd
+
+
 def within_group_atypicality(
     refs: Sequence[Sequence[object]],
     groups: Sequence[int],

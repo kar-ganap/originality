@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from whitespace3.measures import reference_atypicality, within_group_atypicality
+from whitespace3.measures import cd_index, reference_atypicality, within_group_atypicality
 
 
 def test_reference_atypicality_vendored() -> None:
@@ -28,3 +28,15 @@ def test_within_group_atypicality() -> None:
     w = within_group_atypicality(refs, groups, d_min=3, min_pairs=1)
     assert not np.isnan(w[0]) and not np.isnan(w[-1])
     assert w[0] > 0              # [X,Y] co-cited 10× vs ~6.7 expected → conventional in group 0
+
+
+def test_cd_index() -> None:
+    # element 1 (cites root 0) cited by 3 papers ignoring its ref (disruptive) + 1 citing both
+    # (consolidating) ⇒ CD > 0.
+    disruptive = [[], [0], [1], [1], [1], [1, 0]]
+    cd = cd_index(disruptive, min_citers=3)
+    assert cd[1] > 0
+    assert np.isnan(cd[0])       # root: no references → NaN
+    # reverse: 3 consolidating citers + 1 disruptive ⇒ CD < 0.
+    consolidating = [[], [0], [1, 0], [1, 0], [1, 0], [1]]
+    assert cd_index(consolidating, min_citers=3)[1] < 0
