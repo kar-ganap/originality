@@ -258,3 +258,128 @@ analog of the ≥3-`κ`-specs rule.
 - **No phase diagram / Pareto / Modal sweep** (rung 5; laptop-scale here).
 - One rung, one job: **reproduce the Phase-2.4 fingerprint from one persistent-bounded-`m`
   partition, and prove the object could not have reproduced its negation.**
+
+---
+
+## 9. Post-prototype amendment (2026-07-07) — mechanism disconfirmed and replaced
+
+§§0–8 are the pre-registration as written **before** prototyping. Prototyping (four
+scratchpad tests, all seeded) **disconfirmed the specific mechanism** (disjoint `m`-blocks
+with private per-niche elements) and **confirmed the fingerprint is reproducible** by a
+different realisation of the *same* bounded-`m` primitive. This section supersedes the
+mechanism in §1/§5; the hypotheses, the forbidden ledger, and the primitive itself
+survive (with the re-anchoring below). Reported honestly per the null-results rule.
+
+### 9.1 What was disconfirmed, and why
+
+The headline instantiation of §5 — niches as **disjoint islands of their own
+low-usage elements** — produces the fingerprint's *within-flat* limb but the **wrong
+sign** on the *global-rise* limb. Triangulated four ways:
+
+| test | global novelty | within | verdict |
+|---|---|---|---|
+| cross-`N` sweep (off-canon, marginal) | flat (`−0.007`) | flat | wrong (no rise) |
+| cross-`N` sweep (Uzzi atypicality) | **conventionalises** (z `+2.6`) | flat | wrong sign |
+| soft geometry (bw→`1/K`) | conventionalises (z `+1.2`) | flat | wrong sign |
+| **faithful frame** (one null, z-vs-birth) | conventionalises (`+0.040`) | flat (`+0.005`) | wrong sign |
+
+**Root cause (structural, not measurement):** islands are built from *low-global-degree*
+elements. Under the degree-preserving null, two rarely-used elements that co-occur even
+once look *surprisingly conventional* (obs ≫ tiny expectation) → high z. Real atypical
+work is the opposite: **globally *popular* references combined in a rarely-done way**
+(obs ≪ expectation) → low z. Islands have no shared, high-degree canon to recombine, so
+the model's within/global relationship comes out *inverted* vs the data (model: global
+more conventional than within; data: global more atypical). The faithful within-corpus
+birth-time frame (the true analog of `panel_year_test`) did **not** rescue it — so it is
+the mechanism, not the measurement.
+
+### 9.2 The confirmed mechanism — shared-canon recombination over a growing vocabulary
+
+Verified to reproduce the fingerprint (`verify_recombination.py`): niches **recombine a
+shared, heavily-used vocabulary** (popularity accumulates across niches ⇒ high global
+degree) via **persistent niche lenses** (each niche characteristically combines two
+regions of a latent content space); **the vocabulary and the niche count grow with
+scale**. A late niche pairs *popular* elements in *its* way — a pairing few niches use ⇒
+globally rare relative to the pieces' popularity ⇒ atypical globally, standard locally.
+
+Verified signatures (faithful frame, seeded):
+- **global novelty rises** with birth-time (slope `−0.020` at `bw=0.035`), **within-niche
+  flat** (`+0.000`), and the **relationship is now correct** (mean z global `−1.15` <
+  within `−0.01`).
+- **fragmentation is the driver, not recency:** the **K-fixed control never rises**
+  (`+0.023`) — a pre-registered placebo now *demonstrated*, not just asserted.
+- **concentration co-occurs (F3, now verified):** `H_global` (Gini of citation degree)
+  **rises** with field size (`0.79 → 0.83`) *while* novelty rises — concentrates at the
+  top, fragments in the middle, exactly the WS2+2.4 picture.
+
+### 9.3 The single bounded-`m` lever (this is what fixes F5 and restores the discipline)
+
+The prototype's `K`-growth and lens-width were *free inputs* — discipline debt (F5's
+"`K` forced by bounded `m`" was lost). The fix is **one lever**: bounded reach over a
+**growing shared vocabulary**. As the field grows (`E ∝ N`), a fixed `m`-element reach is
+a bandwidth that **shrinks automatically** (`bw ∝ m/E`), niches **tile** the growing space
+(`K ≈ E/m ∝ N/m`), and a single measured `m` drives *both*. This:
+- **satisfies F5 by construction** (`K ∝ N/m`, sub-linear once `m` grows with the corpus);
+- **kills the saturation** the sweep exposed (at *fixed* `bw`, `K`↑ weakens the effect:
+  slope `−0.042 → −0.002` as `K:10→80`; shrinking `bw` with `N` prevents it);
+- **re-pins anti-bolt-on** (`m` measured off-trend; it is *the* free parameter, not `K`
+  or `bw` separately).
+
+**The sign flip is a tunable crossover, not knife-edge** (robustness, Q2): monotone in
+`bw`, sign-change at **`bw* ≈ 0.05`** (`−0.080, −0.039, −0.020, +0.007, +0.016, +0.013`
+across `bw = 0.010…0.160`). This is the `λ*` crossover shape of rung 3/4a — a locatable
+phase boundary, a strength. The rung must **locate `bw*`/`m*`** (reuse
+`conformity.locate_lambda_star`-style logic), not just exhibit one point.
+
+### 9.4 Re-anchored forbidden ledger + constraints
+
+| row | status after prototyping |
+|---|---|
+| **F1** (global↑+within↑ needs `m→N`) | ✅ verified — wide lens (`bw≥0.06`, → `m→N`) kills the flip |
+| **F2** (global↓ forbidden) | 🟡 partial — wide-`bw`/K-fixed conventionalise; the shared-lens `η` escape-hatch demo still owed |
+| **F3** (must coexist with `H↑`) | ✅ **verified** — `H_global` `0.79→0.83` while novelty rises |
+| **F4** (within↓ forbidden) | ✅ outcome holds — but **mechanism re-anchored: lens-persistence, NOT the Strimling floor** |
+| **F5** (`K` sub-linear, forced) | ✅ **by construction** once `K`,`bw` are driven by the single bounded-`m` over a growing vocabulary |
+| placebo (K-fixed) | ✅ **demonstrated** (never rises) |
+
+**H2a retired.** The within-flat limb is no longer the Strimling `ε/(1−f·m)` floor (the
+recombination model has no independent-traits accumulation; within mean z ≈ 0, not a
+positive floor). Within-flat is now anchored on **lens-persistence** (a niche's
+characteristic pairing is standard *in its own frame*, and stays so because the lens does
+not drift). Level 3 is therefore **not** inherited here; the anchor is the empirical
+fingerprint (2.4) + the `λ*`-analog crossover. Documented per the
+reproduce-published-numbers rule — the fragmentation mechanism is the contribution.
+
+### 9.5 Corrected measurement frame
+
+The V^struct fingerprint is measured the **faithful way** — one large run, one fixed
+full-corpus null, atypicality regressed on **element birth-time** (the analog of
+`panel_year_test` on year), global frame vs within-niche frame. **Not** the cross-`N`
+`logN`-slope of §3 (that frame has a null-scale confound — bigger corpus mechanically
+shifts z). `H_global` and `K` (no such confound) are still read across scale.
+
+### 9.6 Amended module + tests
+
+`src/whitespace3/subfield.py` is the **content/`τ`-channel** model (its own substrate —
+elements in a latent content space, bounded-`m` niche lenses, growing shared vocabulary),
+reusing `canon.gini` and the `conformity` slope/CI tooling; it does **not** reuse the
+attachment-DAG dynamics (a different channel — `τ` is ungoverned by `κ`, per the primer).
+`C` is the attachment channel's business (rungs 1–4b); rung 4d owns V^struct + `H_global`
++ `K`.
+
+- **T1 determinism.**
+- **T2 the sign-flip (crux).** global atyp-vs-birth slope `< 0` (seed-bootstrap CI
+  excludes 0) with `m≪E`; `≥ 0` as `m→E` (wide lens).
+- **T3 within-flat.** within-niche slope `≈ 0`, `|within| ≪ |global|`.
+- **T4 fragmentation-is-the-driver (placebo).** K-fixed run: global slope not `< 0`.
+- **T5 concentration co-occurs (F3).** `H_global` rises with field size while novelty
+  rises.
+- **T6 the crossover (robustness).** global slope monotone in `bw`; a locatable `bw*`.
+- **T7 `K ∝ N/m` (F5).** niche count scales sub-linearly, forced by `m` over the growing
+  vocabulary.
+- **T8 input validation.**
+- **T9 (slow) sensitivity.** sign-structure invariant across content-space dim / lens
+  shape / popularity law.
+
+Superseded from §6: T4-Strimling-floor (H2a retired), and the cross-`N` `V^struct` slope
+framing (replaced by the birth-time frame).
