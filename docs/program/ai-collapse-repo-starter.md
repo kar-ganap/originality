@@ -1,8 +1,12 @@
-# Model-Collapse Bridge — new-repo starter
+# Canary — new-repo starter
 
+> **Project: `canary`** — *an early-warning theory of diversity collapse in knowledge-producing
+> systems, human and AI.* The name foregrounds the contribution: not that models collapse, but that
+> a theory (the C/V predictor) forecasts *when* they do.
+>
 > **Copy this file into the new repo as `CLAUDE.md` (or `README.md`).** It is the self-contained
 > onboarding doc: what the project is, why it exists, the exact experiment, the tools, the Modal
-> setup, and the first thing to build. Working title: **`collapse-bridge`** (rename freely).
+> setup, and the first thing to build.
 
 ---
 
@@ -198,10 +202,10 @@ above does that). The seed data lives on the existing `ws2-section0` Volume — 
 ## 10. Suggested repo structure
 
 ```
-collapse-bridge/
+canary/
 ├── CLAUDE.md                 # this doc
 ├── pyproject.toml            # deps + editable refs to the two originality packages
-├── src/collapse_bridge/
+├── src/canary/
 │   ├── data.py               # seed sampling + inverted-index→text + κ-mix builder
 │   ├── loop.py               # the recursive LoRA fine-tune + generate loop
 │   ├── measure.py            # per-round metric battery (wraps diversity_metrics)
