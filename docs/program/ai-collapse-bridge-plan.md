@@ -132,6 +132,13 @@ Run the loop at `κ ∈ {0.0, 0.25, 0.5, 0.75, 1.0}`:
   *This mapping is itself a contribution — flag it as approximate.*
 - `cv_predictor.predict(params)` → predicted `λ*`, regime, trajectory.
 - **Compare** predicted crossover vs observed (the κ where diversity collapses).
+- **Fast vs. ground-truth (learned during the package build):** `predict()` is the *mean-field*
+  approximation — a fast directional regime indicator, accurate at low fidelity (`f≈0.15 → λ*≈0.08`)
+  but it *undershoots* at high fidelity (`f=0.6 → λ*≈0`, where the persistence saturates), whereas
+  the **simulation** gives the vivid `λ*≈0.09`. So: use `predict()` for the **regime-ordering** gate
+  (H3 primary — which κ collapse vs sustain, robust to the approximation), and the Modal
+  **`calibrate()`** sim path for the **quantitative `λ*`** gate (H3 stretch). Don't stake the exact-λ*
+  comparison on the fast predictor.
 
 ### B7. Pre-registered hypotheses + gates
 
