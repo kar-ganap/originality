@@ -1,0 +1,33 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "cv-predictor"
+version = "0.1.0"
+description = "Fast mean-field C/V diversity-collapse regime predictor, graduated from the Originality WS3 analytics."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = ["numpy>=1.24"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff", "mypy"]
+modal = ["modal>=0.63"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/cv_predictor"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+# The gate runs `mypy src`; modal_app.py lives at the package root and is intentionally NOT
+# strict-checked (modal ships no type stubs in this env). Excluded for the `mypy .` case too.
+exclude = ['modal_app\.py$']
