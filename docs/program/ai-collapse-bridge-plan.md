@@ -87,8 +87,14 @@ round trains on a mix of *real* seed abstracts and the model's *own* prior-round
 rounds, the generated distribution narrows. It is **not** RLHF/preference training — plain causal-LM
 fine-tuning on text, which keeps it cheap and label-free.
 
-- **Model:** DeepSeek-small — `DeepSeek-R1-Distill-Qwen-1.5B` (small ⇒ fast, cheap, collapses
-  legibly). Upsize to 7B only as a robustness check if budget allows. (From the crit-thinking stack.)
+- **Model — small + BASE, not new/powerful (revised 2026-07-08).** You are picking an experimental
+  *substrate*, not a product: **small** (collapse is faster/cleaner/cheaper on ~1.5B; big MoEs are
+  out of budget and irrelevant) and **base, not instruct/reasoning-tuned** — because instruct/RLHF
+  models are *already partially mode-collapsed* (crit-thinking's agreeable-bias finding), which would
+  conflate pre-existing alignment-collapse with recursion-induced collapse. **Primary:** `Qwen2.5-1.5B`
+  (base) / `SmolLM2-1.7B` / `Llama-3.2-1B`. **Robustness:** run ≥2 families (e.g. Qwen-1.5B +
+  Llama-1B). **Pilot** on a classic (`Pythia-1.4B`/`GPT-2`). *(A DeepSeek R1-distill is
+  reasoning-tuned — wrong domain — and the tie to crit-thinking's big API model is thin; skip it.)*
 - **Round loop (per κ):**
   - `t=0`: LoRA-fine-tune base on the real seed → `M_0`.
   - `t≥1`: generate `G` abstracts from `M_{t-1}`; build round-`t` data = `κ`·(synthetic pool) +
