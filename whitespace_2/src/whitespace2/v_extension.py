@@ -240,6 +240,113 @@ def reference_atypicality(
     return med, p10
 
 
+def cd_index(
+    refs: Sequence[Sequence[int]],
+    min_citers: int = 3,
+    focals: Sequence[int] | None = None,
+) -> npt.NDArray[np.float64]:
+    """Funk–Owen-Smith **consolidation–disruption** index per paper (Phase-2 bridge — the WS3
+    Park-reconciliation data-half). For a focal paper ``e`` with within-panel references
+    ``refs[e]`` and citers (papers whose refs include ``e``): ``CD = (n_i − n_j)/(n_i+n_j+n_k)``,
+    where ``n_i`` = citers of ``e`` that do NOT cite ``e``'s references (disruptive), ``n_j`` =
+    citers that DO (consolidating), ``n_k`` = papers citing ``e``'s references but not ``e``.
+    ``CD > 0`` disruptive, ``< 0`` consolidating; ``NaN`` if ``< min_citers`` citers or no refs.
+    ``focals`` restricts the O(N²) computation to given indices (others ``NaN``); the citer graph
+    is always built from the FULL ``refs`` so a sampled focal's citers/``n_k`` stay exact.
+
+    VENDORED from ``whitespace_3/src/whitespace3/measures.py`` @ commit ``282e09f`` (byte-faithful;
+    keep in sync). Applied here to the *within-panel* citation graph (refs crossing the panel
+    boundary are truncated — a documented limitation vs Park's full-graph CD)."""
+    e_count = len(refs)
+    citers: list[list[int]] = [[] for _ in range(e_count)]
+    for c in range(e_count):
+        for pr in refs[c]:
+            citers[pr].append(c)
+    cd = np.full(e_count, np.nan, dtype=np.float64)
+    for e in (range(e_count) if focals is None else focals):
+        refs_e = set(refs[e])
+        ce = citers[e]
+        if not refs_e or len(ce) < min_citers:
+            continue
+        n_j = sum(1 for c in ce if refs_e & set(refs[c]))
+        n_i = len(ce) - n_j
+        citing_refs: set[int] = set()
+        for r in refs_e:
+            citing_refs.update(citers[r])
+        n_k = len(citing_refs - set(ce) - {e})
+        denom = n_i + n_j + n_k
+        if denom > 0:
+            cd[e] = (n_i - n_j) / denom
+    return cd
+
+
+def cd_index_csr(
+    indptr: npt.NDArray[np.int64],
+    indices: npt.NDArray[np.int32],
+    min_citers: int = 3,
+    focals: Sequence[int] | None = None,
+    cand_cap: int = 500_000,
+    year: npt.NDArray[np.int32] | None = None,
+    window: int | None = None,
+    year_min: int | None = None,
+) -> npt.NDArray[np.float64]:
+    """Same CD arithmetic as ``cd_index`` but on a **CSR reference graph** (``indptr``/``indices``:
+    paper ``e``'s references = ``indices[indptr[e]:indptr[e+1]]``), so it scales to the 24M-paper
+    OpenAlex graph without materializing list-of-lists. Citers come from the transposed (CSC) view.
+    For focal ``e``: ``support`` = papers citing any of ``e``'s refs (union of the citer-columns of
+    ``refs_e``); ``n_j`` = ``|support ∩ citers(e)|``; ``n_i = |citers(e)| − n_j``; ``n_k = |support|
+    − n_j − 1`` (``e`` itself cites its refs so it is in ``support`` — the ``−1`` drops it, matching
+    ``cd_index``'s ``− {e}``). A ref cited by ``> cand_cap`` papers is a mega-hub ⇒ ``CD≈0`` ⇒
+    short-circuit to ``0.0`` (bounds cost). Equivalence to ``cd_index`` is asserted in tests.
+
+    **Coverage-battery filters** (both need ``year``): ``window`` = a **fixed forward-citation
+    window** — count only citers/``n_k`` papers with ``year_e ≤ year_c ≤ year_e + window`` (the
+    Park-standard equal-observation-window control for the accumulation asymmetry); ``year_min`` =
+    an **absolute floor** — count only papers with ``year_c ≥ year_min`` (the born-digital
+    well-covered-era cut). Both filter ``citers(e)`` and the ``support``/``n_k`` set; ``e`` stays in
+    ``support`` (its own year is in-window/≥floor for a focal that passes), so the ``−1`` holds."""
+    from scipy.sparse import csr_matrix
+
+    n = int(indptr.shape[0] - 1)
+    rcsr = csr_matrix((np.ones(indices.shape[0], dtype=np.int8), indices, indptr), shape=(n, n))
+    rcsc = rcsr.tocsc()
+    ci, cp = rcsc.indices, rcsc.indptr   # column e ⇒ citers of e (papers citing e)
+    filt = year is not None and (window is not None or year_min is not None)
+
+    def _keep(arr: npt.NDArray[np.int32], ye: int) -> npt.NDArray[np.int32]:
+        if not filt or year is None:
+            return arr
+        ya = year[arr]
+        m = np.ones(arr.size, dtype=bool)
+        if window is not None:
+            m &= (ya >= ye) & (ya <= ye + window)
+        if year_min is not None:
+            m &= ya >= year_min
+        return arr[m]  # type: ignore[no-any-return]
+
+    cd = np.full(n, np.nan, dtype=np.float64)
+    for e in (range(n) if focals is None else focals):
+        refs_e = indices[indptr[e]:indptr[e + 1]]
+        if refs_e.size == 0:
+            continue
+        ye = int(year[e]) if year is not None else 0
+        citers_e = _keep(ci[cp[e]:cp[e + 1]], ye)
+        if citers_e.size < min_citers:
+            continue
+        cand = _keep(np.concatenate([ci[cp[r]:cp[r + 1]] for r in refs_e]), ye)
+        if cand.size > cand_cap:
+            cd[e] = 0.0
+            continue
+        support = np.unique(cand)
+        n_j = int(np.intersect1d(support, citers_e, assume_unique=True).size)
+        n_i = int(citers_e.size) - n_j
+        n_k = int(support.size) - n_j - 1
+        denom = n_i + n_j + n_k
+        if denom > 0:
+            cd[e] = (n_i - n_j) / denom
+    return cd
+
+
 def panel_year_test(
     outcome: Sequence[float],
     year: Sequence[float],

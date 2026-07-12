@@ -335,6 +335,9 @@ def run(
         "H": h_traj,
         "W": r_size,          # collective breadth (repertoire size)
         "R_size": r_size,
+        "prereqs": prereqs,   # the attachment DAG (references) — for the CD index (Phase 2 · C)
+        "birth": birth,       # element birth-time
+        "struct": struct,
         "n": n, "c0": c0, "f": f, "epsilon": epsilon, "b": b,
         "persistence": persistence, "generations": generations,
         "lam": lam, "p": p, "alpha": alpha, "gamma_thresh": gamma_thresh,
