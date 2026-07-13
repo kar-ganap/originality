@@ -79,16 +79,26 @@ coverage, and creativity — with no principled tool to detect or prevent it.
   vs. new work** delineation (the packages are prior; the tool is in-window).
 - **`/feedback` Codex Session ID** for the thread where the core functionality was built.
 
-## Repo decision
+## Repo decision (LOCKED) — a separate tool repo; WS2/WS3 are never shared
 
-Rules **permit an existing repo** (evaluated only on in-window work, with prior-vs-new docs + Codex
-evidence). **Recommended: a separate, product-named tool repo** that reuses the originality packages as
-**cited dependencies** — because sharing the submission repo for judging would otherwise expose your
-**entire unpublished program** (WS2/WS3, papers-in-progress) to Devpost + OpenAI, and a clean tool repo
-is easier to judge and fits the product framing. Publishing `diversity_metrics` + `cv_predictor` as
-**public pip libs** first makes the "dependency, not prior-project-work" line unambiguous (a portfolio
-win too). *(Alternative — an `originality/` subdir — is allowed but shares everything with judges +
-adds delineation friction; only if you're comfortable with that exposure.)*
+Build in a **separate, product-named tool repo**. The **only** things ever shared with judges are
+(a) this repo and (b) the hosted demo URL. **WS2, WS3, the papers, and the data stay fully private** —
+never in this repo, never referenced, never shared.
+
+**The bare-minimum dependency.** The tool needs `diversity_metrics` + `cv_predictor` — the *metric +
+predictor* code, **not** the program. **Bundle them into the tool repo as vendored prior-work deps**:
+either copy the two (small) packages in, or vendor only the ~8 functions the tool actually uses
+(`effective_dimensionality`, `mean_pairwise_cosine_distance`, `cluster_entropy`, `gini`;
+`v_star_meanfield` / `branching_survival` / `predict`), each with a provenance header. This makes the
+shared repo **self-contained** (judges can install and run it) while exposing **only the tool + its
+metric/predictor deps** — nothing of WS2/WS3. Document them as prior work in the README (the prior-vs-new
+delineation the rules require); the NEW, in-window work is the thermostat built around them.
+**Do NOT publish the packages to PyPI** — bundling into the private-shared repo is *less* exposing than
+publishing, and it's all the judges need (this also honors "build conviction before publishing").
+
+**What each shared surface reveals:** the repo → the tool code + the metric/predictor deps (no program);
+the hosted demo → the running tool's behavior (no code/program); the video + README → the tool. **WS2/WS3
+never leave your private control.**
 
 ## Model / effort + budget
 
