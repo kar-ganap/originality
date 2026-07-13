@@ -113,9 +113,11 @@ never leave your private control.**
 This doc lives at `originality/docs/program/ws1-hackathon-plan.md` (research repo; a design doc, not
 code). **On build day:** create the tool repo and port this in as its **`AGENTS.md`** (Codex's
 auto-read project-instructions file — the `CLAUDE.md` analogue; root + optional nested + global
-`~/.codex/AGENTS.md`) + the Codex **`Prompt.md`** (frozen build spec); the **`Plan.md`** milestones
-come from the build ladder + the checklist. (`~/.codex/config.toml` holds *tool* config — model,
-sandbox, hooks, budget — separate from `AGENTS.md`.)
+`~/.codex/AGENTS.md`, concatenated root→cwd with closer files winning; **32 KiB** combined cap; an
+`AGENTS.override.md` beats `AGENTS.md` at each level, for local un-committed tweaks) + the Codex
+**`Prompt.md`** (frozen build spec); the **`Plan.md`** milestones come from the build ladder + the
+checklist. (`~/.codex/config.toml` holds *tool* config — model, sandbox, hooks, budget — plus the knobs
+governing `AGENTS.md` discovery: `project_doc_max_bytes` (the 32 KiB cap) + `project_doc_fallback_filenames`.)
 
 ## Ready to leverage
 
