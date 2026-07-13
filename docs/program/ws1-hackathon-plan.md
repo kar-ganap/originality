@@ -111,8 +111,11 @@ never leave your private control.**
 ## Preservation + porting
 
 This doc lives at `originality/docs/program/ws1-hackathon-plan.md` (research repo; a design doc, not
-code). **On build day:** create the tool repo and port this in as its `CLAUDE.md` + the Codex
-`Prompt.md`; the `Plan.md` milestones come from the build ladder + the checklist.
+code). **On build day:** create the tool repo and port this in as its **`AGENTS.md`** (Codex's
+auto-read project-instructions file — the `CLAUDE.md` analogue; root + optional nested + global
+`~/.codex/AGENTS.md`) + the Codex **`Prompt.md`** (frozen build spec); the **`Plan.md`** milestones
+come from the build ladder + the checklist. (`~/.codex/config.toml` holds *tool* config — model,
+sandbox, hooks, budget — separate from `AGENTS.md`.)
 
 ## Ready to leverage
 
