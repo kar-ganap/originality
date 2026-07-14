@@ -1,4 +1,4 @@
-# Diversity Thermostat — OpenAI Build Week (Developer Tools) blueprint
+# Polyphony — a diversity thermostat for multi-agent systems (OpenAI Build Week · Developer Tools)
 
 **Product-first reframe (2026-07-13).** Build Week judges a **product** — equally-weighted on
 Technological Implementation (Codex use), **Design** ("a complete, coherent product experience — *not
@@ -19,8 +19,11 @@ agent insulation) to keep it varied.
 loops **silently lose output diversity over time** (homogenization / mode-collapse) — degrading quality,
 coverage, and creativity — with no principled tool to detect or prevent it.
 **Audience:** developers building **agentic workflows** (a named use-case of the Developer Tools track).
-**Track:** Developer Tools. **Working name:** "the diversity thermostat" — pick a product name (e.g.
-*Chorus*, *Polyphony*, *Bellwether*).
+**Track:** Developer Tools. **Name (LOCKED 2026-07-13): Polyphony** — tagline *"many voices — no collapse
+into unison."* Picked over *Bellwether*/*Manifold* after collision + dashboard checks: the only candidate
+with **no same-lane AI-dev-tool namesake** (its famous collision — Sony's Gran Turismo studio — doesn't
+compete), and it **self-explains** (polyphony = many independent voices; the collapse is *homophony*).
+Repo slug `polyphony`; icon ♪. Minor caveat: a first-glance "music app" read — the tagline reframes it.
 
 ## How it hits the four judging criteria
 
@@ -81,9 +84,11 @@ coverage, and creativity — with no principled tool to detect or prevent it.
 
 ## Repo decision (LOCKED) — a separate tool repo; WS2/WS3 are never shared
 
-Build in a **separate, product-named tool repo**. The **only** things ever shared with judges are
+Build in a **separate tool repo named `polyphony`**. The **only** things ever shared with judges are
 (a) this repo and (b) the hosted demo URL. **WS2, WS3, the papers, and the data stay fully private** —
-never in this repo, never referenced, never shared.
+never in this repo, never referenced, never shared. (Local package/import name `polyphony` is fine — the
+repo installs editable and vendors its deps, so nothing is fetched from PyPI; an unrelated `polyphony`
+HLS compiler exists in the Python ecosystem, so don't publish under the bare name.)
 
 **The bare-minimum dependency.** The tool needs `diversity_metrics` + `cv_predictor` — the *metric +
 predictor* code, **not** the program. **Bundle them into the tool repo as vendored prior-work deps**:
