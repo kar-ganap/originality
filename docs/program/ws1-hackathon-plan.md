@@ -113,6 +113,26 @@ never leave your private control.**
   `cv_predictor`/WS3 integration, gnarly debugging); **Luna / `low`** mechanical. `codex exec --model
   <tier> --config model_reasoning_effort=<effort>`. **API-key auth** (hard budget cap; no subscription).
 
+## Funding & build-tool — decoupled; don't block on Codex credits
+
+The $100 Build Week credits are **NOT load-bearing** — the whole science is <$100, near-identical on
+GPT-5.6 or Claude (verified 2026-07-14: Haiku 4.5 ≈ Luna, Sonnet 5 ≈ Terra, Opus 4.8 ≈ Sol; Anthropic
+~15% cheaper on output). Self-fund on an existing API key; never wait on credits.
+
+Build tool ⊥ runtime model:
+- **Build tool** — Claude Code *or* Codex (interchangeable for writing the repo).
+- **Runtime** — GPT-5.6 / Claude / OSS-on-Modal (the provider-agnostic `LLMClient` hot-swaps them).
+
+**Chosen play (2026-07-14):** build with **Claude Code now**, runtime **GPT-5.6** (self-funded ~$5–50) —
+unblocks momentum *and* keeps Build Week model-eligibility live from day one. **Swap the builder to Codex
+if/when credits come**, doing a *substantial, genuine* chunk there — ideally the RUN/SPRINT rungs + the
+autonomous-Codex-harness (itself a Codex showcase) — so the required Codex-collaboration evidence (session
+id, "how you used Codex") is real, not retrofitted. If credits never come or come too late, Build Week is
+cleanly forgone; the GPT-5.6-run project still stands. To support both builders the repo carries
+**`AGENTS.md`** (Codex) + a thin **`CLAUDE.md`** (Claude Code) that `@`-imports it — one brief, both tools.
+Keep the harness provider-agnostic so runtime can also swap to **Claude** for the paper arm (cheaper +
+exposes thinking traces for the V_reason study).
+
 ## Preservation + porting
 
 This doc lives at `originality/docs/program/ws1-hackathon-plan.md` (research repo; a design doc, not

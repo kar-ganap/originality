@@ -95,6 +95,13 @@ Open **reasoning** models with native long CoT: a DeepSeek-R1-class model, a Qwe
 ≥1 further family for the cross-model output layer. Served on Modal (vLLM) or a per-token inference API
 (Together/Fireworks/DeepInfra). Cheap — GPU-seconds / pennies-per-token, no API premium.
 
+**Claude is a first-class backend for this arm** (and swappable in project-wide) — not just OSS. Cost is
+near-identical to GPT-5.6 (Haiku 4.5 ≈ Luna, Sonnet 5 ≈ Terra, Opus 4.8 ≈ Sol; ~15% cheaper on output),
+self-funded, buildable with **Claude Code**. Decisive for *this* arm: Claude exposes **extended-thinking
+traces**, so `V_reason` is directly measurable — better than any API that hides the raw trace. It also
+makes the arm **Anthropic-facing** (a frontier-lab audience in its own right). Natural cross-model panel:
+**GPT-5.6 + Claude + ≥1 OSS reasoning model.** (The hackathon build runs GPT-5.6; Claude enters here.)
+
 ## Theory hook (`cv_predictor`)
 
 Open question: does the C/V crossover `λ*` **differ by layer**? If, under the same conditioning,
