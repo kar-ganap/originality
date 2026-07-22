@@ -49,11 +49,14 @@ def run(client: LLMClient, *, n_blocks: int) -> tuple[list[CellMeasure], Usage]:
     blocks = build_schedule(n_blocks=n_blocks, seed=SCHEDULE_SEED)
     total = Usage()
     measures: list[CellMeasure] = []
+    roles_emb = rung0.role_embeddings(client)  # constant; hoisted out of the loop
     for i, block in enumerate(blocks, start=1):
         for cell in CELLS:
             texts, usage = rung0.collect_block(client, block, cell)
             total = total + usage
-            measures.append(rung0.measure_cell(client, block, cell, texts))
+            measures.append(
+                rung0.measure_cell(client, block, cell, texts, roles_emb=roles_emb)
+            )
         print(f"  block {i}/{len(blocks)}  {block.family_id}", file=sys.stderr)
     return measures, total
 

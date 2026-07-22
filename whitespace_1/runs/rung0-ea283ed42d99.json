@@ -1,0 +1,2416 @@
+{
+  "stimulus_hash": "7940ad166f80cfacad44233f6d2d9ab0c5ca666e85bde68e98551139c3cbe25a",
+  "schedule_hash": "ea283ed42d99abcc8df74a1ff14b202ed6f3af485c3aeb6052e10cbd46dcf331",
+  "model": "gpt-5.6-sol",
+  "n_blocks": 10,
+  "passed": false,
+  "usage": {
+    "input": 122071,
+    "output": 27890,
+    "reasoning": 0,
+    "embedding": 33469
+  },
+  "cost_usd": 1.44772438,
+  "measures": [
+    {
+      "family_id": "observability_v1",
+      "block_index": 0,
+      "cell": "A",
+      "v_output": 0.43250689427771427,
+      "role_margin": 0.11407497980650645,
+      "anchor_alignment": 0.5660653466235924,
+      "echo_concentration": 0.44999999999999996,
+      "outputs": [
+        "Replay Checkpoints: persist redacted state snapshots at each timeline span, enabling deterministic replay from the first divergent step with rollback to the original run.",
+        "Trace Replay: step through the persisted run timeline one span at a time, revealing redacted inputs, tool calls, outputs, handoff rationales, and divergence markers.",
+        "Access Audit Trail: append immutable, timestamped records of who viewed, exported, redacted, or replayed each persisted run trace, with role-based access checks.",
+        "Causal Replay: reconstruct a redacted run timeline and let developers replay from any agent handoff, diffing downstream outputs against the original trace.",
+        "Cost Overlay: annotate each timeline span with token usage, latency, model/tool cost, and cumulative run totals, with budget overruns flagged at the first divergent step."
+      ]
+    },
+    {
+      "family_id": "observability_v1",
+      "block_index": 0,
+      "cell": "B",
+      "v_output": 0.40062513572848246,
+      "role_margin": 0.12575524875276423,
+      "anchor_alignment": 0.6732352260061678,
+      "echo_concentration": 0.6500000000000001,
+      "outputs": [
+        "Replayable Run Timeline: persist each agent handoff, tool call, input/output hash, latency, and failure state as ordered spans, enabling deterministic replay from any checkpoint.",
+        "Handoff Timeline: render each agent-to-agent transition in order with rationale, exchanged context, tool calls, and elapsed time.",
+        "Access-Audited Run Timeline: display each agent step, input, and tool call with redacted sensitive fields, while logging every trace view or replay with user, timestamp, and purpose.",
+        "Handoff Timeline: display each agent transition chronologically with inputs, outputs, tool calls, elapsed time, and a one-line handoff rationale.",
+        "Cost Timeline: annotate each agent span with input/output tokens, latency, and estimated cost, then aggregate totals by agent, model, and tool call."
+      ]
+    },
+    {
+      "family_id": "observability_v1",
+      "block_index": 0,
+      "cell": "C",
+      "v_output": 0.39736023917125607,
+      "role_margin": 0.13524847815649585,
+      "anchor_alignment": null,
+      "echo_concentration": null,
+      "outputs": [
+        "Replayable Run Timeline: record each agent\u2019s prompts, tool calls, outputs, handoffs, errors, retries, timing, and model/version in a causally linked timeline with redaction, filtering, and deterministic replay from any checkpoint.",
+        "Causal Run Timeline: an interactive, time-ordered trace linking each agent action, prompt, tool call, output, and handoff, with expandable inputs/outputs and dependency highlighting to reveal why each step occurred.",
+        "Tamper-Evident Agent Audit Trail: record signed, timestamped traces of each agent\u2019s prompts, tool calls, data access, permission checks, outputs, and handoffs, with sensitive-field redaction and role-based replay.",
+        "Causal Run Replay: an interactive timeline that links each agent\u2019s inputs, tool calls, outputs, and shared-state changes, letting developers step through the run and trace any final claim back to its originating event.",
+        "Run Cost Waterfall: reconstruct each agent/tool step with token usage, latency, retries, parallelism, and estimated cost, highlighting critical-path and budget overruns."
+      ]
+    },
+    {
+      "family_id": "observability_v1",
+      "block_index": 1,
+      "cell": "A",
+      "v_output": 0.402906639243795,
+      "role_margin": 0.13075892556876173,
+      "anchor_alignment": 0.5850353945032797,
+      "echo_concentration": 0.55,
+      "outputs": [
+        "Run Replay Checkpoints: persist redacted state snapshots at each timeline span, enabling authorized step-by-step replay, failure reproduction, and rollback from the last known-good handoff.",
+        "Trace Replay: scrub through the persisted run timeline, inspecting redacted inputs, tool calls, handoff rationales, and divergence markers at each agent step.",
+        "Trace Access Ledger: enforce role-based access to redacted run timelines and append immutable records of every trace view, export, replay, and redaction override.",
+        "Causal Replay: reconstruct the persisted timeline with redacted inputs, handoff rationales, and divergence markers, letting developers step through exactly why each agent action occurred.",
+        "Cost Overlay: annotate each Run Timeline span with token usage, latency, model/tool cost, and concurrency, flagging the first budget or throughput bottleneck."
+      ]
+    },
+    {
+      "family_id": "observability_v1",
+      "block_index": 1,
+      "cell": "B",
+      "v_output": 0.4157403662702145,
+      "role_margin": 0.12844297920762077,
+      "anchor_alignment": 0.6619875245990217,
+      "echo_concentration": 0.75,
+      "outputs": [
+        "Replay from Checkpoint: persist agent state and tool results after each timeline span, enabling deterministic resume from any failed or divergent step.",
+        "Agent Handoff Timeline: persist each agent handoff as an ordered span showing sender, recipient, rationale, inputs, outputs, tool calls, and elapsed time.",
+        "Access-Audited Run Timeline: persist each agent step, tool call, and handoff with actor identity, authorization decision, redaction status, timestamp, and immutable access logs.",
+        "Run Replay: reconstruct a persisted timeline step-by-step, showing each agent\u2019s inputs, outputs, tool calls, and handoff rationale.",
+        "Cost Timeline: annotate each Run Timeline span with input/output tokens, estimated cost, latency, and model/provider, then aggregate totals by agent and tool."
+      ]
+    },
+    {
+      "family_id": "observability_v1",
+      "block_index": 1,
+      "cell": "C",
+      "v_output": 0.34469849991208446,
+      "role_margin": 0.10760354440619338,
+      "anchor_alignment": null,
+      "echo_concentration": null,
+      "outputs": [
+        "Run Replay Timeline: Capture each agent\u2019s prompts, tool calls, outputs, retries, errors, and state changes in a causally linked timeline with redaction, diffing, and export for deterministic incident review.",
+        "Causal Run Timeline: Replay each agent\u2019s prompts, tool calls, outputs, handoffs, and state changes on a synchronized timeline, with expandable evidence and data-flow links showing why each step occurred.",
+        "Tamper-Evident Run Ledger: Record each agent\u2019s prompts, tool calls, data accesses, permission decisions, outputs, and handoffs in a timestamped, access-controlled trace with redaction and cryptographic integrity checks.",
+        "Causal Run Replay: reconstructs each agent\u2019s inputs, tool calls, outputs, and downstream dependencies on an interactive timeline, with step-level diffs for expected versus actual behavior.",
+        "Run Cost Waterfall: reconstruct each agent/tool step on a timeline, attributing tokens, latency, retries, concurrency, model choice, and estimated cost to expose bottlenecks and budget overruns."
+      ]
+    },
+    {
+      "family_id": "observability_v1",
+      "block_index": 2,
+      "cell": "A",
+      "v_output": 0.4989259118579035,
+      "role_margin": 0.17525005646425879,
+      "anchor_alignment": 0.5892990548229349,
+      "echo_concentration": 0.3500000000000001,
+      "outputs": [
+        "Replayable Failure Snapshot: persist a redacted checkpoint at each agent handoff with state, tool results, timing, and rationale, enabling step-by-step replay and rollback from the first divergence.",
+        "Causal Handoff Map: link each agent transition to the exact triggering output, tool result, and one-line rationale, with redacted values and jump-to-timeline navigation.",
+        "Access Audit Trail: record every trace view, replay, export, and redaction reversal with actor identity, authorization result, timestamp, and affected run spans in an append-only log.",
+        "Causal Handoff Map: link each agent step to the exact prior outputs, tool results, and decision annotations that triggered it, enabling users to trace any final result back through the persisted timeline.",
+        "Cost Overlay: annotate each timeline span and trace diff with token usage, latency, model/tool cost, and concurrency, then roll up totals by agent and flag budget or throughput bottlenecks."
+      ]
+    },
+    {
+      "family_id": "observability_v1",
+      "block_index": 2,
+      "cell": "B",
+      "v_output": 0.3635371371061191,
+      "role_margin": 0.13165375653657602,
+      "anchor_alignment": 0.7217859294360539,
+      "echo_concentration": 0.75,
+      "outputs": [
+        "Run Timeline Replay: persist ordered agent spans with inputs, outputs, tool calls, errors, and timestamps, then replay the exact execution path from any checkpoint.",
+        "Agent Handoff Timeline: show each agent transition as a durable ordered span with inputs, outputs, tool calls, rationale, and elapsed time.",
+        "Access-Controlled Run Timeline: persist each agent step, input, tool call, actor, authorization decision, and elapsed time as an immutable audit span, with field-level redaction and role-based viewing.",
+        "Handoff Timeline: render each agent transfer as an ordered span showing rationale, inputs, outputs, tool calls, and elapsed time, persisted for replay.",
+        "Cost Timeline: annotate each agent span with input/output tokens, latency, and estimated cost, then aggregate totals by agent, model, and tool call."
+      ]
+    },
+    {
+      "family_id": "observability_v1",
+      "block_index": 2,
+      "cell": "C",
+      "v_output": 0.41934143302014554,
+      "role_margin": 0.12796862388439711,
+      "anchor_alignment": null,
+      "echo_concentration": null,
+      "outputs": [
+        "Run Flight Recorder: Capture a time-ordered, replayable trace of every agent prompt, tool call, response, state change, retry, error, and model/config version, with correlation IDs and secret redaction.",
+        "Causal Run Timeline: replay each agent\u2019s prompts, tool calls, outputs, handoffs, and state changes in a synchronized timeline with dependency links, diffable snapshots, and expandable evidence for every decision.",
+        "Tamper-Evident Run Ledger: record a chronological, access-controlled trace of agent actions, prompts, tool calls, data accesses, policy decisions, and outputs with redaction-aware views and cryptographic integrity checks.",
+        "Causal Run Replay: reconstruct a timestamped, step-by-step trace linking each agent\u2019s inputs, outputs, tool calls, shared-state changes, and downstream effects, with filters and \u201cwhy did this happen?\u201d provenance paths.",
+        "Cost & Latency Waterfall: an interactive trace that attributes token usage, model/API spend, queue time, and execution latency to each agent, tool call, and retry, highlighting budget overruns and throughput bottlenecks."
+      ]
+    },
+    {
+      "family_id": "observability_v1",
+      "block_index": 3,
+      "cell": "A",
+      "v_output": 0.4348177076435148,
+      "role_margin": 0.10577196636400876,
+      "anchor_alignment": 0.5461768225915236,
+      "echo_concentration": 0.55,
+      "outputs": [
+        "Replay Checkpoints: persist redacted state at each handoff, enabling operators to resume from any timeline step and compare the replay against the original trace.",
+        "Causal Replay: reconstruct a redacted run timeline and let users step through agent handoffs, tool calls, and decision annotations, with divergence markers against a selected baseline run.",
+        "Access Audit Trail: record every trace view, replay, export, and redaction reversal with actor identity, timestamp, run/span scope, and authorization decision in an append-only log.",
+        "Causal Replay: reconstruct a redacted run timeline and let developers replay from any agent handoff with one input changed, highlighting the first downstream divergence.",
+        "Cost Overlay: annotate each timeline span and trace diff with token usage, estimated cost, latency, and model/tool attribution, highlighting the first budget or SLA breach."
+      ]
+    },
+    {
+      "family_id": "observability_v1",
+      "block_index": 3,
+      "cell": "B",
+      "v_output": 0.39334427353656765,
+      "role_margin": 0.13048530264147376,
+      "anchor_alignment": 0.672720948201001,
+      "echo_concentration": 0.75,
+      "outputs": [
+        "Replayable Run Timeline: persist ordered agent spans, tool inputs/outputs, errors, and timing so operators can replay a failed run step-by-step from any checkpoint.",
+        "Handoff Timeline: show each agent transition as an ordered span with inputs, tool calls, latency, and a one-line handoff rationale, persisted for replay.",
+        "Access-Audited Run Timeline: persist each agent span with inputs, tool calls, redaction status, actor identity, and an immutable log of every trace view or replay.",
+        "Causal Run Replay: step through the persisted timeline one handoff at a time, showing each agent\u2019s inputs, tool results, rationale, and resulting state change.",
+        "Cost Timeline: annotate each agent span with input/output tokens, model cost, tool latency, and concurrency, then aggregate totals and flag the workflow\u2019s largest cost and latency bottlenecks."
+      ]
+    },
+    {
+      "family_id": "observability_v1",
+      "block_index": 3,
+      "cell": "C",
+      "v_output": 0.35800340038326584,
+      "role_margin": 0.12534061137374242,
+      "anchor_alignment": null,
+      "echo_concentration": null,
+      "outputs": [
+        "Run Replay Timeline: capture every agent message, tool call, state mutation, error, retry, and model/config version in a correlated, timestamped trace with step-by-step replay, diffs, and rollback checkpoints.",
+        "Causal Run Replay: an interactive timeline that links each agent\u2019s prompts, tool calls, outputs, handoffs, and state changes, with click-to-inspect inputs and diffs at every step.",
+        "Provenance Timeline: an immutable, access-controlled event log showing each agent\u2019s prompts, tool calls, data accessed, permission decisions, outputs, and handoffs, with timestamps and redacted sensitive fields.",
+        "Causal Run Replay: an interactive timeline that links each agent\u2019s inputs, tool calls, outputs, and state changes, letting developers step through the run and trace any final result back to its originating evidence and decisions.",
+        "Cost & Latency Trace: an interactive per-agent timeline showing token usage, model calls, retries, parallelism, latency, and estimated cost, with drill-down to individual prompts and responses."
+      ]
+    },
+    {
+      "family_id": "observability_v1",
+      "block_index": 4,
+      "cell": "A",
+      "v_output": 0.4330969625252205,
+      "role_margin": 0.11638452396274909,
+      "anchor_alignment": 0.5584096156605709,
+      "echo_concentration": 0.3500000000000001,
+      "outputs": [
+        "Failure Snapshot: persist the first failed or divergent step with its inputs, tool results, handoff rationale, timing, and last known-good checkpoint for inspection and replay.",
+        "Causal Replay: replay a selected timeline span with edited inputs, then diff downstream outputs and handoff rationales against the original run.",
+        "Access-Audited Run Timeline: show each agent span, handoff rationale, tool call, and trace divergence with capture-time redaction, while logging every trace view, reveal, and replay against role-based permissions.",
+        "Causal Replay: step through the persisted run timeline and inspect each handoff\u2019s inputs, tool outputs, rationale, and downstream effects, with automatic redaction.",
+        "Cost Overlay: annotate each persisted timeline span with token usage, model/tool cost, latency, and concurrency, then surface cumulative totals and budget overruns in Trace Diff."
+      ]
+    },
+    {
+      "family_id": "observability_v1",
+      "block_index": 4,
+      "cell": "B",
+      "v_output": 0.4526205859127626,
+      "role_margin": 0.13882359800650637,
+      "anchor_alignment": 0.6267409306138761,
+      "echo_concentration": 0.6500000000000001,
+      "outputs": [
+        "Replay from Checkpoint: persist each agent handoff\u2019s inputs, outputs, tool results, and state so operators can resume a failed run from any step without rerunning earlier work.",
+        "Handoff Timeline: show each agent-to-agent transition in order with the triggering output, one-line rationale, tool calls, and elapsed time.",
+        "Access Audit Timeline: record each agent\u2019s data reads, tool permissions, authorization decisions, and redactions as ordered spans in durable, tamper-evident storage.",
+        "Handoff Timeline: show each agent transition in order with inputs, tool calls, latency, and a one-line rationale for why control moved.",
+        "Cost Timeline: annotate each agent span with input/output tokens, latency, tool spend, and cumulative run cost, highlighting the first budget overrun."
+      ]
+    },
+    {
+      "family_id": "observability_v1",
+      "block_index": 4,
+      "cell": "C",
+      "v_output": 0.3948744347522768,
+      "role_margin": 0.11954229280059803,
+      "anchor_alignment": null,
+      "echo_concentration": null,
+      "outputs": [
+        "Replayable Run Timeline: capture every agent message, tool call, state change, retry, latency, and error in a correlated event timeline with payload diffs and one-click replay from any checkpoint.",
+        "Causal Run Timeline: replay each agent\u2019s prompts, tool calls, outputs, handoffs, and failures in order, with expandable provenance links showing which prior events influenced every decision.",
+        "Tamper-Evident Execution Ledger: record every agent action, prompt, tool call, data access, permission decision, and output in a timestamped, redacted, cryptographically chained trace with per-role viewing controls.",
+        "Causal Run Replay: an interactive timeline that links each agent\u2019s inputs, tool calls, outputs, and state changes, letting developers step through the run and trace any final result back to its originating evidence and decisions.",
+        "Run Cost Waterfall: reconstruct each agent turn and tool call with token usage, latency, retries, model/deployment, and estimated cost, highlighting critical-path bottlenecks and budget overruns."
+      ]
+    },
+    {
+      "family_id": "observability_v1",
+      "block_index": 5,
+      "cell": "A",
+      "v_output": 0.3945476943650433,
+      "role_margin": 0.08445539700063853,
+      "anchor_alignment": 0.5681649157258587,
+      "echo_concentration": 0.55,
+      "outputs": [
+        "Replay Checkpoints: persist redacted state snapshots at each annotated handoff, enabling deterministic replay from the first Trace Diff divergence with one-click rollback to the last known-good step.",
+        "Causal Replay: reconstruct a redacted, durable timeline of agent handoffs, rationales, inputs, and tool calls, with step-by-step replay and divergence markers against a selected baseline run.",
+        "Scoped Trace Ledger: record each agent handoff, tool call, redaction event, and data-access decision in a tamper-evident timeline with actor identity, authorization scope, rationale, and replay permissions.",
+        "Causal Replay: re-run any trace from a selected agent handoff using captured inputs, redacted state, tool results, and decision annotations, then diff downstream outputs and timing against the original.",
+        "Cost Overlay: annotate each Run Timeline span with input/output tokens, latency, estimated cost, and model/tool usage, with Trace Diff highlighting the first significant budget regression."
+      ]
+    },
+    {
+      "family_id": "observability_v1",
+      "block_index": 5,
+      "cell": "B",
+      "v_output": 0.49411426153708876,
+      "role_margin": 0.1405154932424694,
+      "anchor_alignment": 0.6288124398869047,
+      "echo_concentration": 0.44999999999999996,
+      "outputs": [
+        "Failure Replay: rerun any failed span from its persisted inputs and tool responses, then diff the output against the original before resuming downstream steps.",
+        "Handoff Timeline: show each agent transition as a durable ordered span with inputs, tool calls, latency, and a one-line handoff rationale.",
+        "Access-Aware Run Timeline: render each agent step, input, output, and tool call with actor identity, authorization decision, and redacted fields, persisted in a tamper-evident audit log.",
+        "Causal Handoff Timeline: annotate each persisted timeline span with the triggering output, one-line handoff rationale, and link to the preceding span.",
+        "Cost Timeline: annotate each agent span with input/output tokens, model cost, tool latency, and cumulative run spend, flagging the first budget overrun."
+      ]
+    },
+    {
+      "family_id": "observability_v1",
+      "block_index": 5,
+      "cell": "C",
+      "v_output": 0.3653968886982463,
+      "role_margin": 0.11698692204599392,
+      "anchor_alignment": null,
+      "echo_concentration": null,
+      "outputs": [
+        "Run Replay Timeline: record every agent action, prompt, tool call, output, error, retry, and state change in a correlated timeline with searchable traces and point-in-time state snapshots.",
+        "Causal Run Timeline: An interactive, filterable trace that synchronizes agent messages, tool calls, state changes, and handoffs, with expandable inputs/outputs and \u201cwhy this happened\u201d links to upstream events.",
+        "Tamper-Evident Run Ledger: Record every agent action, tool call, data access, permission decision, and handoff in a signed, redacted timeline with actor identity, policy rationale, and replayable inputs/outputs.",
+        "Causal Run Replay: an interactive timeline that links each agent\u2019s inputs, tool calls, outputs, and state changes, letting developers step through the run and inspect downstream effects.",
+        "Run Cost Waterfall: reconstruct each agent/tool step as a timeline showing token usage, model latency, concurrency, retries, cache hits, and estimated cost, with drill-down to the exact prompt, response, and deployment bottleneck."
+      ]
+    },
+    {
+      "family_id": "observability_v1",
+      "block_index": 6,
+      "cell": "A",
+      "v_output": 0.5027384950932676,
+      "role_margin": 0.1134800825431546,
+      "anchor_alignment": 0.6021720614366549,
+      "echo_concentration": 0.3500000000000001,
+      "outputs": [
+        "Failure Snapshot: on run failure, persist the timeline, first divergent step, handoff rationales, and redacted inputs/tool outputs as a replayable incident bundle.",
+        "Handoff Replay: select any timeline step to replay it with the original inputs, tools, and permissions, then diff the output against the recorded run while preserving redaction controls.",
+        "Access Ledger: append immutable, per-step records of which agent or user accessed, changed, redacted, or replayed each trace artifact, with timestamps and authorization context.",
+        "Decision Annotations: require each agent handoff to record a one-line rationale linked to the relevant timeline span, making control-flow decisions easy to inspect.",
+        "Cost Overlay: annotate each Run Timeline span with input/output tokens, estimated cost, and latency, enabling Trace Diff to pinpoint the first budget or performance regression."
+      ]
+    },
+    {
+      "family_id": "observability_v1",
+      "block_index": 6,
+      "cell": "B",
+      "v_output": 0.5515601723513166,
+      "role_margin": 0.15598888456043106,
+      "anchor_alignment": 0.6297558041609223,
+      "echo_concentration": 0.44999999999999996,
+      "outputs": [
+        "Failure Snapshot: capture each failed agent step with its inputs, tool calls, errors, and retry history, plus a one-click replay from that checkpoint.",
+        "Handoff Timeline: show each agent transition in order with the triggering output, one-line rationale, and elapsed time.",
+        "Access Audit Trail: append actor identity, permission scope, and every trace view, export, replay, or redaction reversal to a tamper-evident log.",
+        "Handoff Rationale Timeline: annotate each persisted agent handoff with a one-line rationale, triggering input, output summary, and elapsed time.",
+        "Cost Timeline: annotate each agent span with input/output tokens, model price, latency, and cumulative run cost, flagging the first budget overrun."
+      ]
+    },
+    {
+      "family_id": "observability_v1",
+      "block_index": 6,
+      "cell": "C",
+      "v_output": 0.3439416067808261,
+      "role_margin": 0.11976024466046276,
+      "anchor_alignment": null,
+      "echo_concentration": null,
+      "outputs": [
+        "Replayable Run Timeline: capture each agent\u2019s prompts, tool calls, outputs, state changes, errors, retries, and timestamps in a correlated trace that supports step-by-step replay and diffing across runs.",
+        "Causal Run Replay: an interactive, time-ordered trace that links each agent\u2019s prompt, tool call, output, and handoff, with click-to-expand evidence and highlighted dependencies explaining why each step occurred.",
+        "Tamper-Evident Run Audit Trail: record each agent action, tool call, data access, permission decision, and handoff with timestamps, actor identity, policy context, redacted inputs/outputs, and cryptographic hashes for searchable replay and misuse investigation.",
+        "Causal Run Replay: Reconstruct a synchronized timeline of agent messages, tool calls, state changes, and branching decisions, with each output linked to its triggering inputs.",
+        "Cost & Latency Waterfall: visualize each agent call, tool invocation, and retry on a shared timeline with per-step tokens, cost, latency, model, and concurrency to expose bottlenecks and budget overruns."
+      ]
+    },
+    {
+      "family_id": "observability_v1",
+      "block_index": 7,
+      "cell": "A",
+      "v_output": 0.39955876364844917,
+      "role_margin": 0.12799110040532785,
+      "anchor_alignment": 0.6241081234370098,
+      "echo_concentration": 0.55,
+      "outputs": [
+        "Failure-Aware Run Timeline: persist ordered agent spans with redacted inputs, tool calls, handoff rationales, errors, retries, and rollback events, enabling replay and first-divergence comparison.",
+        "Handoff Replay: select any timeline transition to view the redacted context, decision annotation, tool results, and trace diff that led to the next agent.",
+        "Scoped Trace Ledger: append each agent handoff, tool call, redaction, and access event to a tamper-evident timeline with role-based reveal controls and actor/timestamp metadata.",
+        "Causal Handoff Map: link each timeline span to its decision annotation and triggering output, letting teams trace why control moved while preserving redacted inputs.",
+        "Cost Overlay: annotate each persisted timeline span with token usage, latency, tool cost, and cumulative run spend, enabling trace diffs to pinpoint the first cost or performance regression."
+      ]
+    },
+    {
+      "family_id": "observability_v1",
+      "block_index": 7,
+      "cell": "B",
+      "v_output": 0.44387354330398254,
+      "role_margin": 0.1163139846814552,
+      "anchor_alignment": 0.6689974550192584,
+      "echo_concentration": 0.75,
+      "outputs": [
+        "Failure Replay: re-run any failed timeline span with its captured inputs, tool responses, and model version in an isolated sandbox, preserving the original trace for comparison.",
+        "Handoff Timeline: display each agent transition as an ordered event with the triggering output, one-line rationale, and elapsed time.",
+        "Access-Audited Run Timeline: persist each agent step with inputs, tool calls, handoffs, actor identity, authorization decision, redaction status, and timestamp in an append-only log.",
+        "Handoff Timeline: render each agent transition as an ordered span showing inputs, outputs, tool calls, elapsed time, and a one-line rationale.",
+        "Cost Overlay: annotate each Run Timeline span with input/output tokens, estimated cost, and latency, then aggregate totals by agent, model, and tool."
+      ]
+    },
+    {
+      "family_id": "observability_v1",
+      "block_index": 7,
+      "cell": "C",
+      "v_output": 0.40209927801899015,
+      "role_margin": 0.12779966320647695,
+      "anchor_alignment": null,
+      "echo_concentration": null,
+      "outputs": [
+        "Run Flight Recorder: capture a timestamped, causally linked timeline of every agent message, tool call, state mutation, retry, error, and model/config version, with replayable checkpoints and sensitive-data redaction.",
+        "Causal Run Timeline: replay each agent turn, tool call, handoff, and state change in order, with expandable inputs/outputs and provenance links showing which prior event triggered each action.",
+        "Tamper-Evident Run Ledger: record each agent action, tool call, data access, permission decision, and handoff in a signed timeline with redacted views and drill-down audit trails.",
+        "Causal Replay: reconstruct each agent\u2019s inputs, tool calls, outputs, and state changes on a synchronized timeline with provenance links and branch-by-branch replay.",
+        "Cost-Critical Path: visualize each agent call on a timeline with token usage, latency, model cost, concurrency, and budget overruns to pinpoint expensive or blocking steps."
+      ]
+    },
+    {
+      "family_id": "observability_v1",
+      "block_index": 8,
+      "cell": "A",
+      "v_output": 0.45514986359954934,
+      "role_margin": 0.13374468591642646,
+      "anchor_alignment": 0.6029078950852409,
+      "echo_concentration": 0.3500000000000001,
+      "outputs": [
+        "Replay Checkpoints: persist redacted state, tool outputs, and handoff rationale at each timeline span so operators can resume from the first divergent step and verify recovery without rerunning the full workflow.",
+        "Trace Evidence Drawer: expand any timeline step to inspect redacted inputs, tool calls, outputs, handoff rationale, and stable hashes, with one-click diff against the same step in another run.",
+        "Access-Audited Trace Viewer: enforce field-level RBAC on redacted run timelines and record every reveal, replay, export, and decision-annotation access in an immutable audit log.",
+        "Causal Replay: replay a persisted timeline from any agent step with one input, tool result, or handoff rationale changed, then highlight downstream divergences.",
+        "Cost Overlay: annotate each persisted timeline span with input/output tokens, estimated cost, latency, and model/tool identity, with rollups by agent and run."
+      ]
+    },
+    {
+      "family_id": "observability_v1",
+      "block_index": 8,
+      "cell": "B",
+      "v_output": 0.5321806324135202,
+      "role_margin": 0.14193717882643084,
+      "anchor_alignment": 0.5950596555661708,
+      "echo_concentration": 0.6500000000000001,
+      "outputs": [
+        "Failure Snapshot: on any failed or timed-out span, persist the exact inputs, outputs, tool errors, retries, and last successful handoff for inspection and replay.",
+        "Handoff Timeline: show each agent-to-agent transfer as an ordered span with sender, recipient, one-line rationale, payload preview, tool calls, and latency.",
+        "Access Audit Trail: append actor, role, purpose, timestamp, and export/replay actions to each persisted run trace in a tamper-evident log.",
+        "Causal Handoff Timeline: render each agent handoff as an ordered span linking its input, tool calls, output, elapsed time, and one-line transfer rationale.",
+        "Cost Overlay: annotate each Run Timeline span with input/output tokens, estimated cost, latency, and model/provider, plus per-agent and per-run totals."
+      ]
+    },
+    {
+      "family_id": "observability_v1",
+      "block_index": 8,
+      "cell": "C",
+      "v_output": 0.37023069778518775,
+      "role_margin": 0.1316819794771229,
+      "anchor_alignment": null,
+      "echo_concentration": null,
+      "outputs": [
+        "Run Replay Timeline: Capture timestamped agent messages, tool calls, state changes, errors, retries, and model metadata in a correlated trace, with step-by-step replay and exportable diagnostics.",
+        "Causal Run Timeline: replay each agent\u2019s prompts, tool calls, handoffs, outputs, and errors on a synchronized timeline with expandable evidence, dependency links, and exact timestamps.",
+        "Tamper-Evident Run Ledger: record each agent\u2019s prompts, tool calls, data accesses, permission decisions, outputs, and timestamps in a redacted, access-controlled, cryptographically chained trace.",
+        "Causal Run Replay: an interactive timeline that links each agent\u2019s inputs, outputs, tool calls, and state changes, with step-by-step diffs and dependency tracing to reveal why the final result occurred.",
+        "Run Cost Timeline: Visualize each agent call with token usage, latency, model, retries, and estimated cost, highlighting critical-path and budget-overrun events."
+      ]
+    },
+    {
+      "family_id": "observability_v1",
+      "block_index": 9,
+      "cell": "A",
+      "v_output": 0.45689208082339583,
+      "role_margin": 0.1444750099229759,
+      "anchor_alignment": 0.5678041928431199,
+      "echo_concentration": 0.3500000000000001,
+      "outputs": [
+        "Failure Breadcrumbs: persist redacted checkpoints at each timeline span, marking errors, retries, handoffs, and rollback actions so Trace Diff can pinpoint the first divergence and operators can reconstruct recovery.",
+        "Trace Replay: scrub through the persisted run timeline to inspect each agent\u2019s redacted inputs, tool calls, outputs, handoff rationale, and divergence markers step by step.",
+        "Access Audit Trail: append tamper-evident records of every trace view, replay, export, and redaction reversal, including actor, scope, purpose, and timestamp.",
+        "Causal Replay: reconstruct a selected timeline span from persisted inputs, tool results, and handoff rationales, then compare the replay with the original to expose the first causal divergence.",
+        "Cost Overlay: annotate each timeline span with input/output tokens, estimated cost, latency, and model/tool usage, with per-agent and full-run rollups for trace comparison."
+      ]
+    },
+    {
+      "family_id": "observability_v1",
+      "block_index": 9,
+      "cell": "B",
+      "v_output": 0.4404961753269932,
+      "role_margin": 0.14654938109734852,
+      "anchor_alignment": 0.6400716012623497,
+      "echo_concentration": 0.75,
+      "outputs": [
+        "Failure Replay: restart a failed run from any persisted timeline span using captured inputs, tool outputs, and agent state in an isolated sandbox.",
+        "Handoff Timeline: show each agent transfer as a durable timeline span with inputs, outputs, tool calls, latency, and a one-line rationale.",
+        "Access-Controlled Run Timeline: persist each agent span, inputs, tool calls, outputs, and handoffs with field-level redaction, role-based viewing, and an immutable access audit log.",
+        "Causal Replay: replay a selected agent step with its original inputs, tool results, and handoff rationale, then highlight downstream output changes.",
+        "Cost Timeline: annotate each agent span with input/output tokens, estimated cost, latency, and model, then aggregate totals by agent and run."
+      ]
+    },
+    {
+      "family_id": "observability_v1",
+      "block_index": 9,
+      "cell": "C",
+      "v_output": 0.3526099413586262,
+      "role_margin": 0.09759986423657784,
+      "anchor_alignment": null,
+      "echo_concentration": null,
+      "outputs": [
+        "Agent Run Flight Recorder: capture a timestamped, replayable timeline of every agent handoff, prompt, tool call, response, state change, retry, error, and token/cost metric, with correlation IDs and secret redaction for root-cause analysis.",
+        "Causal Run Timeline: Replay each agent\u2019s prompts, tool calls, outputs, handoffs, and state changes on a synchronized timeline, with expandable provenance and failure markers.",
+        "Tamper-Evident Agent Trace: Record each agent\u2019s inputs, outputs, tool calls, data access, permission decisions, and handoffs in a redacted, role-gated, cryptographically chained timeline.",
+        "Causal Run Replay: reconstruct a synchronized timeline of agent messages, tool calls, state changes, and outputs, with clickable dependency links showing which prior events influenced each decision.",
+        "Run Cost Waterfall: reconstruct each agent/tool call on a timeline with per-step token usage, latency, retries, model/provider, and estimated cost, highlighting critical-path and budget overruns."
+      ]
+    },
+    {
+      "family_id": "testing_v1",
+      "block_index": 0,
+      "cell": "A",
+      "v_output": 0.36635467237009633,
+      "role_margin": 0.12643801397690618,
+      "anchor_alignment": 0.5548478617306604,
+      "echo_concentration": 0.6500000000000001,
+      "outputs": [
+        "Canary Rollback Gate: replay pinned scenarios across every agent path, measure regressions and variance against the last stable baseline, and automatically block promotion or restore the prior workflow version when thresholds are exceeded.",
+        "Merge Confidence Gate: on each workflow change, replay pinned scenarios with stubbed credentials, surface untested agent paths and output variance, and block merges on behavioral regressions.",
+        "Policy Boundary Gate: replay pinned misuse and privacy scenarios across every agent handoff with least-privilege credentials, blocking merges on unauthorized tool calls, sensitive-data leakage, or missing audit events.",
+        "Trace Attribution Gate: replay pinned scenarios and block merges when an agent handoff, tool call, or failure-recovery path deviates from the approved trace without an explicit baseline update.",
+        "Budget Regression Gate: replay pinned workflow scenarios and block merges when token cost, latency, or agent-call counts exceed configured baseline thresholds."
+      ]
+    },
+    {
+      "family_id": "testing_v1",
+      "block_index": 0,
+      "cell": "B",
+      "v_output": 0.31053061616888245,
+      "role_margin": 0.09373549421084669,
+      "anchor_alignment": 0.5917819857973065,
+      "echo_concentration": 0.55,
+      "outputs": [
+        "Failure Replay Gate: block a merge when replayed production failure traces no longer match pinned recovery outcomes, with external calls stubbed and rollback behavior verified.",
+        "Agent Handoff Gate: replay pinned scenarios and block merges when agent routing, tool calls, or handoff payloads deviate from the approved baseline.",
+        "Policy Replay Gate: rerun saved multi-agent workflows against recorded fixtures with stubbed credentials, blocking merges on new access-control, privacy-boundary, or audit-log violations.",
+        "Agent Path Replay Gate: rerun pinned multi-agent scenarios on every change and block merges when agent routing, tool calls, or final outputs diverge from approved baselines.",
+        "Budget Replay Gate: rerun pinned workflow fixtures and block merges when token cost, latency, or agent-call counts exceed committed regression thresholds."
+      ]
+    },
+    {
+      "family_id": "testing_v1",
+      "block_index": 0,
+      "cell": "C",
+      "v_output": 0.3277286077752939,
+      "role_margin": 0.13265473633682348,
+      "anchor_alignment": null,
+      "echo_concentration": null,
+      "outputs": [
+        "Agent Chaos Replay: inject configurable agent, tool, timeout, and malformed-output failures into recorded workflow runs, then verify traces, fallbacks, and rollback behavior against release gates.",
+        "Agent Workflow Replay: record each agent\u2019s inputs, outputs, tool calls, handoffs, and latency in a step-by-step trace that teams can replay with alternate prompts or models and compare outcomes before release.",
+        "Boundary Replay Harness: execute recorded multi-agent traces in a sandbox with adversarial misuse tests, least-privilege access checks, PII leak detection, and immutable audit logs.",
+        "Agent Replay Lab: replay curated and adversarial tasks with fixed seeds, visualize each agent\u2019s decisions and handoffs, then require regression thresholds on task success, cost, latency, and failure recovery before release.",
+        "Budget Replay: simulate representative multi-agent runs to report per-agent token cost, end-to-end latency, concurrency bottlenecks, and projected production spend against configurable release thresholds."
+      ]
+    },
+    {
+      "family_id": "testing_v1",
+      "block_index": 1,
+      "cell": "A",
+      "v_output": 0.4082043717429878,
+      "role_margin": 0.1467312078572125,
+      "anchor_alignment": 0.5543888935812775,
+      "echo_concentration": 0.55,
+      "outputs": [
+        "Failure Injection Replay: rerun pinned scenarios with simulated agent timeouts, malformed outputs, and tool failures, verifying retries, fallbacks, observability, and rollback behavior against expected outcomes.",
+        "Trace Replay Review: replay recorded multi-agent runs with stubbed credentials, highlight prompt/output diffs and untested branches, and gate merges when pinned scenarios regress beyond an established variance band.",
+        "Policy Boundary Gate: replay pinned scenarios with synthetic identities and stubbed secrets, blocking merges when any agent violates tool permissions, data-access scopes, or required audit logging.",
+        "Failure Trace Tutor: turn replay or regression failures into an agent-by-agent causal trace that highlights the first divergence and links it to the responsible prompt, tool call, or uncovered workflow path.",
+        "Budget Regression Gate: replay pinned scenarios and block merges when token cost, latency, or agent-step counts exceed baseline thresholds."
+      ]
+    },
+    {
+      "family_id": "testing_v1",
+      "block_index": 1,
+      "cell": "B",
+      "v_output": 0.357517284900661,
+      "role_margin": 0.11954450913898604,
+      "anchor_alignment": 0.5926704044211579,
+      "echo_concentration": 0.6500000000000001,
+      "outputs": [
+        "Failure Replay Gate: inject recorded agent, tool, timeout, and malformed-output failures into pinned workflows and block merges when fallback behavior or recovery paths regress.",
+        "Agent Trace Replay: rerun saved multi-agent traces with stubbed tools and credentials, then diff each handoff, tool call, and final output against a pinned baseline.",
+        "Access-Control Replay Gate: rerun recorded workflows under least-privilege test identities with secrets redacted, blocking merges on unauthorized tool calls, cross-agent data leaks, or missing audit events.",
+        "Agent Trace Replay: rerun saved multi-agent traces with stubbed tools and compare each agent\u2019s outputs, handoffs, and final result against pinned baselines.",
+        "Budget Regression Gate: replay pinned workflow scenarios and block merges when token cost, end-to-end latency, or peak concurrent-agent usage exceeds configured baselines."
+      ]
+    },
+    {
+      "family_id": "testing_v1",
+      "block_index": 1,
+      "cell": "C",
+      "v_output": 0.37126128503699657,
+      "role_margin": 0.1615730402718121,
+      "anchor_alignment": null,
+      "echo_concentration": null,
+      "outputs": [
+        "Failure Replay Lab: record agent traces, tool calls, state transitions, and injected faults, then deterministically replay failed runs to validate alerts, fallback behavior, and rollback paths before release.",
+        "Agent Trace Sandbox: Replay representative tasks in a step-by-step timeline, exposing each agent\u2019s inputs, outputs, tool calls, handoffs, and failure points for team review before release.",
+        "Agent Trust Boundary Simulator: replay workflows with synthetic secrets, malicious prompts, and role violations to verify least-privilege access, detect cross-agent data leaks, and generate an auditable policy-enforcement report.",
+        "Workflow Replay Lab: replay versioned multi-agent traces against edge-case scenarios, score each agent\u2019s decisions with explicit rubrics, and surface regressions with step-level failure explanations.",
+        "Cost & Latency Replay Gate: replay representative workflows under production concurrency, reporting per-agent token spend, p95 latency, throughput, and budget/SLA violations before deployment."
+      ]
+    },
+    {
+      "family_id": "testing_v1",
+      "block_index": 2,
+      "cell": "A",
+      "v_output": 0.3340587011329538,
+      "role_margin": 0.11873785968206818,
+      "anchor_alignment": 0.5346416723150731,
+      "echo_concentration": 0.75,
+      "outputs": [
+        "Failure Injection Gate: replay pinned scenarios while simulating agent timeouts, malformed handoffs, and tool failures; block merges when recovery, fallback, or rollback assertions fail.",
+        "Agent Trace Diff: replay pinned scenarios and block merges when agent handoffs, tool calls, or routing paths diverge from the approved baseline beyond configured tolerances.",
+        "Privilege Boundary Gate: replay pinned scenarios with least-privilege credentials and fail the merge if any agent accesses unauthorized data, tools, or actions, emitting an auditable trace.",
+        "Trace Credit Gate: replay pinned scenarios and block merges when an agent handoff or tool call deviates from the approved trace beyond its learned variance band.",
+        "Cost Regression Gate: replay pinned scenarios and block merges when per-agent token usage, latency, or concurrency-adjusted cost exceeds an approved variance budget."
+      ]
+    },
+    {
+      "family_id": "testing_v1",
+      "block_index": 2,
+      "cell": "B",
+      "v_output": 0.4082897178328232,
+      "role_margin": 0.10354156567094974,
+      "anchor_alignment": 0.5818582795946696,
+      "echo_concentration": 0.44999999999999996,
+      "outputs": [
+        "Failure-Path Replay Gate: rerun recorded workflows with injected agent timeouts, malformed outputs, and tool failures; block merges when fallback or rollback behavior regresses.",
+        "Agent Handoff Replay: rerun pinned scenarios across agent transitions and block merges when routing, payloads, or final outputs drift from the approved baseline.",
+        "Permission Boundary Replay: rerun saved workflows with per-agent credential scopes stubbed, blocking merges when any agent attempts a tool, secret, or data access outside its declared policy.",
+        "Scenario Coverage Gate: block a merge when changed workflow paths lack a committed test scenario or fail replay against a pinned baseline.",
+        "Cost Regression Gate: replay pinned workflow scenarios on each change and block merges when token spend, latency, or peak concurrency exceeds committed budgets."
+      ]
+    },
+    {
+      "family_id": "testing_v1",
+      "block_index": 2,
+      "cell": "C",
+      "v_output": 0.37845380410296803,
+      "role_margin": 0.13534301739240293,
+      "anchor_alignment": null,
+      "echo_concentration": null,
+      "outputs": [
+        "Failure Replay Harness: record agent messages, tool calls, model versions, and state snapshots, then deterministically replay fault-injected scenarios to verify alerts, fallback behavior, and rollback paths before release.",
+        "Workflow Replay Sandbox: Capture real multi-agent runs, let teams replay them step-by-step with prompt/tool/model variants, and highlight behavior diffs, failures, and regressions before deployment.",
+        "Agent Boundary Simulator: run adversarial pre-release tests that inject unauthorized data and tool requests, then verify per-agent access controls, data redaction, and tamper-evident audit logs.",
+        "Counterfactual Replay: rerun a fixed test suite with one agent, prompt, tool, or model changed at a time, then surface output diffs, failure regressions, and confidence trends.",
+        "Agent Workflow Load Simulator: replay representative tasks under configurable concurrency to report per-agent token cost, end-to-end latency, throughput limits, and deployment bottlenecks before release."
+      ]
+    },
+    {
+      "family_id": "testing_v1",
+      "block_index": 3,
+      "cell": "A",
+      "v_output": 0.3713493735417722,
+      "role_margin": 0.09967322940638712,
+      "anchor_alignment": 0.5645026364727419,
+      "echo_concentration": 0.55,
+      "outputs": [
+        "Failure Trace Replay: capture agent handoffs, tool calls, retries, and state snapshots for failed runs, then deterministically replay them with stubbed dependencies and pinpoint the first divergence from a passing baseline.",
+        "Coverage-Guided Replay: automatically generate and rerun fixture-backed scenarios for untested agent handoffs, flagging flaky or behavior-changing paths before merge.",
+        "Policy Boundary Gate: replay pinned scenarios with synthetic identities and stubbed credentials, blocking merges when any agent gains unauthorized tool, data, or cross-agent access and logging the exact trace.",
+        "Trace Coverage Gate: replay pinned scenarios and block merges when any agent handoff, tool call, or fallback path is unexercised or deviates from its approved trace.",
+        "Cost Regression Gate: replay pinned workflow scenarios and block merges when token usage, latency, or agent-call counts exceed configurable baseline budgets."
+      ]
+    },
+    {
+      "family_id": "testing_v1",
+      "block_index": 3,
+      "cell": "B",
+      "v_output": 0.3657103253447694,
+      "role_margin": 0.12034882532286348,
+      "anchor_alignment": 0.5573481412406988,
+      "echo_concentration": 0.3500000000000001,
+      "outputs": [
+        "Failure-Path Replay Gate: replay pinned scenarios with injected agent timeouts, malformed outputs, and tool failures, blocking merges when recovery paths or final results regress.",
+        "Agent Handoff Matrix: replay pinned scenarios and flag any inter-agent handoff whose schema, routing, or output differs from the committed baseline.",
+        "Policy Boundary Replay Gate: rerun saved workflows against recorded misuse, privacy, and access-control cases with credentials stubbed, blocking merges on new unauthorized tool calls, data exposure, or missing audit events.",
+        "Agent Path Replay Gate: rerun pinned multi-agent scenarios on every change and block merges when agent routing, tool calls, or final outputs diverge from the approved baseline.",
+        "Budget Regression Gate: replay pinned workflow scenarios on every change and block merges when token cost, latency, or agent-call counts exceed configured baseline thresholds."
+      ]
+    },
+    {
+      "family_id": "testing_v1",
+      "block_index": 3,
+      "cell": "C",
+      "v_output": 0.3619319060267988,
+      "role_margin": 0.16167762099240252,
+      "anchor_alignment": null,
+      "echo_concentration": null,
+      "outputs": [
+        "Fault Injection Replay: record full multi-agent traces, inject deterministic failures at each handoff or tool call, and verify retries, fallbacks, observability alerts, and rollback behavior before release.",
+        "Agent Replay Sandbox: run production-like scenarios through the full multi-agent workflow, then inspect a synchronized timeline of handoffs, tool calls, outputs, confidence flags, and approval checkpoints before shipping.",
+        "Agent Boundary Auditor: simulate adversarial workflows to detect cross-agent data leaks, unauthorized tool access, and privilege escalation, producing replayable traces and policy-violation reports.",
+        "Counterfactual Replay Lab: rerun versioned multi-agent traces with controlled perturbations to prompts, tools, and agent outputs, then score downstream behavior against expected invariants and surface failure propagation.",
+        "Cost & Latency Replay Gate: replay representative workflows under production concurrency, reporting per-agent token spend, end-to-end latency, throughput, and deployment-limit violations against configurable release thresholds."
+      ]
+    },
+    {
+      "family_id": "testing_v1",
+      "block_index": 4,
+      "cell": "A",
+      "v_output": 0.38308825894972404,
+      "role_margin": 0.12163145102621509,
+      "anchor_alignment": 0.5418476662056652,
+      "echo_concentration": 0.6500000000000001,
+      "outputs": [
+        "Trace Invariant Gate: replay pinned multi-agent scenarios and block merges when critical invariants\u2014handoff order, tool permissions, retry limits, and rollback behavior\u2014are violated.",
+        "Agent Trace Review: replay pinned scenarios as a step-by-step multi-agent timeline, highlighting prompt, handoff, tool-call, and output diffs for approval before merge.",
+        "Privilege Boundary Auditor: replay pinned workflows with synthetic identities and canary secrets, failing merges when any agent exceeds scoped permissions, leaks protected data, or omits an auditable access trace.",
+        "Trace Replay Gate: replay pinned multi-agent traces with stubbed credentials, compare each agent handoff and final output to baselines, and block merges on uncovered paths or regressions beyond measured variance.",
+        "Budget Regression Gate: replay pinned workflow fixtures and block merges when token cost, latency, or agent-call counts exceed baseline thresholds."
+      ]
+    },
+    {
+      "family_id": "testing_v1",
+      "block_index": 4,
+      "cell": "B",
+      "v_output": 0.3576632372852744,
+      "role_margin": 0.1137969708174353,
+      "anchor_alignment": 0.5573122416289971,
+      "echo_concentration": 0.55,
+      "outputs": [
+        "Rollback Replay Gate: replay pinned scenarios against the proposed workflow and last-known-good version, blocking release on regressions and enabling one-click rollback.",
+        "Agent Path Coverage Gate: replay committed scenarios, visualize which agent handoffs and tool calls they exercise, and block merges when a changed workflow path lacks coverage.",
+        "Authorization Replay Gate: rerun recorded multi-agent workflows under least-privilege test identities and block merges if any agent accesses unapproved tools, data, or credentials, with a per-step audit trace.",
+        "Workflow Path Replay Gate: replay pinned scenarios across every multi-agent path and block merges when outputs regress or any changed path remains untested.",
+        "Cost Regression Gate: replay pinned workflow fixtures on each change and block merges when token cost, latency, or agent-call count exceeds configured baseline thresholds."
+      ]
+    },
+    {
+      "family_id": "testing_v1",
+      "block_index": 4,
+      "cell": "C",
+      "v_output": 0.4473451832370244,
+      "role_margin": 0.1717346125845131,
+      "anchor_alignment": null,
+      "echo_concentration": null,
+      "outputs": [
+        "Failure Drill Harness: inject agent timeouts, malformed outputs, tool failures, and routing errors in staging, then verify traces, alerts, fallback behavior, and rollback criteria against predefined assertions.",
+        "Preflight Replay: Run versioned agent workflows against a shared scenario suite, showing step-by-step traces, handoffs, tool calls, and output diffs with pass/fail gates before deployment.",
+        "Agent Boundary Auditor: simulate adversarial workflows to verify each agent\u2019s permissions, detect sensitive-data leakage and tool misuse, and generate an auditable trace of all access-control decisions.",
+        "Counterfactual Replay: rerun recorded workflows with perturbed inputs, agent outputs, and tool failures, then highlight decision points where outcomes diverge from expected behavior.",
+        "Preflight Cost & Load Simulator: replay representative workflows across all agents to estimate per-run token cost, p95 latency, concurrency limits, and deployment capacity, with configurable budget and SLO failure gates."
+      ]
+    },
+    {
+      "family_id": "testing_v1",
+      "block_index": 5,
+      "cell": "A",
+      "v_output": 0.3913400845354572,
+      "role_margin": 0.12124030701119175,
+      "anchor_alignment": 0.5559707184887465,
+      "echo_concentration": 0.55,
+      "outputs": [
+        "Rollback Canary: run the candidate workflow in shadow mode on pinned replays, compare agent traces and outcomes to the current version, and automatically revert deployment when error, variance, or uncovered-path thresholds are exceeded.",
+        "Agent Trace Diff: replay pinned scenarios and highlight changes in agent handoffs, tool calls, and final outputs, blocking merges when critical workflow paths diverge from the baseline.",
+        "Privilege Boundary Gate: replay pinned workflows with stubbed identities and canary secrets, blocking merges if any agent exceeds scoped permissions, leaks sensitive data, or invokes an unaudited tool path.",
+        "Trace Attribution Gate: replay pinned scenarios and block merges when an agent handoff or tool call deviates from its baseline beyond a defined variance threshold.",
+        "Budget Regression Gate: replay pinned workflow fixtures and block merges when per-agent token cost, end-to-end latency, or peak concurrency exceeds baseline thresholds."
+      ]
+    },
+    {
+      "family_id": "testing_v1",
+      "block_index": 5,
+      "cell": "B",
+      "v_output": 0.3509764705513384,
+      "role_margin": 0.12811788170684119,
+      "anchor_alignment": 0.5599536318422212,
+      "echo_concentration": 0.55,
+      "outputs": [
+        "Failure Replay Gate: block merges when any previously observed agent, tool, or handoff failure reoccurs during credential-stubbed workflow replay.",
+        "Agent Handoff Diff Gate: replay pinned scenarios and block merges when agent-to-agent messages, tool calls, or final outputs diverge from approved baselines.",
+        "Policy Replay Gate: replay pinned misuse, privacy, and access-control scenarios with stubbed identities and credentials, blocking merges on newly unauthorized actions, data exposure, or missing audit events.",
+        "Agent Path Replay Gate: block a merge when recorded multi-agent scenarios produce a different handoff path or fail pinned output assertions.",
+        "Cost Regression Gate: replay pinned workflow scenarios and block merges when token spend, end-to-end latency, or agent-call count exceeds committed budgets."
+      ]
+    },
+    {
+      "family_id": "testing_v1",
+      "block_index": 5,
+      "cell": "C",
+      "v_output": 0.38764207063418893,
+      "role_margin": 0.14419907051687803,
+      "anchor_alignment": null,
+      "echo_concentration": null,
+      "outputs": [
+        "Replayable Failure Injection: deterministically replay multi-agent traces while injecting timeouts, malformed outputs, and tool failures, then verify alerts, fallback behavior, and rollback paths before release.",
+        "Replay Sandbox: replay real or synthetic inputs through the full multi-agent workflow, compare agent decisions and outputs across model/prompt versions, and require reviewers to approve flagged regressions before release.",
+        "Policy Trace Sandbox: simulate multi-agent runs with adversarial inputs while logging data access, permission checks, inter-agent disclosures, tool calls, and policy violations in a reviewable audit trail.",
+        "Counterfactual Replay: rerun a fixed suite of real workflow traces with controlled agent failures, tool errors, and prompt variations, then report outcome drift, recovery behavior, and step-level regressions.",
+        "Budget Stress Test: replay representative workflows across agents under token, latency, concurrency, and rate-limit caps, then flag SLA breaches, bottlenecks, and projected per-run costs before deployment."
+      ]
+    },
+    {
+      "family_id": "testing_v1",
+      "block_index": 6,
+      "cell": "A",
+      "v_output": 0.3534800356483922,
+      "role_margin": 0.14087005976408795,
+      "anchor_alignment": 0.5547364938511165,
+      "echo_concentration": 0.55,
+      "outputs": [
+        "Failure Replay Gate: inject recorded agent/tool failures into pinned scenarios and block merges when workflows fail to recover, exceed retry budgets, or lack a verified rollback path.",
+        "Preflight Confidence Gate: on every workflow change, replay pinned scenarios across all agent paths with stubbed credentials and repeated runs, then block merges on uncovered paths, behavioral regressions, or variance beyond configured thresholds.",
+        "Policy Boundary Gate: replay pinned misuse and privilege-escalation scenarios across every agent/tool path, blocking merges on unauthorized data access, unsafe tool calls, or missing audit events.",
+        "Agent Trace Gate: replay pinned scenarios and block merges when agent handoffs, tool calls, or final outputs diverge from approved traces beyond set tolerances.",
+        "Cost Budget Gate: replay pinned scenarios across workflow paths and block merges when token spend, p95 latency, or peak concurrency exceed configured baselines."
+      ]
+    },
+    {
+      "family_id": "testing_v1",
+      "block_index": 6,
+      "cell": "B",
+      "v_output": 0.44947566353122037,
+      "role_margin": 0.1236724052380774,
+      "anchor_alignment": 0.5600299520820786,
+      "echo_concentration": 0.55,
+      "outputs": [
+        "Failure Replay Gate: replay recorded multi-agent runs on every merge and block changes that introduce new agent, tool-call, or handoff failures.",
+        "Agent Handoff Gate: block a merge when replayed scenarios show a changed agent-to-agent handoff schema, routing decision, or required context.",
+        "Privilege Boundary Replay: rerun saved workflows with least-privilege agent credentials and fail if any agent accesses undeclared tools, data, or cross-agent context.",
+        "Agent Handoff Replay: rerun recorded multi-agent handoffs against stubbed fixtures and diff each agent\u2019s messages, tool calls, and final output against a pinned baseline.",
+        "Cost Regression Gate: replay pinned workflow scenarios on each merge and block when token spend, p95 latency, or peak concurrency exceeds committed budgets."
+      ]
+    },
+    {
+      "family_id": "testing_v1",
+      "block_index": 6,
+      "cell": "C",
+      "v_output": 0.4088628500810828,
+      "role_margin": 0.16482160382721803,
+      "anchor_alignment": null,
+      "echo_concentration": null,
+      "outputs": [
+        "Failure Replay Harness: capture agent traces, tool calls, and state transitions, then deterministically replay injected failures to verify alerts, fallbacks, and rollback behavior before deployment.",
+        "Agent Replay Sandbox: capture full multi-agent runs, then let teams replay, fork, and compare traces with per-step inputs, outputs, tool calls, latency, cost, and pass/fail assertions.",
+        "Preflight Security Harness: simulate adversarial agent interactions to verify scoped permissions, detect sensitive-data leakage, and produce auditable traces of every tool call and policy decision.",
+        "Counterfactual Replay: rerun recorded multi-agent traces with controlled prompt, model, tool, and failure perturbations, then flag divergent outcomes and assign targeted regression tests.",
+        "Preflight Cost & Load Simulator: replay representative workflows with mocked agent responses to estimate per-run tokens, p95 latency, peak concurrency, and infrastructure spend against configurable deployment budgets."
+      ]
+    },
+    {
+      "family_id": "testing_v1",
+      "block_index": 7,
+      "cell": "A",
+      "v_output": 0.4304880169808447,
+      "role_margin": 0.13893854360223534,
+      "anchor_alignment": 0.513667702629567,
+      "echo_concentration": 0.55,
+      "outputs": [
+        "Failure Trace Replay: capture each agent handoff, tool call, and state transition so failed or flaky runs can be deterministically replayed and compared step-by-step against a known-good trace.",
+        "Agent Trace Diff: replay pinned scenarios and highlight changes in agent handoffs, tool calls, and final outputs before merge.",
+        "Policy Boundary Gate: replay pinned multi-agent scenarios with synthetic identities and scoped credentials, blocking merges on new unauthorized data access, tool calls, cross-agent leakage, or missing audit events.",
+        "Failure Trace Tutor: cluster replay and flake failures by agent handoff, then show the earliest divergent step with the triggering prompt, context, and expected behavior.",
+        "Budget Regression Gate: replay pinned multi-agent scenarios and block merges when token cost, latency, or model-call counts exceed committed thresholds."
+      ]
+    },
+    {
+      "family_id": "testing_v1",
+      "block_index": 7,
+      "cell": "B",
+      "v_output": 0.3426925151315053,
+      "role_margin": 0.09991857436044152,
+      "anchor_alignment": 0.5699441994498683,
+      "echo_concentration": 0.6500000000000001,
+      "outputs": [
+        "Failure Replay Gate: capture failed multi-agent traces, replay them with stubbed tools on every change, and block merges when failure signatures recur or outputs regress.",
+        "Agent Trace Replay: replay pinned multi-agent runs step by step against recorded fixtures and flag the first agent, handoff, or tool call that diverges from baseline.",
+        "Permission Boundary Replay: rerun recorded workflows with synthetic identities and stubbed credentials, failing any case where an agent accesses undeclared tools, data, or cross-tenant context.",
+        "Agent Path Replay: rerun pinned scenarios through each agent handoff and flag routing, tool-call, or final-output diffs from the approved baseline.",
+        "Budget Replay Gate: replay pinned multi-agent scenarios and block merges when token cost, end-to-end latency, or peak concurrency exceeds committed thresholds."
+      ]
+    },
+    {
+      "family_id": "testing_v1",
+      "block_index": 7,
+      "cell": "C",
+      "v_output": 0.42415772888582903,
+      "role_margin": 0.15978589380699892,
+      "anchor_alignment": null,
+      "echo_concentration": null,
+      "outputs": [
+        "Failure Replay Harness: record agent inputs, outputs, tool calls, timing, and state transitions, then deterministically replay injected failures to validate alerts, fallbacks, and rollback behavior before release.",
+        "Preflight Replay: Run versioned multi-agent scenarios with step-by-step traces, assertions, and side-by-side baseline diffs before deployment.",
+        "Agent Boundary Auditor: simulate adversarial workflows to verify per-agent permissions, data-access boundaries, misuse resistance, and tamper-evident audit logs before deployment.",
+        "Counterfactual Replay: rerun a fixed suite of real and adversarial tasks while swapping agent prompts, models, and failure injections, then report step-level behavioral diffs, regressions, and confidence trends.",
+        "Budget & Load Simulator: replay representative workflows across agents to estimate per-step token cost, end-to-end latency, concurrency limits, and deployment quota breaches before release."
+      ]
+    },
+    {
+      "family_id": "testing_v1",
+      "block_index": 8,
+      "cell": "A",
+      "v_output": 0.3914143360266613,
+      "role_margin": 0.13942281469368725,
+      "anchor_alignment": 0.48893250948835243,
+      "echo_concentration": 0.3500000000000001,
+      "outputs": [
+        "Trace-Aware Canary Gate: replay pinned scenarios across every agent handoff, inject common tool and model failures, and block release unless recovery paths, alerts, and rollback behavior match the baseline.",
+        "Agent Handoff Trace: visualize each scenario\u2019s agent-to-agent transitions, tool calls, and state changes, highlighting deviations from a pinned baseline.",
+        "Policy Boundary Gate: replay pinned misuse and privilege-escalation scenarios across every agent handoff, failing merges on unauthorized tool/data access or missing audit events.",
+        "Trace Tutor: visualize each agent handoff against replayed scenario expectations, highlighting the first divergence and suggesting a targeted regression case.",
+        "Cost Regression Gate: replay pinned scenarios to measure per-agent tokens, latency, and tool calls, blocking merges that exceed configured budgets or regress beyond variance-adjusted thresholds."
+      ]
+    },
+    {
+      "family_id": "testing_v1",
+      "block_index": 8,
+      "cell": "B",
+      "v_output": 0.4488102514553118,
+      "role_margin": 0.11992201375180853,
+      "anchor_alignment": 0.5782651462484216,
+      "echo_concentration": 0.3500000000000001,
+      "outputs": [
+        "Failure-Path Replay: inject recorded agent timeouts, malformed outputs, and tool failures into pinned scenarios, then verify retries, fallbacks, and rollback behavior match the baseline.",
+        "Handoff Coverage Map: trace committed scenarios across agent-to-agent handoffs and flag any transition, tool call, or fallback branch that no test has exercised.",
+        "Permission Boundary Matrix: run committed misuse scenarios across every agent/tool path with least-privilege test credentials, flagging unauthorized data access, secret exposure, and missing audit events.",
+        "Trace Coverage Gate: replay pinned scenarios and block merges when any agent handoff, tool call, or routing branch is no longer exercised.",
+        "Budget Replay Gate: rerun pinned workflow fixtures and block merges when token cost, end-to-end latency, or agent-call count exceeds the recorded baseline threshold."
+      ]
+    },
+    {
+      "family_id": "testing_v1",
+      "block_index": 8,
+      "cell": "C",
+      "v_output": 0.43624540857999944,
+      "role_margin": 0.1430366132188492,
+      "anchor_alignment": null,
+      "echo_concentration": null,
+      "outputs": [
+        "Failure Drill Harness: inject configurable agent, tool, timeout, and malformed-output failures into replayed workflows, then verify traces, fallback behavior, rollback triggers, and recovery SLOs before release.",
+        "Workflow Flight Recorder: replay multi-agent runs step-by-step with inputs, outputs, tool calls, handoffs, and policy checks, then approve or flag each transition before release.",
+        "Agent Boundary Simulator: replay adversarial scenarios against each agent\u2019s permissions, data access, and handoff rules, then produce an auditable report of unauthorized actions, privacy leaks, and missing controls.",
+        "Counterfactual Replay: rerun a fixed scenario suite with controlled agent failures, model swaps, and handoff perturbations, then visualize outcome variance and trace regressions to specific decisions.",
+        "Agent Load Simulator: replay representative workflows under configurable concurrency and model limits to estimate per-agent token cost, end-to-end latency, throughput, and rate-limit failures before deployment."
+      ]
+    },
+    {
+      "family_id": "testing_v1",
+      "block_index": 9,
+      "cell": "A",
+      "v_output": 0.4540552378058222,
+      "role_margin": 0.15594198074478358,
+      "anchor_alignment": 0.5147251652877347,
+      "echo_concentration": 0.55,
+      "outputs": [
+        "Failure Drill Gate: inject recorded tool, timeout, and agent failures during replay, then verify bounded retries, fallback behavior, observability signals, and rollback outcomes against pinned expectations.",
+        "Agent Trace Diff: replay pinned scenarios and visualize per-agent decisions, handoffs, tool calls, and output changes against the last trusted baseline.",
+        "Policy Boundary Gate: replay pinned workflows with synthetic identities and scoped credentials, blocking merges on unauthorized data access, tool calls, privilege escalation, or missing audit events.",
+        "Failure Trace Tutor: cluster replay and regression failures by agent handoff, then surface the smallest causal trace showing where behavior first diverged.",
+        "Budget Regression Gate: replay pinned workflow fixtures and block merges when token cost, p95 latency, or agent-call count exceeds baseline thresholds."
+      ]
+    },
+    {
+      "family_id": "testing_v1",
+      "block_index": 9,
+      "cell": "B",
+      "v_output": 0.4209807890046255,
+      "role_margin": 0.11679230394965678,
+      "anchor_alignment": 0.5574854516023228,
+      "echo_concentration": 0.3500000000000001,
+      "outputs": [
+        "Failure Replay Matrix: inject recorded agent, tool, and timeout failures into pinned scenarios, then verify fallback paths, bounded retries, and rollback outcomes against baselines.",
+        "Path Coverage Gate: block merges when replayed regression scenarios leave any changed agent handoff or workflow branch unexercised.",
+        "Permission Boundary Matrix: run committed scenarios under least-privilege agent identities and flag any workflow path that accesses unauthorized tools, credentials, or data, with an audit trace.",
+        "Path Coverage Gate: block merges when a workflow change introduces or alters an agent-to-agent path not exercised by a committed scenario.",
+        "Budget Regression Gate: replay pinned workflow scenarios and block merges when token cost, latency, or agent-call count exceeds configured baseline thresholds."
+      ]
+    },
+    {
+      "family_id": "testing_v1",
+      "block_index": 9,
+      "cell": "C",
+      "v_output": 0.46201896960894917,
+      "role_margin": 0.1751880478700485,
+      "anchor_alignment": null,
+      "echo_concentration": null,
+      "outputs": [
+        "Failure Replay Harness: record agent inputs, outputs, tool calls, timing, and failures, then deterministically replay scenarios with fault injection and one-click rollback validation.",
+        "Replayable Agent Trace: capture each agent\u2019s inputs, outputs, tool calls, handoffs, and approvals in a step-by-step timeline teams can replay, inspect, and compare against expected outcomes before release.",
+        "Policy Boundary Simulator: inject adversarial requests and cross-agent data leaks in a sandbox, then report unauthorized tool calls, privilege escalations, sensitive-data exposure, and missing audit events.",
+        "Counterfactual Replay: rerun saved workflow traces with controlled agent failures, prompt changes, and tool-output perturbations, then highlight where outputs diverge from team-defined success criteria.",
+        "Preflight Cost & Load Simulator: replay representative workflows with mocked agents to estimate per-agent token spend, end-to-end latency, concurrency limits, and projected deployment cost before release."
+      ]
+    },
+    {
+      "family_id": "collaboration_v1",
+      "block_index": 0,
+      "cell": "A",
+      "v_output": 0.48478273366597885,
+      "role_margin": 0.13101584107317737,
+      "anchor_alignment": 0.5305911338921478,
+      "echo_concentration": 0.44999999999999996,
+      "outputs": [
+        "Runbook-Aware Change Gates: require reviewed workflow changes to include owner-linked health checks, failure alerts, and a one-click rollback to the last known-good version.",
+        "Handoff Inbox: route branch review requests, prompt changes, and unresolved scratchpad questions to the recorded owner for approval or follow-up.",
+        "Scoped Audit Trail: log who changed, reviewed, merged, or accessed each agent, prompt, tool, branch, and scratchpad, with role-based visibility and tamper-evident history.",
+        "Review-Gated Workflow Branches: assign owners to agents, prompts, and tools; let them edit in isolated branches with a shared scratchpad, then require owner and peer approval before merging.",
+        "Cost-Aware Change Review: show token, latency, and throughput deltas for each workflow branch and require owner approval when deployment budgets are exceeded."
+      ]
+    },
+    {
+      "family_id": "collaboration_v1",
+      "block_index": 0,
+      "cell": "B",
+      "v_output": 0.3547936923043325,
+      "role_margin": 0.1299474164608772,
+      "anchor_alignment": 0.6088485581920192,
+      "echo_concentration": 0.75,
+      "outputs": [
+        "Rollbackable Change Review: version every approved prompt and tool-wiring change, show execution diffs, and restore the last known-good workflow in one click.",
+        "Workflow Diff Review: show side-by-side changes to prompts, agent settings, and tool wiring so collaborators can comment and approve before merging.",
+        "Access-Controlled Change Review: require an authorized second owner to approve prompt, tool, or permission changes, with an immutable audit log.",
+        "Workflow Diff Review: show side-by-side changes to prompts, agents, and tool wiring, with inline comments and approval before merging.",
+        "Cost-Aware Change Review: show token, latency, and throughput deltas for each workflow branch and require approval before merging regressions."
+      ]
+    },
+    {
+      "family_id": "collaboration_v1",
+      "block_index": 0,
+      "cell": "C",
+      "v_output": 0.5010972052585145,
+      "role_margin": 0.17902293426428884,
+      "anchor_alignment": null,
+      "echo_concentration": null,
+      "outputs": [
+        "Run Replay & Rollback: Capture each agent\u2019s inputs, outputs, tool calls, ownership, and state changes in a shared trace, enabling deterministic replay, failure diagnosis, and rollback to any checkpoint.",
+        "Live Workflow Presence: show who is editing or running each agent node, lock active fields, and provide one-click handoff with shared run context and change history.",
+        "Scoped Agent Permissions: enforce per-user and per-agent least-privilege access to tools, data, and secrets, with immutable audit logs for every action.",
+        "Shared Trace Replay: teammates can inspect, annotate, and replay any multi-agent run from a selected step with the exact prompts, state, tool calls, and model versions preserved.",
+        "Shared Budget Governor: Enforce per-agent token, latency, and concurrency limits in a versioned team policy, with pre-merge cost simulations and runtime alerts."
+      ]
+    },
+    {
+      "family_id": "collaboration_v1",
+      "block_index": 1,
+      "cell": "A",
+      "v_output": 0.43156229489846193,
+      "role_margin": 0.12622254416760081,
+      "anchor_alignment": 0.5706467146239294,
+      "echo_concentration": 0.6500000000000001,
+      "outputs": [
+        "Safe Merge Gates: automatically replay shared regression scenarios on each workflow branch, block failing merges, and provide one-click rollback to the last healthy version.",
+        "Collaborative Review Branches: isolate each contributor\u2019s workflow edits, attach notes and component owners, then require owner approval before merge.",
+        "Scoped Audit Trail: log every workflow edit, approval, merge, and tool access with actor, timestamp, branch, and affected component, visible only to authorized collaborators.",
+        "Collaborative Workflow Diff: visualize branch changes to prompts, tools, and agent wiring, attach shared notes, and route each change to the responsible owner for approval before merge.",
+        "Cost-Aware Change Review: compare workflow branches with projected token spend, latency, and throughput deltas before approval and merge."
+      ]
+    },
+    {
+      "family_id": "collaboration_v1",
+      "block_index": 1,
+      "cell": "B",
+      "v_output": 0.3349642285826865,
+      "role_margin": 0.10939665142581212,
+      "anchor_alignment": 0.6201041893178735,
+      "echo_concentration": 0.75,
+      "outputs": [
+        "Rollbackable Change Review: version every approved prompt and tool-wiring change, show execution diffs, and allow one-click rollback to the last known-good workflow.",
+        "Workflow Diff Review: show side-by-side changes to prompts, tools, and agent wiring, and let teammates comment and approve before merging.",
+        "Protected Workflow Branches: enforce role-based edit permissions and require an auditable approval before merging changes to agent prompts or tool wiring.",
+        "Workflow Diff Review: show side-by-side changes to agent prompts, tool wiring, and handoffs, with inline comments and required approval before merge.",
+        "Cost-Aware Change Review: show token, latency, and throughput deltas for each workflow branch and require approval when deployment budgets are exceeded."
+      ]
+    },
+    {
+      "family_id": "collaboration_v1",
+      "block_index": 1,
+      "cell": "C",
+      "v_output": 0.5198921312882507,
+      "role_margin": 0.17906180469765404,
+      "anchor_alignment": null,
+      "echo_concentration": null,
+      "outputs": [
+        "Workflow Checkpoints: version and snapshot prompts, agent state, tools, and outputs at each stage, enabling shared replay, failure comparison, and one-click rollback to any known-good run.",
+        "Live Workflow Handoff: let collaborators claim an agent or step, see presence and active edits, leave checkpoint notes, and transfer ownership with a one-click context snapshot.",
+        "Scoped Collaboration Ledger: enforce role-based access to agents, prompts, secrets, and runs, while recording immutable, exportable audit logs of every edit, execution, approval, and data access.",
+        "Shared Trace Replay: teammates can replay each agent\u2019s inputs, outputs, tool calls, and handoffs step-by-step, annotate failures, and save corrected traces as regression tests.",
+        "Budget-Aware Shared Run Planner: estimates per-agent token cost, latency, and concurrency, then lets collaborators set shared limits and approve deployment changes before execution."
+      ]
+    },
+    {
+      "family_id": "collaboration_v1",
+      "block_index": 2,
+      "cell": "A",
+      "v_output": 0.4672331779659961,
+      "role_margin": 0.12583209012450713,
+      "anchor_alignment": 0.5460358756642384,
+      "echo_concentration": 0.44999999999999996,
+      "outputs": [
+        "Change Review Gates: require owner approval and automated regression checks before merging workflow branches, with one-click rollback to the last healthy version.",
+        "Handoff Queue: surface branch changes with linked scratchpad context, component owners, and required reviewer approval before merge.",
+        "Scoped Audit Trail: log every prompt, tool, ownership, and approval change by user and branch, with role-based visibility and immutable review history.",
+        "Review-Gated Branches: let owners develop workflow variants in isolation, attach shared notes and open questions, and merge only after a second person approves the prompt and tool changes.",
+        "Cost-Aware Change Review: show token, latency, and throughput deltas for each workflow branch and require approval when deployment budgets are exceeded."
+      ]
+    },
+    {
+      "family_id": "collaboration_v1",
+      "block_index": 2,
+      "cell": "B",
+      "v_output": 0.4041624732698045,
+      "role_margin": 0.12568875687272762,
+      "anchor_alignment": 0.6143730519244919,
+      "echo_concentration": 0.55,
+      "outputs": [
+        "Workflow Rollback: version every merged prompt, agent, and tool-wiring change so teams can instantly restore the last known-good workflow after failures.",
+        "Workflow Merge Review: compare branch changes to prompts, agents, and tool wiring side by side, then approve or resolve conflicts before merging.",
+        "Approval-Gated Workflow Branches: isolate each contributor\u2019s changes and require an authorized second reviewer before merging prompt, agent, or tool-access updates, with an immutable audit log.",
+        "Workflow Diff Review: show side-by-side changes to prompts, tools, and agent wiring, then require teammate approval before merging.",
+        "Cost-Aware Change Review: show reviewers projected token cost, latency, and throughput deltas for each prompt or workflow edit before approval."
+      ]
+    },
+    {
+      "family_id": "collaboration_v1",
+      "block_index": 2,
+      "cell": "C",
+      "v_output": 0.49454291534251393,
+      "role_margin": 0.17577097307295597,
+      "anchor_alignment": null,
+      "echo_concentration": null,
+      "outputs": [
+        "Shared Runbook Replay: capture each agent\u2019s prompts, tool calls, outputs, ownership, and checkpoints in a shared timeline, enabling deterministic replay, failure diagnosis, and one-click rollback to any checkpoint.",
+        "Live Workflow Branches: let collaborators fork, edit, test, diff, and merge agent-graph changes with presence indicators, change attribution, and approval gates.",
+        "Scoped Collaboration Audit Log: enforce role-based access to agents, prompts, tools, secrets, and runs while recording tamper-evident, actor-attributed changes and executions.",
+        "Shared Trace Replay: teammates can annotate, fork, and rerun any multi-agent execution from a selected step while preserving prompts, tool calls, outputs, and feedback.",
+        "Cost-Aware Run Ledger: shared per-agent tracking of token spend, latency, and throughput, with configurable budgets and automatic alerts or execution cutoffs."
+      ]
+    },
+    {
+      "family_id": "collaboration_v1",
+      "block_index": 3,
+      "cell": "A",
+      "v_output": 0.40357606265003526,
+      "role_margin": 0.1407729722002879,
+      "anchor_alignment": 0.5829866779311977,
+      "echo_concentration": 0.6500000000000001,
+      "outputs": [
+        "Deployment Guardrails: run merged workflow changes through automated failure-mode checks, canary releases, and one-click rollback with alerts routed via the ownership map.",
+        "Ownership-Aware Change Review: route workflow branch diffs to the owners of affected agents, prompts, and tools for approval, with shared notes preserved in context.",
+        "Scoped Change Review: enforce role-based approvals for prompt and tool changes, with ownership-aware reviewers and an immutable audit log.",
+        "Change Review: require a designated owner to approve prompt or tool-wiring changes, with side-by-side diffs and rationale.",
+        "Cost-Aware Change Review: show per-branch token, latency, and throughput deltas by owner, and block merges that exceed shared deployment budgets without approval."
+      ]
+    },
+    {
+      "family_id": "collaboration_v1",
+      "block_index": 3,
+      "cell": "B",
+      "v_output": 0.34219219211365487,
+      "role_margin": 0.13875222592657588,
+      "anchor_alignment": 0.6205401709002574,
+      "echo_concentration": 0.75,
+      "outputs": [
+        "Rollbackable Change Review: version every approved prompt and tool-wiring change, show diffs, and let operators instantly restore the last known-good workflow.",
+        "Workflow Diff Review: show side-by-side changes to prompts, agents, and tool wiring, with inline comments and required approvals before merging.",
+        "Access-Controlled Change Review: require authorized reviewers to approve prompt, tool, and permission changes, with immutable records of who changed and approved each revision.",
+        "Workflow Diff Review: show side-by-side changes to agent prompts, tools, and wiring, then require teammate approval before merging.",
+        "Cost-Aware Change Review: show token, latency, and throughput deltas for each workflow branch and require approval when deployment budgets are exceeded."
+      ]
+    },
+    {
+      "family_id": "collaboration_v1",
+      "block_index": 3,
+      "cell": "C",
+      "v_output": 0.518641059338756,
+      "role_margin": 0.17731446434449177,
+      "anchor_alignment": null,
+      "echo_concentration": null,
+      "outputs": [
+        "Run Replay & Rollback: capture versioned agent prompts, model settings, tool calls, outputs, and handoffs per run, enabling teammates to diff failures, reproduce them deterministically, and restore the last known-good workflow.",
+        "Live Workflow Presence: show collaborators\u2019 cursors, active agent/node, draft edits, and soft-lock warnings to prevent conflicting changes without blocking parallel work.",
+        "Scoped Collaboration Ledger: enforce role-based access to agents, prompts, secrets, and runs while recording immutable, searchable audit logs for every view, edit, execution, and export.",
+        "Shared Trace Annotations: let collaborators comment on, tag, and resolve issues directly on individual agent steps, prompts, and outputs within a versioned execution trace.",
+        "Budget-Aware Run Coordinator: allocates per-agent token, latency, and concurrency limits, then shares live usage and throttles or reroutes tasks before team-wide workflow budgets are exceeded."
+      ]
+    },
+    {
+      "family_id": "collaboration_v1",
+      "block_index": 4,
+      "cell": "A",
+      "v_output": 0.49503016186305393,
+      "role_margin": 0.15883519693241688,
+      "anchor_alignment": 0.5281968707604412,
+      "echo_concentration": 0.44999999999999996,
+      "outputs": [
+        "Safe Workflow Rollouts: deploy approved workflow branches as canaries with shared health metrics, automatic rollback triggers, and an auditable owner-linked change log.",
+        "Handoff Threads: attach owner-assigned notes, open questions, and decisions to each workflow component, persisting across branches and surfacing during merge reviews.",
+        "Scoped Audit Trail: log every scratchpad, branch, approval, and ownership change with actor, timestamp, diff, and access scope for review and rollback.",
+        "Decision Log: attach rationale, evidence, and unresolved questions to each workflow change so reviewers and future editors understand why it was made.",
+        "Cost-Aware Change Review: show token, latency, and throughput deltas for each workflow branch and require approval before merging changes that exceed deployment budgets."
+      ]
+    },
+    {
+      "family_id": "collaboration_v1",
+      "block_index": 4,
+      "cell": "B",
+      "v_output": 0.4240536662065272,
+      "role_margin": 0.15156381869454952,
+      "anchor_alignment": 0.608788493615425,
+      "echo_concentration": 0.75,
+      "outputs": [
+        "Rollbackable Change Review: require approval for prompt or tool-wiring edits, then deploy as a versioned release with one-click rollback to the last known-good workflow.",
+        "Workflow Diff: show side-by-side changes to agent prompts, tool wiring, and handoffs with author attribution before merge.",
+        "Access-Controlled Change Review: require an authorized second owner to approve prompt, tool, or permission changes, with an immutable audit log.",
+        "Prompt Diff Review: show side-by-side prompt and tool-wiring changes with inline comments and approval before merging.",
+        "Cost-Aware Change Review: show token, latency, and throughput deltas for each workflow edit and require approval when deployment budgets are exceeded."
+      ]
+    },
+    {
+      "family_id": "collaboration_v1",
+      "block_index": 4,
+      "cell": "C",
+      "v_output": 0.5059974735167359,
+      "role_margin": 0.13965289030530004,
+      "anchor_alignment": null,
+      "echo_concentration": null,
+      "outputs": [
+        "Run Checkpoints: persist versioned workflow state, agent traces, and inputs at each step so teams can reproduce failures, compare runs, and roll back to the last known-good checkpoint.",
+        "Shared Run Timeline: a live, branchable event log showing each agent action, prompt, output, tool call, and teammate edit, with comments, approvals, and one-click rollback at any step.",
+        "Scoped Collaboration Ledger: enforce role-based access to agents, prompts, tools, and secrets while recording tamper-evident audit logs for every edit, run, approval, and data access.",
+        "Causal Replay: teammates can rerun any workflow step with the original prompts, agent state, tool outputs, and annotations, then compare branch outcomes side by side.",
+        "Budget-Aware Shared Run Planner: simulates per-agent token cost, latency, throughput, and deployment limits before execution, then lets collaborators approve or adjust resource caps."
+      ]
+    },
+    {
+      "family_id": "collaboration_v1",
+      "block_index": 5,
+      "cell": "A",
+      "v_output": 0.4577423114699372,
+      "role_margin": 0.10632620447159999,
+      "anchor_alignment": 0.5481988040236937,
+      "echo_concentration": 0.44999999999999996,
+      "outputs": [
+        "Safe Merge Gates: run branch changes through automated workflow tests and require owner-approved review, with instant rollback to the last known-good version on failure.",
+        "Handoff Inbox: route branch changes, scratchpad questions, and review requests to each component\u2019s owner with clear accept, comment, or reassign actions.",
+        "Scoped Audit Trail: log every workflow change, approval, and tool access by user and branch, with role-based visibility and immutable history.",
+        "Collaborative Change Review: route proposed prompt and tool-wiring edits to component owners, with branch diffs, shared notes, and required approval before merging.",
+        "Cost-Aware Change Review: show token, latency, throughput, and deployment-impact diffs for each workflow branch, requiring approval before merging changes that exceed configured budgets."
+      ]
+    },
+    {
+      "family_id": "collaboration_v1",
+      "block_index": 5,
+      "cell": "B",
+      "v_output": 0.4875135578431026,
+      "role_margin": 0.14070569859085116,
+      "anchor_alignment": 0.6197341572518983,
+      "echo_concentration": 0.55,
+      "outputs": [
+        "Workflow Rollback: version every prompt and tool-wiring change so teams can instantly restore the last known-good workflow after a failed deployment.",
+        "Workflow Branching: let collaborators fork agents, prompts, or tool wiring into isolated variants, then compare and merge selected changes with conflict resolution.",
+        "Permissioned Change Review: require an authorized owner to approve prompt, tool, or data-access changes, with an immutable audit log of edits and approvals.",
+        "Workflow Diff Review: show side-by-side changes to agent prompts, tools, and connections, and require approval before merging.",
+        "Cost-Aware Change Review: show token, latency, and throughput deltas for each workflow branch and require approval when deployment budgets are exceeded."
+      ]
+    },
+    {
+      "family_id": "collaboration_v1",
+      "block_index": 5,
+      "cell": "C",
+      "v_output": 0.4702462613068773,
+      "role_margin": 0.12127097991592597,
+      "anchor_alignment": null,
+      "echo_concentration": null,
+      "outputs": [
+        "Agent Run Replay: record immutable prompts, tool calls, outputs, ownership, and checkpoints so collaborators can reproduce failures, compare runs, and roll back to any known-good state.",
+        "Shared Run Timeline: a live, branchable event log where collaborators inspect agent steps, annotate outputs, assign interventions, and replay from any checkpoint without overwriting the canonical workflow.",
+        "Scoped Collaboration Ledger: enforce role-based access to agents, prompts, tools, and secrets while recording tamper-evident audit logs for every human and agent action.",
+        "Causal Replay: teammates can replay any workflow run step-by-step, inspect each agent\u2019s inputs and outputs, annotate failures, and branch from a selected step to test fixes.",
+        "Budget-Aware Run Coordinator: Enforce shared token, latency, and concurrency limits across agents, with per-agent quotas and automatic model fallback when thresholds are reached."
+      ]
+    },
+    {
+      "family_id": "collaboration_v1",
+      "block_index": 6,
+      "cell": "A",
+      "v_output": 0.5491452483027162,
+      "role_margin": 0.1288385429811997,
+      "anchor_alignment": 0.4917619818587603,
+      "echo_concentration": 0.3500000000000001,
+      "outputs": [
+        "Rollbackable Releases: version every prompt, agent, and tool-wiring change so teams can compare revisions and instantly restore the last known-good workflow after a failed deployment.",
+        "Handoff Inbox: route unresolved scratchpad questions and pending branch reviews to the responsible agent or tool owner, with clear status and next action.",
+        "Audit Trail: log every prompt, tool, ownership, approval, and merge change with actor, timestamp, diff, and rollback link.",
+        "Decision Log: attach rationale, owner, reviewer feedback, and resolved questions to each approved prompt or tool change.",
+        "Cost-Aware Change Review: show token, latency, throughput, and deployment-cost deltas for each workflow branch and require approval before merging regressions."
+      ]
+    },
+    {
+      "family_id": "collaboration_v1",
+      "block_index": 6,
+      "cell": "B",
+      "v_output": 0.45684222689987697,
+      "role_margin": 0.1380323705184253,
+      "anchor_alignment": 0.6015376445651677,
+      "echo_concentration": 0.55,
+      "outputs": [
+        "Rollback Checkpoints: version every approved workflow change so teams can compare revisions and instantly restore the last known-good prompts and tool wiring.",
+        "Workflow Pull Requests: compare branched workflow changes to the shared version, show prompt and tool-wiring diffs, and require owner approval before merging.",
+        "Permission-Aware Change Review: require an authorized second owner to approve prompt, tool, or access-policy changes, with an immutable audit trail.",
+        "Workflow Diff Review: show side-by-side changes to agent prompts, tools, and routing, requiring a teammate\u2019s approval before merge.",
+        "Cost-Aware Change Review: require approval when workflow edits exceed preset token, latency, throughput, or deployment-budget thresholds."
+      ]
+    },
+    {
+      "family_id": "collaboration_v1",
+      "block_index": 6,
+      "cell": "C",
+      "v_output": 0.5079169834278776,
+      "role_margin": 0.15750907184515758,
+      "anchor_alignment": null,
+      "echo_concentration": null,
+      "outputs": [
+        "Checkpointed Team Runs: version every agent, prompt, dependency, and shared-state change per run, with unified traces, failure alerts, and one-click rollback to any known-good checkpoint.",
+        "Live Workflow Branches: let collaborators fork, edit, test, diff, and merge agent graphs with visible ownership, comments, and conflict resolution.",
+        "Scoped Collaboration Ledger: enforce role-based access to agents, prompts, secrets, and runs while recording immutable, actor-attributed audit logs for every view, edit, execution, and export.",
+        "Shared Trace Annotations: collaborators can comment on exact agent steps, attach revised prompts or expected outputs, and resolve threads after reruns verify the fix.",
+        "Budget-Aware Shared Run Planner: estimates per-agent token cost, latency, and concurrency before execution, then lets collaborators approve limits and automatically throttles or reroutes agents to meet them."
+      ]
+    },
+    {
+      "family_id": "collaboration_v1",
+      "block_index": 7,
+      "cell": "A",
+      "v_output": 0.44264194511615595,
+      "role_margin": 0.15262077048968448,
+      "anchor_alignment": 0.5691481790712565,
+      "echo_concentration": 0.6500000000000001,
+      "outputs": [
+        "Safe Rollout: canary merged workflow changes with per-agent health metrics, automatic rollback, and alerts routed via the ownership map.",
+        "Change Review: show prompt and tool-wiring diffs with owner routing, threaded comments, and required approval before merging a workflow branch.",
+        "Scoped Review Gates: enforce role-based edit permissions and require designated owners to approve branch merges affecting their agents, prompts, or tool access, with an immutable audit log.",
+        "Review-Aware Ownership: route each proposed prompt or tool change to the mapped owner for contextual notes and approval before merging.",
+        "Cost-Aware Change Review: show token, latency, and throughput deltas for each workflow branch and require owner approval when deployment budgets are exceeded."
+      ]
+    },
+    {
+      "family_id": "collaboration_v1",
+      "block_index": 7,
+      "cell": "B",
+      "v_output": 0.41543083317264734,
+      "role_margin": 0.1427114031221976,
+      "anchor_alignment": 0.5885965304091629,
+      "echo_concentration": 0.6500000000000001,
+      "outputs": [
+        "Workflow Rollback: version every approved prompt and tool-wiring change, with one-click restoration to the last known-good workflow.",
+        "Workflow Diff Review: show side-by-side changes to agent prompts, tools, and connections, with inline comments and approval before merge.",
+        "Access-Controlled Change Review: require authorized owners to approve prompt, tool, and permission changes, with immutable audit logs of every edit and approval.",
+        "Workflow Diff Review: show side-by-side changes to prompts, agent roles, and tool wiring so teammates can comment and approve before merging.",
+        "Cost-Aware Change Review: show token, latency, and throughput deltas for each workflow branch and require approval when deployment budgets are exceeded."
+      ]
+    },
+    {
+      "family_id": "collaboration_v1",
+      "block_index": 7,
+      "cell": "C",
+      "v_output": 0.41733339543641906,
+      "role_margin": 0.13630462089375311,
+      "anchor_alignment": null,
+      "echo_concentration": null,
+      "outputs": [
+        "Agent Run Ledger: append-only shared timeline of agent actions, tool calls, state changes, failures, and human edits, with checkpoint-based replay and one-click rollback.",
+        "Collaborative Run Timeline: a shared, replayable trace that shows each agent\u2019s inputs, outputs, tool calls, and edits, with threaded comments and one-click rollback to any checkpoint.",
+        "Scoped Agent Permissions: enforce per-user and per-agent access controls for tools, data, and actions, with approval gates and immutable audit logs.",
+        "Shared Execution Replay: capture each agent\u2019s inputs, outputs, tool calls, and state changes in a synchronized timeline where collaborators can annotate, branch, and rerun any step.",
+        "Cost-Aware Run Ledger: shared per-agent tracking of token usage, latency, throughput, and deployment limits, with budget alerts and bottleneck attribution for every workflow revision."
+      ]
+    },
+    {
+      "family_id": "collaboration_v1",
+      "block_index": 8,
+      "cell": "A",
+      "v_output": 0.4860196303693661,
+      "role_margin": 0.14922871940518517,
+      "anchor_alignment": 0.5744265622023272,
+      "echo_concentration": 0.44999999999999996,
+      "outputs": [
+        "Safe Workflow Releases: version every approved workflow change, run automated smoke tests and canary executions, surface per-agent regressions, and provide one-click rollback to the last healthy version.",
+        "Change Handoffs: bundle a workflow branch\u2019s edits, owner notes, scratchpad context, and unresolved questions into one review-ready package for the next collaborator.",
+        "Scoped Change Review: enforce role-based edit permissions and require an owner\u2019s approval, with an immutable audit log, before changes to prompts, agents, or tool access are merged.",
+        "Workflow Change Replay: show before-and-after agent traces for each branch, prompting owners and reviewers to explain behavioral differences before merging.",
+        "Cost-Aware Change Review: compare branch edits with estimated token spend, latency, and throughput impact, then require owner approval before merging budget-regressing changes."
+      ]
+    },
+    {
+      "family_id": "collaboration_v1",
+      "block_index": 8,
+      "cell": "B",
+      "v_output": 0.5129945575292746,
+      "role_margin": 0.1724761145886189,
+      "anchor_alignment": 0.6163536102400455,
+      "echo_concentration": 0.55,
+      "outputs": [
+        "Workflow Rollback: version every prompt, agent, and tool-wiring change so teams can instantly restore the last known-good workflow after a failed deployment.",
+        "Workflow Merge Review: compare branch changes to prompts, agents, and tool wiring side by side, then require approval before merging.",
+        "Access-Controlled Change Review: require an authorized owner to approve prompt, agent, and tool-permission changes, with an immutable audit log of edits and approvals.",
+        "Workflow Pull Requests: let collaborators submit workflow variants with agent-level diffs, comments, test results, and required approval before merging.",
+        "Cost-Aware Workflow Branching: compare token cost, latency, and throughput of each workflow branch before merging, with configurable deployment-budget gates."
+      ]
+    },
+    {
+      "family_id": "collaboration_v1",
+      "block_index": 8,
+      "cell": "C",
+      "v_output": 0.4876994457182701,
+      "role_margin": 0.12938189962795082,
+      "anchor_alignment": null,
+      "echo_concentration": null,
+      "outputs": [
+        "Replayable Run Ledger: Record every agent action, prompt, tool call, output, and state transition in a shared timeline with diffs, failure markers, and one-click rollback or replay from any checkpoint.",
+        "Live Workflow Branches: let collaborators fork, annotate, test, and merge agent-graph changes with visual diffs, conflict warnings, and approval gates.",
+        "Scoped Collaboration Ledger: enforce role-based access to agents, prompts, tools, and data while recording tamper-evident, per-user audit logs for every workflow change and execution.",
+        "Shared Trace Replay: synchronize agent runs, prompts, outputs, and human edits on a common timeline so collaborators can annotate failures, compare revisions, and rerun from any checkpoint.",
+        "Cost Guardrails: set shared per-agent token, latency, and spend budgets with real-time alerts and automatic fallback to cheaper models when limits are reached."
+      ]
+    },
+    {
+      "family_id": "collaboration_v1",
+      "block_index": 9,
+      "cell": "A",
+      "v_output": 0.4166907464245876,
+      "role_margin": 0.09072773715688545,
+      "anchor_alignment": 0.605099106156501,
+      "echo_concentration": 0.75,
+      "outputs": [
+        "Safe Change Gates: require peer approval for versioned prompt/tool edits, run pre-merge workflow checks, and support one-click rollback to the last healthy version.",
+        "Change Review: Require a designated teammate to approve prompt, agent, or tool-wiring diffs before merging them into the shared workflow.",
+        "Scoped Audit Trail: log every prompt, tool, ownership, branch, and approval change with actor, timestamp, diff, and access-controlled visibility.",
+        "Change Review: require a designated teammate to approve prompt, agent, and tool-wiring changes before merging.",
+        "Cost-Aware Change Review: show token, latency, and throughput deltas for each workflow branch and require approval before merging changes that exceed deployment budgets."
+      ]
+    },
+    {
+      "family_id": "collaboration_v1",
+      "block_index": 9,
+      "cell": "B",
+      "v_output": 0.4384506861885523,
+      "role_margin": 0.103263244055356,
+      "anchor_alignment": 0.67629332824839,
+      "echo_concentration": 0.55,
+      "outputs": [
+        "Workflow Branching: create isolated workflow versions with diff previews, test runs, and one-click rollback before merging into the shared workflow.",
+        "Branch Merge Review: show prompt, tool-wiring, and ownership diffs between workflow branches and require an assigned reviewer\u2019s approval before merging.",
+        "Access-Controlled Change Review: require an authorized second owner to approve prompt, tool-wiring, and permission changes, with an immutable audit trail.",
+        "Workflow Diff Review: show prompt, agent, and tool-wiring changes side by side and require a teammate\u2019s approval before merging.",
+        "Cost-Aware Change Review: require approval when workflow edits exceed preset token, latency, throughput, or deployment-budget thresholds."
+      ]
+    },
+    {
+      "family_id": "collaboration_v1",
+      "block_index": 9,
+      "cell": "C",
+      "v_output": 0.5193546069439245,
+      "role_margin": 0.16106199153230355,
+      "anchor_alignment": null,
+      "echo_concentration": null,
+      "outputs": [
+        "Agent Runbook Replay: capture versioned prompts, model settings, tool calls, outputs, and checkpoints so teammates can deterministically reproduce failures and roll back to the last known-good workflow state.",
+        "Live Workflow Presence: show collaborators\u2019 cursors, selected agents, active edits, and soft-lock indicators on shared workflow nodes to prevent conflicting changes.",
+        "Scoped Collaboration Ledger: enforce role-based access to agents, prompts, tools, and secrets while recording tamper-evident, actor-attributed audit logs for every workflow change and execution.",
+        "Shared Trace Replay: teammates annotate and replay a synchronized timeline of agent prompts, outputs, tool calls, and state changes to diagnose failures and test fixes collaboratively.",
+        "Budget-Aware Run Coordinator: enforces shared token, latency, and concurrency quotas across agents, showing per-agent costs and automatically throttling or rerouting tasks when limits are reached."
+      ]
+    },
+    {
+      "family_id": "access_v1",
+      "block_index": 0,
+      "cell": "A",
+      "v_output": 0.4100881919161742,
+      "role_margin": 0.07934669543114689,
+      "anchor_alignment": 0.61650116702238,
+      "echo_concentration": 0.75,
+      "outputs": [
+        "Fail-Closed Capability Gate: validate each tool call against the agent\u2019s scoped token and current revocation state, block unauthorized actions, and emit an auditable denial event.",
+        "Preflight Capability Review: visualize each agent\u2019s requested tools, datasets, and grant duration before execution, requiring explicit approval and issuing a scoped, revocable token with an auditable justification.",
+        "Policy-Gated Capability Broker: issue short-lived, least-privilege tool and dataset grants per agent step, enforce live revocation, and log approvals, justifications, use, and denials in an immutable audit trail.",
+        "Capability Sandbox Preview: simulate each agent step against proposed scoped grants, flag unauthorized tool or data access, and require approval before execution.",
+        "Grant Budget Guard: enforce per-agent, time-bounded capability tokens with hard limits on token spend, latency, tool calls, and concurrency, revocable mid-run and fully audit-logged."
+      ]
+    },
+    {
+      "family_id": "access_v1",
+      "block_index": 0,
+      "cell": "B",
+      "v_output": 0.35707388247431815,
+      "role_margin": 0.03961373652862873,
+      "anchor_alignment": 0.749446478046268,
+      "echo_concentration": 0.6500000000000001,
+      "outputs": [
+        "Grant Preflight Gate: validate every agent step\u2019s requested tools and datasets against its current scoped capability token, blocking execution and logging the denial when unauthorized.",
+        "Grant Approval Gate: require an authorized reviewer to approve each scoped capability token before a run starts, showing requested tools, datasets, duration, and justification.",
+        "Scoped Capability Token: issue each agent a short-lived, run-bound token that allowlists specific tools, datasets, and actions, enforced at every tool invocation.",
+        "Step-Scoped Capability Token: issue each workflow step a short-lived token limited to the exact tools, datasets, and actions approved for that step.",
+        "Budget-Scoped Capability Token: issue each agent a time-bounded grant that restricts permitted tools and datasets while enforcing per-run token, latency, and cost ceilings."
+      ]
+    },
+    {
+      "family_id": "access_v1",
+      "block_index": 0,
+      "cell": "C",
+      "v_output": 0.34612310292217463,
+      "role_margin": 0.082594857961509,
+      "anchor_alignment": null,
+      "echo_concentration": null,
+      "outputs": [
+        "Capability Guardrails: declare per-agent permissions, budgets, and side-effect limits as policy-as-code, enforced at runtime with audit logs, kill switches, and one-click rollback of reversible actions.",
+        "Capability Contract Builder: Teams define per-agent permissions in a visual workflow, preview blocked actions, and enforce approved tool, data, budget, and escalation limits at runtime with auditable logs.",
+        "Capability Policy Gateway: define per-agent, least-privilege permissions for tools, data, actions, and delegation; enforce them at runtime with approval gates and immutable audit logs.",
+        "Capability Contract Tests: teams declare per-agent permissions and forbidden actions as executable policies, then simulate workflows in CI to block deployments that violate them.",
+        "Execution Budget Guardrails: define and enforce per-workflow limits on tokens, latency, agent calls, concurrency, cost, and deployment region, with preflight estimates and automatic blocking or fallback when thresholds are reached."
+      ]
+    },
+    {
+      "family_id": "access_v1",
+      "block_index": 1,
+      "cell": "A",
+      "v_output": 0.39668781531688174,
+      "role_margin": 0.09441289465727895,
+      "anchor_alignment": 0.5988623722902087,
+      "echo_concentration": 0.44999999999999996,
+      "outputs": [
+        "Fail-Closed Grant Gate: validate each agent action against its scoped token and current revocation state, block unauthorized calls, and log the denial with a safe retry or rollback path.",
+        "Policy Gate: preview each agent\u2019s scoped, time-bounded capabilities for approval, then enforce them at runtime with live revocation and a queryable audit trail.",
+        "Policy Gate: validate every agent tool call against its scoped, time-bounded grant, block revoked or out-of-scope actions, and log the decision with approver and justification.",
+        "Policy Dry Run: simulate a workflow before execution, flag denied or excess capabilities, and require approval of a least-privilege scoped grant with an auditable justification.",
+        "Budget-Bound Capability Token: issue each agent a scoped grant with hard limits on tokens, latency, tool calls, and spend, automatically blocking or revoking actions when any limit is reached."
+      ]
+    },
+    {
+      "family_id": "access_v1",
+      "block_index": 1,
+      "cell": "B",
+      "v_output": 0.3776651067159165,
+      "role_margin": 0.07458361622081451,
+      "anchor_alignment": 0.69238987851388,
+      "echo_concentration": 0.6500000000000001,
+      "outputs": [
+        "Grant Expiry Fail-Safe: automatically revoke scoped capability tokens at expiry, halt affected in-flight steps, and emit an audit event with the rollback outcome.",
+        "Policy Gate: require each agent step to present a scoped capability token, blocking ungranted tool or dataset access and logging the decision.",
+        "Approval-Gated Capability Token: require an authorized approver to issue a time-bounded, step-scoped token naming the exact tools and datasets allowed, with the approval and justification recorded in an audit log.",
+        "Preflight Capability Check: validate every planned tool and dataset access against the agent\u2019s scoped token before execution, blocking ungranted steps with an auditable denial.",
+        "Budget-Scoped Capability Token: issue each agent a time-bounded grant with hard limits on tools, datasets, token spend, latency, and concurrent calls, rejecting actions that exceed them."
+      ]
+    },
+    {
+      "family_id": "access_v1",
+      "block_index": 1,
+      "cell": "C",
+      "v_output": 0.35121200792053964,
+      "role_margin": 0.07251242106207788,
+      "anchor_alignment": null,
+      "echo_concentration": null,
+      "outputs": [
+        "Capability Circuit Breakers: declare per-agent tool, data, spend, and side-effect limits, enforce them at runtime, and automatically halt or roll back the workflow with an audit trail when limits are breached.",
+        "Capability Contract Builder: define per-agent tool, data, spend, and escalation permissions in a visual workflow, then enforce them at runtime with preflight checks and auditable deny/approve events.",
+        "Capability Policy Gateway: define per-agent, per-tool permissions with scoped credentials, data-boundary rules, human approval gates, and tamper-evident audit logs enforced at every action.",
+        "Capability Contract Gate: teams define per-agent permissions and forbidden actions in a versioned policy, then preflight simulations and runtime checks block violations with actionable feedback.",
+        "Budget Guardrails: Set and enforce per-agent and workflow-wide limits on tokens, latency, concurrency, model tier, and spend, with automatic downgrade, queueing, or termination when thresholds are reached."
+      ]
+    },
+    {
+      "family_id": "access_v1",
+      "block_index": 2,
+      "cell": "A",
+      "v_output": 0.4539233246990692,
+      "role_margin": 0.10254780046768548,
+      "anchor_alignment": 0.6334318775370794,
+      "echo_concentration": 0.3500000000000001,
+      "outputs": [
+        "Revocation Impact Simulator: dry-run policy changes against active and historical workflows to identify affected steps, required rollback actions, and observability gaps before enforcement.",
+        "Preflight Grant Simulator: preview each agent\u2019s requested capabilities against least-privilege policy, flag excess access, and require scoped approval before issuing revocable, time-bounded tokens with an audit record.",
+        "Policy-Enforced Capability Broker: issue per-agent, time-bounded scoped tokens, validate every tool or dataset access, support live revocation, and log approvals, denials, and usage for least-privilege review.",
+        "Policy Simulation: replay representative workflows against proposed scoped grants to reveal blocked steps, excess permissions, and revocation effects before enforcement.",
+        "Capability Budget Guard: enforce per-agent token, latency, and tool-call limits within scoped grants, halting in-flight steps when approved budgets or capabilities are exceeded."
+      ]
+    },
+    {
+      "family_id": "access_v1",
+      "block_index": 2,
+      "cell": "B",
+      "v_output": 0.3374532185066747,
+      "role_margin": 0.07875663427960554,
+      "anchor_alignment": 0.645152553735031,
+      "echo_concentration": 0.75,
+      "outputs": [
+        "Capability Preflight: validate every planned tool and dataset access against the agent\u2019s scoped token before execution, blocking and logging unauthorized steps.",
+        "Approval-Gated Capability Grant: pause a workflow before first use of a restricted tool or dataset, show the requested scope and justification, and issue a time-bounded token only after an authorized reviewer approves.",
+        "Preflight Grant Checker: block each agent step unless its requested tool and dataset access are covered by a valid, unexpired scoped capability token, and log the decision.",
+        "Capability Preflight: simulate each workflow step against scoped grants before execution, blocking unauthorized tool or dataset access and naming the missing capability.",
+        "Capability Budget Token: issue each agent a scoped grant that caps tool calls, tokens, latency, and spend, automatically halting or escalating when any limit is reached."
+      ]
+    },
+    {
+      "family_id": "access_v1",
+      "block_index": 2,
+      "cell": "C",
+      "v_output": 0.37458527505223527,
+      "role_margin": 0.0863548940178189,
+      "anchor_alignment": null,
+      "echo_concentration": null,
+      "outputs": [
+        "Capability Gatekeeper: declare per-agent tool/data permissions, budgets, and approval thresholds in versioned policy-as-code, with runtime enforcement, immutable audit logs, kill switches, and one-click rollback.",
+        "Capability Contracts: define per-agent permissions, budgets, and approval gates in a visual workflow, then enforce them at runtime with preflight warnings and an auditable decision log.",
+        "Policy-Gated Capability Manifests: declare per-agent data scopes, tool permissions, and approval thresholds in version-controlled manifests, enforced at runtime with tamper-evident audit logs.",
+        "Capability Contract Simulator: teams define per-agent allowed tools, data, and actions, then run scenario-based tests that block violations and explain which rule triggered.",
+        "Cost Guardrails: Set per-agent and workflow-wide token, latency, concurrency, and spend limits, with preflight estimates and automatic throttling, fallback-model routing, or termination when thresholds are reached."
+      ]
+    },
+    {
+      "family_id": "access_v1",
+      "block_index": 3,
+      "cell": "A",
+      "v_output": 0.3643103235007503,
+      "role_margin": 0.08697927997333049,
+      "anchor_alignment": 0.6313208187279743,
+      "echo_concentration": 0.44999999999999996,
+      "outputs": [
+        "Revocation-Aware Capability Gate: validate each scoped token before every tool call, reject revoked or expired grants, halt the affected workflow branch, and log the decision for audit and rollback.",
+        "Policy Gate: define per-agent, time-bounded tool and dataset grants, require approval with justification, and immediately halt in-flight steps when a grant is revoked.",
+        "Policy Gate: evaluate each agent action against scoped, revocable capability tokens before execution, deny out-of-scope requests, and log the decision with approver, justification, and timestamp.",
+        "Policy Simulation Gate: replay representative workflows against proposed scoped grants, explain blocked or unused capabilities, and require approval before enforcement.",
+        "Budget-Bound Capability Token: issue each agent a scoped, time-limited grant with hard per-tool limits on tokens, spend, calls, and runtime, automatically halting execution when any limit is reached."
+      ]
+    },
+    {
+      "family_id": "access_v1",
+      "block_index": 3,
+      "cell": "B",
+      "v_output": 0.4003363090586907,
+      "role_margin": 0.04800227360806104,
+      "anchor_alignment": 0.6249467431226055,
+      "echo_concentration": 0.6500000000000001,
+      "outputs": [
+        "Capability Circuit Breaker: automatically revoke scoped tokens and halt in-flight steps when tool errors, access anomalies, or policy violations cross configured thresholds, with an audited manual reset.",
+        "Run-Scoped Capability Token: preview and approve a time-bounded token listing each agent\u2019s permitted tools, datasets, and actions before execution.",
+        "Preflight Capability Check: validate each planned agent step against its scoped capability token before execution, blocking unauthorized tools or datasets and logging the denial.",
+        "Preflight Capability Review: simulate each workflow step against scoped grants, flag unauthorized tool or dataset access, and require approval before execution.",
+        "Capability Budget Enforcer: extend scoped capability tokens with per-tool call, token, and spend limits that are checked before each agent action and halt runs when exhausted."
+      ]
+    },
+    {
+      "family_id": "access_v1",
+      "block_index": 3,
+      "cell": "C",
+      "v_output": 0.38776817190640356,
+      "role_margin": 0.07644799709510905,
+      "anchor_alignment": null,
+      "echo_concentration": null,
+      "outputs": [
+        "Capability Contract Gate: declare per-agent tool, data, network, and spend permissions; enforce them at runtime with deny-by-default checks, immutable audit logs, kill switches, and versioned rollback.",
+        "Capability Gatekeeper: define per-agent permissions for tools, data, budgets, and handoffs in a visual policy map, then block or require approval for any out-of-policy action at runtime.",
+        "Capability Policy Gateway: define per-agent, least-privilege permissions for tools, data scopes, and action limits; enforce them at runtime with approval gates for sensitive operations and immutable audit logs.",
+        "Capability Contract Simulator: teams declare per-agent permissions and constraints, then run scenario-based simulations that explain, log, and block any attempted action outside the contract.",
+        "Execution Budget Guardrails: define and enforce per-workflow limits on tokens, latency, concurrency, model cost, tool calls, and deployment targets, with preflight estimates and automatic runtime cutoff or fallback."
+      ]
+    },
+    {
+      "family_id": "access_v1",
+      "block_index": 4,
+      "cell": "A",
+      "v_output": 0.36824197790814084,
+      "role_margin": 0.05584958092135297,
+      "anchor_alignment": 0.6180665596939623,
+      "echo_concentration": 0.55,
+      "outputs": [
+        "Grant Preflight & Kill Switch: validate each scoped capability token immediately before tool execution against current approvals and revocations, deny on stale or unavailable policy state, log the decision, and support deterministic rollback of reversible actions.",
+        "Capability Gate: require an explicit, auditable approval before issuing each scoped, time-bounded token, with one-click live revocation across in-flight runs.",
+        "Policy-Enforced Capability Gate: validate every agent tool or dataset request against its scoped, revocable grant and append the allow/deny decision with approver, justification, and timestamp to an immutable audit log.",
+        "Policy Dry-Run Simulator: replay representative workflows against proposed scoped grants, highlighting blocked steps and excess permissions before approval or deployment.",
+        "Capability Budget Gate: enforce scoped, time-bounded tool and dataset grants with per-agent token, latency, and spend ceilings, blocking or revoking steps that exceed them while logging the approval and violation."
+      ]
+    },
+    {
+      "family_id": "access_v1",
+      "block_index": 4,
+      "cell": "B",
+      "v_output": 0.43643289156504067,
+      "role_margin": 0.10616284394741107,
+      "anchor_alignment": 0.6523444183875593,
+      "echo_concentration": 0.44999999999999996,
+      "outputs": [
+        "Grant Rollback: version capability policies and atomically restore the last known-good grants across all agents, terminating in-flight actions that exceed the restored policy.",
+        "Approval-Gated Capability Token: pause a run when an agent requests an ungranted tool or dataset, show its justification and scope, then issue a time-bounded token only after authorized approval.",
+        "Approval-Gated Capability Escalation: pause any step requesting tools or datasets outside its scoped token until an authorized reviewer approves a time-bounded grant recorded in the audit trail.",
+        "Grant Replay Simulator: replay recorded agent runs against proposed capability changes to show which steps would be allowed, blocked, or require renewed approval before enforcement.",
+        "Budget-Scoped Capability Token: issue each agent a time-bounded grant that caps model tokens, tool-call count, latency, and spend, halting execution when any limit is reached."
+      ]
+    },
+    {
+      "family_id": "access_v1",
+      "block_index": 4,
+      "cell": "C",
+      "v_output": 0.39695917404744707,
+      "role_margin": 0.09446458363600117,
+      "anchor_alignment": null,
+      "echo_concentration": null,
+      "outputs": [
+        "Capability Guardrails: declare per-agent permissions, budgets, and approval gates in policy-as-code, with preflight validation, runtime enforcement, audit logs, kill switches, and one-click rollback.",
+        "Permission Boundary Map: a visual workflow canvas where teams assign per-agent tool, data, spend, and action limits, preview blocked paths, and require approval for high-risk transitions at runtime.",
+        "Capability Policy Gateway: define per-agent, least-privilege permissions for tools, data scopes, and actions; enforce them at runtime with approval gates for sensitive operations and immutable audit logs of every access and decision.",
+        "Capability Contract Simulator: teams define per-agent permissions and test them against simulated workflows, with execution blocked whenever an agent attempts an undeclared action.",
+        "Execution Budget Guardrails: Set and enforce per-agent and per-workflow limits on tokens, latency, concurrency, model tier, and spend, with preflight cost estimates and automatic fallback or termination when thresholds are reached."
+      ]
+    },
+    {
+      "family_id": "access_v1",
+      "block_index": 5,
+      "cell": "A",
+      "v_output": 0.4359098225487267,
+      "role_margin": 0.09788228088463982,
+      "anchor_alignment": 0.5956249417402836,
+      "echo_concentration": 0.75,
+      "outputs": [
+        "Capability Circuit Breaker: monitor agent actions against scoped tokens, halt and revoke on policy violations, emit a grant audit event, and provide an idempotent rollback or operator-approved resume path.",
+        "Permission Preview & Approval: simulate each agent\u2019s planned tool and data access, then require reviewers to approve a time-bounded, least-privilege capability token with a recorded justification before execution.",
+        "Policy-as-Code Capability Gate: validate each agent\u2019s scoped token against versioned least-privilege rules before every tool or data access, logging the decision and supporting immediate revocation.",
+        "Permission Dry-Run: simulate a workflow before deployment, flag each attempted capability outside its scoped token, and require an auditable approval or workflow revision before execution.",
+        "Cost-Aware Capability Budget: attach token, latency, and spend ceilings to each scoped capability grant, with automatic throttling or revocation when limits are reached."
+      ]
+    },
+    {
+      "family_id": "access_v1",
+      "block_index": 5,
+      "cell": "B",
+      "v_output": 0.3588170631160904,
+      "role_margin": 0.07283239014828202,
+      "anchor_alignment": 0.6525454712147016,
+      "echo_concentration": 0.6500000000000001,
+      "outputs": [
+        "Revocation Drill: continuously test that scoped capability tokens can be revoked mid-run, verifying affected steps halt and emitting alerts when enforcement fails.",
+        "Preflight Grant Review: preview every agent\u2019s requested tools, datasets, and duration before a run, then approve, narrow, or deny each capability and issue scoped tokens accordingly.",
+        "Preflight Capability Check: validate each planned agent step against its scoped capability token before execution and block any unapproved tool or dataset access.",
+        "Preflight Capability Review: simulate each workflow step against scoped grants and block deployment when an agent requests unapproved tools or datasets.",
+        "Budget-Scoped Capability Token: issue each agent a time-bounded grant that caps tool calls, model tokens, latency, and spend, automatically halting steps that exceed limits."
+      ]
+    },
+    {
+      "family_id": "access_v1",
+      "block_index": 5,
+      "cell": "C",
+      "v_output": 0.3763042291237034,
+      "role_margin": 0.06264701603916875,
+      "anchor_alignment": null,
+      "echo_concentration": null,
+      "outputs": [
+        "Policy-Gated Action Contracts: define per-agent allowed tools, data scopes, budgets, and approval thresholds in versioned policy-as-code, enforced at runtime with audit logs, kill switches, and one-click rollback.",
+        "Policy Gate: a visual per-agent permission matrix for tools, data, spending, and delegation, enforced at runtime with approval prompts for exceptions and an auditable decision log.",
+        "Capability Gate: declare per-agent permissions for data access, external actions, and delegation; enforce them at runtime with deny-by-default checks and immutable audit logs.",
+        "Capability Contract Simulator: teams define per-agent permissions and test workflows against realistic scenarios, with blocked actions explained and policy-compliant alternatives suggested before deployment.",
+        "Cost Guardrails: set per-agent and workflow-wide limits for tokens, latency, concurrency, and spend, with preflight estimation and automatic block, throttle, or fallback enforcement."
+      ]
+    },
+    {
+      "family_id": "access_v1",
+      "block_index": 6,
+      "cell": "A",
+      "v_output": 0.39191487384015583,
+      "role_margin": 0.06525548384339852,
+      "anchor_alignment": 0.5862654013794366,
+      "echo_concentration": 0.6500000000000001,
+      "outputs": [
+        "Fail-Closed Capability Gate: validate each tool call against the agent\u2019s scoped token and latest revocation state, block unauthorized actions, log the denial, and halt or roll back the step.",
+        "Approval Gate: require reviewers to approve least-privilege, time-bounded capability tokens before each run, with one-click scope narrowing, live revocation, and a recorded justification.",
+        "Preflight Capability Gate: simulate each agent step against its scoped, time-bounded grants and block execution if any required tool or dataset access is unapproved, revoked, or expired.",
+        "Policy Dry-Run Simulator: replay representative workflows against scoped capability tokens to reveal blocked actions, overbroad grants, and live-revocation effects before deployment.",
+        "Capability Budget Gate: enforce per-agent, time-bounded limits on tokens, tool calls, latency, and spend within scoped grants, halting in-flight steps when a budget or grant is revoked or exceeded."
+      ]
+    },
+    {
+      "family_id": "access_v1",
+      "block_index": 6,
+      "cell": "B",
+      "v_output": 0.3880926518097293,
+      "role_margin": 0.08170783925918576,
+      "anchor_alignment": 0.686299590432172,
+      "echo_concentration": 0.6500000000000001,
+      "outputs": [
+        "Capability Kill Switch: centrally revoke a scoped grant, immediately halt affected in-flight steps, and log the revocation and rollback outcome.",
+        "Preflight Capability Review: preview each agent\u2019s requested tools, datasets, scope, and expiry before a run, then require explicit approval for any grant exceeding the saved policy.",
+        "Policy-Gated Capability Grant: require explicit approval for each agent\u2019s scoped tools and datasets, issue a time-bounded token, and log approver, justification, use, and revocation.",
+        "Capability Policy Gate: validate each agent\u2019s scoped token before every tool call and block actions outside approved tools, datasets, or time bounds.",
+        "Budget-Bounded Capability Token: issue each agent a scoped grant with hard limits on token spend, latency, tool calls, and concurrency, automatically halting steps that exceed them."
+      ]
+    },
+    {
+      "family_id": "access_v1",
+      "block_index": 6,
+      "cell": "C",
+      "v_output": 0.3698384799175005,
+      "role_margin": 0.08807624600316352,
+      "anchor_alignment": null,
+      "echo_concentration": null,
+      "outputs": [
+        "Capability Gatekeeper: define per-agent, per-tool allowlists with risk limits, require approval for high-impact actions, log every decision, and provide a one-click workflow kill switch and rollback.",
+        "Capability Contracts: define per-agent permissions, budgets, and approval gates in a visual workflow, then enforce them at runtime with preflight warnings and immutable audit logs.",
+        "Capability Policy Gate: Define per-agent, task-scoped permissions for tools, data, and external actions; enforce them at runtime with approval thresholds, least-privilege tokens, and immutable audit logs.",
+        "Capability Policy Simulator: teams define per-agent tool, data, and action permissions, then run trace-based simulations that explain and block policy violations before deployment.",
+        "Execution Budget Gate: statically estimate and runtime-enforce per-workflow limits on tokens, latency, concurrency, model cost, and tool calls, blocking or degrading agents when thresholds are exceeded."
+      ]
+    },
+    {
+      "family_id": "access_v1",
+      "block_index": 7,
+      "cell": "A",
+      "v_output": 0.3703642212108056,
+      "role_margin": 0.07808099089743965,
+      "anchor_alignment": 0.6377619226166459,
+      "echo_concentration": 0.6500000000000001,
+      "outputs": [
+        "Revocation-Aware Capability Gate: validate each agent\u2019s scoped token against the latest grant state before every tool call, fail closed on stale or revoked grants, and emit an auditable halt event.",
+        "Preflight Capability Review: simulate each agent\u2019s planned tool and data access, then require an approver to issue a scoped, time-bounded, revocable grant before execution.",
+        "Policy-Gated Capability Grants: require approval of a scoped, time-bounded tool and dataset allowlist for each agent, log the approver and justification, and support immediate revocation during active runs.",
+        "Policy Simulation: dry-run each workflow against proposed scoped grants, showing denied steps and required capabilities before approval and token issuance.",
+        "Capability Budget Gate: enforce per-agent scoped tokens with hard limits on tool calls, tokens, latency, and spend; log approvals, revoke in flight, and recommend tighter limits from observed usage."
+      ]
+    },
+    {
+      "family_id": "access_v1",
+      "block_index": 7,
+      "cell": "B",
+      "v_output": 0.42475887375442556,
+      "role_margin": 0.07302803017623641,
+      "anchor_alignment": 0.6358040395603929,
+      "echo_concentration": 0.6500000000000001,
+      "outputs": [
+        "Fail-Closed Capability Gate: validate each agent action against its scoped, time-bounded grant at execution time, block unauthorized calls, and emit an auditable denial event.",
+        "Capability Approval Gate: require an authorized reviewer to approve a proposed scoped capability token\u2014tools, datasets, duration, and justification\u2014before the multi-agent run can start.",
+        "Policy-Bound Capability Token: issue each agent a time-limited, workflow-scoped token listing permitted tools, datasets, actions, and approver, and reject every unauthorized call at execution time.",
+        "Preflight Capability Check: simulate each workflow step against scoped grants before execution, blocking undeclared tool or dataset access and identifying the exact approval needed.",
+        "Capability Budget Token: extend scoped, time-bounded grants with hard per-agent limits on tokens, tool calls, latency, and spend, halting execution when any limit is reached."
+      ]
+    },
+    {
+      "family_id": "access_v1",
+      "block_index": 7,
+      "cell": "C",
+      "v_output": 0.38318375115551495,
+      "role_margin": 0.07330758925519162,
+      "anchor_alignment": null,
+      "echo_concentration": null,
+      "outputs": [
+        "Capability Gatekeeper: enforce per-agent, per-tool allowlists with risk budgets, dry-run previews, immutable audit logs, and automatic rollback or kill-switch activation on policy violations.",
+        "Capability Contract Builder: visually define per-agent permissions, approval gates, budgets, and data/tool access, then enforce the versioned contract at runtime with clear denial reasons and audit logs.",
+        "Capability Policy Gateway: define per-agent, per-tool permissions, data-access scopes, approval thresholds, and rate limits; enforce them at runtime with tamper-evident audit logs and default-deny behavior.",
+        "Capability Contract Simulator: teams define per-agent tool, data, and action permissions, then run sandboxed scenarios that explain and block any workflow step violating those contracts.",
+        "Execution Budget Guardrails: Set per-workflow limits for tokens, latency, cost, concurrency, and tool calls, then block, downgrade, or require approval when predicted or actual usage exceeds them."
+      ]
+    },
+    {
+      "family_id": "access_v1",
+      "block_index": 8,
+      "cell": "A",
+      "v_output": 0.42073375897861737,
+      "role_margin": 0.10185804544700061,
+      "anchor_alignment": 0.5770155790662109,
+      "echo_concentration": 0.3500000000000001,
+      "outputs": [
+        "Fail-Closed Capability Gate: validate each agent action against its scoped token and current revocation state, block unauthorized steps, emit an auditable denial event, and provide a one-click rollback to the last safe checkpoint.",
+        "Preflight Capability Review: visualize each agent\u2019s scoped, time-bounded grants before launch, flag excess access, and require an approver to confirm or narrow them with a recorded justification.",
+        "Policy Preflight Gate: simulate each workflow step against scoped, revocable capability grants and block execution until any missing access has an approved, auditable justification.",
+        "Dry-Run Grant Simulator: replay a workflow against proposed scoped grants to identify denied steps, unused privileges, and revocation effects before enforcement.",
+        "Capability Budget Guard: bind each scoped token to hard per-run limits on tokens, latency, tool calls, and spend, rejecting or halting steps that exceed them and logging the enforcement."
+      ]
+    },
+    {
+      "family_id": "access_v1",
+      "block_index": 8,
+      "cell": "B",
+      "v_output": 0.39849300594224113,
+      "role_margin": 0.06894153927873561,
+      "anchor_alignment": 0.6291967220342212,
+      "echo_concentration": 0.75,
+      "outputs": [
+        "Capability Circuit Breaker: automatically revoke scoped capability tokens and halt in-flight steps when error, latency, or unauthorized-access thresholds are breached, with one-click rollback to the last safe grant.",
+        "Approval-Gated Capability Escalation: pause a run when an agent requests an ungranted tool or dataset, show the exact scope and justification, and issue a time-bounded token only after approval.",
+        "Capability Gatekeeper: validate each agent\u2019s tool or dataset request against its scoped, unexpired, unrevoked grant and log every allow/deny decision.",
+        "Capability Preflight: simulate each workflow step against scoped capability tokens before execution, blocking undeclared tool or dataset access and naming the missing grant.",
+        "Capability Budget: attach per-agent limits for tokens, latency, tool calls, and spend to each scoped grant, blocking or escalating any step that would exceed them."
+      ]
+    },
+    {
+      "family_id": "access_v1",
+      "block_index": 8,
+      "cell": "C",
+      "v_output": 0.3251631538743715,
+      "role_margin": 0.06218002129182042,
+      "anchor_alignment": null,
+      "echo_concentration": null,
+      "outputs": [
+        "Capability Gatekeeper: enforce per-agent, per-tool allowlists with scoped credentials, dry-run previews, immutable audit logs, kill switches, and automatic rollback on policy or runtime violations.",
+        "Capability Contract Builder: a visual policy editor that maps each agent to approved tools, data scopes, spend limits, and human-approval gates, then blocks and logs any out-of-policy action at runtime.",
+        "Capability Policy Gateway: declare per-agent permissions for data, tools, and actions; enforce them at runtime with least-privilege tokens, approval gates for sensitive operations, and immutable audit logs.",
+        "Capability Contract Simulator: teams define per-agent tool, data, and action permissions as executable policies, then run scenario-based simulations that explain each allow/deny decision and block deployment on violations.",
+        "Budget & Capability Guardrails: statically estimate and runtime-enforce per-agent limits on tokens, latency, model access, tool calls, concurrency, and spend, blocking or degrading workflows that exceed policy."
+      ]
+    },
+    {
+      "family_id": "access_v1",
+      "block_index": 9,
+      "cell": "A",
+      "v_output": 0.34668558033728936,
+      "role_margin": 0.08453946769138612,
+      "anchor_alignment": 0.5805853614420367,
+      "echo_concentration": 0.44999999999999996,
+      "outputs": [
+        "Revocation-Safe Capability Gate: validate scoped capability tokens before every tool call, halt in-flight steps on revocation, and log the grant, approver, justification, and denied action.",
+        "Approval Gate: preview each agent\u2019s requested scoped capabilities, justification, and expiry, then let an authorized reviewer approve, narrow, deny, or revoke them before or during a run, with every decision logged.",
+        "Policy Gate: before each agent action, validate its scoped capability token against current revocations and log the decision, approver, justification, and exercised scope for later least-privilege review.",
+        "Preflight Capability Gate: simulate each workflow step against scoped grants before execution, blocking unauthorized tool or dataset access and identifying the exact grant or approval needed.",
+        "Capability Budget Gate: enforce per-run limits on tokens, latency, tool calls, and spend within each scoped grant, halting in-flight steps when a budget is exhausted and logging the trigger."
+      ]
+    },
+    {
+      "family_id": "access_v1",
+      "block_index": 9,
+      "cell": "B",
+      "v_output": 0.41568309815760723,
+      "role_margin": 0.08655780308542338,
+      "anchor_alignment": 0.6261940075697566,
+      "echo_concentration": 0.75,
+      "outputs": [
+        "Grant Canary Rollout: activate a new scoped capability for a small percentage of runs, monitor denials and side effects, then automatically expand or revoke it.",
+        "Preflight Grant Review: preview each agent\u2019s scoped tools, datasets, and expiry before a run, requiring explicit approval for any newly requested capability.",
+        "Approval-Bound Capability Grant: require each tool or dataset grant to reference an approver, justification, scope, and expiry, and reject execution when any field is missing or invalid.",
+        "Preflight Capability Check: simulate each agent step against scoped grants before execution and block any tool or dataset access not explicitly authorized.",
+        "Budget-Bounded Capability Token: issue each agent a scoped grant with hard token, latency, and tool-call limits that automatically halts the step when exhausted."
+      ]
+    },
+    {
+      "family_id": "access_v1",
+      "block_index": 9,
+      "cell": "C",
+      "v_output": 0.39756475076575953,
+      "role_margin": 0.07520065418170799,
+      "anchor_alignment": null,
+      "echo_concentration": null,
+      "outputs": [
+        "Capability Gatekeeper: enforce versioned, least-privilege action policies per agent, with dry-run simulation, immutable decision logs, runtime kill switches, and one-click rollback of policy changes.",
+        "Capability Gate: a visual policy builder that maps each agent to approved tools, data scopes, spend limits, and human-approval checkpoints, then blocks and logs any out-of-policy action at runtime.",
+        "Capability Contract Gateway: declare per-agent permissions for data, tools, destinations, and delegation; enforce them at runtime with deny-by-default checks, approval gates for sensitive actions, and tamper-evident audit logs.",
+        "Capability Contract Simulator: teams define per-agent tool, data, and delegation permissions, then run scenario-based tests that block violations and explain which rule triggered.",
+        "Execution Budget Guardrails: set per-workflow caps on tokens, latency, agent calls, concurrency, and spend, then block, degrade, or require approval when projected or actual usage exceeds policy."
+      ]
+    },
+    {
+      "family_id": "iteration_v1",
+      "block_index": 0,
+      "cell": "A",
+      "v_output": 0.4078126769328564,
+      "role_margin": 0.1668658181538828,
+      "anchor_alignment": 0.6297627305604246,
+      "echo_concentration": 0.55,
+      "outputs": [
+        "Regression Replay: automatically replay representative production failures against each workflow revision and attribute resolved, persistent, or newly introduced behaviors to the change.",
+        "Change Review: attach a stated hypothesis to each workflow edit, then compare representative production runs before and after release to highlight behavior shifts and unexpected failures.",
+        "Audit-Safe Change Review: link each workflow edit to redacted production behavior shifts, with role-based access and immutable reviewer annotations.",
+        "Behavior Review Loop: after each workflow change, compare expected outcomes with representative production runs and surface significant behavior shifts for team annotation.",
+        "Cost Impact Tracker: tie each workflow release to production shifts in token spend, latency, throughput, and failure rate using representative sampled runs."
+      ]
+    },
+    {
+      "family_id": "iteration_v1",
+      "block_index": 0,
+      "cell": "B",
+      "v_output": 0.3666172713114221,
+      "role_margin": 0.1505980470577724,
+      "anchor_alignment": 0.6839275299023597,
+      "echo_concentration": 0.6500000000000001,
+      "outputs": [
+        "Release Behavior Diff: compare representative production runs before and after each workflow release, highlighting new failure modes, regressions, and recovery-path changes.",
+        "Release Behavior Diff: compare sampled production runs before and after each workflow release, highlighting changes in agent handoffs, outputs, latency, and failure patterns.",
+        "Access-Aware Production Sampler: collect representative real runs with automatic redaction, role-based access, and auditable review logs, then prioritize anomalous or high-risk behaviors for inspection.",
+        "Release Behavior Diff: compare representative production runs before and after each workflow change, highlighting shifts in outputs, failure modes, and agent handoffs.",
+        "Cost Trends: chart token spend, latency, throughput, and budget overruns across workflow releases to expose production regressions."
+      ]
+    },
+    {
+      "family_id": "iteration_v1",
+      "block_index": 0,
+      "cell": "C",
+      "v_output": 0.3345387354468389,
+      "role_margin": 0.12108600478469808,
+      "anchor_alignment": null,
+      "echo_concentration": null,
+      "outputs": [
+        "Agent Replay Lab: capture production traces, tool calls, handoffs, errors, and state snapshots, then deterministically replay failed workflows against prompt/model changes with side-by-side diffs and one-click rollback to the last known-good configuration.",
+        "Trace Replay Lab: Capture production multi-agent runs as privacy-safe, step-by-step traces that teams can replay, annotate, compare, and convert into regression tests.",
+        "Privacy-Aware Execution Replay: capture redacted agent traces, tool calls, authorization decisions, and data-access events in a tamper-evident log for role-gated replay and misuse auditing.",
+        "Decision Replay: capture agent traces, tool calls, outcomes, and user feedback, then generate annotated replays highlighting where decisions diverged from successful patterns and prompting teams to record corrective lessons.",
+        "Cost-Trace Replayer: capture per-agent token usage, latency, retries, model calls, and outcomes, then replay traces with alternative models or routing policies to estimate cost, throughput, and quality tradeoffs before deployment."
+      ]
+    },
+    {
+      "family_id": "iteration_v1",
+      "block_index": 1,
+      "cell": "A",
+      "v_output": 0.45401531953310614,
+      "role_margin": 0.15612514749175066,
+      "anchor_alignment": 0.5825807563757671,
+      "echo_concentration": 0.55,
+      "outputs": [
+        "Regression Replay: automatically replay representative and high-failure production traces against each workflow release, compare behavior shifts, and enable one-click rollback when defined reliability thresholds regress.",
+        "Change-Aware Run Sampler: after each release, surface representative and anomalous production runs whose agent behavior changed most, linked to the workflow edit and the team\u2019s expected outcome.",
+        "Privacy-Safe Production Sampler: surface representative, high-risk runs with role-based access, automatic PII/secret redaction, retention controls, and immutable audit logs.",
+        "Representative Run Review: sample high-value production traces, cluster recurring failure patterns, and compare them across releases and workflow changes.",
+        "Cost-Aware Production Sampler: rank representative runs by token spend, latency, failure type, and release change so teams review the most costly behavior shifts first."
+      ]
+    },
+    {
+      "family_id": "iteration_v1",
+      "block_index": 1,
+      "cell": "B",
+      "v_output": 0.4785424801628686,
+      "role_margin": 0.19365056261084942,
+      "anchor_alignment": 0.6398829760858262,
+      "echo_concentration": 0.6500000000000001,
+      "outputs": [
+        "Failure Mode Trends: cluster production run failures by root-cause signature and chart their frequency across workflow releases.",
+        "Release Behavior Diff: compare representative production runs before and after each workflow release, highlighting changed agent decisions, outputs, and failure rates.",
+        "Privacy-Aware Production Sampler: collect representative runs with automatic PII redaction, role-based access, and audit logs, then prioritize anomalous or high-risk cases for review.",
+        "Release Learning Loop: link each workflow change and its expected effect to sampled production runs, then summarize whether behavior improved, regressed, or drifted.",
+        "Cost Impact Trends: track per-agent token usage, latency, and throughput across releases, linking workflow changes to production cost regressions."
+      ]
+    },
+    {
+      "family_id": "iteration_v1",
+      "block_index": 1,
+      "cell": "C",
+      "v_output": 0.3583636616500587,
+      "role_margin": 0.14509388743214563,
+      "anchor_alignment": null,
+      "echo_concentration": null,
+      "outputs": [
+        "Agent Replay & Diff: Capture production traces, tool calls, handoffs, and outputs with redaction, then deterministically replay them against new prompts/models to compare behavior, identify failure modes, and gate rollouts or trigger rollback.",
+        "Workflow Replay: reconstruct each production run as a step-by-step agent timeline with prompts, tool calls, handoffs, outputs, latency, cost, and user feedback, enabling teams to annotate failures and save reusable test cases.",
+        "Privacy-Aware Agent Trace Explorer: capture redacted, access-controlled inter-agent messages and tool calls with immutable audit logs, enabling authorized teams to replay incidents and identify misuse, data leakage, and permission violations.",
+        "Behavior Replay Lab: capture production multi-agent traces, let teams annotate decision points and outcomes, then replay them with altered prompts or agents to compare behavior and turn failures into regression tests.",
+        "Agent Cost Replay: Reconstruct each production run with per-agent token usage, latency, model cost, and bottlenecks, then simulate cheaper model, routing, and concurrency configurations."
+      ]
+    },
+    {
+      "family_id": "iteration_v1",
+      "block_index": 2,
+      "cell": "A",
+      "v_output": 0.4862776936418142,
+      "role_margin": 0.1675308052979611,
+      "anchor_alignment": 0.5486587264874101,
+      "echo_concentration": 0.6500000000000001,
+      "outputs": [
+        "Replay & Rollback: replay representative failed production runs against each release, highlight agent-level divergences, and enable one-click rollback when predefined regressions exceed thresholds.",
+        "Expectation Replay: attach a testable hypothesis to each workflow change, sample representative production runs, and compare expected versus observed behavior and failure trends across releases.",
+        "Secure Run Review: sample and redact production traces, enforce role-based access, and audit reviewer actions while linking findings to releases and stated hypotheses.",
+        "Expectation Review Queue: surface representative post-release runs, grouped by behavior shifts, and prompt teams to compare each change\u2019s hypothesis with observed outcomes.",
+        "Cost Impact Log: link each workflow change to production shifts in token usage, latency, throughput, and cost, highlighting representative regressions against expected budgets."
+      ]
+    },
+    {
+      "family_id": "iteration_v1",
+      "block_index": 2,
+      "cell": "B",
+      "v_output": 0.4309291547238458,
+      "role_margin": 0.16331315485527972,
+      "anchor_alignment": 0.6205137384895117,
+      "echo_concentration": 0.6500000000000001,
+      "outputs": [
+        "Failure Replay: capture failed production runs with agent traces, tool calls, and state so teams can replay them against new releases and verify fixes before rollout.",
+        "Release Behavior Diff: compare representative production runs before and after each workflow change, highlighting shifts in agent decisions, handoffs, outputs, and failures.",
+        "Privacy-Aware Production Sampler: collect representative runs with automatic redaction, role-based access, and auditable review logs.",
+        "Release Behavior Diff: compare representative production runs before and after each workflow change, highlighting shifts in agent decisions, outputs, and failure rates.",
+        "Cost Trends: track per-agent token spend, latency, and throughput across releases, highlighting workflow changes that caused regressions."
+      ]
+    },
+    {
+      "family_id": "iteration_v1",
+      "block_index": 2,
+      "cell": "C",
+      "v_output": 0.40914593560555146,
+      "role_margin": 0.10264148284836257,
+      "anchor_alignment": null,
+      "echo_concentration": null,
+      "outputs": [
+        "Agent Flight Recorder: capture per-run agent handoffs, prompts, tool calls, latency, costs, errors, and outputs with replay, diffing, and one-click rollback to a known-good workflow version.",
+        "Decision Replay: reconstruct each production agent run as a step-by-step timeline of prompts, tool calls, handoffs, and outcomes, with filters for failures and one-click comparison to a successful run.",
+        "Privacy-Aware Workflow Replay: reconstruct production agent traces with automatic secret/PII redaction, role-based access, immutable audit logs, and time-limited approvals for viewing sensitive steps.",
+        "Behavior Replay Lab: Automatically cluster production multi-agent traces by outcome, then let teams replay representative failures with step-level annotations, counterfactual edits, and regression checks.",
+        "Cost-to-Outcome Profiler: trace each agent\u2019s token spend, latency, retries, and model calls per workflow outcome, then flag the highest-cost steps and recommend cheaper model or prompt configurations."
+      ]
+    },
+    {
+      "family_id": "iteration_v1",
+      "block_index": 3,
+      "cell": "A",
+      "v_output": 0.4948189616682065,
+      "role_margin": 0.1704706603211809,
+      "anchor_alignment": 0.5955209838469842,
+      "echo_concentration": 0.44999999999999996,
+      "outputs": [
+        "Regression Replay: automatically rerun representative failed and successful production traces against each workflow edit, highlighting behavioral changes and linking them to the release.",
+        "Change Review Queue: for each workflow release, surface representative production runs, compare behavior to the prior version, and prompt teams to confirm whether observed shifts match the change hypothesis.",
+        "Access-Aware Production Sampler: surface representative, high-signal runs with sensitive data redacted, role-based access enforced, and every review action audit-logged.",
+        "Counterfactual Replay: rerun representative production cases before and after each workflow edit, then summarize which behaviors changed and whether they matched the team\u2019s stated hypothesis.",
+        "Cost Impact: link each workflow change to shifts in token spend, latency, throughput, and failures across representative production runs."
+      ]
+    },
+    {
+      "family_id": "iteration_v1",
+      "block_index": 3,
+      "cell": "B",
+      "v_output": 0.35218366446100785,
+      "role_margin": 0.1448806632029112,
+      "anchor_alignment": 0.6844485304199779,
+      "echo_concentration": 0.6500000000000001,
+      "outputs": [
+        "Release Behavior Diff: compare sampled production runs before and after each workflow release, highlighting new failure modes, regressions, and improvements with one-click rollback.",
+        "Behavior Diff: compare representative production runs before and after each workflow release, highlighting changed agent decisions, handoffs, outputs, and failure patterns.",
+        "Access-Aware Production Sampler: collect representative runs with automatic redaction, role-based access, and audit logs, then surface high-risk failures for review.",
+        "Release Behavior Diff: compare representative production runs before and after each workflow change, highlighting shifts in outputs, agent handoffs, and failure modes.",
+        "Cost Trends: chart token spend, latency, and throughput by agent across releases, highlighting regressions after workflow changes."
+      ]
+    },
+    {
+      "family_id": "iteration_v1",
+      "block_index": 3,
+      "cell": "C",
+      "v_output": 0.3302051537566565,
+      "role_margin": 0.12980209764827574,
+      "anchor_alignment": null,
+      "echo_concentration": null,
+      "outputs": [
+        "Agent Replay & Diff: capture production traces, tool calls, handoffs, and outcomes, then deterministically replay them against new prompts/models to surface behavioral regressions before rollout.",
+        "Workflow Replay: reconstruct each production run as a step-by-step agent timeline with prompts, tool calls, handoffs, outputs, latency, cost, and user feedback, enabling teams to inspect failures and compare traces.",
+        "Privacy-Safe Agent Replay: capture redacted, access-controlled traces of agent prompts, tool calls, data access, and policy decisions with immutable audit logs for secure production replay and review.",
+        "Behavior Replay Lab: automatically capture production agent traces, cluster recurring failure patterns, and generate replayable cases with outcome feedback so teams can test fixes and track whether errors recur.",
+        "Cost Trace Replay: capture per-agent token usage, latency, model, retries, and concurrency, then replay traces against alternative routing and budget policies to estimate cost, throughput, and SLA impact."
+      ]
+    },
+    {
+      "family_id": "iteration_v1",
+      "block_index": 4,
+      "cell": "A",
+      "v_output": 0.385948464015479,
+      "role_margin": 0.14130734401937156,
+      "anchor_alignment": 0.6097022482995642,
+      "echo_concentration": 0.55,
+      "outputs": [
+        "Release Replay: automatically replay a representative set of production traces against each workflow version, highlighting behavior changes, regressions, and rollback candidates.",
+        "Release Learning Digest: after each workflow edit, compare a representative sample of production runs to the prior version, highlight behavior and failure shifts, and record whether the change\u2019s stated hypothesis was validated.",
+        "Audited Change Impact: tie each versioned workflow edit and stated hypothesis to privacy-redacted production samples, highlighting behavior shifts with role-based access and immutable review logs.",
+        "Change Review Loop: for each workflow edit, compare expected outcomes with a representative production sample and summarize resulting behavior and failure shifts.",
+        "Cost Impact Ledger: tie each workflow release to changes in token spend, latency, throughput, and failure rates using representative production runs, then flag regressions against expected budgets."
+      ]
+    },
+    {
+      "family_id": "iteration_v1",
+      "block_index": 4,
+      "cell": "B",
+      "v_output": 0.3661245795755451,
+      "role_margin": 0.14227631074100766,
+      "anchor_alignment": 0.6741734667872319,
+      "echo_concentration": 0.6500000000000001,
+      "outputs": [
+        "Release Behavior Diff: compare sampled production runs before and after each workflow release, highlighting changes in outputs, failure modes, latency, and cost.",
+        "Release Behavior Diff: compare representative production runs before and after each workflow release, highlighting changes in outputs, agent handoffs, tool calls, and failure modes.",
+        "Access-Aware Production Sampler: collect representative runs with sensitive data redacted, enforce role-based access, and log every review action for auditability.",
+        "Release Behavior Diff: compare representative production runs before and after each workflow edit, highlighting changes in outputs, agent handoffs, and failure patterns.",
+        "Cost Trends: chart token spend, latency, and throughput by agent and release, highlighting regressions after workflow changes."
+      ]
+    },
+    {
+      "family_id": "iteration_v1",
+      "block_index": 4,
+      "cell": "C",
+      "v_output": 0.4047742810914852,
+      "role_margin": 0.12078965641950065,
+      "anchor_alignment": null,
+      "echo_concentration": null,
+      "outputs": [
+        "Replayable Workflow Autopsies: capture agent prompts, tool calls, handoffs, outputs, latency, and errors as a causally linked trace that teams can replay against versioned configurations, compare outcomes, and roll back regressions.",
+        "Decision Replay: reconstruct each production run as a timeline of agent handoffs, tool calls, prompts, and outcomes, with one-click branching from any step to test alternative decisions safely.",
+        "Privacy-Safe Agent Replay: capture redacted, permission-scoped traces of agent prompts, tool calls, data access, and handoffs in a tamper-evident audit log for authorized replay and misuse analysis.",
+        "Decision Replay: capture each agent\u2019s inputs, outputs, tool calls, and handoffs, then let teams replay failed runs with alternative prompts or policies and compare outcomes side by side.",
+        "Cost Trace Explorer: attributes per-agent token spend, latency, retries, and model usage to workflow steps, then flags costly bottlenecks and suggests routing, caching, or prompt-size optimizations."
+      ]
+    },
+    {
+      "family_id": "iteration_v1",
+      "block_index": 5,
+      "cell": "A",
+      "v_output": 0.46406007325502374,
+      "role_margin": 0.15345653411823226,
+      "anchor_alignment": 0.5963098529178643,
+      "echo_concentration": 0.55,
+      "outputs": [
+        "Regression Replay: automatically rerun representative and high-failure production traces against each workflow release, highlighting behavioral changes and enabling one-click rollback to the last stable version.",
+        "Review Queue: sample representative production runs, prioritize surprising failures and drift, and link each to the workflow change and hypothesis that likely caused it.",
+        "Secure Production Sampler: surface representative, high-risk runs for review using role-based access, automatic redaction, retention limits, and audit logs.",
+        "Counterfactual Replay: re-run representative production traces against each workflow release and compare predicted improvements with actual behavior shifts.",
+        "Cost-Impact Sampler: surface representative production runs where workflow changes caused significant shifts in token spend, latency, throughput, or failure rate."
+      ]
+    },
+    {
+      "family_id": "iteration_v1",
+      "block_index": 5,
+      "cell": "B",
+      "v_output": 0.4962417087990726,
+      "role_margin": 0.18261917471148204,
+      "anchor_alignment": 0.6263979844982324,
+      "echo_concentration": 0.6500000000000001,
+      "outputs": [
+        "Failure Trend Alerts: detect statistically significant shifts in agent failures after each release and surface representative production runs for diagnosis and rollback.",
+        "Release Behavior Diff: compare representative production runs before and after each workflow release, highlighting changed agent paths, outputs, latency, and failure modes.",
+        "Privacy-Aware Production Sampler: collect representative runs with sensitive data redacted, role-based access controls, and immutable audit logs of every inspection.",
+        "Failure Pattern Replay: cluster recurring production failures and automatically replay representative cases after each workflow change to show which patterns improved, regressed, or remained unresolved.",
+        "Cost Trends: chart token spend, latency, and throughput by agent and release, surfacing regressions and deployment-limit breaches."
+      ]
+    },
+    {
+      "family_id": "iteration_v1",
+      "block_index": 5,
+      "cell": "C",
+      "v_output": 0.3703623289575267,
+      "role_margin": 0.12737348413475846,
+      "anchor_alignment": null,
+      "echo_concentration": null,
+      "outputs": [
+        "Agent Replay & Diff: Capture per-agent prompts, outputs, tool calls, latency, errors, and handoffs for failed production runs, then deterministically replay them against updated agents and highlight behavioral differences before rollback or redeployment.",
+        "Behavior Replay: Turn sampled production runs into privacy-redacted, step-by-step agent timelines where teams can inspect handoffs, prompts, tool calls, decisions, latency, and costs, then annotate failures and save them as regression tests.",
+        "Privacy-Safe Agent Replay: capture redacted, access-controlled traces of agent prompts, tool calls, data access, and policy decisions with immutable audit logs for authorized incident review and learning.",
+        "Replay-to-Lesson: cluster production agent traces by failure pattern, replay representative cases, and attach human-reviewed explanations and fixes as reusable regression tests.",
+        "Agent Cost Profiler: trace each production workflow by agent, model, and tool call to surface token spend, latency, retries, and bottlenecks with optimization recommendations."
+      ]
+    },
+    {
+      "family_id": "iteration_v1",
+      "block_index": 6,
+      "cell": "A",
+      "v_output": 0.4697724569093569,
+      "role_margin": 0.18108260077840785,
+      "anchor_alignment": 0.5765993450254175,
+      "echo_concentration": 0.44999999999999996,
+      "outputs": [
+        "Release Replay: replay a representative sample of production runs against each workflow version, highlighting behavior shifts, regressions, and safe rollback candidates.",
+        "Release Learning Brief: pair each workflow change and stated hypothesis with representative production runs, then summarize observed behavior shifts and highlight mismatches for review.",
+        "Access-Aware Production Sampler: surface representative high-risk runs with sensitive data redacted, role-based access enforced, and every review action audit-logged.",
+        "Learning Loop: for each workflow change, record the team\u2019s hypothesis, compare representative production runs before and after, and summarize confirmed, refuted, or unexpected behavior shifts.",
+        "Cost-Impact Lens: link each workflow release to shifts in token spend, latency, throughput, and failure rates across representative production runs."
+      ]
+    },
+    {
+      "family_id": "iteration_v1",
+      "block_index": 6,
+      "cell": "B",
+      "v_output": 0.4446917622477472,
+      "role_margin": 0.1273897825475459,
+      "anchor_alignment": 0.6396658016972866,
+      "echo_concentration": 0.6500000000000001,
+      "outputs": [
+        "Release Impact Monitor: compare sampled production runs before and after each workflow release, highlighting shifts in failures, latency, cost, and agent handoff behavior with one-click rollback links.",
+        "Behavior Regression Alerts: compare representative production runs across releases and flag significant shifts in outputs, failure patterns, and agent handoffs for review.",
+        "Privacy-Safe Production Sampler: collect representative runs with role-based access, automatic secret/PII redaction, and audit logs for every view or export.",
+        "Behavior Regression Alerts: compare representative production runs across releases and flag workflow edits linked to significant shifts in outputs or failure patterns.",
+        "Cost Trends: chart token spend, latency, and throughput by agent and release, highlighting regressions after workflow changes."
+      ]
+    },
+    {
+      "family_id": "iteration_v1",
+      "block_index": 6,
+      "cell": "C",
+      "v_output": 0.3411025741939994,
+      "role_margin": 0.09394063444638542,
+      "anchor_alignment": null,
+      "echo_concentration": null,
+      "outputs": [
+        "Agent Flight Recorder: capture per-run agent decisions, handoffs, tool calls, latency, errors, and model versions in a replayable timeline with anomaly alerts and one-click rollback to a known-good workflow configuration.",
+        "Trace Replay Lab: replay production multi-agent runs as a step-by-step timeline, annotate failures and handoffs, compare them with successful runs, and save findings as team-reviewed workflow lessons.",
+        "Privacy-Preserving Workflow Replay: capture redacted agent traces, tool calls, permission decisions, and immutable audit metadata for role-gated production replay and incident analysis.",
+        "Workflow Replay Tutor: clusters production failures, replays agent decision traces, and prompts teams to annotate root causes and verify improved prompts or policies against the same cases.",
+        "Cost-Trace Replay: captures per-agent token usage, latency, concurrency, model choice, and spend for each production workflow, then replays traces with alternative routing or prompts to estimate cost and throughput impact before deployment."
+      ]
+    },
+    {
+      "family_id": "iteration_v1",
+      "block_index": 7,
+      "cell": "A",
+      "v_output": 0.3561658628192397,
+      "role_margin": 0.13010305693078167,
+      "anchor_alignment": 0.6112600140798213,
+      "echo_concentration": 0.6500000000000001,
+      "outputs": [
+        "Regression Replay: automatically rerun representative production failures against each workflow release, linking edits and stated hypotheses to resolved, persistent, or newly introduced behaviors.",
+        "Behavior Shift Review: after each release, surface representative changed and failed runs, link them to the responsible workflow edits, and prompt teams to compare observed outcomes with their recorded hypotheses.",
+        "Privacy-Aware Production Sampler: capture representative, high-signal runs across releases with automatic redaction, role-based access, consent/retention controls, and immutable audit logs linking each reviewed trace to its workflow change.",
+        "Behavior Replay: compare representative production runs before and after each workflow change, highlighting shifted outcomes, new failures, and mismatches with the team\u2019s stated hypothesis.",
+        "Cost Impact Replay: compare representative production runs across releases, attributing token, latency, and failure changes to specific workflow edits and expected outcomes."
+      ]
+    },
+    {
+      "family_id": "iteration_v1",
+      "block_index": 7,
+      "cell": "B",
+      "v_output": 0.4155957549872132,
+      "role_margin": 0.15449249710367333,
+      "anchor_alignment": 0.6535899842788288,
+      "echo_concentration": 0.44999999999999996,
+      "outputs": [
+        "Release Behavior Diff: compare representative production runs before and after each workflow release, highlighting shifts in outputs, failure modes, and agent handoffs.",
+        "Release Behavior Diff: compare representative production runs before and after each workflow change, highlighting shifts in outputs, failures, and agent handoffs.",
+        "Privacy-Aware Production Sampler: collect representative runs with automatic PII redaction, role-based access, retention limits, and auditable reviewer access.",
+        "Change Impact Replay: compare representative production runs before and after each workflow edit, highlighting which agent behaviors and failure modes changed.",
+        "Cost Impact Trends: chart token spend, latency, and throughput regressions across workflow releases, linking each change to its observed production cost shift."
+      ]
+    },
+    {
+      "family_id": "iteration_v1",
+      "block_index": 7,
+      "cell": "C",
+      "v_output": 0.35829007310333105,
+      "role_margin": 0.10778829312810878,
+      "anchor_alignment": null,
+      "echo_concentration": null,
+      "outputs": [
+        "Agent Flight Recorder: capture per-run traces of agent handoffs, prompts, tool calls, latency, costs, errors, and outputs, then cluster failure patterns and enable replay against fixed inputs for debugging and regression testing.",
+        "Workflow Replay: reconstruct production agent runs as a step-by-step timeline with prompts, tool calls, handoffs, outputs, latency, and cost, enabling teams to annotate failures and save them as regression tests.",
+        "Privacy-Safe Agent Trace Replay: capture redacted, access-controlled agent interactions and tool calls with immutable audit logs for secure production replay and incident learning.",
+        "Decision Replay: capture agent traces and outcomes, then generate annotated replays that highlight pivotal decisions, downstream effects, and recurring failure patterns for team review.",
+        "Cost-Trace Replay: capture per-agent token usage, latency, model calls, and handoff paths, then replay production traces to identify cost and throughput bottlenecks."
+      ]
+    },
+    {
+      "family_id": "iteration_v1",
+      "block_index": 8,
+      "cell": "A",
+      "v_output": 0.4607264645833533,
+      "role_margin": 0.1654901416695648,
+      "anchor_alignment": 0.5856758192231173,
+      "echo_concentration": 0.44999999999999996,
+      "outputs": [
+        "Regression Replay: automatically replay representative and failure-prone production runs against each new workflow release, highlighting changed outcomes and enabling one-click rollback to the last stable version.",
+        "Release Review Queue: sample representative production runs after each workflow change, highlight behavior shifts and failures, and prompt teams to compare results against their recorded hypothesis.",
+        "Privacy-Aware Production Sampler: capture representative runs with automatic PII redaction, role-based access, consent controls, and immutable audit logs for every view or export.",
+        "Behavior Replay: compare representative production runs across releases, highlighting which workflow edits changed agent decisions, failures, and outcomes versus the team\u2019s stated hypothesis.",
+        "Cost-Aware Change Impact: correlate workflow releases with shifts in token spend, latency, throughput, failure rates, and sampled production behaviors."
+      ]
+    },
+    {
+      "family_id": "iteration_v1",
+      "block_index": 8,
+      "cell": "B",
+      "v_output": 0.45712332736333233,
+      "role_margin": 0.13001724920579355,
+      "anchor_alignment": 0.5851807507770431,
+      "echo_concentration": 0.44999999999999996,
+      "outputs": [
+        "Failure Replay: capture failed production runs with agent traces, inputs, and tool outputs so teams can reproduce them and verify fixes before redeploying.",
+        "Behavior Regression Alerts: compare production runs across releases and flag statistically significant shifts in agent handoffs, failures, and output quality, linking each alert to the workflow change that likely caused it.",
+        "Access-Controlled Production Sampler: collect representative runs with automatic redaction, role-based access, and audit logs of every view or export.",
+        "Behavior Regression Alerts: compare representative production runs across releases and flag statistically meaningful shifts in outputs, failure modes, and agent handoffs.",
+        "Cost Impact: link each workflow release to changes in per-agent token usage, latency, throughput, and cost per successful production run."
+      ]
+    },
+    {
+      "family_id": "iteration_v1",
+      "block_index": 8,
+      "cell": "C",
+      "v_output": 0.36026613335178614,
+      "role_margin": 0.14195756009115873,
+      "anchor_alignment": null,
+      "echo_concentration": null,
+      "outputs": [
+        "Agent Failure Replay: capture production traces, tool calls, state transitions, and checkpoints so teams can deterministically replay incidents, compare alternate agent decisions, and validate fixes before rollback or redeployment.",
+        "Trace Replay: Reconstruct each production run as a step-by-step agent timeline, highlighting handoffs, tool calls, latency, cost, and failures, with one-click replay against updated prompts or models.",
+        "Privacy-Safe Agent Trace Replay: capture redacted, access-controlled, immutable workflow traces with per-agent inputs, outputs, tool calls, policy decisions, and audit logs for secure production replay and analysis.",
+        "Behavior Replay Cards: automatically turn production agent traces into annotated failure/success cases, then quiz owners on predicted outcomes before revealing actual results and recommended workflow changes.",
+        "Cost Trace Explorer: attribute token spend, latency, and model-call concurrency to each agent and handoff, then flag production bottlenecks and suggest cheaper routing or deployment configurations."
+      ]
+    },
+    {
+      "family_id": "iteration_v1",
+      "block_index": 9,
+      "cell": "A",
+      "v_output": 0.46953057400419496,
+      "role_margin": 0.1275917814194258,
+      "anchor_alignment": 0.6029069580929814,
+      "echo_concentration": 0.6500000000000001,
+      "outputs": [
+        "Release Behavior Ledger: link each workflow change and expected outcome to sampled production runs, trend shifts, failure modes, and rollback signals.",
+        "Behavior Review Queue: rank representative production runs by release-linked behavior shifts, then prompt teams to compare outcomes against the change\u2019s hypothesis.",
+        "Access-Aware Production Sampler: sample high-signal runs across releases, redact sensitive data, enforce role-based visibility, and retain audit logs linking reviewed behavior shifts to workflow changes and hypotheses.",
+        "Expectation-to-Outcome Review: sample production runs after each workflow change, compare observed behavior and failure trends against the team\u2019s logged hypothesis, and flag mismatches for review.",
+        "Cost Impact Tracker: link each workflow release to changes in token spend, latency, throughput, and failure rates using representative production runs."
+      ]
+    },
+    {
+      "family_id": "iteration_v1",
+      "block_index": 9,
+      "cell": "B",
+      "v_output": 0.425125739651046,
+      "role_margin": 0.14553062994037808,
+      "anchor_alignment": 0.6374815557930097,
+      "echo_concentration": 0.6500000000000001,
+      "outputs": [
+        "Failure Trend Alerts: detect statistically significant shifts in agent errors, handoff failures, and fallback usage after each release, then link alerts to representative production traces.",
+        "Release Behavior Diff: compare representative production runs before and after each workflow change, highlighting shifts in agent handoffs, outputs, latency, and failure modes.",
+        "Access-Aware Production Sampler: sample representative multi-agent runs, redact sensitive data, enforce role-based trace access, and log every review action.",
+        "Release Behavior Diff: compare representative production runs before and after each workflow change, highlighting shifts in outputs, failures, and agent handoffs.",
+        "Cost Impact Trends: chart token usage, latency, and throughput shifts across releases, linking regressions to workflow edits and production run samples."
+      ]
+    },
+    {
+      "family_id": "iteration_v1",
+      "block_index": 9,
+      "cell": "C",
+      "v_output": 0.390681429754804,
+      "role_margin": 0.11759202754061811,
+      "anchor_alignment": null,
+      "echo_concentration": null,
+      "outputs": [
+        "Agent Trace Replay: capture versioned prompts, tool calls, handoffs, outputs, errors, and latency for each production run, then enable deterministic replay and side-by-side comparison against updated agents or models.",
+        "Replayable Decision Traces: reconstruct each production run as a step-by-step timeline of agent handoffs, prompts, tool calls, outputs, latency, and cost, with redacted data and one-click bookmarking for team review.",
+        "Privacy-Aware Trace Replay: capture redacted agent actions, tool calls, authorization decisions, and data-access events in tamper-evident logs for permissioned replay and misuse analysis.",
+        "Behavior Replay Cards: automatically capture pivotal agent decisions, tool calls, outcomes, and reviewer corrections, then generate replayable incident cards with counterfactual prompts and team quizzes to reinforce production lessons.",
+        "Agent Cost Trace: attribute per-step tokens, latency, retries, and model spend across agent handoffs, then flag bottlenecks and recommend cheaper model or routing substitutions."
+      ]
+    }
+  ]
+}

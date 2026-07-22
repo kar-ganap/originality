@@ -129,6 +129,11 @@ def collect_block(
     return texts, usage
 
 
+def role_embeddings(client: LLMClient) -> NDArray[np.float64]:
+    """Role descriptors are constant — embed once and reuse across every cell."""
+    return client.embed([r.descriptor for r in ROLES])
+
+
 def measure_cell(
     client: LLMClient,
     block: Block,
@@ -136,11 +141,16 @@ def measure_cell(
     outputs: Sequence[str],
     *,
     families: Sequence[Family] = FAMILIES,
+    roles_emb: NDArray[np.float64] | None = None,
 ) -> CellMeasure:
-    """Embed one cell's outputs and compute every metric it supports."""
+    """Embed one cell's outputs and compute every metric it supports.
+
+    ``roles_emb`` lets the caller hoist the constant role embeddings out of the loop; omitted, it
+    is recomputed per call (correct, just chattier).
+    """
     family = next(f for f in families if f.task_id == block.family_id)
     out_emb = client.embed(list(outputs))
-    role_emb = client.embed([r.descriptor for r in ROLES])
+    role_emb = role_embeddings(client) if roles_emb is None else roles_emb
 
     align = conc = None
     if cell != ABLATION_CELL:
