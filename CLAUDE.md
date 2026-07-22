@@ -10,32 +10,32 @@ with each prior study de-risking the next.
 
 ## Whitespaces
 
-- **Whitespace 2 — Empirical decomposition (ACTIVE).** Empirical time-series
-  study on ~5–10M OpenAlex CS papers (1970–2024): do demographic, semantic,
-  and canonical-concentration metrics diverge? See `whitespace_2/CLAUDE.md`.
-- **Whitespace 3 — Theoretical reconciliation (future).** Formal model
-  reconciling Henrich (larger populations preserve complexity) with
-  Wu-Wang-Evans (small teams disrupt more per capita). See
-  `whitespace_3/docs/conceptual.md`.
-- **Whitespace 1 — Agent simulation (future).** LLM multi-agent model of
-  opinion dynamics and actuator-driven homogenization. Activates after
-  whitespace 2 lands.
+- **Whitespace 2 — Empirical decomposition (empirical work COMPLETE).** Time-series
+  study on OpenAlex CS papers: do demographic, semantic, and canonical-concentration
+  metrics diverge? **They decouple** — a citation canon concentrates (H↑) while the
+  semantic frontier fragments (atypicality↑), orthogonally, both window-robust. See
+  `whitespace_2/CLAUDE.md`.
+- **Whitespace 3 — Theoretical reconciliation (Phase 1 + Phase 2 bridge COMPLETE).**
+  Minimal ABM decomposing cumulative complexity `C` from per-capita variance `V`,
+  reconciling Henrich with Wu-Wang-Evans. Delivers the conformity crossover `λ*≈0.09`
+  and the orthogonality that explains WS2. See `whitespace_3/docs/conceptual.md`.
+- **Whitespace 1 — Agent simulation (ACTIVE since 2026-07-21).** The mechanistic /
+  counterfactual leg: manipulates the actuator WS2 could only observe and WS3 only
+  theorize. Two chapters — **ch.1 Polyphony COMPLETE + public** (`../polyphony`);
+  **ch.2 the OSS adjudication arm** designed, not built. See `whitespace_1/CLAUDE.md`.
 
 ## Current State
 
-- **Active whitespace:** `whitespace_2/`
-- **Program-level phase:** Scaffold complete; all downstream work happens
-  inside the active whitespace.
-- **Next:** `whitespace_2/` Phase 0.1 retro + Phase 0.2 pre-registration
-  consolidation. See `whitespace_2/tasks/todo.md` "Next session — entry
-  point" for the full handoff package. Phase 0.1 is ~95% complete: all
-  empirical checks (1+2, 3, 4, 5a, 5b, 5c, 5d) and the embedding-
-  pipeline scaffold are done. Check 5b locked per-metric N_target for
-  Phase 0.2; Check 5c committed Flavor A and surfaced three pull-spec
-  follow-ups; Check 5d retained §11 pending production-scale
-  re-validation; Check 3 locked NamSor escalation. The retro should
-  consolidate all Phase-0.2 commitments into a single
-  pre-registration document.
+- **Active whitespace:** `whitespace_1/` (ch.2). WS2 and WS3 are complete; their
+  remaining work is the write-up.
+- **The program's positive result:** intellectual plurality **decouples** from
+  concentration — observed in humans (WS2), explained by theory (WS3), and
+  reproduced on an AI substrate where the actuator was *driven* rather than
+  observed (WS1 ch.1, R4: concentration↑ *and* diversity↑ simultaneously).
+- **Next:** (a) `whitespace_1/` ch.2 — stimulus preflight, then the locked rung-0
+  reachability probe (~$2.80). See `whitespace_1/tasks/todo.md`. (b) The papers —
+  ~2 planned, split by thesis rather than substrate; division deferred until the
+  remaining AI results land.
 
 ## Navigating This Repo
 

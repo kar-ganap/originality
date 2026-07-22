@@ -1,17 +1,22 @@
 # Build brief — WS1 OSS arm, Rung 0 (reachability probe)
 
-> **How to use this.** Paste the whole document into a fresh agent session in a **new private repo**.
-> It is deliberately self-contained. The parent design note is `ws1-oss-reasoning-arm.md` (§4 rung 0,
-> §9); this brief is the executable subset. **Rung 0 is LOCKED — build to it, do not redesign it.**
+> **How to use this.** Build in **`whitespace_1/`** (this whitespace) — not a separate repo. Chapter 2
+> is private program science and belongs alongside WS2 and WS3. The parent design note is
+> `ws1-oss-reasoning-arm.md` (§4 rung 0, §9); this brief is the executable subset.
+> **Rung 0 is LOCKED — build to it, do not redesign it.**
 >
-> Status: drafted 2026-07-21, sizing locked the same day (5 families × 10 blocks). Not yet built.
+> Status: drafted 2026-07-21; sizing locked the same day (5 families × 10 blocks); relocated into
+> `whitespace_1/` on activation. Not yet built.
 
 ## 0. Hard rules
 
-- **New PRIVATE repo**, sibling to the others. Self-contained.
-- **Firewall.** Never reference or describe any other study, dataset, or program by name. One
-  exception: **Polyphony is public** (`github.com/kar-ganap/polyphony`) and is citable as prior work
-  by the same author. Everything else stays out.
+- **Build here**, in `whitespace_1/src/whitespace1/`, with this whitespace's own `pyproject.toml` and
+  virtualenv. Do not create a sibling repo, and do not import from another whitespace — cross-
+  whitespace reuse goes through an explicit versioned package (program ground rule).
+- **Firewall — internal vs published.** Internal program references are fine here; this repo is
+  private. The firewall binds on anything *extracted for publication*: at that point, strip program,
+  study, and dataset names, as chapter 1 did. **Polyphony is already public**
+  (`github.com/kar-ganap/polyphony`) and is citable by name either way.
 - **Secrets** in env/`.env` only, never committed. API-key auth with a hard cap.
 - **TDD.** The engine (actuators, metrics, classifier, analysis) must be token-free and unit-tested
   behind a mockable client. Only generation calls hit the network.

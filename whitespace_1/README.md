@@ -1,25 +1,57 @@
-# Whitespace 1 — LLM Multi-Agent Simulation (INACTIVE)
+# Whitespace 1 — LLM Multi-Agent Simulation (ACTIVE)
 
-Not active yet. Activates after whitespace 2 (empirical) and whitespace 3
-(theoretical) land, since both de-risk the modeling choices here.
+**Active since 2026-07-21.** WS1 is the program's *mechanistic / counterfactual* leg: it
+manipulates the actuator that WS2 could only observe and WS3 only theorize.
 
-**Planned scope:** agent-based model of opinion dynamics and actuator-driven
-homogenization, using LLM agents as population members. Operationalizes
-Claim #13 (decoupling of demographic and intellectual plurality) and
-Claim #17 (small-group originality advantage) in silico.
+## Structure — two chapters
+
+| chapter | substrate | code lives | status |
+|---|---|---|---|
+| **1 — Polyphony** | GPT-5.6, in-context multi-agent | `../../polyphony` (**public**) | **complete** |
+| **2 — OSS / cross-model arm** | OSS reasoning models + Claude | `src/whitespace1/` (here, private) | designed, not built |
+
+**Why chapter 1's code is external.** Polyphony was published
+(`github.com/kar-ganap/polyphony`), so it is firewalled from the program and lives in its own repo.
+Chapter 2 is private program science and lives here, like WS2 and WS3. If it is ever published,
+extract a sanitized repo at that point — the same route Polyphony took.
+
+## Chapter 1 result (complete)
+
+Role-diverse LLM ensembles **did not** homogenize under shared-context conditioning, across six
+pre-registered experiments and every actuator tried. The one real effect was version-conflict
+contamination (superseded context → deprecated-constraint adoption, 40/40 vs 0/40 empty), which
+failed its cross-task rule. Notably, R4 **reproduced WS2's decoupling signature** on an AI substrate
+— concentration↑ *and* diversity↑ simultaneously, with the mechanism confirmed live in between.
+
+## Chapter 2 (this directory)
+
+Adjudicates whether chapter 1's null is real or an artifact of measuring only the layer that talks,
+by adding a **reasoning-diversity** layer that proprietary APIs structurally cannot expose. It is
+also the program's only venue for a **causal** test of WS3's C/V theory, because λ (conformity) is a
+literal experimental knob in a multi-agent ensemble rather than an unvalidated mapping.
+
+- **Design note:** [`docs/ws1-oss-reasoning-arm.md`](docs/ws1-oss-reasoning-arm.md) — the build
+  ladder, estimands, and the §9 pre-registration.
+- **Rung-0 build brief:** [`docs/ws1-oss-rung0-build-brief.md`](docs/ws1-oss-rung0-build-brief.md)
+  — the locked, executable first step (~$2.80).
+- **Stimuli:** [`docs/ws1-oss-rung0-stimuli.md`](docs/ws1-oss-rung0-stimuli.md) — five task
+  families, committed pre-generation, pending preflight.
+- **Provenance:** [`docs/ws1-hackathon-plan.md`](docs/ws1-hackathon-plan.md) — chapter 1's original
+  blueprint. **Superseded:** its diversity-thermostat premise was falsified. Kept as the record.
+
+## Build & test
+
+```bash
+cd whitespace_1
+uv sync --extra dev
+make test          # pytest
+make lint          # ruff
+make typecheck     # mypy strict
+```
 
 ## References
 
 - Program context: `../docs/program/research_program_overview.md`
-- Deep research (lit review + pathway DAGs): `../docs/program/originality_deepresearch_markdown.md`
-- Pathway lineage: `../docs/program/pathway_lineage_tables.md`
 - Program principles: `../docs/program/desiderata.md`
-
-## When activating
-
-1. Write a compass document at `docs/conceptual.md` (modeled on the
-   whitespace 2 and whitespace 3 compasses).
-2. Replicate the scaffolding pattern used in `../whitespace_2/` (pyproject.toml,
-   Makefile, CLAUDE.md, docs/desiderata.md, tasks/, src/, tests/, data/,
-   experiments/, literature-review/).
-3. Update `../CLAUDE.md` to list whitespace 1 as active.
+- The theory this arm tests causally: `../whitespace_3/docs/conceptual.md`
+- The human-side result it bridges to: `../whitespace_2/`
