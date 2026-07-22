@@ -134,34 +134,34 @@ FAMILIES: tuple[Family, ...] = (
         ),
     ),
     Family(
-        task_id="cost_v1",
+        task_id="collaboration_v1",
         brief=(
-            "Propose one concise feature for a developer tool that helps teams understand and "
-            "manage what their multi-agent LLM workflows cost to run."
+            "Propose one concise feature for a developer tool that helps several people work "
+            "together on the same multi-agent LLM workflow."
         ),
         cards=(
             Card(
-                "Step Cost Ledger",
-                "attribute every token and tool charge to its originating step, model, and caller, "
-                "exported as a per-run statement.",
+                "Workflow Branching",
+                "let each person develop a variant of the same workflow in isolation and merge "
+                "changes deliberately.",
                 7,
             ),
             Card(
-                "Pre-Run Estimator",
-                "project a run's cost from its plan and refuse to start when the projection "
-                "exceeds a set budget.",
+                "Change Review",
+                "require a second person to approve edits to agent prompts and tool wiring before "
+                "they land.",
                 4,
             ),
             Card(
-                "Model Tier Advisor",
-                "flag steps whose output quality would be unchanged on a cheaper model tier, "
-                "ranked by savings.",
+                "Ownership Map",
+                "record who is responsible for each agent, prompt, and tool so questions reach "
+                "the right person.",
                 2,
             ),
             Card(
-                "Spend Digest",
-                "summarize weekly workflow cost by team and feature in plain language for non- "
-                "engineering readers.",
+                "Shared Scratchpad",
+                "capture in-progress notes and open questions alongside the workflow so context "
+                "survives between people.",
                 1,
             ),
         ),
@@ -200,34 +200,33 @@ FAMILIES: tuple[Family, ...] = (
         ),
     ),
     Family(
-        task_id="recovery_v1",
+        task_id="iteration_v1",
         brief=(
-            "Propose one concise feature for a developer tool that helps teams deal with "
-            "multi-agent LLM runs that fail partway through."
+            "Propose one concise feature for a developer tool that helps teams learn from how "
+            "their multi-agent LLM workflows behave in production."
         ),
         cards=(
             Card(
-                "Checkpoint Resume",
-                "restart a failed run from its last durable step rather than from the beginning, "
-                "preserving completed work.",
+                "Behavior Trends",
+                "chart how a workflow's outputs and failure patterns shift across releases so "
+                "drift becomes visible.",
                 7,
             ),
             Card(
-                "Partial State Viewer",
-                "expose the intermediate outputs a failed run produced so an operator can judge "
-                "what is salvageable.",
+                "Production Sampler",
+                "collect a representative sample of real runs and surface the ones most worth "
+                "examining closely.",
                 4,
             ),
             Card(
-                "Deterministic Retry",
-                "replay a retry against the recorded inputs and seeds so the second attempt is "
-                "comparable to the first.",
+                "Change Impact",
+                "link each workflow edit to the behavior shift that followed it in production.",
                 2,
             ),
             Card(
-                "Blast Radius Report",
-                "list downstream steps and external side effects a failure may have already "
-                "triggered.",
+                "Hypothesis Log",
+                "record what a team expected from a change and whether the observed behavior "
+                "matched.",
                 1,
             ),
         ),
