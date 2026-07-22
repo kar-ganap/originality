@@ -305,22 +305,36 @@ Because V's floor is 0, any effect can be read as a fraction of the distance to 
 
 ### 9.2 Rung-0 gate (LOCKED)
 
-**Design.** 3 task families × 3 cells (**instruction-λ=1**, **payoff-λ=1**, shared **ablation**) × 5
-**distinct** roles × **6 blocks**. Single round; the question is acute reachability, not dynamics.
+**Design.** **5** task families × 3 cells (**instruction-λ=1**, **payoff-λ=1**, shared **ablation**) ×
+5 **distinct** roles × **10 blocks** = **750 calls**. Single round; the question is acute
+reachability, not dynamics.
+
+*Sizing rationale (2026-07-21): rung 0 costs ~$1 at 270 calls and ~$2.80 at 750 (§9.5), so it is
+sized by what the science needs, not by budget — a first for this program, where canary died at a
+$250 wall and Polyphony ran its whole arc on ~$3–4. The extra ~$1.80 buys a Wilcoxon floor of
+0.00098 instead of a marginal 0.016, and a 5-family generality rule instead of a 3-family one.*
 
 **Passes iff all four hold:**
 1. **Margin** — `V_output` declines **≥20%** vs matched ablation (0.42 → ≤0.336, Δ ≈ −0.084).
-2. **Generality** — in **≥2 of 3** task families.
-3. **Significance** — one-sided sign/Wilcoxon **p<.05** at n=6.
+2. **Generality** — in **≥3 of 5** task families.
+3. **Significance** — one-sided sign/Wilcoxon **p<.05** at **n=10** blocks.
 4. **Guards** — `anchor_alignment` stays **below a ceiling pre-registered from the R6 scale** (the
    diverse baseline is 0.34–0.51; parroting is 0.84 — set the ceiling at **0.65**), **and** measured
    persona diversity D is statistically unchanged from ablation.
 
 **The arithmetic, checked in advance** (canary's gate was arithmetically unreachable and nobody
 noticed until audit): Δ = −0.084 against a CI half-width of 0.003–0.013 is **7–28× headroom**, so
-detection is not the constraint. Minimum one-sided Wilcoxon p is 0.031 at n=5 and **0.016 at n=6**,
-so the p<.05 branch **is reachable** at the planned n. Power is not binding here; **actuator strength
-is** — the gate demands ~8× the magnitude, and the opposite sign, of anything Polyphony achieved.
+detection is not the constraint. Minimum one-sided Wilcoxon p is 0.031 at n=5, 0.016 at n=6, and
+**0.00098 at n=10** — so the p<.05 branch is reachable with wide margin, not marginally. Power is not
+binding here; **actuator strength is** — the gate demands ~8× the magnitude, and the opposite sign,
+of anything Polyphony achieved.
+
+**Conditional λ-ladder tail (run only if the gate PASSES).** If λ=1 collapses V, immediately extend
+on the same warm harness to λ ∈ {0.33, 0.66} for both actuator forms: 5 families × 4 added cells × 5
+agents × 10 blocks = **1,000 calls ≈ $3.65**. This brackets λ\* while the apparatus is running and
+pulls the cheap half of rung 3 forward. Do **not** run it if the gate fails — every intermediate λ is
+weaker than λ=1, so a λ=1 null makes the ladder vacuous. This is the staging discipline canary
+violated by running its fidelity test at the floor.
 
 ### 9.3 The actuator floor — derived from rung 0, not guessed
 
@@ -357,13 +371,23 @@ Every constant is registered here or in a dated change-log entry; none is introd
 
 ### 9.5 Cost ladder
 
-Rung 0 is priced from Polyphony actuals (960 calls inside a ~$3–4 total). Rungs 1–3 are dominated by
-**reasoning tokens, which bill at output rate** — the single largest uncertainty, since a long-CoT
-model may emit 1k–10k thinking tokens per response.
+Rung 0 is priced from **measured Polyphony actuals**, not estimated: R7C-A ran 960 calls on the same
+substrate (`gpt-5.6-sol`, effort `none`, 120-token cap, 5-agent cells) at **137.4 input** and **63.0
+output** tokens/call — 131,864 in + 60,513 out = **$2.47** at Sol's $5/$30 per 1M.
+
+**Rung 0's cost has a hard ceiling**, which is why it can be sized freely: output is capped at 120
+tokens and bills 6× input, so 750 calls cannot exceed 750 × 120 × $30/1M = **$2.70** in output plus
+~$1.88 input at a generous 500 tokens/call. Prompt-size uncertainty moves the total by ±$0.30 and is
+not worth optimizing.
+
+Rungs 1–3 are a different regime, dominated by **reasoning tokens, which bill at output rate** — the
+single largest uncertainty, since a long-CoT model may emit 1k–10k thinking tokens per response.
+Those estimates are genuinely uncertain and must be re-costed from rung 0's telemetry.
 
 | rung | scale | estimate |
 |---|---|---|
-| **0** reachability | 3 families × 3 cells × 5 agents × 6 blocks ≈ 270 calls, short outputs | **< $10** |
+| **0** reachability | 5 families × 3 cells × 5 agents × 10 blocks = 750 calls, short outputs | **≈ $2.80** (hard ceiling $4.60) |
+| **0-tail** λ ladder *(only if rung 0 passes)* | +4 cells × 5 × 5 × 10 = 1,000 calls | **≈ $3.65** |
 | **1** Arm 0 bridge | 3 × 2 × 5 × 8 rounds × 6 seeds ≈ 1,440 calls, long CoT | **$40–80** |
 | **2** two-layer | ≈ 2,880 calls + skeleton extraction (~5,760 cheap calls) | **$100–150** |
 | **3** λ\* straddling | fine λ grid × fidelity/innovation arms ≈ 9k–13k calls + ABM compute | **$300–500** |
@@ -379,8 +403,10 @@ arms. **No rung launches without a re-costed estimate from the prior rung's tele
   §5) + `V_reason` (≥2 skeleton extractions × ≥2 granularities) + reference-anchored concentration.
 - **Primary:** the joint `(V_output, V_reason)` trajectory and the **which-collapses-first** ordering,
   classified by the §6 level+slope co-primary — never a bare slope.
-- **n≥6** per cell; equal observation windows across compared conditions; if any run is truncated,
-  report the matched-window sensitivity alongside the full result.
+- **n≥10** per cell at rung 0; **n≥6** minimum at later rungs where calls are dearer (never n≤4 — the
+  one-sided Wilcoxon floor is 0.0625 there, i.e. a p<.05 gate is arithmetically dead). Equal
+  observation windows across compared conditions; if any run is truncated, report the matched-window
+  sensitivity alongside the full result.
 - **Report regime/sign over magnitude** — the short-output magnitude-inflation caution carries over.
 
 ---
