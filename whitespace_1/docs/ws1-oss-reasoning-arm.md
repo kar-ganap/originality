@@ -272,13 +272,30 @@ decisive for `V_reason` and better than any API that hides it. Natural panel for
 Claude + ≥1 OSS reasoning model. Served on Modal (vLLM) or a per-token inference API
 (Together/Fireworks/DeepInfra).
 
-**Harness — correction to v1.** v1 assumed this arm "reuses Polyphony's provider-agnostic
-`LLMClient` harness… so this is a drop-in." **That harness does not exist.** Polyphony has
-`_make_openai_client()` — a private helper returning a bare `OpenAI()` with no `base_url`, imported
-across ~6 modules. Concretely:
-  - OSS endpoints are OpenAI-compatible → a small `base_url` parameterization suffices.
-  - **Claude needs a separate client path**, including extended-thinking trace retrieval.
-  - Budget this as real (if modest) work, not as free reuse.
+**Harness — correction to v1, now built** (`src/whitespace1/client.py`). v1 assumed this arm
+"reuses Polyphony's provider-agnostic `LLMClient` harness… so this is a drop-in." That harness did
+not exist; it does now — an `LLMClient` protocol with `OpenAICompatClient` (GPT-5.6 + OSS via
+`base_url`), `AnthropicClient` (extended thinking), `MockClient`, and a cost `Ledger`.
+
+> ### ⚠ Correction to the arm's centerpiece claim (2026-07-22)
+>
+> v1 asserted: *"Claude exposes **extended-thinking traces**, so `V_reason` is directly measurable —
+> better than any API that hides the raw trace."* **That is wrong**, verified against the Anthropic
+> API reference. **The raw chain of thought is never exposed on any current Claude model.**
+> `thinking={"type": "adaptive", "display": "summarized"}` returns a *readable summary*;
+> `display="omitted"` (the default — it must be set explicitly) returns thinking blocks whose text
+> is empty. Also: `budget_tokens` is **removed** on Opus 4.8/4.7, Sonnet 5, and Fable 5 — sending it
+> is a 400. Thinking bills at the output rate with **no separate reasoning-token usage field**.
+>
+> **Consequence for §5.** `V_reason` on Claude measures **summarized** reasoning; on OSS long-CoT
+> models it measures the **raw trace**. These are different instruments, and summarization is itself
+> a homogenizing transform — it could compress `V_reason` for reasons that have nothing to do with
+> conformity. So a Claude-vs-OSS `V_reason` comparison is **confounded by the instrument** and must
+> not be made. Treat them as separate within-substrate measurements (which §5's
+> "`V_reason` is within-model longitudinal only" rule already implies), and **prefer OSS models for
+> the reasoning layer**, with Claude as an output-layer and cross-model-panel backend. If Claude's
+> reasoning layer is used at all, pre-register a summarization-invariance check: does the summarizer
+> compress diversity on deliberately diverse traces?
 
 Everything else in Polyphony worth reusing is public and citable: the metric battery, the
 persona/catalog machinery, and the token-free test discipline.

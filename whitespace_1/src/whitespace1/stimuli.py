@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+from collections.abc import Sequence
 from dataclasses import dataclass
 
 
@@ -234,20 +235,31 @@ FAMILIES: tuple[Family, ...] = (
 )
 
 
-def render_cell(family: Family, cell: str, role: Role) -> str:
-    """Render the full prompt for one (family, cell, role). ``cell`` is 'A', 'B', or 'C'."""
+def render_cell(
+    family: Family, cell: str, role: Role, *, order: Sequence[int] | None = None
+) -> str:
+    """Render the full prompt for one (family, cell, role). ``cell`` is 'A', 'B', or 'C'.
+
+    ``order`` is the block's committed item permutation (see :mod:`whitespace1.schedule`). Cells A
+    and B in the same block MUST receive the same ``order`` — the contrast isolates the
+    annotation's meaning, not the ordering. Cell A's ``(position N)`` is the **display** position,
+    which is only neutral because the order is shuffled per block.
+    """
     if cell not in {"A", "B", "C"}:
         raise ValueError(f"cell must be A, B, or C; got {cell!r}")
+    idx = tuple(range(len(family.cards))) if order is None else tuple(order)
+    if sorted(idx) != list(range(len(family.cards))):
+        raise ValueError(f"order must be a permutation of card indices; got {order!r}")
+    cards = [family.cards[i] for i in idx]
+
     head = f"You are a {role.descriptor}\n\n{family.brief}\n\n"
     if cell == "C":
         body = EMPTY_CONTEXT
     elif cell == "A":
-        items = "\n".join(
-            f"- {c.text} (position {i})" for i, c in enumerate(family.cards, start=1)
-        )
+        items = "\n".join(f"- {c.text} (position {i})" for i, c in enumerate(cards, start=1))
         body = f"{ITEMS_HEADER_A}\n{items}\n\n{DIRECTIVE_A}"
     else:
-        items = "\n".join(f"- {c.text} (adopted by {c.adoption})" for c in family.cards)
+        items = "\n".join(f"- {c.text} (adopted by {c.adoption})" for c in cards)
         body = f"{ITEMS_HEADER_B}\n{items}\n\n{PAYOFF_B}"
     return f"{head}{body}\n\n{FORMAT_INSTRUCTION}"
 
