@@ -33,7 +33,7 @@ def _client(api_key: str):  # noqa: ANN202 - thin SDK wrapper
 def main() -> int:
     print(f"stimulus hash: {stimulus_hash()}\n")
 
-    results = [pf.check_role_coverage(), pf.check_length_balance(), pf.check_no_leakage()]
+    results = [pf.check_open_brief(), pf.check_length_balance(), pf.check_no_leakage()]
 
     try:
         key = require_secret("OPENAI_API_KEY")
@@ -80,7 +80,8 @@ def main() -> int:
     )
 
     failed = [c.name for c in results if not c.passed]
-    print("\nPREFLIGHT " + ("PASSED — stimuli may be frozen." if not failed else f"FAILED: {failed}"))
+    verdict = "PASSED - stimuli may be frozen." if not failed else f"FAILED: {failed}"
+    print(f"\nPREFLIGHT {verdict}")
     return 0 if not failed else 1
 
 

@@ -1,11 +1,46 @@
 # Rung-0 stimulus appendix — five task families (draft, pre-generation)
 
-> **Status:** draft stimuli, 2026-07-21. Committed **before** any generation call, per the preflight
-> discipline: stimuli are frozen and hashed before the run, and **no generation output may be
-> examined while revising them.** Companion to `ws1-oss-rung0-build-brief.md` §3 and
-> `ws1-oss-reasoning-arm.md` §9.2.
+> **Status: NOT FROZEN — preflight FAILED on C6 (2026-07-21).** 5 of 6 criteria pass;
+> `cost_v1` and `recovery_v1` fall below the ablation-diversity floor and must be **replaced, not
+> tuned**. Companion to `ws1-oss-rung0-build-brief.md` §3 and `ws1-oss-reasoning-arm.md` §9.2.
+> Source of truth is `src/whitespace1/stimuli.py`; run `uv run python experiments/run_preflight.py`.
 >
-> These are **not yet frozen.** They require the §4 preflight below to pass first.
+> *Note on the "no generation output may be examined while revising stimuli" rule: C6 is by
+> construction an outcome check on ablation pilots, so its output legitimately informs stimulus
+> revision. What must not happen is examining **treatment-cell** output (A/B) before the freeze.
+> No treatment cell has been run.*
+
+## 0. Preflight record (2026-07-21)
+
+Three real defects were caught, all in the stimuli or the criteria — **`CEILING_MIN` was never
+moved.** Validation that the target itself was right: `testing_v1` now measures **0.405 [0.38–0.42]**
+against prior work's role-diverse ablation of **0.408–0.431**, so the calibration transfers and the
+earlier failures were genuine stimulus defects rather than a mis-set threshold.
+
+| # | defect | fix |
+|---|---|---|
+| **C4** | Cell B annotated items with adoption counts, cell A annotated none → B was +16 words in every family (9.1–10.1% skew). A B-vs-A difference could have been prompt length, not actuator form. | Structural parity: both cells render `- {text} ({annotation})`; only the annotation's meaning differs. Skew → 1.1–1.3%. |
+| **C1** | The check *rewarded* briefs for enumerating ≥3 constraint clauses. That was backwards — an enumerated checklist hands every role the same answer. All five roles produced near-identical proposals (ablation V 0.14–0.24). | **Inverted:** briefs must state the problem domain *without* enumerating solution requirements, ≤30 words. All five briefs rewritten as open prompts. |
+| **C3** | Compared brief-to-brief distance against card-to-card. Incommensurable — briefs share a deliberately identical stem, so their distance is boilerplate-dominated. The test could not pass however distinct the families were. | **Re-specified** onto card-to-card on both sides. Now passes: between-family 0.701 > within-family 0.631. |
+
+A fourth fix came from matching prior work's form, which the design principle already required:
+roles carry a **viewpoint**, not a bare job title (`"Reliability engineer: Failure modes,
+observability, rollback paths, and operations."`). Bare titles are a much weaker diversity signal.
+Effect on ablation V, cumulative across all fixes:
+
+```
+                    original   open briefs   + viewpoint roles (3 blocks)
+observability_v1     0.236        0.291        0.368 [0.35-0.39]  PASS
+testing_v1           0.209        0.323        0.405 [0.38-0.42]  PASS
+access_v1            0.221        0.250        0.376 [0.36-0.40]  PASS
+cost_v1              0.179        0.163        0.279 [0.26-0.31]  FAIL
+recovery_v1          0.142        0.209        0.273 [0.24-0.31]  FAIL
+```
+
+**Open action.** `cost_v1` and `recovery_v1` are genuinely narrow domains — cost converges on
+"attribute the spend," recovery on "checkpoint and replay" — so every role lands in the same place.
+Their ranges do not overlap the passing families', so this is not sampling noise. Per §4 they are
+**replaced**, with candidate domains chosen for multi-facetedness rather than tuned wording.
 
 ## 1. Design constraints these stimuli must satisfy
 

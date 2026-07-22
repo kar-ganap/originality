@@ -24,8 +24,10 @@ CARD_WORDS_MIN = 14
 CARD_WORDS_MAX = 24
 BRIEF_BALANCE_TOL = 0.15  # briefs within +/-15% of the mean word count
 PROMPT_BALANCE_TOL = 0.10  # cell A vs cell B prompt length within +/-10%
+BRIEF_WORDS_MAX = 30  # open briefs are short; an enumerated checklist is long
 CARD_SPREAD_MIN = 0.15  # within-family mean pairwise cosine distance across the 4 cards
-CEILING_MIN = 0.35  # ablation pilot V_output floor (calibrated diverse ceiling is ~0.42)
+CEILING_MIN = 0.35  # ablation V_output floor (calibrated diverse ceiling is ~0.42)
+CEILING_BLOCKS = 3  # blocks/family: precision of the estimate, NOT the criterion
 
 # Words that would leak the manipulation into a brief or card.
 BANNED = ("conformity", "diversity", "collapse", "adopted by", "adoption count")
@@ -51,19 +53,26 @@ def _mpcd(vectors: NDArray[np.float64]) -> float:
     return float(np.mean([1.0 - float(np.dot(v[i], v[j])) for i, j in pairs]))
 
 
-def check_role_coverage(families: Sequence[Family] = FAMILIES) -> Check:
-    """C1 (structural): each brief must name >=3 distinct constraint clauses, so no single role
-    monopolizes it. A blinded human read remains the authoritative version of this check."""
+def check_open_brief(families: Sequence[Family] = FAMILIES) -> Check:
+    """C1 (revised 2026-07-21): briefs must state the problem domain WITHOUT enumerating solution
+    requirements.
+
+    The first version required >=3 constraint clauses, on the theory that more clauses give the five
+    roles more to divide. The pilot showed the opposite: an enumerated checklist hands every agent
+    the same answer, and all five roles converged on one proposal (ablation V 0.14-0.24 against a
+    ~0.42 calibrated ceiling). Open briefs let each role bring its own lens.
+    """
     bad = []
     for f in families:
-        tail = f.brief.split("Active constraints:", 1)
-        clauses = tail[1].count(",") + tail[1].count(";") if len(tail) == 2 else 0
-        if len(tail) != 2 or clauses < 2:
-            bad.append(f"{f.task_id}(clauses={clauses})")
+        n = len(f.brief.split())
+        markers = ("active constraints", "must ", "required")
+        prescriptive = any(m in f.brief.lower() for m in markers)
+        if prescriptive or n > BRIEF_WORDS_MAX:
+            bad.append(f"{f.task_id}(words={n}, prescriptive={prescriptive})")
     return Check(
-        "C1 role coverage (structural)",
+        f"C1 open brief (no enumerated requirements, <= {BRIEF_WORDS_MAX}w)",
         not bad,
-        "all briefs carry >=3 constraint clauses" if not bad else f"thin: {bad}",
+        "all briefs open-ended" if not bad else f"over-specified: {bad}",
     )
 
 
@@ -83,13 +92,31 @@ def check_card_spread(embed: Embedder, families: Sequence[Family] = FAMILIES) ->
 
 
 def check_family_separation(embed: Embedder, families: Sequence[Family] = FAMILIES) -> Check:
-    """C3: between-family brief distance must exceed mean within-family card distance."""
-    between = _mpcd(embed([f.brief for f in families]))
-    within = float(np.mean([_mpcd(embed([c.text for c in f.cards])) for f in families]))
-    ok = between > within
+    """C3 (re-specified 2026-07-21): between-family CARD distance must exceed within-family CARD
+    distance -- i.e. cards cluster by family.
+
+    The first version compared brief-to-brief against card-to-card. Those are incommensurable: the
+    briefs share a deliberately identical stem, so their distance is dominated by boilerplate while
+    card distance is dominated by content. That test had no power to discriminate family
+    distinctness and could not pass however distinct the families were. Both sides are now
+    card-to-card.
+    """
+    per_family = [
+        embed([c.text for c in f.cards]) / np.linalg.norm(
+            embed([c.text for c in f.cards]), axis=1, keepdims=True
+        )
+        for f in families
+    ]
+    within = float(np.mean([_mpcd(m) for m in per_family]))
+    cross = [
+        float(np.mean(1.0 - per_family[i] @ per_family[j].T))
+        for i in range(len(per_family))
+        for j in range(i + 1, len(per_family))
+    ]
+    between = float(np.mean(cross))
     return Check(
-        "C3 family separation (between-brief > within-card)",
-        ok,
+        "C3 family separation (between-card > within-card)",
+        between > within,
         f"between={between:.3f} within={within:.3f}",
     )
 
@@ -132,18 +159,29 @@ def check_no_leakage(families: Sequence[Family] = FAMILIES) -> Check:
 
 
 def check_ceiling_sanity(
-    generate: Generator, embed: Embedder, families: Sequence[Family] = FAMILIES
+    generate: Generator,
+    embed: Embedder,
+    families: Sequence[Family] = FAMILIES,
+    *,
+    n_blocks: int = CEILING_BLOCKS,
 ) -> Check:
-    """C6: one ablation pilot block per family must land V_output >= CEILING_MIN.
+    """C6: the mean ablation V_output over ``n_blocks`` pilot blocks must be >= CEILING_MIN.
 
-    A family whose ablation V is already low has a floor problem: the rung-0 >=20% margin would be
+    A family whose ablation V is already low has a floor problem: rung 0's >=20% margin would be
     measured against the wrong baseline.
+
+    ``n_blocks`` raises the precision of the estimate; it does **not** move the criterion. A single
+    block is too noisy to classify a family, and this check decides whether a family is replaced.
     """
     rows, fails = [], []
     for f in families:
-        outs = [generate(render_cell(f, "C", r)) for r in ROLES]
-        v = _mpcd(embed(outs))
-        rows.append(f"{f.task_id}={v:.3f}")
+        vs = [
+            _mpcd(embed([generate(render_cell(f, "C", r)) for r in ROLES]))
+            for _ in range(n_blocks)
+        ]
+        v = float(np.mean(vs))
+        spread = f"[{min(vs):.2f}-{max(vs):.2f}]" if n_blocks > 1 else ""
+        rows.append(f"{f.task_id}={v:.3f}{spread}")
         if v < CEILING_MIN:
             fails.append(f.task_id)
     return Check(

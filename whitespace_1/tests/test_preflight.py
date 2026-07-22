@@ -78,8 +78,8 @@ def test_stimulus_hash_is_stable() -> None:
 # --- criteria --------------------------------------------------------------
 
 
-def test_c1_role_coverage_passes() -> None:
-    assert pf.check_role_coverage().passed
+def test_c1_open_brief_passes() -> None:
+    assert pf.check_open_brief().passed
 
 
 def test_c4_length_balance_passes() -> None:

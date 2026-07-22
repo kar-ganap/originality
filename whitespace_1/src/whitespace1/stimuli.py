@@ -13,12 +13,26 @@ import hashlib
 import json
 from dataclasses import dataclass
 
-ROLES: tuple[str, ...] = (
-    "Reliability engineer",
-    "Product designer",
-    "Security reviewer",
-    "Learning scientist",
-    "Cost analyst",
+
+@dataclass(frozen=True)
+class Role:
+    """A fixed viewpoint. Form matches prior work: a bare job title is a far weaker diversity
+    signal than name + viewpoint, and the ceiling calibration was measured with the latter."""
+
+    name: str
+    viewpoint: str
+
+    @property
+    def descriptor(self) -> str:
+        return f"{self.name}: {self.viewpoint}"
+
+
+ROLES: tuple[Role, ...] = (
+    Role("Reliability engineer", "Failure modes, observability, rollback paths, and operations."),
+    Role("Product designer", "User workflows, affordances, trust, and interaction friction."),
+    Role("Security reviewer", "Misuse, privacy boundaries, access control, and auditability."),
+    Role("Learning scientist", "Explanation, feedback loops, and durable understanding."),
+    Role("Cost analyst", "Token budget, latency, throughput, and deployment constraints."),
 )
 
 FORMAT_INSTRUCTION = (
@@ -56,10 +70,8 @@ FAMILIES: tuple[Family, ...] = (
     Family(
         task_id="observability_v1",
         brief=(
-            "Propose one concise feature for a developer tool that makes multi-agent LLM runs "
-            "inspectable after the fact. Active constraints: traces must survive process restarts, "
-            "must not expose secrets or raw user data, and must be readable by someone who did not "
-            "build the workflow."
+            "Propose one concise feature for a developer tool that helps teams inspect and "
+            "understand what actually happened during a multi-agent LLM run."
         ),
         cards=(
             Card(
@@ -91,10 +103,8 @@ FAMILIES: tuple[Family, ...] = (
     Family(
         task_id="testing_v1",
         brief=(
-            "Propose one concise feature for a developer tool that verifies multi-agent LLM "
-            "workflows before release. Active constraints: checks must run without live production "
-            "credentials, must catch regressions introduced by prompt edits, and must report which "
-            "scenarios remain unexercised."
+            "Propose one concise feature for a developer tool that helps teams build confidence "
+            "in a multi-agent LLM workflow before they ship it."
         ),
         cards=(
             Card(
@@ -126,10 +136,8 @@ FAMILIES: tuple[Family, ...] = (
     Family(
         task_id="cost_v1",
         brief=(
-            "Propose one concise feature for a developer tool that keeps multi-agent LLM workflow "
-            "spending predictable. Active constraints: spend must be attributable to a step, "
-            "model, and tool; budget limits must be enforceable before a run starts; and the "
-            "report must be legible to a non-engineer."
+            "Propose one concise feature for a developer tool that helps teams understand and "
+            "manage what their multi-agent LLM workflows cost to run."
         ),
         cards=(
             Card(
@@ -161,10 +169,8 @@ FAMILIES: tuple[Family, ...] = (
     Family(
         task_id="access_v1",
         brief=(
-            "Propose one concise feature for a developer tool that controls what data and tools a "
-            "multi-agent LLM workflow may reach. Active constraints: capability grants must be "
-            "scoped per agent and time-bounded, every grant must leave an auditable record, and "
-            "revocation must take effect on runs already in flight."
+            "Propose one concise feature for a developer tool that helps teams decide and enforce "
+            "what a multi-agent LLM workflow is allowed to do."
         ),
         cards=(
             Card(
@@ -196,10 +202,8 @@ FAMILIES: tuple[Family, ...] = (
     Family(
         task_id="recovery_v1",
         brief=(
-            "Propose one concise feature for a developer tool that helps teams recover from failed "
-            "multi-agent LLM runs. Active constraints: recovery must not silently discard work "
-            "already completed, partial state must be inspectable before any retry, and a retry "
-            "must be reproducible from a recorded checkpoint."
+            "Propose one concise feature for a developer tool that helps teams deal with "
+            "multi-agent LLM runs that fail partway through."
         ),
         cards=(
             Card(
@@ -231,11 +235,11 @@ FAMILIES: tuple[Family, ...] = (
 )
 
 
-def render_cell(family: Family, cell: str, role: str) -> str:
+def render_cell(family: Family, cell: str, role: Role) -> str:
     """Render the full prompt for one (family, cell, role). ``cell`` is 'A', 'B', or 'C'."""
     if cell not in {"A", "B", "C"}:
         raise ValueError(f"cell must be A, B, or C; got {cell!r}")
-    head = f"You are a {role}.\n\n{family.brief}\n\n"
+    head = f"You are a {role.descriptor}\n\n{family.brief}\n\n"
     if cell == "C":
         body = EMPTY_CONTEXT
     elif cell == "A":
