@@ -123,18 +123,30 @@ a recorded checkpoint.
 
 ## 3. Cell rendering (identical across families)
 
+Implemented in `src/whitespace1/stimuli.py` (`render_cell`), which is the source of truth.
+
 - **Cell C — ablation.** Public brief + role + format instruction. Visible context field reads:
   `Shared context: No prior proposals are available.`
 - **Cell A — instruction-λ=1.** Identical, plus the four items under
-  `Leading approaches from other teams:` and the directive:
-  *"Your proposal should align with the leading approaches shown above."*
-- **Cell B — payoff-λ=1.** Identical, plus the same four items with their adoption counts under
-  `Proposals adopted by other teams (adoption count):` and the payoff frame:
-  *"Proposals similar to those already adopted are more likely to be adopted."*
+  `Leading approaches proposed by other teams (list position):`, each annotated `(position N)`,
+  and the directive:
+  *"Your proposal should align with the leading approaches shown in the list above."*
+- **Cell B — payoff-λ=1.** Identical, plus the **same four items** under
+  `Proposals adopted by other teams (adoption count):`, each annotated `(adopted by N)`, and the
+  payoff frame: *"Proposals similar to those already adopted are more likely to be adopted."*
 
-The visible field label, item order, card length, and format are held identical across A and B.
+**Structural parity (added 2026-07-21 after preflight C4 failed).** Both cells render every item as
+`- {card text} ({annotation})`; **only the annotation's meaning differs** — list position vs adoption
+count. The first draft annotated items in B only, which made B systematically **+16 words** longer in
+every family (9.1–10.1% skew; `testing_v1` breached the registered ±10% tolerance). That is a real
+confound: a B-vs-A difference could then be prompt length rather than actuator form, which defeats
+the contrast's purpose. Parity brings the skew to **1.1–1.3%**. The threshold was **not** relaxed —
+the stimuli were fixed.
+
 Adoption counts `[7, 4, 2, 1]` are deliberately skewed to give preferential attachment a clear
-target; item order is a committed shuffle per block, not correlated with count.
+target. **Item order must be a committed shuffle per block**, so cell A's `position` annotation
+carries no rank information; without the shuffle, position would proxy adoption rank and leak the
+manipulation into A.
 
 ## 4. Preflight — must pass before freezing
 
