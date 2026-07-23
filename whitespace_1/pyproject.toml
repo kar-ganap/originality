@@ -27,6 +27,11 @@ llm = [
 serve = [
     "modal>=1.2",
 ]
+# The second-family embedder (instrument I2 in rung-0 v2) — a local open model, genuinely
+# independent of OpenAI. Only needed for a real probe run; the dry-run mocks it.
+embed2 = [
+    "sentence-transformers>=3.0",
+]
 # Optional: figures.
 plot = [
     "matplotlib>=3.7",
