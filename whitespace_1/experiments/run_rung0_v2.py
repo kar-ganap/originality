@@ -3,6 +3,7 @@
     uv run python experiments/run_rung0_v2.py --dry-run          # mock everything; no key, no spend
     uv run python experiments/run_rung0_v2.py                    # ~1,250 gens + extraction, ~$1.5
     uv run python experiments/run_rung0_v2.py --workers 16       # tune concurrency
+    uv run python experiments/run_rung0_v2.py --seed 20260724    # replicate at a new schedule
 
 Two API phases, each **concurrent** (a thread pool over the network calls) and **checkpointed** per
 ``(block, cell)``: generation banks answers + traces, extraction banks skeletons. A finished cell is
@@ -164,9 +165,9 @@ def _local_embedder() -> Any:
     return SentenceTransformer(I2_MODEL)
 
 
-def run(dry_run: bool, workers: int) -> int:
+def run(dry_run: bool, workers: int, seed: int) -> int:
     gen_fn, skel_fn, embed_i1, embed_i2, ledger = build_pieces(dry_run)
-    blocks = build_schedule(n_blocks=N_BLOCKS, seed=SCHEDULE_SEED)
+    blocks = build_schedule(n_blocks=N_BLOCKS, seed=seed)
     tag = "dry" if dry_run else schedule_hash(blocks)[:12]
     RUNS_DIR.mkdir(exist_ok=True)
     gen_bank_path = RUNS_DIR / f"rung0-v2-{tag}-gen.jsonl"
@@ -214,6 +215,7 @@ def run(dry_run: bool, workers: int) -> int:
         path = RUNS_DIR / f"rung0-v2-{tag}.json"
         path.write_text(json.dumps({
             "stimulus_hash": stimulus_hash(), "schedule_hash": schedule_hash(blocks),
+            "schedule_seed": seed,
             "gen_model": GEN_MODEL, "extract_model": EXTRACT_MODEL, "i2_model": I2_MODEL,
             "cost_usd": ledger.cost_usd(), "measures": [asdict(m) for m in measures],
         }, indent=2))
@@ -279,9 +281,11 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry-run", action="store_true", help="mock everything; no key, no spend")
     ap.add_argument("--workers", type=int, default=DEFAULT_WORKERS)
+    ap.add_argument("--seed", type=int, default=SCHEDULE_SEED,
+                    help="schedule seed; change to replicate at an independent arrangement")
     args = ap.parse_args()
     try:
-        return run(args.dry_run, args.workers)
+        return run(args.dry_run, args.workers, args.seed)
     except MissingCredential as exc:
         print(f"{exc}\n\n(use --dry-run to exercise the pipeline without a key)", file=sys.stderr)
         return 1
