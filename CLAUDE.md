@@ -20,8 +20,11 @@ with each prior study de-risking the next.
   never leaves the near-all-singletons regime (0.013→0.060, versus 0.8–0.99 for a real citation
   distribution), and rises near-identically in CS and Physics while the age-restricted citation
   Gini moves in *opposite* directions. That age-restricted series is the pre-registered substrate
-  gate; in CS it **declines** at all three windows, and was never reported. See
-  `whitespace_2/CLAUDE.md`.
+  gate; in CS it **declines** at all three windows, and was never reported. **Measured correctly**
+  (denominator-safe canon-share + accrual-fair, density-controlled cohort in-degree over the 24M
+  population): **CS canon concentration is flat, Physics rises** — the field difference `ref_gini`
+  erased. In CS, the field the decoupling was claimed for, there is no rising concentration to be
+  orthogonal to the fragmentation. See `whitespace_2/CLAUDE.md`.
 - **Whitespace 3 — Theoretical reconciliation (Phase 1 + Phase 2 bridge COMPLETE;
   crossover claim UNDER REVISION as of 2026-07-22).** Minimal ABM decomposing cumulative
   complexity `C` from per-capita variance `V`, reconciling Henrich with Wu-Wang-Evans.

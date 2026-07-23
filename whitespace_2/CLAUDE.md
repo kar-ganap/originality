@@ -53,6 +53,33 @@ claim is disconfirmed — a successful null.
 > It was computed, committed to `series/semantic-canonical.json`, and never reported. It is the
 > metric that should have carried the concentration claim, and in CS it points the other way.
 >
+> **What a correct measurement shows (added 2026-07-22).** Requirements were pre-registered in
+> `docs/concentration-measures.md` (canon-scale range, no growing denominator, fixed observation
+> window, matched null, replay validation, field discrimination), then two measures built to them:
+>
+> - **`canon_share`** (`src/whitespace2/canon_share.py`) — out-edge: the share of a year's references
+>   landing in the top-K canon its *predecessors* built. Fixed K, denominator is the year's own edges,
+>   so the `ref_gini` confound is absent by construction. Result: **flat-to-declining in both fields**
+>   at K=100/1000/10000; entropy-deficit falls in all six cells; sample-size invariant.
+> - **Cohort in-degree** (`src/whitespace2/cohort_concentration.py`) — in-edge: inequality of citations
+>   *received* within a publication cohort, over the **24M population** (the local 1M sees only 1.93% of
+>   edges), on a **fixed forward window** (accrual-fair) and **density-controlled** (each cohort thinned
+>   to a common cites-per-paper, since Gini of a count vector is density-dependent). Replay of the
+>   committed series is bit-exact. Result: **CS is flat** (volume-controlled slope ≈0, robust at
+>   density floors 0.60/1.30/2.39), **Physics rises** (+0.0027…+0.0031/yr, robust across W=5/10 and
+>   1970/1990/2000). The all-time-vs-windowed sign flip confirms the age-restricted (all-time) gate was
+>   accrual-confounded — the CD-index lesson applied to concentration.
+>
+> **The honest landing.** `ref_gini` said CS and Physics both concentrate near-identically; the clean
+> measures say **CS canon concentration is flat, Physics rises** — the field discrimination the old
+> metric erased. WS2's decoupling was a *CS* claim (semantic fragmentation held on three embedding
+> families in CS), and in CS there is **no rising concentration to be orthogonal to the fragmentation**.
+> Physics concentrates, but its fragmentation was the mixed one (SPECTER2 reversed). So the two
+> phenomena appear in **different fields, not orthogonally in the same one**. This is an *observation*,
+> not a new thesis: whether it is real field structure (e.g. a niche-distinctiveness effect) needs a
+> pre-registered multi-field test, and fitting a two-field difference to a tunable parameter after the
+> fact is a trap explicitly declined.
+>
 > Nothing below is edited; read the "citation canon concentrates" clause as superseded by this box.
 
 - **Current Stage:** Stage 2 → 3 **(Phase 2.3 COMPLETE — the subfield mechanism
