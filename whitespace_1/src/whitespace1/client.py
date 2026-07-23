@@ -15,6 +15,7 @@ distinct instruments rather than one. See ``docs/ws1-oss-reasoning-arm.md`` §8.
 
 from __future__ import annotations
 
+import threading
 from collections.abc import Sequence
 from dataclasses import dataclass, field
 from typing import Any, Protocol, cast
@@ -22,7 +23,7 @@ from typing import Any, Protocol, cast
 import numpy as np
 from numpy.typing import NDArray
 
-# USD per 1M tokens (input, output). Verified 2026-07-22.
+# USD per 1M tokens (input, output). Verified 2026-07-22; DeepSeek added 2026-07-23.
 PRICING: dict[str, tuple[float, float]] = {
     "gpt-5.6-sol": (5.00, 30.00),
     "gpt-5.6-terra": (2.50, 15.00),
@@ -30,6 +31,9 @@ PRICING: dict[str, tuple[float, float]] = {
     "claude-opus-4-8": (5.00, 25.00),
     "claude-sonnet-5": (3.00, 15.00),
     "claude-haiku-4-5": (1.00, 5.00),
+    # DeepSeek V4 (thinking mode) — the OSS reasoning substrate. Reasoning bills at the output rate.
+    "deepseek-v4-pro": (0.435, 0.87),
+    "deepseek-v4-flash": (0.14, 0.28),
     "text-embedding-3-small": (0.02, 0.00),
 }
 
@@ -77,14 +81,19 @@ class LLMClient(Protocol):
 
 @dataclass
 class Ledger:
-    """Running token/cost tally. Rung 0 doubles as the cost calibration for later rungs."""
+    """Running token/cost tally. Rung 0 doubles as the cost calibration for later rungs.
+
+    ``record`` is lock-guarded so concurrent generation workers (rung-0 v2) can share one ledger.
+    """
 
     total: Usage = field(default_factory=Usage)
     by_model: dict[str, Usage] = field(default_factory=dict)
+    _lock: threading.Lock = field(default_factory=threading.Lock, repr=False, compare=False)
 
     def record(self, model: str, usage: Usage) -> None:
-        self.total = self.total + usage
-        self.by_model[model] = self.by_model.get(model, Usage()) + usage
+        with self._lock:
+            self.total = self.total + usage
+            self.by_model[model] = self.by_model.get(model, Usage()) + usage
 
     def cost_usd(self) -> float:
         total = 0.0
@@ -204,6 +213,80 @@ class AnthropicClient:
         if self._embed_with is None:
             raise RuntimeError(
                 "AnthropicClient has no embedding backend. Pass "
+                "embed_with=<an OpenAICompatClient> so embeddings stay on one "
+                "fixed model across generation backends."
+            )
+        return self._embed_with.embed(texts)
+
+
+class DeepSeekClient:
+    """DeepSeek V4 with thinking mode — the OSS reasoning substrate that exposes the **raw** trace.
+
+    Unlike :class:`OpenAICompatClient` (which uses OpenAI's ``responses`` API) DeepSeek speaks the
+    ``chat/completions`` API, with thinking enabled via ``extra_body`` and the chain of thought
+    returned as ``message.reasoning_content`` — a *raw* trace, not Claude's summary, which is the
+    measurement ``V_reason`` requires. ``usage.completion_tokens_details.reasoning_tokens`` reports
+    the reasoning slice of the (output-rate-billed) completion tokens.
+
+    Model names (verified 2026-07-23): ``deepseek-v4-pro`` / ``deepseek-v4-flash``. The older
+    ``deepseek-reasoner`` / ``deepseek-chat`` aliases retire 2026-07-24, so do not use them. Serves
+    no embedding endpoint — delegate embeddings to a fixed model so the instrument never varies.
+    """
+
+    def __init__(
+        self,
+        model: str,
+        api_key: str,
+        *,
+        base_url: str = "https://api.deepseek.com",
+        reasoning_effort: str = "high",
+        thinking: bool = True,
+        embed_with: LLMClient | None = None,
+        ledger: Ledger | None = None,
+    ) -> None:
+        from openai import OpenAI
+
+        self.model = model
+        self.reasoning_effort = reasoning_effort
+        self.thinking = thinking  # off for cheap V_output-only sanity (preflight); on for the probe
+        self._embed_with = embed_with
+        self.ledger = ledger if ledger is not None else Ledger()
+        self._client = OpenAI(api_key=api_key, base_url=base_url)
+
+    def generate(self, prompt: str, *, max_output_tokens: int) -> Completion:
+        thinking = (
+            {"type": "enabled", "reasoning_effort": self.reasoning_effort}
+            if self.thinking
+            else {"type": "disabled"}
+        )
+        resp = self._client.chat.completions.create(
+            model=self.model,
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=max_output_tokens,
+            extra_body={"thinking": thinking},
+        )
+        message = resp.choices[0].message
+        reasoning = cast(Any, getattr(message, "reasoning_content", None))
+        usage = Usage()
+        if resp.usage is not None:
+            details = getattr(resp.usage, "completion_tokens_details", None)
+            reasoning_tokens = int(getattr(details, "reasoning_tokens", 0) or 0)
+            usage = Usage(
+                input=resp.usage.prompt_tokens,
+                output=resp.usage.completion_tokens,
+                reasoning=reasoning_tokens,
+            )
+        self.ledger.record(self.model, usage)
+        return Completion(
+            text=(message.content or "").strip(),
+            usage=usage,
+            reasoning=reasoning.strip() if reasoning else None,
+        )
+
+    def embed(self, texts: Sequence[str]) -> NDArray[np.float64]:
+        if self._embed_with is None:
+            raise RuntimeError(
+                "DeepSeekClient has no embedding backend. Pass "
                 "embed_with=<an OpenAICompatClient> so embeddings stay on one "
                 "fixed model across generation backends."
             )
