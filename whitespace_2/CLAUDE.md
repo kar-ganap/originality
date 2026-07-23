@@ -82,6 +82,34 @@ claim is disconfirmed — a successful null.
 >
 > Nothing below is edited; read the "citation canon concentrates" clause as superseded by this box.
 
+> ### ⚠️ CORRECTION 2026-07-22 — the reframing's evidence base (Claim #13, MIXED, Tests II–IV)
+>
+> The concentration box above withdraws the *canon* leg. This box records three methodology residuals
+> in how Claim #13 was *disconfirmed and reframed* — all of which fed the now-withdrawn decoupling, and
+> none of which the record below acknowledges. They are recorded for honesty; the reframing they
+> supported is gone, so none needs re-running.
+>
+> 1. **The pre-registered test confirmed Claim #13; it was overridden post-hoc.** The locked Test-I
+>    rule used *ratio* estimators, and the ratio returned **"divergence"** — i.e. it **confirmed**
+>    Claim #13. On finding the ratio denominator-confounded (a real defect — the ratio falls whenever
+>    demographic outpaces semantic even as semantic rises), it was replaced by an *absolute* estimator
+>    that disconfirmed. The switch is methodologically defensible, but it was made **after seeing the
+>    ratio result** and was **not pre-registered**; "robustly disconfirmed" does not disclose that the
+>    pre-registered estimator pointed the other way.
+> 2. **"MIXED" was read as "independent."** Phase 2.3's subfield-mechanism artifact states
+>    `VERDICT: MIXED / metric-or-definition-dependent` — γ₁'s sign is embedding-determined, i.e. the
+>    test **cannot determine** the relationship. The retro reads this as concentration and diversity
+>    being **independent** (a positive orthogonality claim). Absence of a robust *positive* predictor
+>    is not evidence of *independence*; "we can't tell" was upgraded to the WS3-favourable reading.
+> 3. **Only Test I of the pre-registered I–IV suite ran.** Test II (gap regression, 7 controls),
+>    Test III (de-trended cross-correlation + Granger), and **Test IV (per-paper team-diversity ×
+>    novelty — the load-bearing within-paper test)** were pre-registered and **never run**. The
+>    disconfirmation of Claim #13 rested on Test I alone, so "robustly" over-states the evidence base.
+>
+> **Net.** All three propped up the reframing (independent / orthogonal decoupling), which is
+> withdrawn. The surviving honest finding is the narrow one: demographic plurality rose sharply, and
+> semantic diversity did **not** fall. See `docs/phases/phase-2.2-retro.md`, `phase-2.3-retro.md`.
+
 - **Current Stage:** Stage 2 → 3 **(Phase 2.3 COMPLETE — the subfield mechanism
   test, the pre-registered "single most important analysis," is run).** Stage 1
   CLOSED. **Headline: Claim #13 robustly DISCONFIRMED (successful null), reframed

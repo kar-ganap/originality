@@ -1,5 +1,13 @@
 # Phase 2.2 Retro — the divergence test + robustness + the reframing
 
+> **⚠️ Superseded in part (2026-07-22).** The "reframing" (concentration ⊥ fragmentation decoupling)
+> below is **withdrawn** — see the two correction boxes at the top of `../../CLAUDE.md`. Three
+> residuals from this phase specifically: the pre-registered *ratio* Test-I estimator **confirmed**
+> Claim #13 and was overridden post-hoc by an absolute estimator; only Test I of the pre-registered
+> I–IV suite ran (II/III/IV never did); and the canon "negative control" it passed used the
+> now-withdrawn `ref_gini`. The surviving finding is narrow: demographic plurality rose, semantic
+> diversity did not fall.
+
 **Phase:** 2.2 — compute the 3 series + run the pre-registered divergence test
 **Stage:** 2 — Walk
 **Branch:** `phase-2.2-execution`
