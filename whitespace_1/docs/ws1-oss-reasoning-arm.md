@@ -81,6 +81,33 @@ invisible; if `V_reason` also holds, the null deepens — resilience is not surf
 
 ## 3. Why this arm is now the program's theory test
 
+> **Update 2026-07-22 — WS3's resolution map changes *which* prediction this arm tests.** A
+> pre-registered noise-floor study of the WS3 ABM (`whitespace_3/docs/resolution-map-phase3-retro.md`)
+> asked where the model makes crisp, testable counterfactual predictions. Result: **the crossover is
+> not statistically present** (at n=30 there is no reliably V-favouring region — total-V never
+> reliably rises in N) and **C is a deterministic clock**. So `λ*` is **not** a usable target, and the
+> "locate λ\*" framing below (and Rung 3's λ\*-straddling test) is **superseded**. What the model *is*
+> trustworthy on is the **level/intervention channel**, and that is what this arm should test:
+>
+> 1. **A conformity *threshold*, not a crossover.** WS3 predicts structural novelty collapses only
+>    *above* a conformity threshold (below it the effect is sub-detection-floor); and **isolation
+>    preserves it** (+59% for a shielded subgroup). Pre-register *these two* — a threshold and an
+>    insulation rescue — not a crossover location.
+> 2. **Sweep actuator strength; don't test one level.** The rung-0 null (no `V_output` decline at a
+>    single setting) is exactly what an *under-threshold* actuator would produce. There is no validated
+>    λ↔actuator-strength map (the identifiability gap that sank canary), so the transferable prediction
+>    is the *threshold shape*, tested by sweeping strength — which the ladder already does, but now
+>    the expected signature is a threshold, not a sign-flip.
+> 3. **Measure the structural channel.** WS3's usable estimand is `V^struct` (how work builds off the
+>    canon), not output diversity. Rung 0 measured `V_output`. The rung-0 null may be a *construct
+>    mismatch*: `V^struct` maps more naturally to this arm's `V_reason` (reasoning-strategy diversity)
+>    than to `V_output`, which is a further reason `V_reason` is the load-bearing measurement, not a
+>    stretch goal. (Hypothesis, not established — the V^struct≈V_reason mapping is untested.)
+>
+> The imposed-λ *ruler* below stays useful — it locates a *threshold* empirically — but it no longer
+> locates a *crossover*, because there isn't one to locate. Read §3 and Rung 3 with the crossover
+> claim demoted to a threshold claim throughout.
+
 WS3's C/V model is a theory of **conformity** — copy versus innovate. Canary could reach conformity
 only through the κ→λ identity (data-mixture fraction ≟ behavioural conformity weight), which its own
 design doc distrusted, and which is the root of its identifiability failure.
