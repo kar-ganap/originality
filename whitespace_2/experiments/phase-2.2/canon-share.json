@@ -1,0 +1,3226 @@
+{
+  "cs-K100": {
+    "summary": {
+      "deficit_slope": -0.006218188460394759,
+      "null_slope": -0.0003259086255007003,
+      "observed_slope": -2.501428176228961e-06
+    },
+    "years": [
+      {
+        "canon_share": 0.00520494469746259,
+        "entropy_deficit": 0.9181853990102655,
+        "k": 100,
+        "n_edges": 1537,
+        "n_papers": 205,
+        "n_prior_targets": 1880,
+        "null_share": 0.05319148936170213,
+        "year": 1971
+      },
+      {
+        "canon_share": 0.008880994671403197,
+        "entropy_deficit": 0.47216036960495567,
+        "k": 100,
+        "n_edges": 1689,
+        "n_papers": 197,
+        "n_prior_targets": 3338,
+        "null_share": 0.029958058717795086,
+        "year": 1972
+      },
+      {
+        "canon_share": 0.014447884416924664,
+        "entropy_deficit": 0.5280424715352366,
+        "k": 100,
+        "n_edges": 1938,
+        "n_papers": 238,
+        "n_prior_targets": 4951,
+        "null_share": 0.020197939810139367,
+        "year": 1973
+      },
+      {
+        "canon_share": 0.012571428571428572,
+        "entropy_deficit": 0.4544312454336026,
+        "k": 100,
+        "n_edges": 1750,
+        "n_papers": 223,
+        "n_prior_targets": 6745,
+        "null_share": 0.014825796886582653,
+        "year": 1974
+      },
+      {
+        "canon_share": 0.011818181818181818,
+        "entropy_deficit": 0.4757449842466597,
+        "k": 100,
+        "n_edges": 2200,
+        "n_papers": 257,
+        "n_prior_targets": 8296,
+        "null_share": 0.012054001928640309,
+        "year": 1975
+      },
+      {
+        "canon_share": 0.014156508061344868,
+        "entropy_deficit": 0.34582078068218436,
+        "k": 100,
+        "n_edges": 2543,
+        "n_papers": 255,
+        "n_prior_targets": 10273,
+        "null_share": 0.009734254842791784,
+        "year": 1976
+      },
+      {
+        "canon_share": 0.01327683615819209,
+        "entropy_deficit": 0.3264081720282034,
+        "k": 100,
+        "n_edges": 3540,
+        "n_papers": 320,
+        "n_prior_targets": 12530,
+        "null_share": 0.007980845969672785,
+        "year": 1977
+      },
+      {
+        "canon_share": 0.013823437009110902,
+        "entropy_deficit": 0.39179381275567227,
+        "k": 100,
+        "n_edges": 3183,
+        "n_papers": 304,
+        "n_prior_targets": 15579,
+        "null_share": 0.006418897233455292,
+        "year": 1978
+      },
+      {
+        "canon_share": 0.01358695652173913,
+        "entropy_deficit": 0.3781403081345758,
+        "k": 100,
+        "n_edges": 3680,
+        "n_papers": 344,
+        "n_prior_targets": 18336,
+        "null_share": 0.005453752181500873,
+        "year": 1979
+      },
+      {
+        "canon_share": 0.014771395076201642,
+        "entropy_deficit": 0.29173017259162937,
+        "k": 100,
+        "n_edges": 4265,
+        "n_papers": 373,
+        "n_prior_targets": 21462,
+        "null_share": 0.004659398005777654,
+        "year": 1980
+      },
+      {
+        "canon_share": 0.01595120806943467,
+        "entropy_deficit": 0.2777936775239853,
+        "k": 100,
+        "n_edges": 4263,
+        "n_papers": 374,
+        "n_prior_targets": 25035,
+        "null_share": 0.003994407829039345,
+        "year": 1981
+      },
+      {
+        "canon_share": 0.013535684987694831,
+        "entropy_deficit": 0.25799187277695945,
+        "k": 100,
+        "n_edges": 4876,
+        "n_papers": 448,
+        "n_prior_targets": 28350,
+        "null_share": 0.003527336860670194,
+        "year": 1982
+      },
+      {
+        "canon_share": 0.011948529411764705,
+        "entropy_deficit": 0.28128740862431223,
+        "k": 100,
+        "n_edges": 5440,
+        "n_papers": 464,
+        "n_prior_targets": 32296,
+        "null_share": 0.003096358682189745,
+        "year": 1983
+      },
+      {
+        "canon_share": 0.0156957928802589,
+        "entropy_deficit": 0.26289515144915565,
+        "k": 100,
+        "n_edges": 6180,
+        "n_papers": 478,
+        "n_prior_targets": 36791,
+        "null_share": 0.002718056046315675,
+        "year": 1984
+      },
+      {
+        "canon_share": 0.011681136543014996,
+        "entropy_deficit": 0.3726411344833772,
+        "k": 100,
+        "n_edges": 6335,
+        "n_papers": 514,
+        "n_prior_targets": 41854,
+        "null_share": 0.002389257896497348,
+        "year": 1985
+      },
+      {
+        "canon_share": 0.010984647961884595,
+        "entropy_deficit": 0.33147371426770866,
+        "k": 100,
+        "n_edges": 7556,
+        "n_papers": 643,
+        "n_prior_targets": 47026,
+        "null_share": 0.002126483222047378,
+        "year": 1986
+      },
+      {
+        "canon_share": 0.011152416356877323,
+        "entropy_deficit": 0.3248502266674649,
+        "k": 100,
+        "n_edges": 8339,
+        "n_papers": 640,
+        "n_prior_targets": 53013,
+        "null_share": 0.0018863297681700716,
+        "year": 1987
+      },
+      {
+        "canon_share": 0.015215638855300282,
+        "entropy_deficit": 0.268994561193423,
+        "k": 100,
+        "n_edges": 9924,
+        "n_papers": 781,
+        "n_prior_targets": 59766,
+        "null_share": 0.0016731921159187499,
+        "year": 1988
+      },
+      {
+        "canon_share": 0.013743247537337147,
+        "entropy_deficit": 0.2866262428657874,
+        "k": 100,
+        "n_edges": 12588,
+        "n_papers": 928,
+        "n_prior_targets": 67590,
+        "null_share": 0.0014795088030773783,
+        "year": 1989
+      },
+      {
+        "canon_share": 0.016382536382536384,
+        "entropy_deficit": 0.24855324337595885,
+        "k": 100,
+        "n_edges": 12025,
+        "n_papers": 951,
+        "n_prior_targets": 77210,
+        "null_share": 0.0012951690195570523,
+        "year": 1990
+      },
+      {
+        "canon_share": 0.015079989509572515,
+        "entropy_deficit": 0.27345028804139326,
+        "k": 100,
+        "n_edges": 15252,
+        "n_papers": 1121,
+        "n_prior_targets": 86076,
+        "null_share": 0.0011617640224917515,
+        "year": 1991
+      },
+      {
+        "canon_share": 0.01488026040455708,
+        "entropy_deficit": 0.19434416438608204,
+        "k": 100,
+        "n_edges": 17204,
+        "n_papers": 1256,
+        "n_prior_targets": 97356,
+        "null_share": 0.0010271580590821316,
+        "year": 1992
+      },
+      {
+        "canon_share": 0.013243533872884714,
+        "entropy_deficit": 0.22464418436199085,
+        "k": 100,
+        "n_edges": 17669,
+        "n_papers": 1192,
+        "n_prior_targets": 109615,
+        "null_share": 0.000912283902750536,
+        "year": 1993
+      },
+      {
+        "canon_share": 0.012790051059097113,
+        "entropy_deficit": 0.18908974599948192,
+        "k": 100,
+        "n_edges": 19781,
+        "n_papers": 1359,
+        "n_prior_targets": 122472,
+        "null_share": 0.0008165131621921746,
+        "year": 1994
+      },
+      {
+        "canon_share": 0.01315373676726181,
+        "entropy_deficit": 0.2583272055888238,
+        "k": 100,
+        "n_edges": 25316,
+        "n_papers": 1422,
+        "n_prior_targets": 136509,
+        "null_share": 0.0007325524324403519,
+        "year": 1995
+      },
+      {
+        "canon_share": 0.01551239770367656,
+        "entropy_deficit": 0.24045887891604678,
+        "k": 100,
+        "n_edges": 24561,
+        "n_papers": 1506,
+        "n_prior_targets": 153478,
+        "null_share": 0.0006515591811204212,
+        "year": 1996
+      },
+      {
+        "canon_share": 0.013134018836948069,
+        "entropy_deficit": 0.24761345582225114,
+        "k": 100,
+        "n_edges": 23146,
+        "n_papers": 1550,
+        "n_prior_targets": 170532,
+        "null_share": 0.0005864002064128726,
+        "year": 1997
+      },
+      {
+        "canon_share": 0.013949433304272014,
+        "entropy_deficit": 0.28100090273920353,
+        "k": 100,
+        "n_edges": 26381,
+        "n_papers": 1771,
+        "n_prior_targets": 186445,
+        "null_share": 0.0005363512027675722,
+        "year": 1998
+      },
+      {
+        "canon_share": 0.016171067918485257,
+        "entropy_deficit": 0.19959497205074828,
+        "k": 100,
+        "n_edges": 31847,
+        "n_papers": 2055,
+        "n_prior_targets": 204501,
+        "null_share": 0.0004889951638378297,
+        "year": 1999
+      },
+      {
+        "canon_share": 0.014090321160249882,
+        "entropy_deficit": 0.22425796653144514,
+        "k": 100,
+        "n_edges": 36337,
+        "n_papers": 2239,
+        "n_prior_targets": 226060,
+        "null_share": 0.0004423604352826683,
+        "year": 2000
+      },
+      {
+        "canon_share": 0.013950601961027678,
+        "entropy_deficit": 0.2071246327341567,
+        "k": 100,
+        "n_edges": 40285,
+        "n_papers": 2348,
+        "n_prior_targets": 251232,
+        "null_share": 0.0003980384664373965,
+        "year": 2001
+      },
+      {
+        "canon_share": 0.020074850184829445,
+        "entropy_deficit": 0.15339564311164988,
+        "k": 100,
+        "n_edges": 130661,
+        "n_papers": 10847,
+        "n_prior_targets": 277992,
+        "null_share": 0.0003597225819448042,
+        "year": 2002
+      },
+      {
+        "canon_share": 0.017930659756326933,
+        "entropy_deficit": 0.14845413727117585,
+        "k": 100,
+        "n_edges": 95702,
+        "n_papers": 6854,
+        "n_prior_targets": 351249,
+        "null_share": 0.00028469831942582043,
+        "year": 2003
+      },
+      {
+        "canon_share": 0.01521935528706305,
+        "entropy_deficit": 0.18140253526821082,
+        "k": 100,
+        "n_edges": 100727,
+        "n_papers": 6254,
+        "n_prior_targets": 405196,
+        "null_share": 0.00024679414406854957,
+        "year": 2004
+      },
+      {
+        "canon_share": 0.016318032948766478,
+        "entropy_deficit": 0.19699746234155946,
+        "k": 100,
+        "n_edges": 121522,
+        "n_papers": 7549,
+        "n_prior_targets": 462974,
+        "null_share": 0.00021599485068275973,
+        "year": 2005
+      },
+      {
+        "canon_share": 0.016409272927400784,
+        "entropy_deficit": 0.1790590403273965,
+        "k": 100,
+        "n_edges": 148087,
+        "n_papers": 8914,
+        "n_prior_targets": 532214,
+        "null_share": 0.00018789434325290204,
+        "year": 2006
+      },
+      {
+        "canon_share": 0.014970775341492557,
+        "entropy_deficit": 0.20215022730339538,
+        "k": 100,
+        "n_edges": 154835,
+        "n_papers": 8566,
+        "n_prior_targets": 614149,
+        "null_share": 0.00016282693613439085,
+        "year": 2007
+      },
+      {
+        "canon_share": 0.015159423448639782,
+        "entropy_deficit": 0.19883808589074092,
+        "k": 100,
+        "n_edges": 174347,
+        "n_papers": 10121,
+        "n_prior_targets": 699820,
+        "null_share": 0.00014289388699951415,
+        "year": 2008
+      },
+      {
+        "canon_share": 0.014585083899880325,
+        "entropy_deficit": 0.19752047476055157,
+        "k": 100,
+        "n_edges": 196365,
+        "n_papers": 11014,
+        "n_prior_targets": 793202,
+        "null_share": 0.0001260712907935179,
+        "year": 2009
+      },
+      {
+        "canon_share": 0.014136162625451271,
+        "entropy_deficit": 0.18821540918188295,
+        "k": 100,
+        "n_edges": 226582,
+        "n_papers": 12520,
+        "n_prior_targets": 897493,
+        "null_share": 0.00011142148183885557,
+        "year": 2010
+      },
+      {
+        "canon_share": 0.013433502883776365,
+        "entropy_deficit": 0.18137620243441654,
+        "k": 100,
+        "n_edges": 234935,
+        "n_papers": 12491,
+        "n_prior_targets": 1016901,
+        "null_share": 9.833798963714265e-05,
+        "year": 2011
+      },
+      {
+        "canon_share": 0.012051253853708851,
+        "entropy_deficit": 0.1785114496912784,
+        "k": 100,
+        "n_edges": 263707,
+        "n_papers": 13529,
+        "n_prior_targets": 1139803,
+        "null_share": 8.77344593758746e-05,
+        "year": 2012
+      },
+      {
+        "canon_share": 0.012066349439002488,
+        "entropy_deficit": 0.20013269385510613,
+        "k": 100,
+        "n_edges": 290643,
+        "n_papers": 14661,
+        "n_prior_targets": 1276860,
+        "null_share": 7.831712168914368e-05,
+        "year": 2013
+      },
+      {
+        "canon_share": 0.011495921898171033,
+        "entropy_deficit": 0.2122589475394009,
+        "k": 100,
+        "n_edges": 323680,
+        "n_papers": 15626,
+        "n_prior_targets": 1428202,
+        "null_share": 7.001810668238807e-05,
+        "year": 2014
+      },
+      {
+        "canon_share": 0.011546401440070006,
+        "entropy_deficit": 0.21063897481621074,
+        "k": 100,
+        "n_edges": 340539,
+        "n_papers": 16025,
+        "n_prior_targets": 1596117,
+        "null_share": 6.265204869066616e-05,
+        "year": 2015
+      },
+      {
+        "canon_share": 0.010489700527202566,
+        "entropy_deficit": 0.20517944234517216,
+        "k": 100,
+        "n_edges": 349581,
+        "n_papers": 15766,
+        "n_prior_targets": 1770358,
+        "null_share": 5.6485750339761785e-05,
+        "year": 2016
+      },
+      {
+        "canon_share": 0.009144483910018491,
+        "entropy_deficit": 0.1720873639388949,
+        "k": 100,
+        "n_edges": 375855,
+        "n_papers": 16246,
+        "n_prior_targets": 1949730,
+        "null_share": 5.128915285706226e-05,
+        "year": 2017
+      },
+      {
+        "canon_share": 0.008597950000456368,
+        "entropy_deficit": 0.1650303512876462,
+        "k": 100,
+        "n_edges": 438244,
+        "n_papers": 18131,
+        "n_prior_targets": 2139623,
+        "null_share": 4.673720557313134e-05,
+        "year": 2018
+      },
+      {
+        "canon_share": 0.01129800535873772,
+        "entropy_deficit": 0.18943966310230675,
+        "k": 100,
+        "n_edges": 537440,
+        "n_papers": 20200,
+        "n_prior_targets": 2359945,
+        "null_share": 4.2373868882537516e-05,
+        "year": 2019
+      },
+      {
+        "canon_share": 0.013245634783262504,
+        "entropy_deficit": 0.16719131714183577,
+        "k": 100,
+        "n_edges": 638399,
+        "n_papers": 22221,
+        "n_prior_targets": 2625276,
+        "null_share": 3.809123307416058e-05,
+        "year": 2020
+      },
+      {
+        "canon_share": 0.014475501418816298,
+        "entropy_deficit": 0.1432500459635716,
+        "k": 100,
+        "n_edges": 755207,
+        "n_papers": 24664,
+        "n_prior_targets": 2939892,
+        "null_share": 3.401485496746139e-05,
+        "year": 2021
+      },
+      {
+        "canon_share": 0.011494488270679566,
+        "entropy_deficit": 0.14088770457313216,
+        "k": 100,
+        "n_edges": 732438,
+        "n_papers": 23838,
+        "n_prior_targets": 3307830,
+        "null_share": 3.0231299673804278e-05,
+        "year": 2022
+      },
+      {
+        "canon_share": 0.012822421111260491,
+        "entropy_deficit": 0.1359628336048101,
+        "k": 100,
+        "n_edges": 833072,
+        "n_papers": 27493,
+        "n_prior_targets": 3676595,
+        "null_share": 2.7199079583146905e-05,
+        "year": 2023
+      },
+      {
+        "canon_share": 0.011228518726360848,
+        "entropy_deficit": 0.1344812972369176,
+        "k": 100,
+        "n_edges": 794762,
+        "n_papers": 26698,
+        "n_prior_targets": 4084138,
+        "null_share": 2.4484970880024133e-05,
+        "year": 2024
+      }
+    ]
+  },
+  "cs-K1000": {
+    "summary": {
+      "deficit_slope": -0.006890673477833046,
+      "null_slope": -0.0032590862550070025,
+      "observed_slope": 2.7206865511451426e-06
+    },
+    "years": [
+      {
+        "canon_share": 0.018867924528301886,
+        "entropy_deficit": 0.61082331135454,
+        "k": 1000,
+        "n_edges": 1537,
+        "n_papers": 205,
+        "n_prior_targets": 1880,
+        "null_share": 0.5319148936170213,
+        "year": 1971
+      },
+      {
+        "canon_share": 0.018354055654233273,
+        "entropy_deficit": 0.5287744887790258,
+        "k": 1000,
+        "n_edges": 1689,
+        "n_papers": 197,
+        "n_prior_targets": 3338,
+        "null_share": 0.2995805871779509,
+        "year": 1972
+      },
+      {
+        "canon_share": 0.021155830753353973,
+        "entropy_deficit": 0.5818595540599527,
+        "k": 1000,
+        "n_edges": 1938,
+        "n_papers": 238,
+        "n_prior_targets": 4951,
+        "null_share": 0.20197939810139365,
+        "year": 1973
+      },
+      {
+        "canon_share": 0.03142857142857143,
+        "entropy_deficit": 0.4643303383573789,
+        "k": 1000,
+        "n_edges": 1750,
+        "n_papers": 223,
+        "n_prior_targets": 6745,
+        "null_share": 0.14825796886582654,
+        "year": 1974
+      },
+      {
+        "canon_share": 0.025,
+        "entropy_deficit": 0.48127368664977044,
+        "k": 1000,
+        "n_edges": 2200,
+        "n_papers": 257,
+        "n_prior_targets": 8296,
+        "null_share": 0.12054001928640308,
+        "year": 1975
+      },
+      {
+        "canon_share": 0.04089657884388517,
+        "entropy_deficit": 0.3678425605693406,
+        "k": 1000,
+        "n_edges": 2543,
+        "n_papers": 255,
+        "n_prior_targets": 10273,
+        "null_share": 0.09734254842791784,
+        "year": 1976
+      },
+      {
+        "canon_share": 0.04011299435028248,
+        "entropy_deficit": 0.3387373386181466,
+        "k": 1000,
+        "n_edges": 3540,
+        "n_papers": 320,
+        "n_prior_targets": 12530,
+        "null_share": 0.07980845969672785,
+        "year": 1977
+      },
+      {
+        "canon_share": 0.04115614200439836,
+        "entropy_deficit": 0.36043754059267663,
+        "k": 1000,
+        "n_edges": 3183,
+        "n_papers": 304,
+        "n_prior_targets": 15579,
+        "null_share": 0.06418897233455292,
+        "year": 1978
+      },
+      {
+        "canon_share": 0.044293478260869566,
+        "entropy_deficit": 0.33763395228249016,
+        "k": 1000,
+        "n_edges": 3680,
+        "n_papers": 344,
+        "n_prior_targets": 18336,
+        "null_share": 0.054537521815008726,
+        "year": 1979
+      },
+      {
+        "canon_share": 0.03939038686987104,
+        "entropy_deficit": 0.3196714299966005,
+        "k": 1000,
+        "n_edges": 4265,
+        "n_papers": 373,
+        "n_prior_targets": 21462,
+        "null_share": 0.046593980057776534,
+        "year": 1980
+      },
+      {
+        "canon_share": 0.054656345296739385,
+        "entropy_deficit": 0.26877144519351925,
+        "k": 1000,
+        "n_edges": 4263,
+        "n_papers": 374,
+        "n_prior_targets": 25035,
+        "null_share": 0.039944078290393446,
+        "year": 1981
+      },
+      {
+        "canon_share": 0.04265791632485644,
+        "entropy_deficit": 0.28704939810328167,
+        "k": 1000,
+        "n_edges": 4876,
+        "n_papers": 448,
+        "n_prior_targets": 28350,
+        "null_share": 0.03527336860670194,
+        "year": 1982
+      },
+      {
+        "canon_share": 0.04007352941176471,
+        "entropy_deficit": 0.2906910770390223,
+        "k": 1000,
+        "n_edges": 5440,
+        "n_papers": 464,
+        "n_prior_targets": 32296,
+        "null_share": 0.030963586821897447,
+        "year": 1983
+      },
+      {
+        "canon_share": 0.04724919093851133,
+        "entropy_deficit": 0.2644376752671068,
+        "k": 1000,
+        "n_edges": 6180,
+        "n_papers": 478,
+        "n_prior_targets": 36791,
+        "null_share": 0.027180560463156752,
+        "year": 1984
+      },
+      {
+        "canon_share": 0.03756906077348066,
+        "entropy_deficit": 0.3036507988905125,
+        "k": 1000,
+        "n_edges": 6335,
+        "n_papers": 514,
+        "n_prior_targets": 41854,
+        "null_share": 0.02389257896497348,
+        "year": 1985
+      },
+      {
+        "canon_share": 0.03560084700899947,
+        "entropy_deficit": 0.2766187635371634,
+        "k": 1000,
+        "n_edges": 7556,
+        "n_papers": 643,
+        "n_prior_targets": 47026,
+        "null_share": 0.02126483222047378,
+        "year": 1986
+      },
+      {
+        "canon_share": 0.03525602590238638,
+        "entropy_deficit": 0.280687902292561,
+        "k": 1000,
+        "n_edges": 8339,
+        "n_papers": 640,
+        "n_prior_targets": 53013,
+        "null_share": 0.018863297681700714,
+        "year": 1987
+      },
+      {
+        "canon_share": 0.04161628375654978,
+        "entropy_deficit": 0.2538811530554914,
+        "k": 1000,
+        "n_edges": 9924,
+        "n_papers": 781,
+        "n_prior_targets": 59766,
+        "null_share": 0.016731921159187497,
+        "year": 1988
+      },
+      {
+        "canon_share": 0.04178582777248173,
+        "entropy_deficit": 0.24515245768384675,
+        "k": 1000,
+        "n_edges": 12588,
+        "n_papers": 928,
+        "n_prior_targets": 67590,
+        "null_share": 0.014795088030773782,
+        "year": 1989
+      },
+      {
+        "canon_share": 0.048232848232848236,
+        "entropy_deficit": 0.22549683852028413,
+        "k": 1000,
+        "n_edges": 12025,
+        "n_papers": 951,
+        "n_prior_targets": 77210,
+        "null_share": 0.012951690195570522,
+        "year": 1990
+      },
+      {
+        "canon_share": 0.045502229215840545,
+        "entropy_deficit": 0.20781493353984115,
+        "k": 1000,
+        "n_edges": 15252,
+        "n_papers": 1121,
+        "n_prior_targets": 86076,
+        "null_share": 0.011617640224917515,
+        "year": 1991
+      },
+      {
+        "canon_share": 0.04603580562659847,
+        "entropy_deficit": 0.17800057820642357,
+        "k": 1000,
+        "n_edges": 17204,
+        "n_papers": 1256,
+        "n_prior_targets": 97356,
+        "null_share": 0.010271580590821316,
+        "year": 1992
+      },
+      {
+        "canon_share": 0.04329616843058464,
+        "entropy_deficit": 0.17855509822133642,
+        "k": 1000,
+        "n_edges": 17669,
+        "n_papers": 1192,
+        "n_prior_targets": 109615,
+        "null_share": 0.00912283902750536,
+        "year": 1993
+      },
+      {
+        "canon_share": 0.041605581113189426,
+        "entropy_deficit": 0.16824467931639508,
+        "k": 1000,
+        "n_edges": 19781,
+        "n_papers": 1359,
+        "n_prior_targets": 122472,
+        "null_share": 0.008165131621921746,
+        "year": 1994
+      },
+      {
+        "canon_share": 0.03705166693000474,
+        "entropy_deficit": 0.19295911404768473,
+        "k": 1000,
+        "n_edges": 25316,
+        "n_papers": 1422,
+        "n_prior_targets": 136509,
+        "null_share": 0.00732552432440352,
+        "year": 1995
+      },
+      {
+        "canon_share": 0.045071454745327956,
+        "entropy_deficit": 0.17912296699612607,
+        "k": 1000,
+        "n_edges": 24561,
+        "n_papers": 1506,
+        "n_prior_targets": 153478,
+        "null_share": 0.006515591811204212,
+        "year": 1996
+      },
+      {
+        "canon_share": 0.04333362136006221,
+        "entropy_deficit": 0.16980158779407306,
+        "k": 1000,
+        "n_edges": 23146,
+        "n_papers": 1550,
+        "n_prior_targets": 170532,
+        "null_share": 0.005864002064128727,
+        "year": 1997
+      },
+      {
+        "canon_share": 0.04400894583222774,
+        "entropy_deficit": 0.1853421302843603,
+        "k": 1000,
+        "n_edges": 26381,
+        "n_papers": 1771,
+        "n_prior_targets": 186445,
+        "null_share": 0.005363512027675722,
+        "year": 1998
+      },
+      {
+        "canon_share": 0.04355198291832826,
+        "entropy_deficit": 0.17175223804356787,
+        "k": 1000,
+        "n_edges": 31847,
+        "n_papers": 2055,
+        "n_prior_targets": 204501,
+        "null_share": 0.004889951638378296,
+        "year": 1999
+      },
+      {
+        "canon_share": 0.03869334287365495,
+        "entropy_deficit": 0.1741017473270563,
+        "k": 1000,
+        "n_edges": 36337,
+        "n_papers": 2239,
+        "n_prior_targets": 226060,
+        "null_share": 0.004423604352826683,
+        "year": 2000
+      },
+      {
+        "canon_share": 0.038500682636216955,
+        "entropy_deficit": 0.16332652052810537,
+        "k": 1000,
+        "n_edges": 40285,
+        "n_papers": 2348,
+        "n_prior_targets": 251232,
+        "null_share": 0.003980384664373965,
+        "year": 2001
+      },
+      {
+        "canon_share": 0.05580088932428192,
+        "entropy_deficit": 0.11308954999873688,
+        "k": 1000,
+        "n_edges": 130661,
+        "n_papers": 10847,
+        "n_prior_targets": 277992,
+        "null_share": 0.003597225819448042,
+        "year": 2002
+      },
+      {
+        "canon_share": 0.051660362374871996,
+        "entropy_deficit": 0.10007007611989371,
+        "k": 1000,
+        "n_edges": 95702,
+        "n_papers": 6854,
+        "n_prior_targets": 351249,
+        "null_share": 0.002846983194258204,
+        "year": 2003
+      },
+      {
+        "canon_share": 0.043195965332036096,
+        "entropy_deficit": 0.12786298079679026,
+        "k": 1000,
+        "n_edges": 100727,
+        "n_papers": 6254,
+        "n_prior_targets": 405196,
+        "null_share": 0.0024679414406854954,
+        "year": 2004
+      },
+      {
+        "canon_share": 0.0458517799246227,
+        "entropy_deficit": 0.11997108276881285,
+        "k": 1000,
+        "n_edges": 121522,
+        "n_papers": 7549,
+        "n_prior_targets": 462974,
+        "null_share": 0.0021599485068275973,
+        "year": 2005
+      },
+      {
+        "canon_share": 0.045432752368540115,
+        "entropy_deficit": 0.11748128851609285,
+        "k": 1000,
+        "n_edges": 148087,
+        "n_papers": 8914,
+        "n_prior_targets": 532214,
+        "null_share": 0.0018789434325290203,
+        "year": 2006
+      },
+      {
+        "canon_share": 0.04341395679271483,
+        "entropy_deficit": 0.1187455538836183,
+        "k": 1000,
+        "n_edges": 154835,
+        "n_papers": 8566,
+        "n_prior_targets": 614149,
+        "null_share": 0.0016282693613439085,
+        "year": 2007
+      },
+      {
+        "canon_share": 0.04582241162738676,
+        "entropy_deficit": 0.11181855857760414,
+        "k": 1000,
+        "n_edges": 174347,
+        "n_papers": 10121,
+        "n_prior_targets": 699820,
+        "null_share": 0.0014289388699951415,
+        "year": 2008
+      },
+      {
+        "canon_share": 0.04368904845568202,
+        "entropy_deficit": 0.11120093757225469,
+        "k": 1000,
+        "n_edges": 196365,
+        "n_papers": 11014,
+        "n_prior_targets": 793202,
+        "null_share": 0.0012607129079351793,
+        "year": 2009
+      },
+      {
+        "canon_share": 0.04187005146039844,
+        "entropy_deficit": 0.10796218193016249,
+        "k": 1000,
+        "n_edges": 226582,
+        "n_papers": 12520,
+        "n_prior_targets": 897493,
+        "null_share": 0.0011142148183885556,
+        "year": 2010
+      },
+      {
+        "canon_share": 0.039989784408453403,
+        "entropy_deficit": 0.10320539834196985,
+        "k": 1000,
+        "n_edges": 234935,
+        "n_papers": 12491,
+        "n_prior_targets": 1016901,
+        "null_share": 0.0009833798963714265,
+        "year": 2011
+      },
+      {
+        "canon_share": 0.036749119287694296,
+        "entropy_deficit": 0.09788193238014531,
+        "k": 1000,
+        "n_edges": 263707,
+        "n_papers": 13529,
+        "n_prior_targets": 1139803,
+        "null_share": 0.000877344593758746,
+        "year": 2012
+      },
+      {
+        "canon_share": 0.03676331444418066,
+        "entropy_deficit": 0.10526911324944699,
+        "k": 1000,
+        "n_edges": 290643,
+        "n_papers": 14661,
+        "n_prior_targets": 1276860,
+        "null_share": 0.0007831712168914368,
+        "year": 2013
+      },
+      {
+        "canon_share": 0.03412011863568957,
+        "entropy_deficit": 0.11020896387660517,
+        "k": 1000,
+        "n_edges": 323680,
+        "n_papers": 15626,
+        "n_prior_targets": 1428202,
+        "null_share": 0.0007001810668238807,
+        "year": 2014
+      },
+      {
+        "canon_share": 0.03284205333309841,
+        "entropy_deficit": 0.11449821737869703,
+        "k": 1000,
+        "n_edges": 340539,
+        "n_papers": 16025,
+        "n_prior_targets": 1596117,
+        "null_share": 0.0006265204869066616,
+        "year": 2015
+      },
+      {
+        "canon_share": 0.030776844279294356,
+        "entropy_deficit": 0.1145976956642395,
+        "k": 1000,
+        "n_edges": 349581,
+        "n_papers": 15766,
+        "n_prior_targets": 1770358,
+        "null_share": 0.0005648575033976179,
+        "year": 2016
+      },
+      {
+        "canon_share": 0.029133575447978607,
+        "entropy_deficit": 0.11274983568655206,
+        "k": 1000,
+        "n_edges": 375855,
+        "n_papers": 16246,
+        "n_prior_targets": 1949730,
+        "null_share": 0.0005128915285706226,
+        "year": 2017
+      },
+      {
+        "canon_share": 0.03163534469382353,
+        "entropy_deficit": 0.1327679245131823,
+        "k": 1000,
+        "n_edges": 438244,
+        "n_papers": 18131,
+        "n_prior_targets": 2139623,
+        "null_share": 0.0004673720557313134,
+        "year": 2018
+      },
+      {
+        "canon_share": 0.03472573682643644,
+        "entropy_deficit": 0.148434666767834,
+        "k": 1000,
+        "n_edges": 537440,
+        "n_papers": 20200,
+        "n_prior_targets": 2359945,
+        "null_share": 0.00042373868882537516,
+        "year": 2019
+      },
+      {
+        "canon_share": 0.03640826505054049,
+        "entropy_deficit": 0.14925193635445155,
+        "k": 1000,
+        "n_edges": 638399,
+        "n_papers": 22221,
+        "n_prior_targets": 2625276,
+        "null_share": 0.00038091233074160583,
+        "year": 2020
+      },
+      {
+        "canon_share": 0.036677361306237895,
+        "entropy_deficit": 0.14454025725044228,
+        "k": 1000,
+        "n_edges": 755207,
+        "n_papers": 24664,
+        "n_prior_targets": 2939892,
+        "null_share": 0.0003401485496746139,
+        "year": 2021
+      },
+      {
+        "canon_share": 0.030312463307474488,
+        "entropy_deficit": 0.14103837584183787,
+        "k": 1000,
+        "n_edges": 732438,
+        "n_papers": 23838,
+        "n_prior_targets": 3307830,
+        "null_share": 0.00030231299673804274,
+        "year": 2022
+      },
+      {
+        "canon_share": 0.030388729905698426,
+        "entropy_deficit": 0.14664377416266206,
+        "k": 1000,
+        "n_edges": 833072,
+        "n_papers": 27493,
+        "n_prior_targets": 3676595,
+        "null_share": 0.0002719907958314691,
+        "year": 2023
+      },
+      {
+        "canon_share": 0.02848903193660492,
+        "entropy_deficit": 0.14390323504923608,
+        "k": 1000,
+        "n_edges": 794762,
+        "n_papers": 26698,
+        "n_prior_targets": 4084138,
+        "null_share": 0.0002448497088002413,
+        "year": 2024
+      }
+    ]
+  },
+  "cs-K10000": {
+    "summary": {
+      "deficit_slope": -0.006558883296247351,
+      "null_slope": -0.01182718783939069,
+      "observed_slope": -0.0003904179440890882
+    },
+    "years": [
+      {
+        "canon_share": 0.10381439244986236,
+        "entropy_deficit": 0.4112487056848473,
+        "k": 10000,
+        "n_edges": 2543,
+        "n_papers": 255,
+        "n_prior_targets": 10273,
+        "null_share": 0.9734254842791784,
+        "year": 1976
+      },
+      {
+        "canon_share": 0.11073446327683616,
+        "entropy_deficit": 0.37245854371288256,
+        "k": 10000,
+        "n_edges": 3540,
+        "n_papers": 320,
+        "n_prior_targets": 12530,
+        "null_share": 0.7980845969672785,
+        "year": 1977
+      },
+      {
+        "canon_share": 0.09267986176562991,
+        "entropy_deficit": 0.4103956797935421,
+        "k": 10000,
+        "n_edges": 3183,
+        "n_papers": 304,
+        "n_prior_targets": 15579,
+        "null_share": 0.6418897233455292,
+        "year": 1978
+      },
+      {
+        "canon_share": 0.09891304347826087,
+        "entropy_deficit": 0.38864506762203177,
+        "k": 10000,
+        "n_edges": 3680,
+        "n_papers": 344,
+        "n_prior_targets": 18336,
+        "null_share": 0.5453752181500873,
+        "year": 1979
+      },
+      {
+        "canon_share": 0.09308323563892146,
+        "entropy_deficit": 0.3774353904552995,
+        "k": 10000,
+        "n_edges": 4265,
+        "n_papers": 373,
+        "n_prior_targets": 21462,
+        "null_share": 0.46593980057776535,
+        "year": 1980
+      },
+      {
+        "canon_share": 0.1205723668777856,
+        "entropy_deficit": 0.34633318409322944,
+        "k": 10000,
+        "n_edges": 4263,
+        "n_papers": 374,
+        "n_prior_targets": 25035,
+        "null_share": 0.3994407829039345,
+        "year": 1981
+      },
+      {
+        "canon_share": 0.0955701394585726,
+        "entropy_deficit": 0.36012914404607343,
+        "k": 10000,
+        "n_edges": 4876,
+        "n_papers": 448,
+        "n_prior_targets": 28350,
+        "null_share": 0.3527336860670194,
+        "year": 1982
+      },
+      {
+        "canon_share": 0.09375,
+        "entropy_deficit": 0.3533899479095135,
+        "k": 10000,
+        "n_edges": 5440,
+        "n_papers": 464,
+        "n_prior_targets": 32296,
+        "null_share": 0.3096358682189745,
+        "year": 1983
+      },
+      {
+        "canon_share": 0.09579288025889968,
+        "entropy_deficit": 0.34638470147317246,
+        "k": 10000,
+        "n_edges": 6180,
+        "n_papers": 478,
+        "n_prior_targets": 36791,
+        "null_share": 0.2718056046315675,
+        "year": 1984
+      },
+      {
+        "canon_share": 0.08650355169692187,
+        "entropy_deficit": 0.35321939950329195,
+        "k": 10000,
+        "n_edges": 6335,
+        "n_papers": 514,
+        "n_prior_targets": 41854,
+        "null_share": 0.2389257896497348,
+        "year": 1985
+      },
+      {
+        "canon_share": 0.09303864478560085,
+        "entropy_deficit": 0.32559872175062876,
+        "k": 10000,
+        "n_edges": 7556,
+        "n_papers": 643,
+        "n_prior_targets": 47026,
+        "null_share": 0.2126483222047378,
+        "year": 1986
+      },
+      {
+        "canon_share": 0.0851421033697086,
+        "entropy_deficit": 0.3299472141874118,
+        "k": 10000,
+        "n_edges": 8339,
+        "n_papers": 640,
+        "n_prior_targets": 53013,
+        "null_share": 0.18863297681700714,
+        "year": 1987
+      },
+      {
+        "canon_share": 0.10257960499798469,
+        "entropy_deficit": 0.3001042222159943,
+        "k": 10000,
+        "n_edges": 9924,
+        "n_papers": 781,
+        "n_prior_targets": 59766,
+        "null_share": 0.167319211591875,
+        "year": 1988
+      },
+      {
+        "canon_share": 0.10835716555449634,
+        "entropy_deficit": 0.2773011048444828,
+        "k": 10000,
+        "n_edges": 12588,
+        "n_papers": 928,
+        "n_prior_targets": 67590,
+        "null_share": 0.14795088030773784,
+        "year": 1989
+      },
+      {
+        "canon_share": 0.12474012474012475,
+        "entropy_deficit": 0.26232108079802463,
+        "k": 10000,
+        "n_edges": 12025,
+        "n_papers": 951,
+        "n_prior_targets": 77210,
+        "null_share": 0.12951690195570523,
+        "year": 1990
+      },
+      {
+        "canon_share": 0.12109887227904537,
+        "entropy_deficit": 0.24305714451345872,
+        "k": 10000,
+        "n_edges": 15252,
+        "n_papers": 1121,
+        "n_prior_targets": 86076,
+        "null_share": 0.11617640224917515,
+        "year": 1991
+      },
+      {
+        "canon_share": 0.1218902580795164,
+        "entropy_deficit": 0.2293486877428471,
+        "k": 10000,
+        "n_edges": 17204,
+        "n_papers": 1256,
+        "n_prior_targets": 97356,
+        "null_share": 0.10271580590821315,
+        "year": 1992
+      },
+      {
+        "canon_share": 0.11556964174542984,
+        "entropy_deficit": 0.2301467182367155,
+        "k": 10000,
+        "n_edges": 17669,
+        "n_papers": 1192,
+        "n_prior_targets": 109615,
+        "null_share": 0.0912283902750536,
+        "year": 1993
+      },
+      {
+        "canon_share": 0.11607097720034376,
+        "entropy_deficit": 0.21913615735095837,
+        "k": 10000,
+        "n_edges": 19781,
+        "n_papers": 1359,
+        "n_prior_targets": 122472,
+        "null_share": 0.08165131621921745,
+        "year": 1994
+      },
+      {
+        "canon_share": 0.09985779744035393,
+        "entropy_deficit": 0.22468458774563238,
+        "k": 10000,
+        "n_edges": 25316,
+        "n_papers": 1422,
+        "n_prior_targets": 136509,
+        "null_share": 0.07325524324403519,
+        "year": 1995
+      },
+      {
+        "canon_share": 0.11766621880216603,
+        "entropy_deficit": 0.21202483922553816,
+        "k": 10000,
+        "n_edges": 24561,
+        "n_papers": 1506,
+        "n_prior_targets": 153478,
+        "null_share": 0.06515591811204212,
+        "year": 1996
+      },
+      {
+        "canon_share": 0.11742849736455543,
+        "entropy_deficit": 0.21235429111175763,
+        "k": 10000,
+        "n_edges": 23146,
+        "n_papers": 1550,
+        "n_prior_targets": 170532,
+        "null_share": 0.05864002064128727,
+        "year": 1997
+      },
+      {
+        "canon_share": 0.11440051552253516,
+        "entropy_deficit": 0.21318617415776453,
+        "k": 10000,
+        "n_edges": 26381,
+        "n_papers": 1771,
+        "n_prior_targets": 186445,
+        "null_share": 0.05363512027675722,
+        "year": 1998
+      },
+      {
+        "canon_share": 0.11253807265990518,
+        "entropy_deficit": 0.20377811211679542,
+        "k": 10000,
+        "n_edges": 31847,
+        "n_papers": 2055,
+        "n_prior_targets": 204501,
+        "null_share": 0.04889951638378297,
+        "year": 1999
+      },
+      {
+        "canon_share": 0.1020447477777472,
+        "entropy_deficit": 0.19995028879589682,
+        "k": 10000,
+        "n_edges": 36337,
+        "n_papers": 2239,
+        "n_prior_targets": 226060,
+        "null_share": 0.04423604352826683,
+        "year": 2000
+      },
+      {
+        "canon_share": 0.10644160357453146,
+        "entropy_deficit": 0.18721653690653206,
+        "k": 10000,
+        "n_edges": 40285,
+        "n_papers": 2348,
+        "n_prior_targets": 251232,
+        "null_share": 0.03980384664373965,
+        "year": 2001
+      },
+      {
+        "canon_share": 0.1468456540207101,
+        "entropy_deficit": 0.12557017387869052,
+        "k": 10000,
+        "n_edges": 130661,
+        "n_papers": 10847,
+        "n_prior_targets": 277992,
+        "null_share": 0.03597225819448042,
+        "year": 2002
+      },
+      {
+        "canon_share": 0.13818937953229818,
+        "entropy_deficit": 0.1195775474115669,
+        "k": 10000,
+        "n_edges": 95702,
+        "n_papers": 6854,
+        "n_prior_targets": 351249,
+        "null_share": 0.028469831942582045,
+        "year": 2003
+      },
+      {
+        "canon_share": 0.11942180348863761,
+        "entropy_deficit": 0.13603196428733866,
+        "k": 10000,
+        "n_edges": 100727,
+        "n_papers": 6254,
+        "n_prior_targets": 405196,
+        "null_share": 0.024679414406854953,
+        "year": 2004
+      },
+      {
+        "canon_share": 0.12172281562186271,
+        "entropy_deficit": 0.12529247717054337,
+        "k": 10000,
+        "n_edges": 121522,
+        "n_papers": 7549,
+        "n_prior_targets": 462974,
+        "null_share": 0.021599485068275973,
+        "year": 2005
+      },
+      {
+        "canon_share": 0.12227271806438107,
+        "entropy_deficit": 0.1215164978503308,
+        "k": 10000,
+        "n_edges": 148087,
+        "n_papers": 8914,
+        "n_prior_targets": 532214,
+        "null_share": 0.0187894343252902,
+        "year": 2006
+      },
+      {
+        "canon_share": 0.11679529822068654,
+        "entropy_deficit": 0.11900902874822594,
+        "k": 10000,
+        "n_edges": 154835,
+        "n_papers": 8566,
+        "n_prior_targets": 614149,
+        "null_share": 0.016282693613439085,
+        "year": 2007
+      },
+      {
+        "canon_share": 0.12027737787286275,
+        "entropy_deficit": 0.1141162790951874,
+        "k": 10000,
+        "n_edges": 174347,
+        "n_papers": 10121,
+        "n_prior_targets": 699820,
+        "null_share": 0.014289388699951416,
+        "year": 2008
+      },
+      {
+        "canon_share": 0.11600336108777022,
+        "entropy_deficit": 0.10863510100289209,
+        "k": 10000,
+        "n_edges": 196365,
+        "n_papers": 11014,
+        "n_prior_targets": 793202,
+        "null_share": 0.012607129079351792,
+        "year": 2009
+      },
+      {
+        "canon_share": 0.11183147822863246,
+        "entropy_deficit": 0.10528045623668525,
+        "k": 10000,
+        "n_edges": 226582,
+        "n_papers": 12520,
+        "n_prior_targets": 897493,
+        "null_share": 0.011142148183885557,
+        "year": 2010
+      },
+      {
+        "canon_share": 0.10559516462000128,
+        "entropy_deficit": 0.10201587996418437,
+        "k": 10000,
+        "n_edges": 234935,
+        "n_papers": 12491,
+        "n_prior_targets": 1016901,
+        "null_share": 0.009833798963714266,
+        "year": 2011
+      },
+      {
+        "canon_share": 0.09818851983451331,
+        "entropy_deficit": 0.09796256118633628,
+        "k": 10000,
+        "n_edges": 263707,
+        "n_papers": 13529,
+        "n_prior_targets": 1139803,
+        "null_share": 0.00877344593758746,
+        "year": 2012
+      },
+      {
+        "canon_share": 0.09608007073970472,
+        "entropy_deficit": 0.10251920604648967,
+        "k": 10000,
+        "n_edges": 290643,
+        "n_papers": 14661,
+        "n_prior_targets": 1276860,
+        "null_share": 0.007831712168914368,
+        "year": 2013
+      },
+      {
+        "canon_share": 0.09155956500247157,
+        "entropy_deficit": 0.09999299327962885,
+        "k": 10000,
+        "n_edges": 323680,
+        "n_papers": 15626,
+        "n_prior_targets": 1428202,
+        "null_share": 0.007001810668238807,
+        "year": 2014
+      },
+      {
+        "canon_share": 0.08821603399316966,
+        "entropy_deficit": 0.10310193891872932,
+        "k": 10000,
+        "n_edges": 340539,
+        "n_papers": 16025,
+        "n_prior_targets": 1596117,
+        "null_share": 0.006265204869066616,
+        "year": 2015
+      },
+      {
+        "canon_share": 0.08638341328619119,
+        "entropy_deficit": 0.10695042904442997,
+        "k": 10000,
+        "n_edges": 349581,
+        "n_papers": 15766,
+        "n_prior_targets": 1770358,
+        "null_share": 0.005648575033976179,
+        "year": 2016
+      },
+      {
+        "canon_share": 0.08288036609862846,
+        "entropy_deficit": 0.10969985837095753,
+        "k": 10000,
+        "n_edges": 375855,
+        "n_papers": 16246,
+        "n_prior_targets": 1949730,
+        "null_share": 0.005128915285706226,
+        "year": 2017
+      },
+      {
+        "canon_share": 0.08384598534149926,
+        "entropy_deficit": 0.12486209351875821,
+        "k": 10000,
+        "n_edges": 438244,
+        "n_papers": 18131,
+        "n_prior_targets": 2139623,
+        "null_share": 0.004673720557313134,
+        "year": 2018
+      },
+      {
+        "canon_share": 0.08482993450431676,
+        "entropy_deficit": 0.1380373099384281,
+        "k": 10000,
+        "n_edges": 537440,
+        "n_papers": 20200,
+        "n_prior_targets": 2359945,
+        "null_share": 0.004237386888253752,
+        "year": 2019
+      },
+      {
+        "canon_share": 0.08509411825519776,
+        "entropy_deficit": 0.14193015561018196,
+        "k": 10000,
+        "n_edges": 638399,
+        "n_papers": 22221,
+        "n_prior_targets": 2625276,
+        "null_share": 0.0038091233074160585,
+        "year": 2020
+      },
+      {
+        "canon_share": 0.08239595236802624,
+        "entropy_deficit": 0.14061518523018313,
+        "k": 10000,
+        "n_edges": 755207,
+        "n_papers": 24664,
+        "n_prior_targets": 2939892,
+        "null_share": 0.003401485496746139,
+        "year": 2021
+      },
+      {
+        "canon_share": 0.07082374207782775,
+        "entropy_deficit": 0.1395866333379523,
+        "k": 10000,
+        "n_edges": 732438,
+        "n_papers": 23838,
+        "n_prior_targets": 3307830,
+        "null_share": 0.0030231299673804278,
+        "year": 2022
+      },
+      {
+        "canon_share": 0.07228186759367737,
+        "entropy_deficit": 0.1440890236558935,
+        "k": 10000,
+        "n_edges": 833072,
+        "n_papers": 27493,
+        "n_prior_targets": 3676595,
+        "null_share": 0.0027199079583146908,
+        "year": 2023
+      },
+      {
+        "canon_share": 0.066806163354564,
+        "entropy_deficit": 0.14356235048624144,
+        "k": 10000,
+        "n_edges": 794762,
+        "n_papers": 26698,
+        "n_prior_targets": 4084138,
+        "null_share": 0.002448497088002413,
+        "year": 2024
+      }
+    ]
+  },
+  "physics-K100": {
+    "summary": {
+      "deficit_slope": -0.0028048200558120997,
+      "null_slope": -0.00011928472966752548,
+      "observed_slope": -0.0001050866120075198
+    },
+    "years": [
+      {
+        "canon_share": 0.008853039543576628,
+        "entropy_deficit": 0.26540782589310186,
+        "k": 100,
+        "n_edges": 5083,
+        "n_papers": 372,
+        "n_prior_targets": 5234,
+        "null_share": 0.019105846388995033,
+        "year": 1971
+      },
+      {
+        "canon_share": 0.014777367295352907,
+        "entropy_deficit": 0.24015805220161734,
+        "k": 100,
+        "n_edges": 5143,
+        "n_papers": 389,
+        "n_prior_targets": 9726,
+        "null_share": 0.010281719103434095,
+        "year": 1972
+      },
+      {
+        "canon_share": 0.012679346012679346,
+        "entropy_deficit": 0.22356342559638165,
+        "k": 100,
+        "n_edges": 5994,
+        "n_papers": 392,
+        "n_prior_targets": 14056,
+        "null_share": 0.0071143995446784295,
+        "year": 1973
+      },
+      {
+        "canon_share": 0.009608411892675852,
+        "entropy_deficit": 0.2532451315671138,
+        "k": 100,
+        "n_edges": 5516,
+        "n_papers": 443,
+        "n_prior_targets": 18932,
+        "null_share": 0.005282062117050497,
+        "year": 1974
+      },
+      {
+        "canon_share": 0.013227091633466135,
+        "entropy_deficit": 0.19030351316643934,
+        "k": 100,
+        "n_edges": 6275,
+        "n_papers": 441,
+        "n_prior_targets": 23287,
+        "null_share": 0.004294241422252759,
+        "year": 1975
+      },
+      {
+        "canon_share": 0.01301995265471762,
+        "entropy_deficit": 0.21507631739252864,
+        "k": 100,
+        "n_edges": 5914,
+        "n_papers": 429,
+        "n_prior_targets": 28207,
+        "null_share": 0.0035452192718119615,
+        "year": 1976
+      },
+      {
+        "canon_share": 0.014172974714124658,
+        "entropy_deficit": 0.18255563122632723,
+        "k": 100,
+        "n_edges": 6209,
+        "n_papers": 458,
+        "n_prior_targets": 32686,
+        "null_share": 0.0030594138163127947,
+        "year": 1977
+      },
+      {
+        "canon_share": 0.012285714285714285,
+        "entropy_deficit": 0.1611857085509275,
+        "k": 100,
+        "n_edges": 7000,
+        "n_papers": 466,
+        "n_prior_targets": 37382,
+        "null_share": 0.0026750842651543523,
+        "year": 1978
+      },
+      {
+        "canon_share": 0.013333333333333334,
+        "entropy_deficit": 0.16874708111684233,
+        "k": 100,
+        "n_edges": 7500,
+        "n_papers": 493,
+        "n_prior_targets": 42589,
+        "null_share": 0.0023480241376881354,
+        "year": 1979
+      },
+      {
+        "canon_share": 0.013396882648460647,
+        "entropy_deficit": 0.17430083663387452,
+        "k": 100,
+        "n_edges": 7763,
+        "n_papers": 520,
+        "n_prior_targets": 48251,
+        "null_share": 0.002072495906820584,
+        "year": 1980
+      },
+      {
+        "canon_share": 0.012677484787018255,
+        "entropy_deficit": 0.19702368641989532,
+        "k": 100,
+        "n_edges": 7888,
+        "n_papers": 519,
+        "n_prior_targets": 54055,
+        "null_share": 0.0018499676255665527,
+        "year": 1981
+      },
+      {
+        "canon_share": 0.015044031311154598,
+        "entropy_deficit": 0.1530696742897072,
+        "k": 100,
+        "n_edges": 8176,
+        "n_papers": 522,
+        "n_prior_targets": 59778,
+        "null_share": 0.001672856234735187,
+        "year": 1982
+      },
+      {
+        "canon_share": 0.01142579312021393,
+        "entropy_deficit": 0.16276357329525448,
+        "k": 100,
+        "n_edges": 8227,
+        "n_papers": 541,
+        "n_prior_targets": 65636,
+        "null_share": 0.0015235541471143885,
+        "year": 1983
+      },
+      {
+        "canon_share": 0.010063694267515924,
+        "entropy_deficit": 0.17937991132748987,
+        "k": 100,
+        "n_edges": 7850,
+        "n_papers": 526,
+        "n_prior_targets": 71704,
+        "null_share": 0.0013946223362713377,
+        "year": 1984
+      },
+      {
+        "canon_share": 0.009434909163906454,
+        "entropy_deficit": 0.20682663048366146,
+        "k": 100,
+        "n_edges": 9963,
+        "n_papers": 639,
+        "n_prior_targets": 77407,
+        "null_share": 0.0012918728280388078,
+        "year": 1985
+      },
+      {
+        "canon_share": 0.008145533532446375,
+        "entropy_deficit": 0.18894733575239997,
+        "k": 100,
+        "n_edges": 11049,
+        "n_papers": 652,
+        "n_prior_targets": 84825,
+        "null_share": 0.0011788977306218685,
+        "year": 1986
+      },
+      {
+        "canon_share": 0.009275834011391376,
+        "entropy_deficit": 0.2266183968155998,
+        "k": 100,
+        "n_edges": 12290,
+        "n_papers": 752,
+        "n_prior_targets": 92643,
+        "null_share": 0.0010794123679069114,
+        "year": 1987
+      },
+      {
+        "canon_share": 0.008092657212859159,
+        "entropy_deficit": 0.1964932417894104,
+        "k": 100,
+        "n_edges": 13469,
+        "n_papers": 750,
+        "n_prior_targets": 101247,
+        "null_share": 0.0009876835856864894,
+        "year": 1988
+      },
+      {
+        "canon_share": 0.010167804323094425,
+        "entropy_deficit": 0.16520345464670305,
+        "k": 100,
+        "n_edges": 14064,
+        "n_papers": 800,
+        "n_prior_targets": 110648,
+        "null_share": 0.0009037669004410382,
+        "year": 1989
+      },
+      {
+        "canon_share": 0.01115886300233733,
+        "entropy_deficit": 0.19952771843665995,
+        "k": 100,
+        "n_edges": 13263,
+        "n_papers": 817,
+        "n_prior_targets": 120114,
+        "null_share": 0.0008325424180361989,
+        "year": 1990
+      },
+      {
+        "canon_share": 0.009279881217520415,
+        "entropy_deficit": 0.17090878243333163,
+        "k": 100,
+        "n_edges": 16164,
+        "n_papers": 901,
+        "n_prior_targets": 129088,
+        "null_share": 0.0007746653445711453,
+        "year": 1991
+      },
+      {
+        "canon_share": 0.010437217590530134,
+        "entropy_deficit": 0.143036675749177,
+        "k": 100,
+        "n_edges": 15713,
+        "n_papers": 935,
+        "n_prior_targets": 139652,
+        "null_share": 0.0007160656488986911,
+        "year": 1992
+      },
+      {
+        "canon_share": 0.008964245466653007,
+        "entropy_deficit": 0.1446132199191703,
+        "k": 100,
+        "n_edges": 19522,
+        "n_papers": 1052,
+        "n_prior_targets": 149999,
+        "null_share": 0.0006666711111407409,
+        "year": 1993
+      },
+      {
+        "canon_share": 0.009730880340580813,
+        "entropy_deficit": 0.16076762285292145,
+        "k": 100,
+        "n_edges": 19731,
+        "n_papers": 1072,
+        "n_prior_targets": 162807,
+        "null_share": 0.0006142242041189875,
+        "year": 1994
+      },
+      {
+        "canon_share": 0.009846827133479213,
+        "entropy_deficit": 0.12221044999125497,
+        "k": 100,
+        "n_edges": 21022,
+        "n_papers": 1156,
+        "n_prior_targets": 175229,
+        "null_share": 0.0005706817935387408,
+        "year": 1995
+      },
+      {
+        "canon_share": 0.008920166748845758,
+        "entropy_deficit": 0.14177390374665155,
+        "k": 100,
+        "n_edges": 22309,
+        "n_papers": 1249,
+        "n_prior_targets": 188397,
+        "null_share": 0.0005307940147666895,
+        "year": 1996
+      },
+      {
+        "canon_share": 0.009501187648456057,
+        "entropy_deficit": 0.15620231576334176,
+        "k": 100,
+        "n_edges": 24839,
+        "n_papers": 1365,
+        "n_prior_targets": 202886,
+        "null_share": 0.0004928876314777757,
+        "year": 1997
+      },
+      {
+        "canon_share": 0.008039816232771823,
+        "entropy_deficit": 0.15804197199370462,
+        "k": 100,
+        "n_edges": 28732,
+        "n_papers": 1489,
+        "n_prior_targets": 218721,
+        "null_share": 0.00045720346925992475,
+        "year": 1998
+      },
+      {
+        "canon_share": 0.00780201604094498,
+        "entropy_deficit": 0.11817189088309366,
+        "k": 100,
+        "n_edges": 32043,
+        "n_papers": 1542,
+        "n_prior_targets": 236788,
+        "null_share": 0.00042231869858269845,
+        "year": 1999
+      },
+      {
+        "canon_share": 0.007623456790123457,
+        "entropy_deficit": 0.12963596123572307,
+        "k": 100,
+        "n_edges": 32400,
+        "n_papers": 1604,
+        "n_prior_targets": 256890,
+        "null_share": 0.0003892716727003776,
+        "year": 2000
+      },
+      {
+        "canon_share": 0.0069126667315743354,
+        "entropy_deficit": 0.14578592039296867,
+        "k": 100,
+        "n_edges": 41084,
+        "n_papers": 1773,
+        "n_prior_targets": 276869,
+        "null_share": 0.00036118164185950757,
+        "year": 2001
+      },
+      {
+        "canon_share": 0.007463503250235286,
+        "entropy_deficit": 0.15349480427439144,
+        "k": 100,
+        "n_edges": 45689,
+        "n_papers": 2411,
+        "n_prior_targets": 301366,
+        "null_share": 0.0003318224351784873,
+        "year": 2002
+      },
+      {
+        "canon_share": 0.007365092318677956,
+        "entropy_deficit": 0.15122140315777233,
+        "k": 100,
+        "n_edges": 49015,
+        "n_papers": 2261,
+        "n_prior_targets": 328996,
+        "null_share": 0.0003039550632834442,
+        "year": 2003
+      },
+      {
+        "canon_share": 0.007329545454545455,
+        "entropy_deficit": 0.15464705016985603,
+        "k": 100,
+        "n_edges": 52800,
+        "n_papers": 2282,
+        "n_prior_targets": 357970,
+        "null_share": 0.0002793530184093639,
+        "year": 2004
+      },
+      {
+        "canon_share": 0.008844221105527638,
+        "entropy_deficit": 0.14672293633172628,
+        "k": 100,
+        "n_edges": 59700,
+        "n_papers": 2402,
+        "n_prior_targets": 388429,
+        "null_share": 0.0002574473069724454,
+        "year": 2005
+      },
+      {
+        "canon_share": 0.009450952530442973,
+        "entropy_deficit": 0.131447501752598,
+        "k": 100,
+        "n_edges": 60523,
+        "n_papers": 2619,
+        "n_prior_targets": 422527,
+        "null_share": 0.00023667126597826885,
+        "year": 2006
+      },
+      {
+        "canon_share": 0.009216451063957954,
+        "entropy_deficit": 0.11394606920449724,
+        "k": 100,
+        "n_edges": 66403,
+        "n_papers": 2584,
+        "n_prior_targets": 456893,
+        "null_share": 0.00021886962592992232,
+        "year": 2007
+      },
+      {
+        "canon_share": 0.009261810119773834,
+        "entropy_deficit": 0.1164506537603347,
+        "k": 100,
+        "n_edges": 76227,
+        "n_papers": 2853,
+        "n_prior_targets": 493073,
+        "null_share": 0.00020280972594321733,
+        "year": 2008
+      },
+      {
+        "canon_share": 0.00872904616616994,
+        "entropy_deficit": 0.09991327855513665,
+        "k": 100,
+        "n_edges": 84889,
+        "n_papers": 3060,
+        "n_prior_targets": 533641,
+        "null_share": 0.00018739189829866895,
+        "year": 2009
+      },
+      {
+        "canon_share": 0.008773514599941284,
+        "entropy_deficit": 0.10626061742805315,
+        "k": 100,
+        "n_edges": 88562,
+        "n_papers": 3200,
+        "n_prior_targets": 577811,
+        "null_share": 0.00017306697172604884,
+        "year": 2010
+      },
+      {
+        "canon_share": 0.00968174533084748,
+        "entropy_deficit": 0.09233145207147431,
+        "k": 100,
+        "n_edges": 91719,
+        "n_papers": 3263,
+        "n_prior_targets": 623812,
+        "null_share": 0.00016030470718742185,
+        "year": 2011
+      },
+      {
+        "canon_share": 0.00784885673437665,
+        "entropy_deficit": 0.09491639907912086,
+        "k": 100,
+        "n_edges": 104219,
+        "n_papers": 3556,
+        "n_prior_targets": 670386,
+        "null_share": 0.00014916779288350293,
+        "year": 2012
+      },
+      {
+        "canon_share": 0.00837650170836548,
+        "entropy_deficit": 0.1039624109460332,
+        "k": 100,
+        "n_edges": 108876,
+        "n_papers": 3611,
+        "n_prior_targets": 724604,
+        "null_share": 0.00013800641453814774,
+        "year": 2013
+      },
+      {
+        "canon_share": 0.00802033189764378,
+        "entropy_deficit": 0.08897666573588536,
+        "k": 100,
+        "n_edges": 126304,
+        "n_papers": 3990,
+        "n_prior_targets": 779746,
+        "null_share": 0.0001282468906541361,
+        "year": 2014
+      },
+      {
+        "canon_share": 0.008124168239918295,
+        "entropy_deficit": 0.09881181176617593,
+        "k": 100,
+        "n_edges": 129244,
+        "n_papers": 4050,
+        "n_prior_targets": 842018,
+        "null_share": 0.00011876230674403635,
+        "year": 2015
+      },
+      {
+        "canon_share": 0.008063138474153542,
+        "entropy_deficit": 0.09250165797815857,
+        "k": 100,
+        "n_edges": 146345,
+        "n_papers": 4332,
+        "n_prior_targets": 904860,
+        "null_share": 0.00011051433370908206,
+        "year": 2016
+      },
+      {
+        "canon_share": 0.007607696881249662,
+        "entropy_deficit": 0.0977790085176452,
+        "k": 100,
+        "n_edges": 148008,
+        "n_papers": 4428,
+        "n_prior_targets": 972388,
+        "null_share": 0.00010283960723497205,
+        "year": 2017
+      },
+      {
+        "canon_share": 0.006980111551922291,
+        "entropy_deficit": 0.08502441139297567,
+        "k": 100,
+        "n_edges": 154009,
+        "n_papers": 4548,
+        "n_prior_targets": 1041036,
+        "null_share": 9.605815745084705e-05,
+        "year": 2018
+      },
+      {
+        "canon_share": 0.007330296152843056,
+        "entropy_deficit": 0.0802107340946071,
+        "k": 100,
+        "n_edges": 180211,
+        "n_papers": 5141,
+        "n_prior_targets": 1113507,
+        "null_share": 8.980635056627394e-05,
+        "year": 2019
+      },
+      {
+        "canon_share": 0.007695128260509224,
+        "entropy_deficit": 0.07512872170664775,
+        "k": 100,
+        "n_edges": 199087,
+        "n_papers": 5492,
+        "n_prior_targets": 1198044,
+        "null_share": 8.346938843648481e-05,
+        "year": 2020
+      },
+      {
+        "canon_share": 0.0073322742270560915,
+        "entropy_deficit": 0.09112381075795517,
+        "k": 100,
+        "n_edges": 229124,
+        "n_papers": 6174,
+        "n_prior_targets": 1291345,
+        "null_share": 7.743863955798025e-05,
+        "year": 2021
+      },
+      {
+        "canon_share": 0.006870691475202174,
+        "entropy_deficit": 0.0843084412861621,
+        "k": 100,
+        "n_edges": 217882,
+        "n_papers": 6154,
+        "n_prior_targets": 1400160,
+        "null_share": 7.14204090961033e-05,
+        "year": 2022
+      },
+      {
+        "canon_share": 0.007642726361399468,
+        "entropy_deficit": 0.09238366862524561,
+        "k": 100,
+        "n_edges": 241406,
+        "n_papers": 6593,
+        "n_prior_targets": 1502596,
+        "null_share": 6.655148822437967e-05,
+        "year": 2023
+      },
+      {
+        "canon_share": 0.00811168599652959,
+        "entropy_deficit": 0.09004622216358904,
+        "k": 100,
+        "n_edges": 189603,
+        "n_papers": 4219,
+        "n_prior_targets": 1612314,
+        "null_share": 6.202265811746348e-05,
+        "year": 2024
+      }
+    ]
+  },
+  "physics-K1000": {
+    "summary": {
+      "deficit_slope": -0.00433903135196477,
+      "null_slope": -0.0011928472966752544,
+      "observed_slope": -0.00025379261054352364
+    },
+    "years": [
+      {
+        "canon_share": 0.02832972653944521,
+        "entropy_deficit": 0.33812422683131294,
+        "k": 1000,
+        "n_edges": 5083,
+        "n_papers": 372,
+        "n_prior_targets": 5234,
+        "null_share": 0.19105846388995032,
+        "year": 1971
+      },
+      {
+        "canon_share": 0.0408321991055804,
+        "entropy_deficit": 0.29506008316094623,
+        "k": 1000,
+        "n_edges": 5143,
+        "n_papers": 389,
+        "n_prior_targets": 9726,
+        "null_share": 0.10281719103434094,
+        "year": 1972
+      },
+      {
+        "canon_share": 0.04004004004004004,
+        "entropy_deficit": 0.270700302911175,
+        "k": 1000,
+        "n_edges": 5994,
+        "n_papers": 392,
+        "n_prior_targets": 14056,
+        "null_share": 0.07114399544678429,
+        "year": 1973
+      },
+      {
+        "canon_share": 0.0411530094271211,
+        "entropy_deficit": 0.27389742150235374,
+        "k": 1000,
+        "n_edges": 5516,
+        "n_papers": 443,
+        "n_prior_targets": 18932,
+        "null_share": 0.05282062117050496,
+        "year": 1974
+      },
+      {
+        "canon_share": 0.043824701195219126,
+        "entropy_deficit": 0.24423386234547617,
+        "k": 1000,
+        "n_edges": 6275,
+        "n_papers": 441,
+        "n_prior_targets": 23287,
+        "null_share": 0.04294241422252759,
+        "year": 1975
+      },
+      {
+        "canon_share": 0.04751437267500845,
+        "entropy_deficit": 0.25398434480685395,
+        "k": 1000,
+        "n_edges": 5914,
+        "n_papers": 429,
+        "n_prior_targets": 28207,
+        "null_share": 0.03545219271811961,
+        "year": 1976
+      },
+      {
+        "canon_share": 0.0476727331293284,
+        "entropy_deficit": 0.2348041112266107,
+        "k": 1000,
+        "n_edges": 6209,
+        "n_papers": 458,
+        "n_prior_targets": 32686,
+        "null_share": 0.030594138163127945,
+        "year": 1977
+      },
+      {
+        "canon_share": 0.04428571428571428,
+        "entropy_deficit": 0.23070146337185193,
+        "k": 1000,
+        "n_edges": 7000,
+        "n_papers": 466,
+        "n_prior_targets": 37382,
+        "null_share": 0.026750842651543524,
+        "year": 1978
+      },
+      {
+        "canon_share": 0.039733333333333336,
+        "entropy_deficit": 0.23683703915729992,
+        "k": 1000,
+        "n_edges": 7500,
+        "n_papers": 493,
+        "n_prior_targets": 42589,
+        "null_share": 0.023480241376881355,
+        "year": 1979
+      },
+      {
+        "canon_share": 0.04263815535231225,
+        "entropy_deficit": 0.22253522048855345,
+        "k": 1000,
+        "n_edges": 7763,
+        "n_papers": 520,
+        "n_prior_targets": 48251,
+        "null_share": 0.02072495906820584,
+        "year": 1980
+      },
+      {
+        "canon_share": 0.03942697768762678,
+        "entropy_deficit": 0.23511744362339393,
+        "k": 1000,
+        "n_edges": 7888,
+        "n_papers": 519,
+        "n_prior_targets": 54055,
+        "null_share": 0.018499676255665527,
+        "year": 1981
+      },
+      {
+        "canon_share": 0.042318982387475536,
+        "entropy_deficit": 0.2217477969388285,
+        "k": 1000,
+        "n_edges": 8176,
+        "n_papers": 522,
+        "n_prior_targets": 59778,
+        "null_share": 0.01672856234735187,
+        "year": 1982
+      },
+      {
+        "canon_share": 0.037073052145374985,
+        "entropy_deficit": 0.2310492255197536,
+        "k": 1000,
+        "n_edges": 8227,
+        "n_papers": 541,
+        "n_prior_targets": 65636,
+        "null_share": 0.015235541471143884,
+        "year": 1983
+      },
+      {
+        "canon_share": 0.03426751592356688,
+        "entropy_deficit": 0.24409413892752085,
+        "k": 1000,
+        "n_edges": 7850,
+        "n_papers": 526,
+        "n_prior_targets": 71704,
+        "null_share": 0.013946223362713377,
+        "year": 1984
+      },
+      {
+        "canon_share": 0.03141624008832681,
+        "entropy_deficit": 0.2326028947002784,
+        "k": 1000,
+        "n_edges": 9963,
+        "n_papers": 639,
+        "n_prior_targets": 77407,
+        "null_share": 0.012918728280388078,
+        "year": 1985
+      },
+      {
+        "canon_share": 0.03194859263281745,
+        "entropy_deficit": 0.21166403203347317,
+        "k": 1000,
+        "n_edges": 11049,
+        "n_papers": 652,
+        "n_prior_targets": 84825,
+        "null_share": 0.011788977306218685,
+        "year": 1986
+      },
+      {
+        "canon_share": 0.03352318958502848,
+        "entropy_deficit": 0.21604246590649467,
+        "k": 1000,
+        "n_edges": 12290,
+        "n_papers": 752,
+        "n_prior_targets": 92643,
+        "null_share": 0.010794123679069114,
+        "year": 1987
+      },
+      {
+        "canon_share": 0.03482069938377014,
+        "entropy_deficit": 0.21060330750690437,
+        "k": 1000,
+        "n_edges": 13469,
+        "n_papers": 750,
+        "n_prior_targets": 101247,
+        "null_share": 0.009876835856864895,
+        "year": 1988
+      },
+      {
+        "canon_share": 0.036333902161547214,
+        "entropy_deficit": 0.1884719772870913,
+        "k": 1000,
+        "n_edges": 14064,
+        "n_papers": 800,
+        "n_prior_targets": 110648,
+        "null_share": 0.009037669004410382,
+        "year": 1989
+      },
+      {
+        "canon_share": 0.03566312297368619,
+        "entropy_deficit": 0.19637541574860562,
+        "k": 1000,
+        "n_edges": 13263,
+        "n_papers": 817,
+        "n_prior_targets": 120114,
+        "null_share": 0.008325424180361989,
+        "year": 1990
+      },
+      {
+        "canon_share": 0.03699579312051472,
+        "entropy_deficit": 0.17421415902884663,
+        "k": 1000,
+        "n_edges": 16164,
+        "n_papers": 901,
+        "n_prior_targets": 129088,
+        "null_share": 0.007746653445711453,
+        "year": 1991
+      },
+      {
+        "canon_share": 0.03595748743078979,
+        "entropy_deficit": 0.1771277086776224,
+        "k": 1000,
+        "n_edges": 15713,
+        "n_papers": 935,
+        "n_prior_targets": 139652,
+        "null_share": 0.0071606564889869105,
+        "year": 1992
+      },
+      {
+        "canon_share": 0.03498616944985145,
+        "entropy_deficit": 0.16431258072521526,
+        "k": 1000,
+        "n_edges": 19522,
+        "n_papers": 1052,
+        "n_prior_targets": 149999,
+        "null_share": 0.006666711111407409,
+        "year": 1993
+      },
+      {
+        "canon_share": 0.03603466626121332,
+        "entropy_deficit": 0.15795817985815097,
+        "k": 1000,
+        "n_edges": 19731,
+        "n_papers": 1072,
+        "n_prior_targets": 162807,
+        "null_share": 0.006142242041189875,
+        "year": 1994
+      },
+      {
+        "canon_share": 0.036295309675577966,
+        "entropy_deficit": 0.14933034947435964,
+        "k": 1000,
+        "n_edges": 21022,
+        "n_papers": 1156,
+        "n_prior_targets": 175229,
+        "null_share": 0.005706817935387408,
+        "year": 1995
+      },
+      {
+        "canon_share": 0.03249809493926218,
+        "entropy_deficit": 0.16689608005126388,
+        "k": 1000,
+        "n_edges": 22309,
+        "n_papers": 1249,
+        "n_prior_targets": 188397,
+        "null_share": 0.005307940147666895,
+        "year": 1996
+      },
+      {
+        "canon_share": 0.035589194412013365,
+        "entropy_deficit": 0.14748331271010007,
+        "k": 1000,
+        "n_edges": 24839,
+        "n_papers": 1365,
+        "n_prior_targets": 202886,
+        "null_share": 0.004928876314777757,
+        "year": 1997
+      },
+      {
+        "canon_share": 0.030384240568007797,
+        "entropy_deficit": 0.1463362941006482,
+        "k": 1000,
+        "n_edges": 28732,
+        "n_papers": 1489,
+        "n_prior_targets": 218721,
+        "null_share": 0.004572034692599247,
+        "year": 1998
+      },
+      {
+        "canon_share": 0.029085915800642886,
+        "entropy_deficit": 0.138280297446971,
+        "k": 1000,
+        "n_edges": 32043,
+        "n_papers": 1542,
+        "n_prior_targets": 236788,
+        "null_share": 0.004223186985826985,
+        "year": 1999
+      },
+      {
+        "canon_share": 0.030308641975308644,
+        "entropy_deficit": 0.12822063533218764,
+        "k": 1000,
+        "n_edges": 32400,
+        "n_papers": 1604,
+        "n_prior_targets": 256890,
+        "null_share": 0.003892716727003776,
+        "year": 2000
+      },
+      {
+        "canon_share": 0.027796709181189757,
+        "entropy_deficit": 0.13511594676331695,
+        "k": 1000,
+        "n_edges": 41084,
+        "n_papers": 1773,
+        "n_prior_targets": 276869,
+        "null_share": 0.0036118164185950756,
+        "year": 2001
+      },
+      {
+        "canon_share": 0.02707435050012038,
+        "entropy_deficit": 0.13698003858214203,
+        "k": 1000,
+        "n_edges": 45689,
+        "n_papers": 2411,
+        "n_prior_targets": 301366,
+        "null_share": 0.0033182243517848728,
+        "year": 2002
+      },
+      {
+        "canon_share": 0.028623890645720698,
+        "entropy_deficit": 0.13625567628832536,
+        "k": 1000,
+        "n_edges": 49015,
+        "n_papers": 2261,
+        "n_prior_targets": 328996,
+        "null_share": 0.0030395506328344418,
+        "year": 2003
+      },
+      {
+        "canon_share": 0.030340909090909092,
+        "entropy_deficit": 0.12603031573741563,
+        "k": 1000,
+        "n_edges": 52800,
+        "n_papers": 2282,
+        "n_prior_targets": 357970,
+        "null_share": 0.002793530184093639,
+        "year": 2004
+      },
+      {
+        "canon_share": 0.031474036850921275,
+        "entropy_deficit": 0.11810362666781105,
+        "k": 1000,
+        "n_edges": 59700,
+        "n_papers": 2402,
+        "n_prior_targets": 388429,
+        "null_share": 0.002574473069724454,
+        "year": 2005
+      },
+      {
+        "canon_share": 0.03294615270227847,
+        "entropy_deficit": 0.11151248182344331,
+        "k": 1000,
+        "n_edges": 60523,
+        "n_papers": 2619,
+        "n_prior_targets": 422527,
+        "null_share": 0.0023667126597826885,
+        "year": 2006
+      },
+      {
+        "canon_share": 0.035992349743234495,
+        "entropy_deficit": 0.09774743429155774,
+        "k": 1000,
+        "n_edges": 66403,
+        "n_papers": 2584,
+        "n_prior_targets": 456893,
+        "null_share": 0.002188696259299223,
+        "year": 2007
+      },
+      {
+        "canon_share": 0.036719272698650086,
+        "entropy_deficit": 0.09915762426719266,
+        "k": 1000,
+        "n_edges": 76227,
+        "n_papers": 2853,
+        "n_prior_targets": 493073,
+        "null_share": 0.002028097259432173,
+        "year": 2008
+      },
+      {
+        "canon_share": 0.033749955824665154,
+        "entropy_deficit": 0.08538829268791215,
+        "k": 1000,
+        "n_edges": 84889,
+        "n_papers": 3060,
+        "n_prior_targets": 533641,
+        "null_share": 0.0018739189829866895,
+        "year": 2009
+      },
+      {
+        "canon_share": 0.034202027957814865,
+        "entropy_deficit": 0.09228068737227058,
+        "k": 1000,
+        "n_edges": 88562,
+        "n_papers": 3200,
+        "n_prior_targets": 577811,
+        "null_share": 0.0017306697172604882,
+        "year": 2010
+      },
+      {
+        "canon_share": 0.033973331588874715,
+        "entropy_deficit": 0.08354620906689625,
+        "k": 1000,
+        "n_edges": 91719,
+        "n_papers": 3263,
+        "n_prior_targets": 623812,
+        "null_share": 0.0016030470718742186,
+        "year": 2011
+      },
+      {
+        "canon_share": 0.03091566796841267,
+        "entropy_deficit": 0.08598396490506621,
+        "k": 1000,
+        "n_edges": 104219,
+        "n_papers": 3556,
+        "n_prior_targets": 670386,
+        "null_share": 0.0014916779288350294,
+        "year": 2012
+      },
+      {
+        "canon_share": 0.03137514236379,
+        "entropy_deficit": 0.08433926769581612,
+        "k": 1000,
+        "n_edges": 108876,
+        "n_papers": 3611,
+        "n_prior_targets": 724604,
+        "null_share": 0.0013800641453814773,
+        "year": 2013
+      },
+      {
+        "canon_share": 0.03244552824930327,
+        "entropy_deficit": 0.07906870429817081,
+        "k": 1000,
+        "n_edges": 126304,
+        "n_papers": 3990,
+        "n_prior_targets": 779746,
+        "null_share": 0.001282468906541361,
+        "year": 2014
+      },
+      {
+        "canon_share": 0.03051592336975024,
+        "entropy_deficit": 0.08005496655644007,
+        "k": 1000,
+        "n_edges": 129244,
+        "n_papers": 4050,
+        "n_prior_targets": 842018,
+        "null_share": 0.0011876230674403635,
+        "year": 2015
+      },
+      {
+        "canon_share": 0.03158290341316752,
+        "entropy_deficit": 0.08177290376881052,
+        "k": 1000,
+        "n_edges": 146345,
+        "n_papers": 4332,
+        "n_prior_targets": 904860,
+        "null_share": 0.0011051433370908206,
+        "year": 2016
+      },
+      {
+        "canon_share": 0.0296132641478839,
+        "entropy_deficit": 0.07283758212726588,
+        "k": 1000,
+        "n_edges": 148008,
+        "n_papers": 4428,
+        "n_prior_targets": 972388,
+        "null_share": 0.0010283960723497204,
+        "year": 2017
+      },
+      {
+        "canon_share": 0.029751508028751567,
+        "entropy_deficit": 0.08247490100678623,
+        "k": 1000,
+        "n_edges": 154009,
+        "n_papers": 4548,
+        "n_prior_targets": 1041036,
+        "null_share": 0.0009605815745084704,
+        "year": 2018
+      },
+      {
+        "canon_share": 0.028300159257758962,
+        "entropy_deficit": 0.07141095930327568,
+        "k": 1000,
+        "n_edges": 180211,
+        "n_papers": 5141,
+        "n_prior_targets": 1113507,
+        "null_share": 0.0008980635056627395,
+        "year": 2019
+      },
+      {
+        "canon_share": 0.029112900390281634,
+        "entropy_deficit": 0.07672215715528319,
+        "k": 1000,
+        "n_edges": 199087,
+        "n_papers": 5492,
+        "n_prior_targets": 1198044,
+        "null_share": 0.000834693884364848,
+        "year": 2020
+      },
+      {
+        "canon_share": 0.024964647963548123,
+        "entropy_deficit": 0.07789884102747413,
+        "k": 1000,
+        "n_edges": 229124,
+        "n_papers": 6174,
+        "n_prior_targets": 1291345,
+        "null_share": 0.0007743863955798025,
+        "year": 2021
+      },
+      {
+        "canon_share": 0.025715754399170194,
+        "entropy_deficit": 0.08660612716879756,
+        "k": 1000,
+        "n_edges": 217882,
+        "n_papers": 6154,
+        "n_prior_targets": 1400160,
+        "null_share": 0.000714204090961033,
+        "year": 2022
+      },
+      {
+        "canon_share": 0.027642229273506045,
+        "entropy_deficit": 0.08468671292239438,
+        "k": 1000,
+        "n_edges": 241406,
+        "n_papers": 6593,
+        "n_prior_targets": 1502596,
+        "null_share": 0.0006655148822437968,
+        "year": 2023
+      },
+      {
+        "canon_share": 0.0286282390046571,
+        "entropy_deficit": 0.0883347438137918,
+        "k": 1000,
+        "n_edges": 189603,
+        "n_papers": 4219,
+        "n_prior_targets": 1612314,
+        "null_share": 0.0006202265811746348,
+        "year": 2024
+      }
+    ]
+  },
+  "physics-K10000": {
+    "summary": {
+      "deficit_slope": -0.005082634678208471,
+      "null_slope": -0.0072481580578077675,
+      "observed_slope": -0.0005191228092079051
+    },
+    "years": [
+      {
+        "canon_share": 0.11945278611945279,
+        "entropy_deficit": 0.3140153271179613,
+        "k": 10000,
+        "n_edges": 5994,
+        "n_papers": 392,
+        "n_prior_targets": 14056,
+        "null_share": 0.7114399544678429,
+        "year": 1973
+      },
+      {
+        "canon_share": 0.1258158085569253,
+        "entropy_deficit": 0.31400957616945013,
+        "k": 10000,
+        "n_edges": 5516,
+        "n_papers": 443,
+        "n_prior_targets": 18932,
+        "null_share": 0.5282062117050497,
+        "year": 1974
+      },
+      {
+        "canon_share": 0.11920318725099602,
+        "entropy_deficit": 0.3084837385087916,
+        "k": 10000,
+        "n_edges": 6275,
+        "n_papers": 441,
+        "n_prior_targets": 23287,
+        "null_share": 0.4294241422252759,
+        "year": 1975
+      },
+      {
+        "canon_share": 0.12022319918836659,
+        "entropy_deficit": 0.31464893935383886,
+        "k": 10000,
+        "n_edges": 5914,
+        "n_papers": 429,
+        "n_prior_targets": 28207,
+        "null_share": 0.3545219271811962,
+        "year": 1976
+      },
+      {
+        "canon_share": 0.11741021098405541,
+        "entropy_deficit": 0.31204081193671973,
+        "k": 10000,
+        "n_edges": 6209,
+        "n_papers": 458,
+        "n_prior_targets": 32686,
+        "null_share": 0.30594138163127943,
+        "year": 1977
+      },
+      {
+        "canon_share": 0.11742857142857142,
+        "entropy_deficit": 0.2953788756200857,
+        "k": 10000,
+        "n_edges": 7000,
+        "n_papers": 466,
+        "n_prior_targets": 37382,
+        "null_share": 0.2675084265154352,
+        "year": 1978
+      },
+      {
+        "canon_share": 0.10546666666666667,
+        "entropy_deficit": 0.3032518923117141,
+        "k": 10000,
+        "n_edges": 7500,
+        "n_papers": 493,
+        "n_prior_targets": 42589,
+        "null_share": 0.23480241376881356,
+        "year": 1979
+      },
+      {
+        "canon_share": 0.1120700760015458,
+        "entropy_deficit": 0.29019465766302655,
+        "k": 10000,
+        "n_edges": 7763,
+        "n_papers": 520,
+        "n_prior_targets": 48251,
+        "null_share": 0.2072495906820584,
+        "year": 1980
+      },
+      {
+        "canon_share": 0.11244929006085193,
+        "entropy_deficit": 0.29084471563024317,
+        "k": 10000,
+        "n_edges": 7888,
+        "n_papers": 519,
+        "n_prior_targets": 54055,
+        "null_share": 0.18499676255665526,
+        "year": 1981
+      },
+      {
+        "canon_share": 0.11937377690802348,
+        "entropy_deficit": 0.27853520390963016,
+        "k": 10000,
+        "n_edges": 8176,
+        "n_papers": 522,
+        "n_prior_targets": 59778,
+        "null_share": 0.1672856234735187,
+        "year": 1982
+      },
+      {
+        "canon_share": 0.10854503464203233,
+        "entropy_deficit": 0.28721791414863806,
+        "k": 10000,
+        "n_edges": 8227,
+        "n_papers": 541,
+        "n_prior_targets": 65636,
+        "null_share": 0.15235541471143885,
+        "year": 1983
+      },
+      {
+        "canon_share": 0.10127388535031848,
+        "entropy_deficit": 0.29522002036937156,
+        "k": 10000,
+        "n_edges": 7850,
+        "n_papers": 526,
+        "n_prior_targets": 71704,
+        "null_share": 0.13946223362713378,
+        "year": 1984
+      },
+      {
+        "canon_share": 0.09183980728696176,
+        "entropy_deficit": 0.2875336350777239,
+        "k": 10000,
+        "n_edges": 9963,
+        "n_papers": 639,
+        "n_prior_targets": 77407,
+        "null_share": 0.12918728280388078,
+        "year": 1985
+      },
+      {
+        "canon_share": 0.09810842610190967,
+        "entropy_deficit": 0.2684484492841074,
+        "k": 10000,
+        "n_edges": 11049,
+        "n_papers": 652,
+        "n_prior_targets": 84825,
+        "null_share": 0.11788977306218686,
+        "year": 1986
+      },
+      {
+        "canon_share": 0.09772172497965825,
+        "entropy_deficit": 0.26599176957542814,
+        "k": 10000,
+        "n_edges": 12290,
+        "n_papers": 752,
+        "n_prior_targets": 92643,
+        "null_share": 0.10794123679069115,
+        "year": 1987
+      },
+      {
+        "canon_share": 0.10134382656470413,
+        "entropy_deficit": 0.25761537928543254,
+        "k": 10000,
+        "n_edges": 13469,
+        "n_papers": 750,
+        "n_prior_targets": 101247,
+        "null_share": 0.09876835856864895,
+        "year": 1988
+      },
+      {
+        "canon_share": 0.10388225255972697,
+        "entropy_deficit": 0.2498776129131154,
+        "k": 10000,
+        "n_edges": 14064,
+        "n_papers": 800,
+        "n_prior_targets": 110648,
+        "null_share": 0.09037669004410383,
+        "year": 1989
+      },
+      {
+        "canon_share": 0.10442584633944055,
+        "entropy_deficit": 0.2486572173165904,
+        "k": 10000,
+        "n_edges": 13263,
+        "n_papers": 817,
+        "n_prior_targets": 120114,
+        "null_share": 0.0832542418036199,
+        "year": 1990
+      },
+      {
+        "canon_share": 0.11055431823805989,
+        "entropy_deficit": 0.23006385362057957,
+        "k": 10000,
+        "n_edges": 16164,
+        "n_papers": 901,
+        "n_prior_targets": 129088,
+        "null_share": 0.07746653445711453,
+        "year": 1991
+      },
+      {
+        "canon_share": 0.10939985998854451,
+        "entropy_deficit": 0.23106910580734463,
+        "k": 10000,
+        "n_edges": 15713,
+        "n_papers": 935,
+        "n_prior_targets": 139652,
+        "null_share": 0.0716065648898691,
+        "year": 1992
+      },
+      {
+        "canon_share": 0.10777584263907386,
+        "entropy_deficit": 0.21898955603331072,
+        "k": 10000,
+        "n_edges": 19522,
+        "n_papers": 1052,
+        "n_prior_targets": 149999,
+        "null_share": 0.0666671111140741,
+        "year": 1993
+      },
+      {
+        "canon_share": 0.11291875728548983,
+        "entropy_deficit": 0.20833792339468726,
+        "k": 10000,
+        "n_edges": 19731,
+        "n_papers": 1072,
+        "n_prior_targets": 162807,
+        "null_share": 0.06142242041189875,
+        "year": 1994
+      },
+      {
+        "canon_share": 0.10622205308724193,
+        "entropy_deficit": 0.2132835393821979,
+        "k": 10000,
+        "n_edges": 21022,
+        "n_papers": 1156,
+        "n_prior_targets": 175229,
+        "null_share": 0.05706817935387407,
+        "year": 1995
+      },
+      {
+        "canon_share": 0.10054238199829665,
+        "entropy_deficit": 0.21230034114046437,
+        "k": 10000,
+        "n_edges": 22309,
+        "n_papers": 1249,
+        "n_prior_targets": 188397,
+        "null_share": 0.053079401476668946,
+        "year": 1996
+      },
+      {
+        "canon_share": 0.10378839727847337,
+        "entropy_deficit": 0.20408337677405486,
+        "k": 10000,
+        "n_edges": 24839,
+        "n_papers": 1365,
+        "n_prior_targets": 202886,
+        "null_share": 0.04928876314777757,
+        "year": 1997
+      },
+      {
+        "canon_share": 0.09505081442294307,
+        "entropy_deficit": 0.1984863194171701,
+        "k": 10000,
+        "n_edges": 28732,
+        "n_papers": 1489,
+        "n_prior_targets": 218721,
+        "null_share": 0.04572034692599247,
+        "year": 1998
+      },
+      {
+        "canon_share": 0.09549667634116656,
+        "entropy_deficit": 0.18523504109916922,
+        "k": 10000,
+        "n_edges": 32043,
+        "n_papers": 1542,
+        "n_prior_targets": 236788,
+        "null_share": 0.04223186985826984,
+        "year": 1999
+      },
+      {
+        "canon_share": 0.0971604938271605,
+        "entropy_deficit": 0.18422571894804418,
+        "k": 10000,
+        "n_edges": 32400,
+        "n_papers": 1604,
+        "n_prior_targets": 256890,
+        "null_share": 0.03892716727003776,
+        "year": 2000
+      },
+      {
+        "canon_share": 0.0931019374939149,
+        "entropy_deficit": 0.17672258701251964,
+        "k": 10000,
+        "n_edges": 41084,
+        "n_papers": 1773,
+        "n_prior_targets": 276869,
+        "null_share": 0.036118164185950756,
+        "year": 2001
+      },
+      {
+        "canon_share": 0.08831447394339995,
+        "entropy_deficit": 0.17375202223223574,
+        "k": 10000,
+        "n_edges": 45689,
+        "n_papers": 2411,
+        "n_prior_targets": 301366,
+        "null_share": 0.03318224351784873,
+        "year": 2002
+      },
+      {
+        "canon_share": 0.0954809752116699,
+        "entropy_deficit": 0.16522623513077972,
+        "k": 10000,
+        "n_edges": 49015,
+        "n_papers": 2261,
+        "n_prior_targets": 328996,
+        "null_share": 0.030395506328344417,
+        "year": 2003
+      },
+      {
+        "canon_share": 0.09628787878787878,
+        "entropy_deficit": 0.1633113828475259,
+        "k": 10000,
+        "n_edges": 52800,
+        "n_papers": 2282,
+        "n_prior_targets": 357970,
+        "null_share": 0.027935301840936393,
+        "year": 2004
+      },
+      {
+        "canon_share": 0.09668341708542713,
+        "entropy_deficit": 0.1509633477801413,
+        "k": 10000,
+        "n_edges": 59700,
+        "n_papers": 2402,
+        "n_prior_targets": 388429,
+        "null_share": 0.02574473069724454,
+        "year": 2005
+      },
+      {
+        "canon_share": 0.10278737009070932,
+        "entropy_deficit": 0.1466041095418712,
+        "k": 10000,
+        "n_edges": 60523,
+        "n_papers": 2619,
+        "n_prior_targets": 422527,
+        "null_share": 0.023667126597826885,
+        "year": 2006
+      },
+      {
+        "canon_share": 0.10473924370886857,
+        "entropy_deficit": 0.14197366057429073,
+        "k": 10000,
+        "n_edges": 66403,
+        "n_papers": 2584,
+        "n_prior_targets": 456893,
+        "null_share": 0.02188696259299223,
+        "year": 2007
+      },
+      {
+        "canon_share": 0.10618284859695383,
+        "entropy_deficit": 0.13466473158131875,
+        "k": 10000,
+        "n_edges": 76227,
+        "n_papers": 2853,
+        "n_prior_targets": 493073,
+        "null_share": 0.020280972594321732,
+        "year": 2008
+      },
+      {
+        "canon_share": 0.10358232515402467,
+        "entropy_deficit": 0.1269092328833975,
+        "k": 10000,
+        "n_edges": 84889,
+        "n_papers": 3060,
+        "n_prior_targets": 533641,
+        "null_share": 0.018739189829866897,
+        "year": 2009
+      },
+      {
+        "canon_share": 0.10146563989069804,
+        "entropy_deficit": 0.12583763071967302,
+        "k": 10000,
+        "n_edges": 88562,
+        "n_papers": 3200,
+        "n_prior_targets": 577811,
+        "null_share": 0.017306697172604885,
+        "year": 2010
+      },
+      {
+        "canon_share": 0.10527807760660278,
+        "entropy_deficit": 0.11913411264558638,
+        "k": 10000,
+        "n_edges": 91719,
+        "n_papers": 3263,
+        "n_prior_targets": 623812,
+        "null_share": 0.016030470718742185,
+        "year": 2011
+      },
+      {
+        "canon_share": 0.09582705648682102,
+        "entropy_deficit": 0.11549375422772667,
+        "k": 10000,
+        "n_edges": 104219,
+        "n_papers": 3556,
+        "n_prior_targets": 670386,
+        "null_share": 0.014916779288350293,
+        "year": 2012
+      },
+      {
+        "canon_share": 0.09654101914104118,
+        "entropy_deficit": 0.11752522580011882,
+        "k": 10000,
+        "n_edges": 108876,
+        "n_papers": 3611,
+        "n_prior_targets": 724604,
+        "null_share": 0.013800641453814773,
+        "year": 2013
+      },
+      {
+        "canon_share": 0.09729699771978718,
+        "entropy_deficit": 0.10976986034573066,
+        "k": 10000,
+        "n_edges": 126304,
+        "n_papers": 3990,
+        "n_prior_targets": 779746,
+        "null_share": 0.012824689065413609,
+        "year": 2014
+      },
+      {
+        "canon_share": 0.09540868434898332,
+        "entropy_deficit": 0.10462438556311504,
+        "k": 10000,
+        "n_edges": 129244,
+        "n_papers": 4050,
+        "n_prior_targets": 842018,
+        "null_share": 0.011876230674403635,
+        "year": 2015
+      },
+      {
+        "canon_share": 0.09714031910895486,
+        "entropy_deficit": 0.10401452598324679,
+        "k": 10000,
+        "n_edges": 146345,
+        "n_papers": 4332,
+        "n_prior_targets": 904860,
+        "null_share": 0.011051433370908206,
+        "year": 2016
+      },
+      {
+        "canon_share": 0.09540700502675531,
+        "entropy_deficit": 0.10020212905774206,
+        "k": 10000,
+        "n_edges": 148008,
+        "n_papers": 4428,
+        "n_prior_targets": 972388,
+        "null_share": 0.010283960723497205,
+        "year": 2017
+      },
+      {
+        "canon_share": 0.09170892610172132,
+        "entropy_deficit": 0.10566201533914943,
+        "k": 10000,
+        "n_edges": 154009,
+        "n_papers": 4548,
+        "n_prior_targets": 1041036,
+        "null_share": 0.009605815745084704,
+        "year": 2018
+      },
+      {
+        "canon_share": 0.0913651219958826,
+        "entropy_deficit": 0.09612396994314609,
+        "k": 10000,
+        "n_edges": 180211,
+        "n_papers": 5141,
+        "n_prior_targets": 1113507,
+        "null_share": 0.008980635056627394,
+        "year": 2019
+      },
+      {
+        "canon_share": 0.08966431760988915,
+        "entropy_deficit": 0.09502483055683641,
+        "k": 10000,
+        "n_edges": 199087,
+        "n_papers": 5492,
+        "n_prior_targets": 1198044,
+        "null_share": 0.00834693884364848,
+        "year": 2020
+      },
+      {
+        "canon_share": 0.08400691328712837,
+        "entropy_deficit": 0.09075369562375013,
+        "k": 10000,
+        "n_edges": 229124,
+        "n_papers": 6174,
+        "n_prior_targets": 1291345,
+        "null_share": 0.007743863955798024,
+        "year": 2021
+      },
+      {
+        "canon_share": 0.08370585913476102,
+        "entropy_deficit": 0.09705887996702744,
+        "k": 10000,
+        "n_edges": 217882,
+        "n_papers": 6154,
+        "n_prior_targets": 1400160,
+        "null_share": 0.00714204090961033,
+        "year": 2022
+      },
+      {
+        "canon_share": 0.08666313181942453,
+        "entropy_deficit": 0.094767563140012,
+        "k": 10000,
+        "n_edges": 241406,
+        "n_papers": 6593,
+        "n_prior_targets": 1502596,
+        "null_share": 0.006655148822437967,
+        "year": 2023
+      },
+      {
+        "canon_share": 0.09123800783742873,
+        "entropy_deficit": 0.09888742253638672,
+        "k": 10000,
+        "n_edges": 189603,
+        "n_papers": 4219,
+        "n_prior_targets": 1612314,
+        "null_share": 0.006202265811746347,
+        "year": 2024
+      }
+    ]
+  }
+}
