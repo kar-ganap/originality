@@ -46,7 +46,15 @@ MAX_GEN_TOKENS = 2000
 MAX_SKELETON_TOKENS = 256
 DEFAULT_WORKERS = 12
 RETRY_ATTEMPTS = 4
+# The model occasionally returns reasoning but an empty answer; embedders 400 on "". Map every
+# empty/whitespace text to one fixed token so they embed identically — a degenerate output correctly
+# reads as low diversity, not a crash.
+EMPTY_PLACEHOLDER = "(no proposal)"
 RUNS_DIR = Path(__file__).resolve().parents[1] / "runs"
+
+
+def _nonempty(texts: Any) -> list[str]:
+    return [t if str(t).strip() else EMPTY_PLACEHOLDER for t in texts]
 
 
 def _retry(fn: Callable[[], Any], *, attempts: int = RETRY_ATTEMPTS) -> Any:
@@ -118,7 +126,7 @@ def build_pieces(dry_run: bool):  # noqa: ANN201 - a bundle of callables
         def mock_embed(salt: int) -> Callable[[Any], NDArray[np.float64]]:
             def _e(texts: Any) -> NDArray[np.float64]:
                 rows = [np.random.default_rng((abs(hash(t)) + salt) % (2**32)).normal(size=32)
-                        for t in texts]
+                        for t in _nonempty(texts)]
                 return np.asarray([r / np.linalg.norm(r) for r in rows], dtype=np.float64)
             return _e
 
@@ -144,9 +152,10 @@ def build_pieces(dry_run: bool):  # noqa: ANN201 - a bundle of callables
         return skel.generate(prompt, max_output_tokens=MAX_SKELETON_TOKENS).text
 
     def embed_i2(texts: Any) -> NDArray[np.float64]:
-        return np.asarray(model.encode(list(texts), normalize_embeddings=True), dtype=np.float64)
+        arr = model.encode(_nonempty(texts), normalize_embeddings=True)
+        return np.asarray(arr, dtype=np.float64)
 
-    return gen_fn, skel_fn, lambda t: openai.embed(list(t)), embed_i2, ledger
+    return gen_fn, skel_fn, lambda t: openai.embed(_nonempty(t)), embed_i2, ledger
 
 
 def _local_embedder() -> Any:
