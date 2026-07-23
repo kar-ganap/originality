@@ -11,6 +11,50 @@ claim is disconfirmed — a successful null.
 
 ## Current State
 
+> ### ⚠️ CORRECTION 2026-07-22 — the canonical-concentration leg does not stand
+>
+> The headline below says "the citation canon concentrates while the semantic frontier +
+> authorship diversify." **The first clause is withdrawn.** A matched null
+> (`src/whitespace2/null_ref_gini.py`, runner `experiments/phase-2.2/null_ref_gini.py`) re-runs
+> `reference_canonicity` under **uniform random attachment** — same papers, same per-paper
+> reference counts, target pool sized so expected distinct targets match the observed, and every
+> target equally attractive. Its replay of the committed series is **bit-exact** (max error
+> `0.00e+00`), which is what licenses the null.
+>
+> | | CS | Physics |
+> |---|---:|---:|
+> | observed `ref_gini` slope | `+0.001162`/yr | `+0.001204`/yr |
+> | matched-null slope | `+0.001084`/yr | `+0.001115`/yr |
+> | **null reproduces** | **93%** | **93%** |
+> | excess (real) slope | `+0.000078`/yr | `+0.000089`/yr |
+> | corr(`ref_gini`, edges per distinct target) | `+0.9989` | `+0.9996` |
+>
+> **Why.** `ref_gini` is a Gini over *observed* reference-target multiplicities, so it is a
+> statistic about **repeat citations**. In 1970 CS it saw 1,904 edges over 1,880 distinct targets —
+> almost every cited work appears exactly once, so the Gini is ~0.013 by arithmetic. By 2024 it saw
+> 85,135 over 79,889. Drawing more edges from a pool produces more repeats by the birthday
+> principle, with no change in how canonical anything is. Reference lists grew ~3.7 → ~19.6 per
+> paper; that is what the metric tracked.
+>
+> **Three things follow.**
+> 1. The trend is **93% arithmetic**. The observed slope *is* above the null (p < 0.001), so a real
+>    preferential-attachment signal exists — but it is `+0.000078`/yr, about `+0.004` of Gini across
+>    54 years.
+> 2. **The magnitudes were never canon-scale.** A real, heavy-tailed citation distribution sits at
+>    Gini 0.8–0.99. `ref_gini` moves 0.013 → 0.060. It never leaves the near-all-singletons regime.
+> 3. **It cannot discriminate fields.** `ref_gini` rises near-identically in CS (`+0.001162`) and
+>    Physics (`+0.001204`), while this study's *other* canonical metric — the age-restricted citation
+>    Gini, which does live at 0.81–0.95 — moves in **opposite directions**: CS `-0.001316`/yr
+>    (declining, p=5e-09) versus Physics `+0.001918`/yr (rising). A metric that misses a
+>    field difference the real measure detects is not measuring canon concentration.
+>
+> **Also unreported.** That age-restricted series is the *pre-registered substrate gate*. In CS it
+> **declines at all three windows** (W=3/5/10: `-0.00132`, `-0.00114`, `-0.00082`, all p < 1e-3).
+> It was computed, committed to `series/semantic-canonical.json`, and never reported. It is the
+> metric that should have carried the concentration claim, and in CS it points the other way.
+>
+> Nothing below is edited; read the "citation canon concentrates" clause as superseded by this box.
+
 - **Current Stage:** Stage 2 → 3 **(Phase 2.3 COMPLETE — the subfield mechanism
   test, the pre-registered "single most important analysis," is run).** Stage 1
   CLOSED. **Headline: Claim #13 robustly DISCONFIRMED (successful null), reframed
