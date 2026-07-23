@@ -27,9 +27,16 @@ task-conditionally. The one real effect was **version-conflict contamination** (
 context → deprecated-constraint adoption 40/40 vs 0/40 empty), which failed its cross-task rule.
 
 Two consequences. First, there is no established output collapse for a reasoning layer to be *added
-to* — so the arm must adjudicate rather than extend. Second, R4 **reproduced WS2's decoupling
-signature** on an AI substrate (concentration↑ *and* diversity↑ simultaneously, mechanism confirmed
-live in between), which is why this arm also carries Paper 1's cross-substrate capstone.
+to* — so the arm must adjudicate rather than extend. Second, this note previously said R4
+**reproduced WS2's decoupling signature** on an AI substrate, and used that to hand this arm Paper
+1's cross-substrate capstone. **Withdrawn 2026-07-22, on a matched null rather than an argument.**
+`P_top4` is a fixed-`k` share of a catalog growing 13→48 at measurement, so it falls in both arms
+(uniform −0.0390, popularity −0.0288). Re-running R4's exact process with item preference removed
+(`polyphony/scripts/null_model_p_top4.py`, replay-validated to 2e-16) shows the popularity arm's
+concentration is **indistinguishable from the null** (p = 0.882 raw, 0.289 normalized), and the
+registered `+0.0102` is **over-reproduced by the null at +0.0153 — 151%** with no agent preference
+in the loop. It was a manipulation check on the sampler. There is no ensemble-driven concentration
+to pair with the diversity rise; the capstone is gone, not deferred.
 
 **Canary (AI recursion arm, closed).** Its honest landing: recursive self-training collapses
 diversity robustly (H1), couples concentration with diversity-loss as a *partial echo* (H4), but its
@@ -201,6 +208,16 @@ on deliberately diverse traces and confirm the skeletons stay diverse).
 **reference-anchored** concentration measure (partition fit once on a fixed reference set), not a
 per-round refit. Canary's v9 showed per-round k-means Gini is confounded — it reads noise once the
 signal vanishes.
+
+Two further requirements, both added 2026-07-22 after the R4 `P_top4` failure above. **(a) Fixed or
+explicitly normalized denominator.** Any share-of-top-`k` statistic over a growing pool falls by
+construction; R4's did, and it inverted the reading of the result. Either hold the pool fixed, or
+report the statistic against its even-pool share and say which is primary *before* running.
+**(b) A matched null is mandatory, not optional.** Run the identical growth process with the
+preference mechanism disabled and report the null's trend beside the treatment's. Three separate
+arms of this program have now had a concentration headline that a no-preference null either
+reproduces (WS2's `ref_gini`, ~92%) or inverts (R4's `P_top4`). No concentration claim in this arm
+is reportable without its null.
 
 ---
 

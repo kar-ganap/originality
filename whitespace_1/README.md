@@ -20,8 +20,27 @@ extract a sanitized repo at that point — the same route Polyphony took.
 Role-diverse LLM ensembles **did not** homogenize under shared-context conditioning, across six
 pre-registered experiments and every actuator tried. The one real effect was version-conflict
 contamination (superseded context → deprecated-constraint adoption, 40/40 vs 0/40 empty), which
-failed its cross-task rule. Notably, R4 **reproduced WS2's decoupling signature** on an AI substrate
-— concentration↑ *and* diversity↑ simultaneously, with the mechanism confirmed live in between.
+failed its cross-task rule.
+
+**Correction (2026-07-22) — withdrawn, and now on positive evidence.** This section previously said
+R4 *reproduced WS2's decoupling signature* on an AI substrate (concentration↑ and diversity↑
+together). It does not. The claim was never in polyphony's own record; it originated here.
+
+`P_top4` is a fixed-`k` share of a catalog growing 13→48 items at measurement, so its denominator
+inflates by design and it falls in both arms (uniform −0.0390, popularity −0.0288). A matched null —
+R4's exact generative process with item preference removed, replay-validated against every committed
+run to 2e-16 — settles the rest (`../../polyphony/scripts/null_model_p_top4.py`):
+
+- **The popularity arm's concentration is indistinguishable from the null**, raw (p = 0.882) and
+  normalized (p = 0.289). No ensemble contribution is detectable.
+- **The registered +0.0102 is over-reproduced by the null at +0.0153 (151%)** with zero agent
+  preference. It measured the sampler, not the ensemble — a live-actuator manipulation check.
+- Only the *uniform* arm carries a real excess (+0.0055 raw, p = 0.003, Bonferroni-surviving).
+  Post-hoc, so a hypothesis for a future pre-registration, not a result.
+
+**There is no ensemble-driven concentration↑ to pair with the diversity↑.** The AI-substrate
+decoupling is **refuted for the arm it was claimed on**, not merely unmeasured — which also removes
+the cross-substrate capstone this chapter was carrying.
 
 ## Chapter 2 (this directory)
 

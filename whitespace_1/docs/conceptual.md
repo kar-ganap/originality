@@ -6,10 +6,24 @@ what would settle it.
 
 ## Why WS1 exists
 
-WS2 (human, observational) found that intellectual plurality **decouples** from concentration: a
+WS2 (human, observational) reported that intellectual plurality **decouples** from concentration: a
 citation canon concentrates while the semantic frontier fragments, and the two are orthogonal — both
 window-robust. WS3 (theory) explains it with a C/V model whose conformity parameter λ has a crossover
 λ\* separating a V-favouring regime from a C-favouring one.
+
+> **Status correction (2026-07-22).** The premise above is weaker than it reads, and an independent
+> audit of each arm found the weakness at both ends. **WS2's concentration leg:** a uniform-random-
+> attachment null carrying no canon at all reproduces ~92% of the `ref_gini` trend, the trend
+> reverses post-2000 (t = −2.18), and the pre-registered substrate gate (age-restricted Gini)
+> declined — it was computed and not reported, and its own pre-registration says a decline means the
+> substrate is broken and the primary test must not be interpreted. **WS3's crossover:** λ\*≈0.09
+> carries no confidence interval and interpolates between slopes individually indistinguishable from
+> zero; at N=200–1500 the V-slope CI straddles zero at λ = 0, 0.1, and 0.25 while ∂C/∂logN = 0.0000
+> exactly, so neither half of "same lever, opposite signs" is statistically present at scale.
+> The fragmentation leg (mean pairwise cosine rising across three embedding families in CS) and the
+> demographic leg both survive. What does *not* currently stand is the orthogonality that names this
+> whitespace. **Read the rest of this document as the design that was motivated by that premise, not
+> as a claim that the premise holds.** Settling it is what the null-model suite is for.
 
 Neither leg can establish **causation**. You cannot manipulate conformity in a scientific field: the
 human record is what it is. WS1 supplies the missing arm — a system where the actuator is a knob.
