@@ -48,6 +48,26 @@ DIRECTIVE_A = (
 )
 PAYOFF_B = "Proposals similar to those already adopted are more likely to be adopted."
 
+# --- rung-0 v2 (docs/ws1-oss-rung0-v2-prereg.md) ----------------------------------------------
+# The instruction-λ *sweep*: the shown item set is the same diverse cards; only the directive's
+# conformity pressure is graded C1 < C2 < C3. C2 is v1's DIRECTIVE_A verbatim (the level v1 tested),
+# so the sweep brackets it on both sides. C0 is the ablation (== cell C).
+DIRECTIVE_C1 = "You may draw on the approaches shown above if you find them useful."
+DIRECTIVE_C2 = DIRECTIVE_A  # "should align with the leading approaches" — the v1 setting
+DIRECTIVE_C3 = (
+    "Adopt the leading approach shown above and extend it; stay within its direction rather "
+    "than proposing a different one."
+)
+# The positive control (CP): homogeneous persona (role diversity removed) + one dominant item +
+# a near-definitional adopt directive. Its job is to make diversity genuinely low so the metrics
+# can be shown to *detect* collapse; it is expected to parrot (the alignment guard is off for CP).
+HOMOGENEOUS_ROLE = Role("Software engineer", "General implementation of the feature.")
+DIRECTIVE_CP = (
+    "Propose the feature shown above, refined in your own words; keep its core mechanism and do "
+    "not propose a different feature."
+)
+V2_CELLS: tuple[str, ...] = ("C0", "CP", "C1", "C2", "C3")
+
 
 @dataclass(frozen=True)
 class Card:
@@ -238,27 +258,42 @@ FAMILIES: tuple[Family, ...] = (
 def render_cell(
     family: Family, cell: str, role: Role, *, order: Sequence[int] | None = None
 ) -> str:
-    """Render the full prompt for one (family, cell, role). ``cell`` is 'A', 'B', or 'C'.
+    """Render the full prompt for one (family, cell, role).
 
-    ``order`` is the block's committed item permutation (see :mod:`whitespace1.schedule`). Cells A
-    and B in the same block MUST receive the same ``order`` — the contrast isolates the
-    annotation's meaning, not the ordering. Cell A's ``(position N)`` is the **display** position,
-    which is only neutral because the order is shuffled per block.
+    v1 cells: ``A`` (instruction-λ), ``B`` (payoff-λ), ``C`` (ablation). v2 cells
+    (``docs/ws1-oss-rung0-v2-prereg.md``): ``C0`` ablation, ``C1/C2/C3`` the instruction-λ sweep
+    (same diverse item set, graded directive), ``CP`` the positive control (homogeneous persona +
+    one dominant item + adopt). ``C2`` renders identically to ``A`` — the sweep's midpoint is the
+    v1 setting.
+
+    ``order`` is the block's committed item permutation (see :mod:`whitespace1.schedule`); cells
+    sharing an item set within a block MUST receive the same ``order`` so the contrast isolates the
+    annotation, not the ordering. ``CP`` shows only the single dominant item, so ``order`` is moot.
     """
-    if cell not in {"A", "B", "C"}:
-        raise ValueError(f"cell must be A, B, or C; got {cell!r}")
+    valid = {"A", "B", "C"} | set(V2_CELLS)
+    if cell not in valid:
+        raise ValueError(f"cell must be one of {sorted(valid)}; got {cell!r}")
     idx = tuple(range(len(family.cards))) if order is None else tuple(order)
     if sorted(idx) != list(range(len(family.cards))):
         raise ValueError(f"order must be a permutation of card indices; got {order!r}")
     cards = [family.cards[i] for i in idx]
 
-    head = f"You are a {role.descriptor}\n\n{family.brief}\n\n"
-    if cell == "C":
+    # CP removes role diversity — the persona is homogenized. Every other cell keeps its own role.
+    persona = HOMOGENEOUS_ROLE if cell == "CP" else role
+    head = f"You are a {persona.descriptor}\n\n{family.brief}\n\n"
+
+    if cell in {"C", "C0"}:  # ablation
         body = EMPTY_CONTEXT
-    elif cell == "A":
+    elif cell in {"A", "C1", "C2", "C3"}:  # instruction-λ — diverse item set, graded directive
+        directive = {
+            "A": DIRECTIVE_A, "C1": DIRECTIVE_C1, "C2": DIRECTIVE_C2, "C3": DIRECTIVE_C3,
+        }[cell]
         items = "\n".join(f"- {c.text} (position {i})" for i, c in enumerate(cards, start=1))
-        body = f"{ITEMS_HEADER_A}\n{items}\n\n{DIRECTIVE_A}"
-    else:
+        body = f"{ITEMS_HEADER_A}\n{items}\n\n{directive}"
+    elif cell == "CP":  # positive control — one dominant item + adopt
+        dominant = max(family.cards, key=lambda c: c.adoption)
+        body = f"{ITEMS_HEADER_A}\n- {dominant.text} (position 1)\n\n{DIRECTIVE_CP}"
+    else:  # B — payoff-λ (v1)
         items = "\n".join(f"- {c.text} (adopted by {c.adoption})" for c in cards)
         body = f"{ITEMS_HEADER_B}\n{items}\n\n{PAYOFF_B}"
     return f"{head}{body}\n\n{FORMAT_INSTRUCTION}"

@@ -15,7 +15,16 @@ from itertools import combinations
 import numpy as np
 from numpy.typing import NDArray
 
-from .stimuli import FAMILIES, ROLES, Family, render_cell
+from .stimuli import (
+    DIRECTIVE_C1,
+    DIRECTIVE_C2,
+    DIRECTIVE_C3,
+    FAMILIES,
+    HOMOGENEOUS_ROLE,
+    ROLES,
+    Family,
+    render_cell,
+)
 
 # ---------------------------------------------------------------------------
 # Registered thresholds (pre-run, 2026-07-21)
@@ -28,6 +37,8 @@ BRIEF_WORDS_MAX = 30  # open briefs are short; an enumerated checklist is long
 CARD_SPREAD_MIN = 0.15  # within-family mean pairwise cosine distance across the 4 cards
 CEILING_MIN = 0.35  # ablation V_output floor (calibrated diverse ceiling is ~0.42)
 CEILING_BLOCKS = 3  # blocks/family: precision of the estimate, NOT the criterion
+# v2 (docs/ws1-oss-rung0-v2-prereg.md), registered 2026-07-23:
+PC_DECLINE_MIN = 0.20  # C8: the positive control must drop V_output >=20% vs ablation in the pilot
 
 # Words that would leak the manipulation into a brief or card.
 BANNED = ("conformity", "diversity", "collapse", "adopted by", "adoption count")
@@ -156,6 +167,71 @@ def check_no_leakage(families: Sequence[Family] = FAMILIES) -> Check:
         blob = (f.brief + " " + " ".join(c.text for c in f.cards)).lower()
         hits += [f"{f.task_id}:{w}" for w in BANNED if w in blob]
     return Check("C5 no leakage", not hits, "clean" if not hits else f"leaked: {hits}")
+
+
+def check_v2_cell_structure(families: Sequence[Family] = FAMILIES) -> Check:
+    """C7 (v2, token-free): the new cells render as designed.
+
+    The sweep (C1/C2/C3) must isolate the **directive** — the item block must be byte-identical
+    across the three, so a difference in outcome cannot be blamed on different content. The positive
+    control (CP) must **homogenize the persona** (the passed role is overridden by HOMOGENEOUS_ROLE)
+    and show a **single** item. If any fails, the sweep is confounded or CP is not a control.
+    """
+    problems = []
+    if len({DIRECTIVE_C1, DIRECTIVE_C2, DIRECTIVE_C3}) != 3:
+        problems.append("sweep directives are not distinct")
+    for f in families:
+        order = list(range(len(f.cards)))
+        stripped = {
+            render_cell(f, cell, ROLES[0], order=order).replace(d, "")
+            for cell, d in (("C1", DIRECTIVE_C1), ("C2", DIRECTIVE_C2), ("C3", DIRECTIVE_C3))
+        }
+        if len(stripped) != 1:
+            problems.append(f"{f.task_id}: sweep cells differ beyond the directive")
+        cp = render_cell(f, "CP", ROLES[0], order=order)
+        if HOMOGENEOUS_ROLE.descriptor not in cp:
+            problems.append(f"{f.task_id}: CP persona not homogenized")
+        if ROLES[0].descriptor in cp:
+            problems.append(f"{f.task_id}: CP leaks the passed role")
+        if cp.count("\n- ") != 1:
+            problems.append(f"{f.task_id}: CP shows {cp.count(chr(10) + '- ')} items, expected 1")
+    return Check(
+        "C7 v2 cell structure (sweep isolates directive; CP homogenized + single item)",
+        not problems,
+        "all v2 cells render as designed" if not problems else "; ".join(problems),
+    )
+
+
+def check_positive_control_collapse(
+    generate: Generator,
+    embed: Embedder,
+    families: Sequence[Family] = FAMILIES,
+    *,
+    n_blocks: int = CEILING_BLOCKS,
+) -> Check:
+    """C8 (v2): the positive control (CP) must drop V_output >= PC_DECLINE_MIN vs ablation.
+
+    The identifiability anchor. If CP does not collapse, the apparatus cannot be shown to *detect*
+    collapse and the whole probe is uninterpretable — the exact box v1 sat in. Cheap to check here,
+    on a small pilot, before committing to the full run.
+    """
+    def cell_v(f: Family, cell: str) -> float:
+        blocks = [_mpcd(embed([generate(render_cell(f, cell, r)) for r in ROLES]))
+                  for _ in range(n_blocks)]
+        return float(np.mean(blocks))
+
+    rows, fails = [], []
+    for f in families:
+        v_abl, v_pos = cell_v(f, "C"), cell_v(f, "CP")
+        decline = (v_abl - v_pos) / v_abl if v_abl > 0 else 0.0
+        rows.append(f"{f.task_id}:{v_abl:.2f}->{v_pos:.2f}({decline * 100:+.0f}%)")
+        if decline < PC_DECLINE_MIN:
+            fails.append(f.task_id)
+    return Check(
+        f"C8 positive-control collapse (>= {PC_DECLINE_MIN:.0%} vs ablation)",
+        not fails,
+        " ".join(rows) + ("" if not fails else f"  FAIL: {fails}"),
+    )
 
 
 def check_ceiling_sanity(
