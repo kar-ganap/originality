@@ -75,16 +75,18 @@ def evaluate_confirmatory_artifacts(
     *,
     thresholds: ConfirmThresholds,
     v_embeddings_key: str = "proposal_embeddings",
+    uptake_embeddings_key: str = "proposal_embeddings",
 ) -> ConfirmatoryResult:
-    """Evaluate the eight R4 pairs using only persisted raw fields. ``v_embeddings_key``
-    selects the diversity channel: ``proposal_embeddings`` (V_output, default) or
-    ``skeleton_embeddings`` (V_reason, rung 2). The actuator gates (uptake, feedback) always use the
-    answers, so they are channel-independent; only the collapse slope changes with the key."""
+    """Evaluate the eight R4 pairs from raw fields. ``v_embeddings_key`` picks the collapse channel
+    (``proposal_embeddings`` = V_output default, ``skeleton_embeddings`` = V_reason);
+    ``uptake_embeddings_key`` picks what echoes the shown items (answers default, or skeletons).
+    Both default to answers, so rung 1 is unchanged."""
     if thresholds.bootstrap_samples < 1:
         raise ValueError("bootstrap_samples must be positive")
     pairs_by_topic = _paired_runs(artifacts)
     prepared_by_topic = {
-        topic: tuple(_prepare_pair(pair, v_embeddings_key) for pair in topic_pairs)
+        topic: tuple(_prepare_pair(pair, v_embeddings_key, uptake_embeddings_key)
+                     for pair in topic_pairs)
         for topic, topic_pairs in pairs_by_topic.items()
     }
     pairs = tuple(pair for topic_pairs in prepared_by_topic.values() for pair in topic_pairs)
@@ -179,7 +181,7 @@ def _resample_prepared(
     return tuple(selected)
 
 
-def _prepare_pair(pair: _PairedRun, v_key: str) -> _PreparedPair:
+def _prepare_pair(pair: _PairedRun, v_key: str, uptake_key: str) -> _PreparedPair:
     popularity_rounds = _rounds(pair.popularity)
     uniform_rounds = _rounds(pair.uniform)
     ablation_rounds = _rounds(pair.ablation)
@@ -189,9 +191,9 @@ def _prepare_pair(pair: _PairedRun, v_key: str) -> _PreparedPair:
     pop_v = tuple(_matrix(item, v_key) for item in popularity_rounds)
     uni_v = tuple(_matrix(item, v_key) for item in uniform_rounds)
     abl_v = tuple(_matrix(item, v_key) for item in ablation_rounds)
-    # uptake is always answer-based (the actuator-live check, channel-independent)
-    pop_out = tuple(_matrix(item, "proposal_embeddings") for item in popularity_rounds)
-    abl_out = tuple(_matrix(item, "proposal_embeddings") for item in ablation_rounds)
+    # uptake source echoes the shown items: answers (conclusions) or skeletons (reasoning)
+    pop_out = tuple(_matrix(item, uptake_key) for item in popularity_rounds)
+    abl_out = tuple(_matrix(item, uptake_key) for item in ablation_rounds)
     shown = tuple(_matrix(item, "shown_sample_embeddings") for item in popularity_rounds)
     decoy = tuple(_matrix(item, "decoy_embeddings") for item in popularity_rounds)
     return _PreparedPair(

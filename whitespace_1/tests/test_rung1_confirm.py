@@ -106,6 +106,15 @@ def test_two_channel_split_reasoning_collapses_where_output_holds() -> None:
     assert rea.collapse_passed  # V_reason collapses — the rung-2 headline pattern
 
 
+def test_uptake_key_runs_on_the_skeleton_channel() -> None:
+    # reasoning-mode analysis path: both the collapse channel and the uptake source are skeletons
+    r = evaluate_confirmatory_artifacts(
+        _dataset(FLAT), thresholds=_TH,
+        v_embeddings_key="skeleton_embeddings", uptake_embeddings_key="skeleton_embeddings",
+    )
+    assert r.run_count == 8 and r.dynamic_uptake_passed  # pop skeletons on P echo the shown-on-P
+
+
 def test_requires_exactly_two_topics() -> None:
     one_topic = [a for a in _dataset(FLAT) if a["config"]["topic_id"] == "topic-a"]
     with pytest.raises(ValueError):

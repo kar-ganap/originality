@@ -2,3 +2,4 @@
 # rung-1 R4 artifacts carry full embeddings (large); keep local, commit summaries
 runs/rung1-r4/
 runs/rung2-r4/
+runs/rung2-reasoning/
