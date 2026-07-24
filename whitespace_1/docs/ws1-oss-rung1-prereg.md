@@ -152,10 +152,18 @@ V-slopes are slightly negative but not reliably so.
 - **The Day-0 "conditions harder" hint did not translate.** DeepSeek's stronger per-round conditioning
   (+0.066) did not compound into multi-round output homogenization; the substrate-specific-collapse
   branch is retired.
-- **Gate 2 is a manipulation check, not a concentration result.** The `P_top4` recurrence passing means
-  popularity sampling produces recurrence — but Polyphony's +0.0102 analog was null-reproducible at
-  151%. The **matched `P_top4` null on DeepSeek is still to run** (pre-reg build step 3); until then,
-  Gate 2 is not read as ensemble concentration.
+- **Gate 2 concentration is a SAMPLING ARTIFACT (matched null, 2026-07-23,
+  `experiments/analyze_rung1_null.py`).** Replay validates the process model to **2.2e-16**; the
+  preference-free POPULARITY−HETEROGENEOUS null reproduces the observed pop−uniform +0.0063 at **232%**
+  (+0.0146), and the popularity arm is indistinguishable from / *below* its matched null (raw excess
+  −0.003, p=0.19; normalized excess −0.072, p=0.004). So the recurrence is a property of
+  popularity-weighted sampling of a growing catalog, not ensemble concentration — the same artifact
+  class as WS2's `ref_gini` and Polyphony's +0.0102. (The uniform *control* shows a small raw excess
+  +0.0053/p=0.004 that vanishes when normalized — the same after-the-fact non-result Polyphony had.)
+
+**Rung 1 is complete.** Polyphony's *full* R4 pattern reproduces on DeepSeek across a different model
+family: a live actuator, outputs that do not homogenize, and a `P_top4` concentration that is a
+sampling artifact. The bridge holds three ways; rung 2 (add `V_reason`) is well-founded.
 
 ## What rung 1 deliberately does not do
 

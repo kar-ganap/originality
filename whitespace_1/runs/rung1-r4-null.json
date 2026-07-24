@@ -1,0 +1,89 @@
+{
+  "replay_max_error": 2.220446049250313e-16,
+  "pool_size": 2560,
+  "pool_mean": 0.44007867967937175,
+  "observed": {
+    "popularity": {
+      "label": "popularity",
+      "n": 8,
+      "raw_slope": -0.03241921576291634,
+      "normalized_slope": 0.2773121086665936
+    },
+    "uniform": {
+      "label": "uniform",
+      "n": 8,
+      "raw_slope": -0.03869316396584013,
+      "normalized_slope": 0.16861178740614022
+    }
+  },
+  "null": {
+    "structure": {
+      "label": "structure",
+      "n": 2000,
+      "raw_slope": -0.04361838165925657,
+      "normalized_slope": 0.1471145025609653
+    },
+    "heterogeneous": {
+      "label": "heterogeneous",
+      "n": 2000,
+      "raw_slope": -0.04396991107970264,
+      "normalized_slope": 0.15163706848477607
+    },
+    "popularity": {
+      "label": "popularity",
+      "n": 2000,
+      "raw_slope": -0.029410420722274077,
+      "normalized_slope": 0.3493739591387033
+    }
+  },
+  "comparisons": [
+    {
+      "arm": "uniform",
+      "null_mode": "heterogeneous",
+      "metric": "raw",
+      "observed": -0.03869316396584013,
+      "null_mean": -0.04396991107970264,
+      "null_band": [
+        -0.04741646787253405,
+        -0.040467827149276415
+      ],
+      "p_value": 0.0035
+    },
+    {
+      "arm": "uniform",
+      "null_mode": "heterogeneous",
+      "metric": "normalized",
+      "observed": 0.16861178740614022,
+      "null_mean": 0.15163706848477607,
+      "null_band": [
+        0.1194818798484824,
+        0.186033841843747
+      ],
+      "p_value": 0.315
+    },
+    {
+      "arm": "popularity",
+      "null_mode": "popularity",
+      "metric": "raw",
+      "observed": -0.03241921576291634,
+      "null_mean": -0.029410420722274077,
+      "null_band": [
+        -0.0338710385021589,
+        -0.024911401996311814
+      ],
+      "p_value": 0.18690000000000007
+    },
+    {
+      "arm": "popularity",
+      "null_mode": "popularity",
+      "metric": "normalized",
+      "observed": 0.2773121086665936,
+      "null_mean": 0.3493739591387033,
+      "null_band": [
+        0.3001914776157555,
+        0.4003672742868922
+      ],
+      "p_value": 0.0035000000000000586
+    }
+  ]
+}
