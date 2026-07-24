@@ -47,6 +47,9 @@ tasks/
 # Literature review PDFs (copyrighted)
 literature-review/*.pdf
 
+# Rendered PDF copies of tracked .md guides (derived; keep the .md source)
+experiments/**/*.pdf
+
 # Run logs
 *.log
 
