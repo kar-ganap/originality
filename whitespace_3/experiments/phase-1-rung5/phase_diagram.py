@@ -13,6 +13,14 @@ Panels:
      V↓ with N (WWE) in the crossover regime — the reconciliation's opposite-sign column.
   C. **Pareto / selective isolation.** Shielding a subgroup from κ keeps its V^struct high
      while global C is preserved (the non-strict-trade-off, `cc:reconcile`).
+
+⚠️ CORRECTION 2026-07-22 (propagated to this script 2026-07-24): the crossover is NOT
+statistically present at scale. At N=200–1500 the total-V slope CI straddles zero at
+λ=0/0.1/0.25, and C is a deterministic clock (∂C/∂logN=0 exactly). The λ* printed by
+Panel A is a point-estimate locator between CI-straddling slopes, not a validated
+crossover; the "V-favouring"/"C-favouring" labels are point-estimate signs, NOT
+CI-separated. Panel C's Pareto is ∂V>0 / ∂C=0 (raise V at no C-cost), not a both-boost.
+See whitespace_3/CLAUDE.md §CORRECTION 2026-07-22 + docs/resolution-map-phase3-retro.md.
 """
 
 from __future__ import annotations
@@ -60,6 +68,12 @@ def main() -> None:
         reg = "V-favouring" if x["point"] > 0 else "C-favouring"
         print(f"  λ={lam:>4}: V-slope={x['point']:+.4f} [{x['lo']:+.4f},{x['hi']:+.4f}]  {reg}")
     print(f"  ==> λ* ≈ {lam_star:.2f}")
+    _straddle = [lam for lam, x in zip(LAMBDAS, v) if x["lo"] <= 0.0 <= x["hi"]]
+    if _straddle:
+        print(f"  CAVEAT (2026-07-22): V-slope CI straddles 0 at λ={_straddle} — the")
+        print("     crossover is NOT statistically present; λ* above is a point-estimate")
+        print("     locator between CI-straddling slopes, and the region labels are point")
+        print("     signs, not CI-separated. See whitespace_3/CLAUDE.md §CORRECTION 2026-07-22.")
     print("\nB. SAME LEVER, OPPOSITE SIGNS (in N) — C↑ while V↓ beyond λ*")
     for lam, xc, xv in zip(LAMBDAS, c, v):
         print(f"  λ={lam:>4}: C-slope={xc['point']:+.3f}  V-slope={xv['point']:+.4f}"
