@@ -54,10 +54,42 @@ hold endogenously. Polyphony's null is genuine and **two-layer**, deeper than th
 not a measurement artifact. (This honestly revises rung 0's "first evidence it *could* be an artifact":
 that evidence was imposed-only.)
 
-## What remains — the reasoning-exposure actuator
+## Catalog-of-reasoning (the second variant) — the actuator did not engage
 
-One pre-registered variant is untested (§9.4: "reasoning collapses only under catalog-of-reasoning →
-reasoning-collapse **requires reasoning-exposure**"). Under catalog-of-**conclusions** reasoning holds;
-the open mechanism question is whether sharing the **reasoning traces** themselves (catalog-of-reasoning
-— the actuator a proprietary API structurally cannot run) collapses reasoning. That is rung 2's second
-half and the arm's remaining novel test.
+Run 2026-07-24 (`run_rung2_reasoning.py`, `analyze_rung2_reasoning.py`): the shared catalog now holds
+each agent's extracted strategy skeleton, so agents condition on prior **reasoning**; `V_reason` is the
+primary channel and the uptake is reasoning-side. 24 artifacts, ~$0.67.
+
+**Verdict: the reasoning-side actuator is NOT live — the result is unreadable.** The uptake gate (do
+agents take up the shown reasoning?) fails: **+0.00947, 95% lower −0.00354** (straddles zero), versus
+**+0.034** for the catalog-of-conclusions actuator. Both channels' V happen to rise slightly (`V_reason`
+pop +0.0005, `V_output` +0.0030), but that cannot be read as resistance, because the manipulation did
+not measurably engage. Per the arm's discipline (the uptake live-gate), a dead actuator → the V null is
+**unreadable**, not "reasoning resists."
+
+**Interpretation (honest, not over-read).** Showing agents each other's *extracted reasoning summaries*
+("The reasoning strategy was to…") is a far weaker actuator than showing their concrete answers —
+plausibly because the summaries are abstract and observer-voiced, and the task is to produce a feature,
+not to reason about reasoning. The paired pop-vs-ablation contrast controls for the (feature) seed, so
+this is not merely a seed artifact: seeing the reasoning gave only a tiny, non-significant boost. **So
+whether a stronger reasoning-exposure actuator could move reasoning is unanswered** — this
+implementation's actuator is below the read-threshold.
+
+**Options.** (a) Bank it as a boundary result — the reasoning-exposure actuator, built from extracted
+skeletons, does not engage; the arm's headline (rung 2a: two-layer resilience, not a measurement
+artifact) stands. (b) Try a stronger actuator — raw traces instead of skeletons (long + costly) or a
+more directive framing (which drifts toward rung 0's *imposed* regime, already characterized).
+
+## The arm, complete
+
+| rung | actuator | finding |
+|---|---|---|
+| 0 | imposed, max conformity | reasoning-strategy **collapses** (imposed-only) |
+| 1 | endogenous, conclusions | `V_output` **holds** (null replicates; concentration = artifact) |
+| 2a | endogenous, conclusions + `V_reason` | `V_reason` **holds** — null **deepens**, not a measurement artifact |
+| 2b | endogenous, reasoning-exposure | actuator **not live** — unreadable (weak reasoning actuator) |
+
+Net: under realistic endogenous conditioning, role-diverse ensembles resist homogenization at **both**
+layers; the reasoning collapse rung 0 found is imposed-only; and the one actuator built to move
+reasoning endogenously is too weak to register. Polyphony's null is genuine, two-layer, and not a
+measurement artifact.
