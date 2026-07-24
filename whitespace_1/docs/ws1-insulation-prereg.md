@@ -68,3 +68,29 @@ isolated-group-**size** sweep (the "small" dimension) is a registered secondary,
 
 Not the human observational study (skipped — tenable only via a natural-experiment design). Not a
 group-**size** primary (secondary only). Not a diversity claim — the outcome is field adoption.
+
+## Results (post-registration, 2026-07-24)
+
+8 run-ids fired (`experiments/run_insulation.py`, ~$0.64). Verdict (`analyze_insulation.py`):
+
+| quantity | value |
+|---|---|
+| live-check (shown − decoy echo) | **+0.0643** → field responds to shown; **readable** |
+| per-capita adoption | isolated **2.644**, connected **2.662** |
+| gap (isolated − connected) | mean **−0.0172**, 95% CI **[−0.165, +0.123]** |
+| vs label-shuffle null | one-sided **p = 0.657** |
+
+**Verdict: Claim #17 NOT supported — a readable, informative null.** Under a *live* actuator (the field
+genuinely echoes shown candidates, +0.064 — this is not rung-2b's dead-actuator case), insulated-origin
+ideas are adopted **no more** per capita than the connected field's own: the gap is essentially zero,
+slightly negative, its CI includes 0, and it sits squarely within the label-shuffle null (p = 0.66).
+Insulation produced genuinely *different* ideas (the two ensembles diverged — e.g. "Divergence Drift
+Monitor" vs "Diversity Rollback Loop"), but **different ≠ more-valued**: the field adopts insider and
+outsider ideas about equally, if anything mildly favoring the familiar (a conformity hint, within
+noise). The wide CI (n = 8 run-ids) can't exclude a small effect, but the near-zero point estimate and
+the decisive null-comparison make "no support" the clear read.
+
+**Program implication:** both program founding claims are now empirically unsupported on their own
+tests — Claim #13 (the decoupling) withdrawn on the concentration artifact, Claim #17 a clean causal
+null here. The surviving story is unchanged: intellectual diversity is *resilient* (the arm's two-layer
+finding) and the null-model/methods contribution.

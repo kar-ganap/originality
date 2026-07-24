@@ -1,0 +1,320 @@
+{
+  "run_id": "topic-b-run0",
+  "topic_id": "topic-b",
+  "connected_candidates": [
+    "Handoff Resilience Audit \u2014 injects transient agent crashes, corrupted payloads, and schema partial-failures at every handoff contract, then maps the resulting retry, fallback, and rollback paths alongside alerting signals so reliability engineers can pre-certify that error budgets and SLOs hold under real-world stress before deployment.",
+    "Handoff Whisper Trace silently replays user sessions across every agent handoff, capturing dropped context, stalled interactions, and inconsistent tone, so product designers can pinpoint and smooth conversational friction before users encounter it.",
+    "Permission Boundary Dry-Run injects unauthorized or tainted calls into each handoff contract and flags every instance where data crosses a trust boundary without explicit authorization, giving security reviewers a complete pre-deployment audit log that verifies least-privilege access controls hold.",
+    "Explanation Gap Injector inserts subtle conceptual errors into inter-agent messages and traces whether downstream agents detect, challenge, or amplify them, producing a feedback-loop map of explanatory breakdowns so learning scientists can iteratively harden prompts and knowledge boundaries for durable, self-correcting understanding before deployment.",
+    "Token Burn Simulator \u2014 programmatically injects variable-length payloads and token-heavy context at each agent handoff, then measures per-handoff cost, latency, and throughput against defined token budgets, so cost analysts can pre-identify budget-busting edges and tune prompts or consolidate agents before deployment."
+  ],
+  "isolated_candidates": [
+    "Rollback Path Auditor: replays recorded multi-agent traces to identify every decision point where an operator could safely abort, then precomputes the exact state-reset and manual-handoff steps, giving reliability engineers a verified rollback playbook for each interaction fork before deployment.",
+    "Coherence Drift Check replays multi-agent traces through a lens that highlights moments where the system\u2019s responses subtly shift intent or tone across turns, so product designers can pinpoint exactly where user trust begins to fray and adjust prompts or handoffs to preserve a steady, reliable interaction rhythm.",
+    "Privacy Boundary Tester replays multi-agent traces while injecting misuse probes that attempt to extract protected data across agent boundaries, verifying that compartmentalization and access controls hold and recording every attempt in a full audit log so security reviewers can certify data isolation before deployment.",
+    "Learning Trace Auditor replays a multi-agent trace to isolate the decision boundaries where an agent misinterpreted corrective feedback, then simulates downstream consequences under alternative interpretations to verify that the correction generalizes across similar contexts, giving learning scientists a causal map of whether the system builds durable understanding or merely patches surface behavior.",
+    "Token Flow Profiler: replays multi-agent traces and instruments each handoff and tool call to measure token consumption and latency, then pinpoints redundant context-passing and over-prompted turns so cost analysts can rightsize models, trim token budgets, and hit throughput targets before deployment."
+  ],
+  "showings": [
+    {
+      "origin": "isolated",
+      "echo": 2.8379029516487386,
+      "shown": true
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.830896398075359,
+      "shown": true
+    },
+    {
+      "origin": "connected",
+      "echo": 2.9724846542853283,
+      "shown": true
+    },
+    {
+      "origin": "connected",
+      "echo": 2.4208449587590493,
+      "shown": true
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.7446436457860433,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.683208089904367,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.8318533572595,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.5936335893622644,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.142458211036371,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.543391112654414,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.795912177787119,
+      "shown": true
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.6851057211206033,
+      "shown": true
+    },
+    {
+      "origin": "connected",
+      "echo": 2.463787541657133,
+      "shown": true
+    },
+    {
+      "origin": "connected",
+      "echo": 2.0354647084239974,
+      "shown": true
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.815916283561089,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.744279464027345,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.9043007117205653,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.560330516382856,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.450119661942031,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.35901443919309,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.860550140755839,
+      "shown": true
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.933996929381825,
+      "shown": true
+    },
+    {
+      "origin": "connected",
+      "echo": 2.541467145057548,
+      "shown": true
+    },
+    {
+      "origin": "connected",
+      "echo": 2.030334933845187,
+      "shown": true
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.8649176601526465,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.745478260145314,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.7997288950408192,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.5428443106053726,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.6243256898388942,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.397320901150641,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.5500801706906344,
+      "shown": true
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.611264645471262,
+      "shown": true
+    },
+    {
+      "origin": "connected",
+      "echo": 2.319435507060102,
+      "shown": true
+    },
+    {
+      "origin": "connected",
+      "echo": 2.9354761123911497,
+      "shown": true
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.5251743266544993,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.6505435050931285,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.7826522114534544,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.711585903825342,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.538142875554281,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.430377081944693,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.7408584706756103,
+      "shown": true
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.704987196525594,
+      "shown": true
+    },
+    {
+      "origin": "connected",
+      "echo": 2.634472597409185,
+      "shown": true
+    },
+    {
+      "origin": "connected",
+      "echo": 2.3356960396925386,
+      "shown": true
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.4803421970301107,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.599662630500829,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.6655557205802296,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.5793970976701575,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.453247991562345,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 1.997281997510848,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.8382173031395483,
+      "shown": true
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.7010061115531423,
+      "shown": true
+    },
+    {
+      "origin": "connected",
+      "echo": 2.736184542574519,
+      "shown": true
+    },
+    {
+      "origin": "connected",
+      "echo": 2.5316368918350665,
+      "shown": true
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.6360073005786346,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.6944710564926595,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.8538962356255286,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.568068307166807,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.424486387071681,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.493927556955855,
+      "shown": false
+    }
+  ]
+}

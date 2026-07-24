@@ -1,0 +1,320 @@
+{
+  "run_id": "topic-b-run2",
+  "topic_id": "topic-b",
+  "connected_candidates": [
+    "Rollback-Replay Sandbox injects simulated agent failures and data drift into recorded multi-agent traces, then evaluates whether fallback and rollback logic restores correct state. This lets reliability engineers harden recovery paths and ensure operational resilience before deployment.",
+    "Friction Forensics automatically annotates multi-agent workflow replays with confidence dips, permission prompts, and fallback triggers, revealing exactly where user trust would erode so designers can preemptively smooth handoffs and reduce invasive prompts before deployment.",
+    "Entitlement Gap Scanner: replays a multi-agent workflow to capture every agent\u2019s actual data reads and tool invocations, then highlights mismatches with a least-privilege policy so security reviewers can spot over-permissioned agents that risk data leakage or unauthorized action before deployment.",
+    "Semantic Drift Stress-Test injects plausible misinterpretations into inter-agent messages and replays the workflow to surface compounding reasoning failures; this shows teams exactly where to embed self-correcting feedback loops so that durable understanding survives handoffs.",
+    "Budget Bleed Estimator: projects end\u2011to\u2011end token consumption and per\u2011step latency from trace data, then flags agent paths that exceed cost or throughput limits. It lets teams prune expensive handoffs and tune models before deployment so real\u2011world usage stays under budget."
+  ],
+  "isolated_candidates": [
+    "Handoff Chaos Injector injects configurable faults\u2014timeouts, malformed payloads, or missing replies\u2014into agent handoffs during simulated runs, then maps the cascade and validates automated rollback paths so reliability engineers can harden failure containment and degrade gracefully before deployment.",
+    "Handoff Trust Preview  \nIt simulates agent handoff paths against defined contracts, visually flagging mismatches, fallback loops, and missing affordances so designers can refine handshake prompts and cues to eliminate dead-end friction and strengthen user trust before deployment.",
+    "Handoff Privacy Auditor scans each agent handoff\u2019s data payload for PII, credentials, and out\u2011of\u2011scope data via static analysis and simulated runs, flagging risky information leaks so security reviewers can tighten data\u2011minimization rules and enforce privacy boundaries before deployment.",
+    "Assumption Stress-Test systematically perturbs an agent\u2019s intermediate beliefs and then replays downstream decisions, surfacing which assumptions would cascade into false conclusions so teams can build more robust reasoning chains and gain a durable mental model of the workflow\u2019s failure modes.",
+    "Cost Forecaster simulates the multi-agent workflow across diverse input profiles, aggregating token consumption, latency, and cost per agent and handoff, then projects total spend and throughput under deployment load. This lets cost analysts set per-agent token budgets, identify expensive conversation patterns, and right-size models before deployment to prevent budget overruns."
+  ],
+  "showings": [
+    {
+      "origin": "isolated",
+      "echo": 2.216377269488393,
+      "shown": true
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.209073494742965,
+      "shown": true
+    },
+    {
+      "origin": "connected",
+      "echo": 2.6593447383900073,
+      "shown": true
+    },
+    {
+      "origin": "connected",
+      "echo": 2.43023923826069,
+      "shown": true
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.510576640697479,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.3523497743270005,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.1630603909557466,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.860056074830614,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.6027020201745645,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.177252378495089,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.710777142449936,
+      "shown": true
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.630395118498275,
+      "shown": true
+    },
+    {
+      "origin": "connected",
+      "echo": 2.4935813887082365,
+      "shown": true
+    },
+    {
+      "origin": "connected",
+      "echo": 2.401697610125214,
+      "shown": true
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.774543137767398,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.1657698019426803,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.3750352680813,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.5742892439354015,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.813736317949243,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.2953893134017003,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.7873421840884225,
+      "shown": true
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.606041146629072,
+      "shown": true
+    },
+    {
+      "origin": "connected",
+      "echo": 2.407663195669278,
+      "shown": true
+    },
+    {
+      "origin": "connected",
+      "echo": 2.249870754069647,
+      "shown": true
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.682920580350099,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.2945367367978102,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.4845240364633323,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.448334509142114,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.990221597142383,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.542966805724483,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.7471749557269773,
+      "shown": true
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.157171236719428,
+      "shown": true
+    },
+    {
+      "origin": "connected",
+      "echo": 2.35468378595477,
+      "shown": true
+    },
+    {
+      "origin": "connected",
+      "echo": 2.5059286998389405,
+      "shown": true
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.5885989063633392,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.304626215889043,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.2624689347993634,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.6246769839065704,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.750169555363558,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.167384580225906,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.34740959803115,
+      "shown": true
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.4317743711508997,
+      "shown": true
+    },
+    {
+      "origin": "connected",
+      "echo": 2.75727464724973,
+      "shown": true
+    },
+    {
+      "origin": "connected",
+      "echo": 2.3912303353114894,
+      "shown": true
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.6513878946930265,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.813715687307812,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.2605559772702115,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.529516400324619,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.685246436006875,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.1523964000642364,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.949366622247742,
+      "shown": true
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.8470872999353065,
+      "shown": true
+    },
+    {
+      "origin": "connected",
+      "echo": 2.618388206640642,
+      "shown": true
+    },
+    {
+      "origin": "connected",
+      "echo": 2.4223217884225536,
+      "shown": true
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.7317388019996836,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.2027365486145136,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.485481231411695,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.7902935113380156,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.6338471977955153,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.318189523954166,
+      "shown": false
+    }
+  ]
+}

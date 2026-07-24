@@ -1,0 +1,320 @@
+{
+  "run_id": "topic-a-run3",
+  "topic_id": "topic-a",
+  "connected_candidates": [
+    "Convergence Circuit Breaker: continuously monitors pairwise semantic distance among agents and, upon detecting drift below a configurable threshold, automatically restores a previously saved high-diversity ensemble state\u2014giving reliability engineers an automatic rollback safeguard against idea collapse that preserves operational variety without manual intervention.",
+    "Divergence Sandbox: each agent can fork a private workspace to explore a divergent idea and then seamlessly merge it back without contaminating the main thread, giving designers a living map of alternative directions and building trust that the ensemble sustains creative breadth without manual intervention.",
+    "Privacy-Gated Divergence Replay: Each stored agent output is tagged with its required clearance and provenance, and the tool blocks its re-injection into any agent lacking that clearance while logging every attempt, giving security reviewers auditable proof that diversity preservation never violates context privacy boundaries.",
+    "Explanation Divergence Journal: Each agent periodically writes a brief causal account of why its current idea diverged from its own past outputs, and these self-explanations are fed back into the ensemble\u2019s context, turning drift into deliberate reinforcement of distinct reasoning paths so learning scientists can trace and trust the origins of durable conceptual diversity.",
+    "Budget-Aware Divergence Timer:  \nIt schedules the re\u2011introduction of historical agent outputs to disrupt convergence only when semantic similarity drops below a threshold and the current run\u2019s remaining token budget and latency headroom allow, giving cost analysts a self\u2011regulating safeguard that sustains idea variety inside fixed operational envelopes."
+  ],
+  "isolated_candidates": [
+    "Divergent Recovery Circuit: After a diversity collapse triggers a rollback, it temporarily disables the ensemble\u2019s consensus mechanism and forces each agent to pursue independent, divergent lines of reasoning, logging every forced exploration so the reliability engineer can audit the recovery trajectory and confirm the system rebuilds genuine variety instead of re\u2011converging on the same brittle path.",
+    "Idea Diversity Dial: a live, side-panel gauge that shrinks and fades to gray as the ensemble's outputs converge, letting you one-click inject a devil's-advocate re-seed whenever the visual cue suggests dangerous uniformity. This turns a hidden threat into a glanceable, trustable control that prevents groupthink without breaking your design flow.",
+    "Seed Integrity Log: whenever Idea Re\u2011Seeding revives a discarded idea, the tool records the original idea, the agent that proposed it, the discard reason, and a cryptographic signature of the injected prompt in an append\u2011only ledger, giving security reviewers a tamper\u2011evident audit trail to detect unauthorized manipulation of the ensemble\u2019s diversity.",
+    "Contrastive Explanation Weave: Periodically, a dedicated agent generates a narrative that explicitly contrasts the ensemble\u2019s current dominant idea with a high-evidence divergent alternative, surfacing hidden assumptions and explanatory gaps. This deepens feedback loops and durable understanding by ensuring that discarded perspectives are never lost without reasoned examination, preserving conceptual diversity as a learning resource.",
+    "Marginal Divergence Gate: The tool predicts how much each candidate Idea\u202fRe\u2011Seed prompt would increase ensemble output diversity per token and suppresses those that fall below a cost\u2011analyst\u2011set efficiency threshold. This keeps multi\u2011agent perspectives varied over time while cutting out low\u2011yield token spend, so the budget stays disciplined without stifling creative friction."
+  ],
+  "showings": [
+    {
+      "origin": "isolated",
+      "echo": 2.997857192801602,
+      "shown": true
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.5556156800706513,
+      "shown": true
+    },
+    {
+      "origin": "connected",
+      "echo": 3.1600598594141758,
+      "shown": true
+    },
+    {
+      "origin": "connected",
+      "echo": 2.9596756603100807,
+      "shown": true
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.564712459664533,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.4444831797411215,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 3.017720119185256,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.993476496464335,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.7939419739344156,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.928427125672693,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.457664410125119,
+      "shown": true
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.8216968141290995,
+      "shown": true
+    },
+    {
+      "origin": "connected",
+      "echo": 2.7895632902545406,
+      "shown": true
+    },
+    {
+      "origin": "connected",
+      "echo": 2.9120783991597796,
+      "shown": true
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.5973919996901933,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.516787109842162,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.774262659029965,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.55741651170109,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.7651589346249494,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.6097537428307094,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.7850100716536774,
+      "shown": true
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.9041847485182744,
+      "shown": true
+    },
+    {
+      "origin": "connected",
+      "echo": 2.585022635018597,
+      "shown": true
+    },
+    {
+      "origin": "connected",
+      "echo": 2.74834750696219,
+      "shown": true
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.584071441768916,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.715545667378759,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.5762706305720284,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.7023611469632134,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.5939288871079182,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.865642282057057,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.4715763440826213,
+      "shown": true
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.9619250668600565,
+      "shown": true
+    },
+    {
+      "origin": "connected",
+      "echo": 3.3028056133271444,
+      "shown": true
+    },
+    {
+      "origin": "connected",
+      "echo": 2.9411779068750876,
+      "shown": true
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.910527378049773,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.538656870340139,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.354408457422789,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.8215181127470497,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.935577270981147,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.716298211450973,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.851969740596786,
+      "shown": true
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.5286249760616344,
+      "shown": true
+    },
+    {
+      "origin": "connected",
+      "echo": 3.031277440240087,
+      "shown": true
+    },
+    {
+      "origin": "connected",
+      "echo": 2.9888051292888225,
+      "shown": true
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.7231192940368567,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.3997565271110357,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.839681439179364,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.7730882393571163,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.6882816985974687,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.8265522459182457,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.390214010369487,
+      "shown": true
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.9579895314997584,
+      "shown": true
+    },
+    {
+      "origin": "connected",
+      "echo": 2.82719737276208,
+      "shown": true
+    },
+    {
+      "origin": "connected",
+      "echo": 2.7327085531678357,
+      "shown": true
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.733776234759755,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.733972506312009,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.4819943026616658,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.5538365229185853,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.8582363006731466,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.7080456538145676,
+      "shown": false
+    }
+  ]
+}

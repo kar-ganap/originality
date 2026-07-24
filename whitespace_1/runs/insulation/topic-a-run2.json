@@ -1,0 +1,320 @@
+{
+  "run_id": "topic-a-run2",
+  "topic_id": "topic-a",
+  "connected_candidates": [
+    "Diversity Anchor continuously monitors the entropy of agent output clusters and, when variety contracts below a safety threshold, automatically snapshots the current state and rolls back to the last known diverse configuration, giving the reliability engineer an automated, auditable safety net that restores idea variety without manual intervention.",
+    "Divergence Playground gives the product designer a live spatial map of semantic idea clusters across agents; dragging a converging cluster onto a \u201cremix\u201d target injects a custom re-divergence prompt into the ensemble, providing a low-friction, trustable affordance to steer exploration and sustain creative variety without disrupting the workflow.",
+    "Divergence Intervention Control: any manual injection of a re-divergence prompt requires a signed, multi-party approval and is recorded in an immutable, role-based access log, giving security reviewers an auditable guarantee that only authorized individuals can steer idea diversity and any misuse attempt leaves an irrefutable trace.",
+    "Idea Genealogy Tracker continuously logs each agent\u2019s outputs, prompts, and rejection rationales into an explainable timeline that reveals why certain ideas were pruned and others persisted, giving the learning scientist a feedback loop to diagnose convergence patterns and build durable intuition for sustaining diverse exploration.",
+    "Divergence Cost Governor: it tracks token cost per unit of semantic spread across the ensemble and automatically throttles re-divergence prompts when the marginal diversity gain falls below a configurable cost\u2011efficiency threshold, allowing the cost analyst to sustain varied ideas while strictly capping per\u2011session spend and latency."
+  ],
+  "isolated_candidates": [
+    "Drift Circuit Breaker automatically freezes reasoning branches whose idea divergence drops suddenly and exposes full lineage for inspection, giving reliability engineers a low-touch, auditable interrupt that halts cascading homogeneity and enables safe, immediate rollback to a varied ensemble state without disrupting ongoing operations.",
+    "Variety Snapback: A subtle similarity gauge lives in the design canvas toolbar, and when idea convergence is detected, a one-click \u201cSnapback to variety\u201d button instantly restores the most divergent recent ensemble state without breaking the user\u2019s flow. This gives product designers a frictionless, trust-building recovery lever that keeps the ensemble\u2019s output creatively diverse during iterative refinement.",
+    "Divergence Action Audit Trail: It cryptographically signs and timestamps every diversity-related intervention\u2014such as rollback triggers, budget culls, and drift circuit breaker activations\u2014along with the authenticated actor and mandatory justification, then stores the record in an append-only ledger that prevents tampering or selective deletion; security reviewers gain a non-repudiable, forensic audit trail to detect unauthorised attempts to suppress idea diversity and to verify that diversity-preserving actions are accountable and compliant with access control policies.",
+    "Idea Lineage Explainer automatically traces the genealogy of each reasoning branch and surfaces interactive narratives of how semantic diversity evolves, giving learning scientists an explainable feedback loop to diagnose premature convergence and tune interventions that sustain varied ideas for durable understanding.",
+    "Diversity-Aware Token Cap dynamically allocates a per-cycle token budget across reasoning branches by pruning the least distinctive ideas when latency or spend thresholds are breached, giving cost analysts a direct guardrail that preserves the broadest set of varied concepts within strict deployment constraints."
+  ],
+  "showings": [
+    {
+      "origin": "isolated",
+      "echo": 2.380025747673709,
+      "shown": true
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.532459838194098,
+      "shown": true
+    },
+    {
+      "origin": "connected",
+      "echo": 2.4849634976212753,
+      "shown": true
+    },
+    {
+      "origin": "connected",
+      "echo": 2.9156197206044405,
+      "shown": true
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.3453650246896434,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.5541129837901293,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.6534826471268773,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.84956068056504,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.8227546719181205,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.6697878529498924,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.1012524297757222,
+      "shown": true
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.321252836000335,
+      "shown": true
+    },
+    {
+      "origin": "connected",
+      "echo": 3.141633554025021,
+      "shown": true
+    },
+    {
+      "origin": "connected",
+      "echo": 2.781256765932739,
+      "shown": true
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.4126454392717473,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.76982522915757,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.5432843868731707,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.717836938842466,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.302702087040015,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.914780810741301,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.57731966029324,
+      "shown": true
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.6243255136304553,
+      "shown": true
+    },
+    {
+      "origin": "connected",
+      "echo": 2.872315158591074,
+      "shown": true
+    },
+    {
+      "origin": "connected",
+      "echo": 2.895811535281738,
+      "shown": true
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.4171954752770812,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.32508174696816,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.823195214518503,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.887185794024286,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.7411585437212542,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.4745211138318353,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.5017643426618945,
+      "shown": true
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.01874766989802,
+      "shown": true
+    },
+    {
+      "origin": "connected",
+      "echo": 2.168076999361269,
+      "shown": true
+    },
+    {
+      "origin": "connected",
+      "echo": 2.795870746427978,
+      "shown": true
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.2230705014051684,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.6285256668222323,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.2350418890361095,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.6477391003956043,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.693387938312524,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.658992625036212,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.325016178352554,
+      "shown": true
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.3468268467748405,
+      "shown": true
+    },
+    {
+      "origin": "connected",
+      "echo": 2.7188713379212177,
+      "shown": true
+    },
+    {
+      "origin": "connected",
+      "echo": 2.89652081117284,
+      "shown": true
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.180563327816239,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.367574131797565,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.411623091371329,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.5744431939724635,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.3810527304522666,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.795437185529524,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.279916705434976,
+      "shown": true
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.3601588698230684,
+      "shown": true
+    },
+    {
+      "origin": "connected",
+      "echo": 2.9586496077089413,
+      "shown": true
+    },
+    {
+      "origin": "connected",
+      "echo": 2.473628544728699,
+      "shown": true
+    },
+    {
+      "origin": "isolated",
+      "echo": 1.9469891314057417,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.2350643669636647,
+      "shown": false
+    },
+    {
+      "origin": "isolated",
+      "echo": 2.551094233175238,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.431019168109514,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.3277326004566907,
+      "shown": false
+    },
+    {
+      "origin": "connected",
+      "echo": 2.4686688448615954,
+      "shown": false
+    }
+  ]
+}
