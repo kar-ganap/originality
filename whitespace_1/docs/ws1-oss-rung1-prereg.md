@@ -125,6 +125,38 @@ Day-0 gate ~**$0.10** (~20 calls). Main loop 960 calls on `deepseek-v4-pro` thin
    present. TDD every token-free part against Polyphony's committed tests as executable spec.
 3. Run the R4 replication (960 calls) → confirmatory analysis → verdict (§ branches).
 
+## Results (post-registration, 2026-07-23)
+
+*Appended, not edited into the locked design above.* Gate 0 PASSED (diversity 0.5816, shift +0.0657 —
+stronger than GPT-5.6 Sol). The R4 loop then fired: 24 artifacts (8 run-ids × 3 conditions × 5 personas
+× 8 rounds = 960 gens, **$0.61**). Confirmatory analysis (`experiments/analyze_rung1_r4.py`,
+10,000-draw hierarchical bootstrap, seed 20260718):
+
+| gate | statistic | value | bound | verdict |
+|---|---|---|---|---|
+| 1 — dynamic uptake (actuator live) | mean Δ_U_pop | +0.04197 | lower +0.02106 | **PASS** |
+| 2 — popularity feedback (`P_top4`) | mean pop−uniform slope | +0.00627 | lower +0.00108 | **PASS** |
+| 3 — collapse (`V_pair`) | popularity V slope | −0.00275 | **upper +0.00604** | **FAIL** |
+| 3 | popularity − ablation V | −0.00048 | upper +0.00547 | FAIL |
+| 3 | popularity − uniform V | −0.00481 | upper +0.00136 | FAIL |
+
+**Verdict: NO COLLAPSE under a live actuator → Polyphony's output-layer null REPLICATES on DeepSeek.
+The bridge holds; rung 2 is well-founded.** All three collapse upper bounds straddle zero — the point
+V-slopes are slightly negative but not reliably so.
+
+- **The actuator is demonstrably live** (uptake +0.042, feedback +0.0063, both CI-excluding-0). Not a
+  dead-actuator null — the mechanism engages and outputs still resist.
+- **DeepSeek is flatter than Polyphony, not collapsing.** Polyphony's popularity V *rose* (+0.0090);
+  DeepSeek's is −0.00275 (CI straddles 0), and pop−ablation ≈ 0 — the catalog adds essentially nothing
+  to a slightly-declining baseline. Closer to collapse than GPT-5.6, but no reliable collapse.
+- **The Day-0 "conditions harder" hint did not translate.** DeepSeek's stronger per-round conditioning
+  (+0.066) did not compound into multi-round output homogenization; the substrate-specific-collapse
+  branch is retired.
+- **Gate 2 is a manipulation check, not a concentration result.** The `P_top4` recurrence passing means
+  popularity sampling produces recurrence — but Polyphony's +0.0102 analog was null-reproducible at
+  151%. The **matched `P_top4` null on DeepSeek is still to run** (pre-reg build step 3); until then,
+  Gate 2 is not read as ensemble concentration.
+
 ## What rung 1 deliberately does not do
 
 Not `V_reason` (rung 2). Not catalog-of-reasoning (rung 2). Not the imposed-λ* grid (rung 3). Not the
