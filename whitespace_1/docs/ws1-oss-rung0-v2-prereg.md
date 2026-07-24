@@ -125,3 +125,60 @@ From the trace smoke (837 reasoning tokens/call, `$0.00085`/generation on v4-pro
 Not the payoff-λ form (rung 1); not the cross-model Claude check (a conditional robustness pass, not
 the substrate); not the full λ-ladder (only if the gate passes). Rung 0 remains an **acute
 reachability probe** — now interpretable, two-channel, and controlled.
+
+---
+
+## Results (post-registration, 2026-07-23) — replication + pooled CI
+
+*The design above was locked before any run; this section is appended, not edited into it.* Three
+seeds were fired — the original `20260723` plus replications `20260724`, `20260725`, each a full
+1,250-generation probe at an **independent schedule**. Artifacts: `runs/rung0-v2-{a28965362227,
+d1af2cd9a75f,762f48f4d1dd}.json`. Pooled analysis: `experiments/pool_rung0_v2_seeds.py` (zero-spend,
+reads the artifacts via the gate's own `evaluate`, bootstrap seed pinned).
+
+**H0 (apparatus) — valid 3/3.** The positive control collapses both channels every seed (V_output
++54–76%, V_reason +29–48%). Extractor validation is satisfied implicitly by the contrast: ablation
+skeletons stay diverse, C+ skeletons homogenize.
+
+**H2 (threshold) — 3/3.** C1/C2 show no collapse (V drifts slightly up); collapse turns on only at
+C3. A threshold, as WS3 predicted.
+
+**H1 (reachability, the binary gate) — did NOT robustly replicate: REACHED / REACHED / NULL (2/3).**
+The miss is a **guard-count threshold artifact, not a disappearance of the effect.** V_reason
+clean-collapses (≥20%, significant, all three instruments agree) in 5/5 families every seed; the gate
+*additionally* requires ≥3 families to clear the parroting/role guards, and that count is **3 / 3 /
+2** — sitting on the threshold. Seed `20260725` fell to 2 only because the `testing` family's leading
+item induced output parroting in that schedule (its guard failed), dropping the count below 3. This
+is precisely the thresholded-binary-hides-a-continuous-effect failure this arm's ground rules (rule
+5, "level and slope both primary") warn about.
+
+**The pooled continuous estimand — robust.** Per (seed, family), `gap = decline_reason −
+decline_output` at C3 on the registered primary (I1, `strategy` procedure), the gate's own arithmetic:
+
+| set | mean gap | 95% CI (bootstrap 10k) | positive |
+|---|---|---|---|
+| guarded — clean conformity (n=8) | **+9.9%** | [+6.3%, +13.9%] **excl. 0** | 8/8 |
+| all cells (n=15) | +14.0% | [+10.4%, +17.8%] excl. 0 | 15/15 |
+
+Reasoning-strategy collapses **+27.1%**, output **+17.1%** — both collapse; strategy more. Holds in
+all 3 seeds (+10.7/+15.7/+15.6%) and all 5 families (+5.6% … +24.5%). Survives the instrument swap —
+I2 (independent local embedder) +11.5% [7.1, 15.3], I3 (lexical distinct-2) +5.1% [3.9, 6.2], both
+excl. 0. Not a small-denominator artifact: ablation baselines are comparable (V_reason 0.40, V_output
+0.48; ratio 0.83) and reasoning loses more on the **absolute** scale too (~0.11 vs ~0.08).
+
+**The refinement that qualifies H3 — the collapse is STRATEGIC, not total.** The second registered
+skeleton procedure, `decisions` (granular decision points), shows the **opposite sign**: gap −6.8%
+[−9.0, −4.5]. The three layers order as **strategy +27% ▸ output +17% ▸ decisions +10%** — the
+high-level approach converges hardest (every role "adopts the leading approach"), the outputs converge
+moderately (surface-diverse extensions), and the specific decision points stay the *most* diverse.
+The homogenization an output-only measure misses is therefore **shared high-level strategy**, not
+homogenization of the whole reasoning trace. Running both procedures and reporting the disagreeing one
+is what surfaced this; the registered primary (`strategy`) is designated and holds.
+
+**H3 verdict.** Not the clean "V_reason collapses while V_output holds" scenario — output *does*
+collapse ~17%. The adjudication direction is confirmed (**reasoning-strategy homogenizes measurably
+more than output**, CI excluding zero across seeds/families/instruments) but **layer-localized to
+strategy**. An output-only null (polyphony) would understate *strategic* convergence specifically.
+Whether polyphony's **endogenous** actuator reaches the regime where this bites is rung 1's question —
+unchanged by this result, but now carrying a clean, layer-specific estimand rather than the fragile
+binary gate.
