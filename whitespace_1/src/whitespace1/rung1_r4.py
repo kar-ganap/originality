@@ -87,6 +87,7 @@ def build_walk_prompt(
 class GeneratedProposal:
     text: str
     persona_name: str
+    reasoning: str = ""  # the raw trace (rung 2 captures it; rung 1 leaves it empty)
 
 
 class R4Provider(Protocol):
@@ -152,6 +153,7 @@ class R4Round:
     v_pair: float
     persona_control: float
     post_echo_top4_share: float | None
+    traces: tuple[str, ...] = ()  # raw reasoning traces per persona (rung 2); empty in rung 1
 
 
 @dataclass(frozen=True)
@@ -214,6 +216,7 @@ def run_r4(*, provider: R4Provider, config: R4Config) -> R4Run:
                 v_pair=float(mean_pairwise_cosine(proposal_embeddings)),
                 persona_control=float(mean_pairwise_cosine(persona_embeddings)),
                 post_echo_top4_share=_top4_share(catalog.echo_weights) if sample else None,
+                traces=tuple(p.reasoning for p in proposals),
             )
         )
     return R4Run(config=config, persona_embeddings=persona_embeddings, rounds=tuple(rounds))
