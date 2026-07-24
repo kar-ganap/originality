@@ -1,0 +1,35 @@
+{
+  "v_output": {
+    "run_count": 8,
+    "mean_uptake_delta": 0.034439675124728494,
+    "uptake_lower": 0.013945830587332222,
+    "mean_feedback_contrast": 0.007225432073280428,
+    "feedback_lower": 0.00467163168873345,
+    "popularity_v_slope": -0.000955551864890536,
+    "popularity_v_upper": 0.008017882112681726,
+    "popularity_minus_ablation_v": 0.0016858086536123578,
+    "popularity_minus_ablation_upper": 0.00702711112529548,
+    "popularity_minus_uniform_v": -0.0007197501773568336,
+    "popularity_minus_uniform_upper": 0.006421620304945011,
+    "dynamic_uptake_passed": true,
+    "feedback_passed": true,
+    "collapse_passed": false
+  },
+  "v_reason": {
+    "run_count": 8,
+    "mean_uptake_delta": 0.034439675124728494,
+    "uptake_lower": 0.013945830587332222,
+    "mean_feedback_contrast": 0.007225432073280428,
+    "feedback_lower": 0.00467163168873345,
+    "popularity_v_slope": 0.002618282477630054,
+    "popularity_v_upper": 0.009262923650349196,
+    "popularity_minus_ablation_v": 0.004488871523628922,
+    "popularity_minus_ablation_upper": 0.008910099116354483,
+    "popularity_minus_uniform_v": -0.0014797803944616062,
+    "popularity_minus_uniform_upper": 0.004792235663989464,
+    "dynamic_uptake_passed": true,
+    "feedback_passed": true,
+    "collapse_passed": false
+  },
+  "headline_measurement_artifact": false
+}

@@ -1,0 +1,40 @@
+{
+  "cs-indeg_alltime": {
+    "confound_corr": 0.548452290633833,
+    "excess_slope": -0.0029802293347839454,
+    "gini_slope": -0.001885543783546864
+  },
+  "cs-indeg_w10": {
+    "confound_corr": -0.22728832847721434,
+    "excess_slope": 0.0069402549155438645,
+    "gini_slope": -0.0003171798983061265,
+    "min_rate": 0.9355400696864111,
+    "volctrl_gini_slope": -2.0510457750694898e-05
+  },
+  "cs-indeg_w5": {
+    "confound_corr": -0.5711207473473883,
+    "excess_slope": 0.00724125341083566,
+    "gini_slope": -0.0005879993615224711,
+    "min_rate": 0.6038834951456311,
+    "volctrl_gini_slope": -0.00011179257908227051
+  },
+  "physics-indeg_alltime": {
+    "confound_corr": -0.45090759131210384,
+    "excess_slope": -0.0007960242934673548,
+    "gini_slope": 0.0018842607104906596
+  },
+  "physics-indeg_w10": {
+    "confound_corr": 0.8912319308281136,
+    "excess_slope": 0.005630617019486707,
+    "gini_slope": 0.003546801353960838,
+    "min_rate": 2.7582260371959944,
+    "volctrl_gini_slope": 0.003091938928810689
+  },
+  "physics-indeg_w5": {
+    "confound_corr": 0.8874228015768817,
+    "excess_slope": 0.005115934253470112,
+    "gini_slope": 0.0033097542029347743,
+    "min_rate": 1.854077253218884,
+    "volctrl_gini_slope": 0.0027352532810715926
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "run_count": 8,
+  "mean_uptake_delta": 0.04197325905616501,
+  "uptake_lower": 0.021064671273123878,
+  "mean_feedback_contrast": 0.006273948202923783,
+  "feedback_lower": 0.0010840733937658776,
+  "popularity_v_slope": -0.0027462815791036046,
+  "popularity_v_upper": 0.0060376984302593735,
+  "popularity_minus_ablation_v": -0.00048345815483242464,
+  "popularity_minus_ablation_upper": 0.005466550996480474,
+  "popularity_minus_uniform_v": -0.004811078490167702,
+  "popularity_minus_uniform_upper": 0.0013555416901717173,
+  "dynamic_uptake_passed": true,
+  "feedback_passed": true,
+  "collapse_passed": false
+}

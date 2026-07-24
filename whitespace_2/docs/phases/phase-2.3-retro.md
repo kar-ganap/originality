@@ -1,5 +1,11 @@
 # Phase 2.3 Retro — the subfield mechanism test (+ the SPECTER2 escalation)
 
+> **⚠️ Superseded in part (2026-07-22).** The artifact verdict was `MIXED / metric-or-definition-
+> dependent` (γ₁'s sign is embedding-determined — the test **cannot determine** the relationship).
+> Reading that as concentration and diversity being **independent** (orthogonality) is an upgrade of
+> "can't tell" to a positive claim, and it fed the now-**withdrawn** decoupling. See the correction
+> boxes at the top of `../../CLAUDE.md`.
+
 **Phase:** 2.3 — the pre-registered "single most important analysis"
 **Stage:** 2 → 3 (Walk → Run close-out)
 **Branch:** `phase-2.3-subfield`

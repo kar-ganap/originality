@@ -23,6 +23,34 @@ contribution available."*).
 analytics), **not** a hard-theorem paper and **not** WS1's LLM multi-agent model.
 The value is conceptual clarity, robust across specifications.
 
+> ### ⚠️ CORRECTION 2026-07-22 — the crossover isn't present, and four residuals in the record below
+>
+> A pre-registered resolution-map study (`docs/resolution-map-phase3-retro.md`) and the program-level
+> audit revised the headlines below. Read the record with these:
+>
+> 1. **The crossover is not statistically present.** At n=30, total-V never reliably rises in N (no
+>    V-favouring region), so `λ*` is not a usable quantity and the "same lever, opposite signs"
+>    reconciliation fails its V-half. `C` is a **deterministic clock** (∂C/∂lever = 0), so it fails the
+>    C-half too. What survives as usable is the **level/intervention channel**: conformity crushes
+>    structural novelty above a threshold; isolation preserves it.
+> 2. **Three inconsistent `λ*` values were presented as convergent.** `λ*≈0.086` (rung 3, reduced-form
+>    `ln N`) and `λ*≈0.09` (phase diagram) are reported as matching, but rung 4a found `λ*≈2` on the
+>    **real endogenous H** driver — a ~20× disagreement. The small values are an artifact of the
+>    reduced-form driver, not a converged estimate.
+> 3. **Two of three "Level-3 anchors" are Level 2** by this project's own standard. Only Henrich/Mesoudi
+>    (`N*≈616`) reproduces a published *number*. Both Strimling anchors (`U/(1−β)=0.2`,
+>    `U/(1−β−r)=1.0`) reproduce the *formula* — Strimling's PDF is inaccessible — which the project
+>    defines as Level 2 ("not just our own coded formula"). They should be labelled Level 2.
+> 4. **The Pareto claim is `∂V>0, ∂C=0`, not "boosts both."** Because `C` is a clock, selective
+>    isolation raises V at **no C-cost** — Pareto-non-worsening, not a both-boost. And `bw*` is
+>    unpinned (`≈0.05` here vs a sign flip at `≈0.09–0.10` in the bridge). The two-channel *sign
+>    structure* (breadth↑ ⊥ structure↓ in N) does survive; its magnitude and `bw*` do not.
+>
+> The C/V *conceptual* reconciliation (two distinct fitness components that needn't move together)
+> stands independent of all this. What is withdrawn is the crossover as a measured phenomenon and the
+> WS2 concentration input the section immediately below leans on (that input is itself withdrawn — see
+> `../whitespace_2/CLAUDE.md`). Nothing below is edited; read it through this box.
+
 ## What WS2 already decided for WS3 (you are ~80% of the way in)
 
 WS2's empirical results are not just background — they **constrain the model** and

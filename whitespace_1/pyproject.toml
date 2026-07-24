@@ -1,0 +1,66 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "whitespace1"
+version = "0.0.0"
+description = "WS1 chapter 2 — the OSS/cross-model adjudication arm: does reasoning-layer diversity collapse where output diversity does not, and can a multi-agent substrate give the C/V theory its first causal test"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=1.24,<2",
+    "scipy>=1.11",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.3",
+    "mypy>=1.8",
+]
+# Generation backends. The engine is token-free and mockable; only these hit the network.
+llm = [
+    "openai>=1.0",
+    "anthropic>=0.40",
+]
+# Optional: OSS model serving for rung 1+ (vLLM on Modal).
+serve = [
+    "modal>=1.2",
+]
+# The second-family embedder (instrument I2 in rung-0 v2) — a local open model, genuinely
+# independent of OpenAI. Only needed for a real probe run; the dry-run mocks it.
+# torch is pinned < 2.3: PyTorch stopped shipping x86_64 macOS wheels after 2.2.2, so an Intel Mac
+# cannot install newer torch. Pinning keeps a genuinely-different-family local embedder installable.
+embed2 = [
+    "sentence-transformers>=2.2,<4",
+    "torch<2.3",
+]
+# Optional: figures.
+plot = [
+    "matplotlib>=3.7",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/whitespace1"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["live: hits a real generation API (deselected by default; costs money)"]
+addopts = "-m 'not live'"
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+
+[[tool.mypy.overrides]]
+module = ["scipy.*", "openai.*", "anthropic.*", "matplotlib.*"]
+ignore_missing_imports = true

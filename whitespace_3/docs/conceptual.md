@@ -2,6 +2,15 @@
 
 **A compass document for when the work gets muddy.**
 
+> **⚠️ Correction 2026-07-22.** The *conceptual* reconciliation below — C and V are distinct fitness
+> components that needn't move together — stands. Two specifics do **not**: (a) the **crossover** (λ\*)
+> is not statistically present (`docs/resolution-map-phase3-retro.md`), so "same lever, opposite signs"
+> is unsupported as a measured phenomenon; and (b) the **Pareto "boost both C and V"** claim (§ below)
+> is really `∂V>0, ∂C=0` — C is a deterministic clock, so selective isolation raises V at no C-cost, not
+> a both-boost. See the correction box at the top of `../CLAUDE.md` for the full list (three λ\* values,
+> the Level-3 anchor labelling, bw). What survives: the two-channel *sign structure* and the level/
+> intervention channel (conformity suppresses structural novelty above a threshold; isolation preserves).
+
 ---
 
 ## What this paper is, in one sentence

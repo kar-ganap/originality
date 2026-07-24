@@ -36,6 +36,11 @@ uv.lock
 experiments/results/
 experiments/logs/
 
+# Large regenerable Modal output: per-paper 24M-population in-degree (113 MB).
+# Regenerate with experiments/phase-2.2/cohort_indegree_pop.py; the committed
+# cohort-concentration-pop.json summary is the inspectable result.
+experiments/phase-2.2/cohort-indegree-pop.json
+
 # Tasks (internal project management — per sibling house style)
 tasks/
 

@@ -11,6 +11,105 @@ claim is disconfirmed — a successful null.
 
 ## Current State
 
+> ### ⚠️ CORRECTION 2026-07-22 — the canonical-concentration leg does not stand
+>
+> The headline below says "the citation canon concentrates while the semantic frontier +
+> authorship diversify." **The first clause is withdrawn.** A matched null
+> (`src/whitespace2/null_ref_gini.py`, runner `experiments/phase-2.2/null_ref_gini.py`) re-runs
+> `reference_canonicity` under **uniform random attachment** — same papers, same per-paper
+> reference counts, target pool sized so expected distinct targets match the observed, and every
+> target equally attractive. Its replay of the committed series is **bit-exact** (max error
+> `0.00e+00`), which is what licenses the null.
+>
+> | | CS | Physics |
+> |---|---:|---:|
+> | observed `ref_gini` slope | `+0.001162`/yr | `+0.001204`/yr |
+> | matched-null slope | `+0.001084`/yr | `+0.001115`/yr |
+> | **null reproduces** | **93%** | **93%** |
+> | excess (real) slope | `+0.000078`/yr | `+0.000089`/yr |
+> | corr(`ref_gini`, edges per distinct target) | `+0.9989` | `+0.9996` |
+>
+> **Why.** `ref_gini` is a Gini over *observed* reference-target multiplicities, so it is a
+> statistic about **repeat citations**. In 1970 CS it saw 1,904 edges over 1,880 distinct targets —
+> almost every cited work appears exactly once, so the Gini is ~0.013 by arithmetic. By 2024 it saw
+> 85,135 over 79,889. Drawing more edges from a pool produces more repeats by the birthday
+> principle, with no change in how canonical anything is. Reference lists grew ~3.7 → ~19.6 per
+> paper; that is what the metric tracked.
+>
+> **Three things follow.**
+> 1. The trend is **93% arithmetic**. The observed slope *is* above the null (p < 0.001), so a real
+>    preferential-attachment signal exists — but it is `+0.000078`/yr, about `+0.004` of Gini across
+>    54 years.
+> 2. **The magnitudes were never canon-scale.** A real, heavy-tailed citation distribution sits at
+>    Gini 0.8–0.99. `ref_gini` moves 0.013 → 0.060. It never leaves the near-all-singletons regime.
+> 3. **It cannot discriminate fields.** `ref_gini` rises near-identically in CS (`+0.001162`) and
+>    Physics (`+0.001204`), while this study's *other* canonical metric — the age-restricted citation
+>    Gini, which does live at 0.81–0.95 — moves in **opposite directions**: CS `-0.001316`/yr
+>    (declining, p=5e-09) versus Physics `+0.001918`/yr (rising). A metric that misses a
+>    field difference the real measure detects is not measuring canon concentration.
+>
+> **Also unreported.** That age-restricted series is the *pre-registered substrate gate*. In CS it
+> **declines at all three windows** (W=3/5/10: `-0.00132`, `-0.00114`, `-0.00082`, all p < 1e-3).
+> It was computed, committed to `series/semantic-canonical.json`, and never reported. It is the
+> metric that should have carried the concentration claim, and in CS it points the other way.
+>
+> **What a correct measurement shows (added 2026-07-22).** Requirements were pre-registered in
+> `docs/concentration-measures.md` (canon-scale range, no growing denominator, fixed observation
+> window, matched null, replay validation, field discrimination), then two measures built to them:
+>
+> - **`canon_share`** (`src/whitespace2/canon_share.py`) — out-edge: the share of a year's references
+>   landing in the top-K canon its *predecessors* built. Fixed K, denominator is the year's own edges,
+>   so the `ref_gini` confound is absent by construction. Result: **flat-to-declining in both fields**
+>   at K=100/1000/10000; entropy-deficit falls in all six cells; sample-size invariant.
+> - **Cohort in-degree** (`src/whitespace2/cohort_concentration.py`) — in-edge: inequality of citations
+>   *received* within a publication cohort, over the **24M population** (the local 1M sees only 1.93% of
+>   edges), on a **fixed forward window** (accrual-fair) and **density-controlled** (each cohort thinned
+>   to a common cites-per-paper, since Gini of a count vector is density-dependent). Replay of the
+>   committed series is bit-exact. Result: **CS is flat** (volume-controlled slope ≈0, robust at
+>   density floors 0.60/1.30/2.39), **Physics rises** (+0.0027…+0.0031/yr, robust across W=5/10 and
+>   1970/1990/2000). The all-time-vs-windowed sign flip confirms the age-restricted (all-time) gate was
+>   accrual-confounded — the CD-index lesson applied to concentration.
+>
+> **The honest landing.** `ref_gini` said CS and Physics both concentrate near-identically; the clean
+> measures say **CS canon concentration is flat, Physics rises** — the field discrimination the old
+> metric erased. WS2's decoupling was a *CS* claim (semantic fragmentation held on three embedding
+> families in CS), and in CS there is **no rising concentration to be orthogonal to the fragmentation**.
+> Physics concentrates, but its fragmentation was the mixed one (SPECTER2 reversed). So the two
+> phenomena appear in **different fields, not orthogonally in the same one**. This is an *observation*,
+> not a new thesis: whether it is real field structure (e.g. a niche-distinctiveness effect) needs a
+> pre-registered multi-field test, and fitting a two-field difference to a tunable parameter after the
+> fact is a trap explicitly declined.
+>
+> Nothing below is edited; read the "citation canon concentrates" clause as superseded by this box.
+
+> ### ⚠️ CORRECTION 2026-07-22 — the reframing's evidence base (Claim #13, MIXED, Tests II–IV)
+>
+> The concentration box above withdraws the *canon* leg. This box records three methodology residuals
+> in how Claim #13 was *disconfirmed and reframed* — all of which fed the now-withdrawn decoupling, and
+> none of which the record below acknowledges. They are recorded for honesty; the reframing they
+> supported is gone, so none needs re-running.
+>
+> 1. **The pre-registered test confirmed Claim #13; it was overridden post-hoc.** The locked Test-I
+>    rule used *ratio* estimators, and the ratio returned **"divergence"** — i.e. it **confirmed**
+>    Claim #13. On finding the ratio denominator-confounded (a real defect — the ratio falls whenever
+>    demographic outpaces semantic even as semantic rises), it was replaced by an *absolute* estimator
+>    that disconfirmed. The switch is methodologically defensible, but it was made **after seeing the
+>    ratio result** and was **not pre-registered**; "robustly disconfirmed" does not disclose that the
+>    pre-registered estimator pointed the other way.
+> 2. **"MIXED" was read as "independent."** Phase 2.3's subfield-mechanism artifact states
+>    `VERDICT: MIXED / metric-or-definition-dependent` — γ₁'s sign is embedding-determined, i.e. the
+>    test **cannot determine** the relationship. The retro reads this as concentration and diversity
+>    being **independent** (a positive orthogonality claim). Absence of a robust *positive* predictor
+>    is not evidence of *independence*; "we can't tell" was upgraded to the WS3-favourable reading.
+> 3. **Only Test I of the pre-registered I–IV suite ran.** Test II (gap regression, 7 controls),
+>    Test III (de-trended cross-correlation + Granger), and **Test IV (per-paper team-diversity ×
+>    novelty — the load-bearing within-paper test)** were pre-registered and **never run**. The
+>    disconfirmation of Claim #13 rested on Test I alone, so "robustly" over-states the evidence base.
+>
+> **Net.** All three propped up the reframing (independent / orthogonal decoupling), which is
+> withdrawn. The surviving honest finding is the narrow one: demographic plurality rose sharply, and
+> semantic diversity did **not** fall. See `docs/phases/phase-2.2-retro.md`, `phase-2.3-retro.md`.
+
 - **Current Stage:** Stage 2 → 3 **(Phase 2.3 COMPLETE — the subfield mechanism
   test, the pre-registered "single most important analysis," is run).** Stage 1
   CLOSED. **Headline: Claim #13 robustly DISCONFIRMED (successful null), reframed
