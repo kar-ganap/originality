@@ -1,0 +1,28 @@
+{
+  "model": "deepseek-v4-pro",
+  "thinking": true,
+  "passed": true,
+  "diversity": 0.5816224689546805,
+  "diversity_ok": true,
+  "diversity_min": 0.1,
+  "no_catalog_alignment": 0.47205101921849735,
+  "conditioned_alignment": 0.5377971280120039,
+  "alignment_shift": 0.06574610879350651,
+  "shift_ok": true,
+  "shift_min": 0.03,
+  "cost_usd": 0.0037293499999999998,
+  "no_catalog_outputs": [
+    "Introduce an automatic diversity circuit breaker that continuously monitors the entropy of the ensemble\u2019s idea pool, and when entropy drops below a configurable threshold, it triggers a rollback to the most recent diverse checkpoint while alerting operators.",
+    "Add a visual diversity timeline that plots idea clusters over sessions, letting developers pause stale threads and inject deliberate novelty prompts with a single click\u2014reducing friction and building trust that the ensemble won\u2019t drift into groupthink.",
+    "Add an immutable, cryptographically signed audit log that records each idea's origin, modifications, and the agent responsible, with role-based access restrictions to prevent tampering and enable tracing of potential misuse or privacy violations.",
+    "A Divergent Explanation Cycle periodically prompts each agent to articulate the causal reasoning behind its unique stance, then surfaces conflicting explanations as feedback to the group, which collectively refines and preserves idea variation by reinforcing the deepest, evidence-backed contrasts.",
+    "Add a lightweight, cache-based semantic deduplication module that periodically clusters agent outputs and prunes near-duplicate ideas using locally computed embeddings, preserving diversity while reducing token spend and API calls."
+  ],
+  "conditioned_outputs": [
+    "Add a diversity safety net that continuously monitors the entropy of the idea space across all agents and automatically triggers a rollback to the last high-variation checkpoint if premature convergence is detected, along with an annotated diff showing which agent proposals caused the collapse.",
+    "Introduce a visual \"idea lineage map\" that renders each proposal as a branching node from its source, using color-coded trails to show how the ensemble's thinking has diverged or converged over time, so developers can instantly trust that diversity is being preserved and easily prune or revive branches without friction.",
+    "Enforce per-agent access controls that limit exposure to idea clusters based on need-to-know, coupled with an immutable, cryptographically signed audit log of every proposal, vote, and merge to prevent manipulation and enable accountability.",
+    "After each round, every agent must produce a short causal narrative explaining why certain ideas persisted or faded, and the ensemble collectively reviews these narratives to inform the next round's divergence, creating a feedback loop that builds durable shared understanding.",
+    "Implement an embedding-based compression layer that filters the shared idea pool to a maximally diverse subset of recent entries under a configurable token budget, injecting only that lean summary into each agent\u2019s context to preserve variety while strictly controlling per-request token costs and latency."
+  ]
+}
