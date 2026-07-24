@@ -1,0 +1,26 @@
+✓ Initialized. View run at 
+https://modal.com/apps/gkartik-extraneous/main/ap-dRAW7dbo6Y8TKYS9Tzpex3
+✓ Created objects.
+Phase 1.2 Step 7 — full bulk-dump parse
+
+Loaded 2127 shards from manifest
+Checking Volume for already-done shards...
+  2127 shards already done on Volume
+  0 shards remaining to process
+
+All shards already processed; skipping to dedup.
+
+Step 7 follow-on: cross-shard dedup (paper-id; max updated_date)
+  dedup complete: 1278s
+  shards concatenated: 2127
+  unique paper-ids: 72,173,308
+  output (Volume):  /output/section0-population.parquet
+
+Downloading section0-population.parquet to local...
+  wrote /Users/kartikganapathi/Documents/Personal/random_projects/originality/whitespace_2/data/metadata/section0-population.parquet (54818.2 MB)
+  wrote /Users/kartikganapathi/Documents/Personal/random_projects/originality/whitespace_2/experiments/phase-1.2/parse-results.json
+
+Phase 1.2 Step 7 complete.
+Stopping app - local entrypoint completed.
+✓ App completed. View run at 
+https://modal.com/apps/gkartik-extraneous/main/ap-dRAW7dbo6Y8TKYS9Tzpex3
